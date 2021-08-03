@@ -68,6 +68,7 @@ export class App extends React.Component {
       subGroup: "",
       engGroup: "", 
       correct: null,
+      groupId: 0,
       label_group: "",
     }
     this.Home = this.Home.bind(this);
@@ -454,6 +455,13 @@ export class App extends React.Component {
     createUser("222", "808", String(this.state.group), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
     } else this.setState({label_group: "Некорректно. Проверьте формат группы: *-*-*"});
+  }
+
+  getGroupID(){
+    for (let i of groups) {
+      if (this.state.group.toLowerCase() === i.name.toLowerCase()) 
+        this.state.groupId=i.id;
+    } 
   }
 
   render() {
