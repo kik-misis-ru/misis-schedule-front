@@ -2,8 +2,10 @@ import React from "react";
 import logo0 from "../src/unnamed.gif";
 import logo from "../src/logo_new.png";
 import karta from "../src/Karta.png";
+import groups from './groups_list.js';
 import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
+import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
 import { text, background, gradient } from '@sberdevices/plasma-tokens';
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,7 +33,7 @@ import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconPersone} from "
 
 import {
   createUser,
-  getUser,
+  getSchedule,
   updateUser,
 } from "./APIHelper.js";
 import { m } from "@sberdevices/plasma-core/mixins";
@@ -52,9 +54,9 @@ export class App extends React.Component {
   
   constructor(props) {
     super(props);
+    this.tfRef = React.createRef();
     console.log('constructor');
     this.state = {
-      notes: [],
       //
       UserId: "",
       //
@@ -62,14 +64,17 @@ export class App extends React.Component {
       logo: logo0, 
       flag: false,
       description: "Привет",
+      group: "",
+      groupId: "",
+      subGroup: "",
+      engGroup: "", 
+      correct: null,
+      label_group: "",
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
     this.Navigator = this.Navigator.bind(this);
-  }
-
-  componentDidMount() {   
-    console.log('componentDidMount');
+    
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
     this.assistant.on("data", (event /*: any*/) => {
       if (event.type == "smart_app_data") {
@@ -85,9 +90,7 @@ export class App extends React.Component {
       console.log(`assistant.on(start)`, event);
     });
 
-    
   }
-
  
   
   getStateForAssistant () {
@@ -117,6 +120,20 @@ export class App extends React.Component {
     
   }
 
+
+  convertGroupNameInId(){
+    for (let i of groups) {
+      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
+        this.state.groupId = i.id
+        console.log(`groupId ${this.state.groupId}`)
+      }
+    }
+  }
+
+
+  
+
+  
   Navigator(){
     return (
       <div class="body">
@@ -196,7 +213,7 @@ export class App extends React.Component {
         class = "button"
         style={{margin: '1em', color: "white"}}
         text='Расписание'
-        size="m"
+        size="l"
         view="secondary"
         pin="square-square"
         onClick={()=>this.setState({ state: 2 })}
@@ -208,7 +225,7 @@ export class App extends React.Component {
         class = "button"
         style={{margin: '1em', color: "white"}}
         text='Навигатор'
-        size="m"
+        size="l"
         view="secondary"
         pin="square-square"
         onClick={()=>this.setState({ state: 3 })}
@@ -220,7 +237,7 @@ export class App extends React.Component {
         class = "button"
         style={{margin: '1em', color: "white"}}
         text=' Контакты '
-        size='m'
+        size='l'
         view="secondary"
         pin="square-square"
         />
@@ -232,7 +249,7 @@ export class App extends React.Component {
         class = "button"
         style={{margin: '1em', color: "white"}}
         text="  Помощь  "
-        size='m'
+        size='l'
         view="secondary"
         pin="square-square"
         />
@@ -255,12 +272,19 @@ export class App extends React.Component {
         <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
         </Header>
 
+        <div >
+        <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} onClick={()=>getSchedule("6156", "2021-05-10")} />
+        <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}/>
+        <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}/>
+        
+        </div>
+
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "20rem", margin: "2em" }}>
+          <Card style={{ width: "20rem", margin: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Понедельник</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Понедельник 28.05.21</TextBoxBigTitle>
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
                   </CardParagraph1>
@@ -281,7 +305,7 @@ export class App extends React.Component {
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "2em" }}>
+          <Card style={{ width: "20rem", margin: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -299,7 +323,7 @@ export class App extends React.Component {
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "2em" }}>
+          <Card style={{ width: "20rem", margin: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -307,14 +331,17 @@ export class App extends React.Component {
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     16:40-18:05
                   </CardParagraph1>
-                  <TextBoxSubTitle>Сетевые технологии, Л-521, Крынецкая</TextBoxSubTitle>
+                  <CardParagraph2 >
+                    Сетевые технологии
+                  </CardParagraph2>
+                  <TextBoxSubTitle> Л-521, Крынецкая</TextBoxSubTitle>
                 </TextBox>
                 <br />
                 
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "2em" }}>
+          <Card style={{ width: "20rem", margin: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -329,7 +356,7 @@ export class App extends React.Component {
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "2em" }}>
+          <Card style={{ width: "20rem", margin: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -344,7 +371,7 @@ export class App extends React.Component {
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "2em" }}>
+          <Card style={{ width: "20rem", margin: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -360,8 +387,8 @@ export class App extends React.Component {
             </CardBody>
           </Card>
           <div style={{
-        width:  '200px',
-        height: '200px',
+        width:  '150px',
+        height: '150px',
         }}></div>
         </div>
 
@@ -371,8 +398,6 @@ export class App extends React.Component {
   }
   
   Home(){
-    const group = '';
-    const eng='';
     return (
       <div class="body">
         <Container style = {{padding: 0}}>
@@ -387,10 +412,16 @@ export class App extends React.Component {
           <h3 style={{margin: '1em'}}>Моя академическая группа</h3>
           <TextField
           id="tf"
+          label={this.state.label_group}
           className="editText"
           placeholder="Напиши номер своей академической группы"
           color="var(--plasma-colors-voice-phrase-gradient)"
           value={this.state.group}
+          onChange={(v) =>
+            this.setState({
+              group: v.target.value,
+            })
+          }
         />
         <h3 style={{margin: '1em'}}>Номер подгруппы</h3>
           <TextField
@@ -398,7 +429,12 @@ export class App extends React.Component {
           className="editText"
           placeholder="1 или 2"
           color="var(--plasma-colors-voice-phrase-gradient)"
-          value={this.state.group}
+          value={this.state.subgroup}
+          onChange={(s) =>
+            this.setState({
+              subGroup: s.target.value,
+            })
+          }
         />
         <h3 style={{margin: '1em'}}>Группа по английскому</h3>
           <TextField
@@ -406,15 +442,37 @@ export class App extends React.Component {
           className="editText"
           placeholder="Напиши номер своей группы по английскому"
           color="var(--plasma-colors-voice-phrase-gradient)"
-          value={this.state.group}
+          value={this.state.eng}
+          onChange={(e) =>
+            this.setState({
+              engGroup: e.target.value,
+            })
+          }
         />
           
-          <Button text="Сохранить" view="primary" style={{alignSelf: "center", marginTop: "auto"}} onClick={()=>console.log("Button")}/>
+          <Button text="Сохранить" view="primary" style={{alignSelf: "center", marginTop: "auto"}} onClick={()=>this.isCorrect()}/>
         </div>
         </Container>
       </div>
     )
   }
+
+  isCorrect(){
+    this.setState({correct: false})
+    for (let i of groups) {
+      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
+        this.state.correct = true
+        console.log(`Correct ${this.state.correct}`)
+        this.convertGroupNameInId()
+    } 
+  }
+  if (this.state.correct===true){
+    console.log("ok")
+    createUser("44", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+      this.setState({label_group: "Группа сохранена"});
+    } else this.setState({label_group: "Некорректно. Проверьте формат группы: *-*-*"});
+  }
+
   render() {
     console.log('render');
     switch(this.state.state){

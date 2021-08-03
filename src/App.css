@@ -35,13 +35,13 @@
 
 .chatbox {
   position: relative;
-  width: calc(95% - 2px);
-  height: 95%;
+  width: calc(100% - 2px);
+  height: 100%;
   border: 3px solid var(--plasma-colors-button-accent);
   background-color: white  ;
   border-radius: 17px;
   overflow: auto;
-  margin: 10px;
+  margin: 15px;
 }
 
 .subChat {
@@ -133,7 +133,7 @@ p {
   position: relative;
   left: 3%;
   top: 3%;
-  width: calc(100% - 1px);
+  width: calc(100% - 2px);
   height: auto;
 }
 .container {
