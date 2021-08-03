@@ -57,7 +57,6 @@ export class App extends React.Component {
     this.tfRef = React.createRef();
     console.log('constructor');
     this.state = {
-      notes: [],
       //
       UserId: "",
       //
@@ -66,18 +65,15 @@ export class App extends React.Component {
       flag: false,
       description: "Привет",
       group: "",
-      subgroup: "",
-      eng: "", 
+      subGroup: "",
+      engGroup: "", 
       correct: null,
       label_group: "",
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
     this.Navigator = this.Navigator.bind(this);
-  }
-
-  componentDidMount() {   
-    console.log('componentDidMount');
+    
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
     this.assistant.on("data", (event /*: any*/) => {
       if (event.type == "smart_app_data") {
@@ -93,9 +89,7 @@ export class App extends React.Component {
       console.log(`assistant.on(start)`, event);
     });
 
-    
   }
-
  
   
   getStateForAssistant () {
@@ -457,6 +451,7 @@ export class App extends React.Component {
     } 
   }
   if (this.state.correct===true){
+    createUser("222", "808", String(this.state.group), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
     } else this.setState({label_group: "Некорректно. Проверьте формат группы: *-*-*"});
   }

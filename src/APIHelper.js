@@ -1,23 +1,16 @@
 import axios from "axios";
 
-//const API_URL = "http://127.0.0.1:8000/";
-const API_URL = "https://serene-inlet-82302.herokuapp.com/";
+const API_URL = "http://127.0.0.1:8000/";
+// const API_URL = "https://serene-inlet-82302.herokuapp.com/";
 
-export async function createUser(UserId, name, foodLevel, sleepLevel, playLevel, timeOfExit, sec, min, hour, kusua, flag) {
-  const { data: answer } = await axios.post(API_URL + "user/", {
-    UserId: UserId,
-    name: name,
-    foodLevel: foodLevel,
-    sleepLevel: sleepLevel,
-    playLevel: playLevel,
-    timeOfExit: timeOfExit,
-    sec: sec,
-    min: min,
-    hour: hour,
-    kusua: kusua,
-    flag: flag,
+export async function createUser(userId, filialId, groupId, subgroupId, engGroup) {
+  return await axios.post(`${API_URL}users`, {
+    "user_id": userId,
+    "filial_id": filialId,
+    "group_id": groupId,
+    "subgroup_id": subgroupId,
+    "eng_group": engGroup,
   });
-  return answer;
 }
 
 export async function getUser(UserId) {
