@@ -33,7 +33,7 @@ import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconPersone} from "
 
 import {
   createUser,
-  getUser,
+  getSchedule,
   updateUser,
 } from "./APIHelper.js";
 import { m } from "@sberdevices/plasma-core/mixins";
@@ -65,6 +65,7 @@ export class App extends React.Component {
       flag: false,
       description: "Привет",
       group: "",
+      groupId: "",
       subGroup: "",
       engGroup: "", 
       correct: null,
@@ -119,6 +120,20 @@ export class App extends React.Component {
     
   }
 
+
+  convertGroupNameInId(){
+    for (let i of groups) {
+      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
+        this.state.groupId = i.id
+        console.log(`groupId ${this.state.groupId}`)
+      }
+    }
+  }
+
+
+  
+
+  
   Navigator(){
     return (
       <div class="body">
@@ -258,7 +273,7 @@ export class App extends React.Component {
         </Header>
 
         <div >
-        <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }}/>
+        <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} onClick={()=>getSchedule("6156", "2021-05-10")} />
         <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}/>
         <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}/>
         
@@ -417,7 +432,7 @@ export class App extends React.Component {
           value={this.state.subgroup}
           onChange={(s) =>
             this.setState({
-              subgroup: s.target.value,
+              subGroup: s.target.value,
             })
           }
         />
@@ -430,7 +445,7 @@ export class App extends React.Component {
           value={this.state.eng}
           onChange={(e) =>
             this.setState({
-              eng: e.target.value,
+              engGroup: e.target.value,
             })
           }
         />
@@ -443,15 +458,17 @@ export class App extends React.Component {
   }
 
   isCorrect(){
-    
     this.setState({correct: false})
     for (let i of groups) {
       if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
-        this.state.correct=true;
+        this.state.correct = true
+        console.log(`Correct ${this.state.correct}`)
+        this.convertGroupNameInId()
     } 
   }
   if (this.state.correct===true){
-    createUser("222", "808", String(this.state.group), String(this.state.subGroup), String(this.state.engGroup));
+    console.log("ok")
+    createUser("44", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
     } else this.setState({label_group: "Некорректно. Проверьте формат группы: *-*-*"});
   }
