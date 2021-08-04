@@ -3,15 +3,21 @@ import axios from "axios";
 const API_URL = "http://127.0.0.1:8000/";
 // const API_URL = "https://serene-inlet-82302.herokuapp.com/";
 
+// export async function putScheduleIntoDb(schedule) {
+//   return await axios.post(`${API_URL}schedule`, {
 
-export async function getSchedule(groupId, date) {
+//   });
+// }
+
+
+export async function getScheduleFromDb(groupId, date) {
   const { data: answer } = await axios.get(`${API_URL}schedule`, {
     params: {
       group_id: groupId,
       date: date
     },
   })
-  console.log(answer);
+  //console.log(`answer ${answer}`);
   return answer;
 }
 

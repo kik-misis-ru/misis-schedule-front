@@ -31,7 +31,7 @@ import { TextField, ActionButton } from "@sberdevices/plasma-ui";
 import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconPersone} from "@sberdevices/plasma-icons";
 import {
   createUser,
-  getSchedule,
+  getScheduleFromDb,
   getUser,
   updateUser,
 } from "./APIHelper.js";
@@ -377,15 +377,19 @@ export class App extends React.Component {
 
         <div >
         <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} 
-          onClick={()=>getSchedule(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
-            this.showSchedule(scheduleStr, "today")
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/10/2021") + 10800000))).then((response)=>{
+            console.log(response)
+            this.showSchedule(response, "today")
+            // if(response.slice(2,5) !== "_id") {
+
+            // }
         })} />
         <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}
-          onClick={()=>getSchedule(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
             this.showSchedule(scheduleStr, "tomorrow")
         })}/>
         <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getSchedule(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
             this.showWeekSchedule(scheduleStr)
         })}/>
         
