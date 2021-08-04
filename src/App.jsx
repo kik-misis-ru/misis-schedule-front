@@ -29,17 +29,17 @@ import {
 import "./App.css";
 import { TextField, ActionButton } from "@sberdevices/plasma-ui";
 import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconPersone} from "@sberdevices/plasma-icons";
-
-
 import {
   createUser,
   getSchedule,
+  getUser,
   updateUser,
 } from "./APIHelper.js";
 import { m } from "@sberdevices/plasma-core/mixins";
 import { isConstructorDeclaration } from "typescript";
 
-const initializeAssistant = (getState/*: any*/) => {
+
+const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development") {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN ?? "",
@@ -52,14 +52,14 @@ const initializeAssistant = (getState/*: any*/) => {
 
 
 export class App extends React.Component {
-  
   constructor(props) {
     super(props);
     this.tfRef = React.createRef();
     console.log('constructor');
     this.state = {
+      notes: [],
       //
-      UserId: "",
+      userId: "",
       //
       state: 0,
       logo: logo0, 
@@ -76,24 +76,68 @@ export class App extends React.Component {
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
     this.Navigator = this.Navigator.bind(this);
-    
+  }
+ 
+  componentDidMount() {   
+
+    console.log('componentDidMount');
+    /*
+    функцию getUser нужно будет переместить ниже, после условия if (event.sub !== undefined)
+    и передавать ей userId
+    */
+    getUser("577").then((user)=>{
+      console.log(user)
+      this.setState({groupId: user["group_id"]})
+      this.setState({subGroup: user["subgroup_name"]})
+      this.setState({engGroup: user["eng_group"]})
+      this.convertIdInGroupName()
+    })
+
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
-    this.assistant.on("data", (event /*: any*/) => {
-      if (event.type == "smart_app_data") {
+    this.assistant.on("data", (event) => {
+      if (event.type === "smart_app_data") {
         console.log("User");
         console.log(event);
         console.log('event.sub', event.sub);
+        if (event.sub !== undefined) {
+          console.log("Sub", event.sub);
+          this.state.userId = event.sub;
+          console.log(this.userId)
+        }
       console.log(`assistant.on(data)`, event);
       const { action } = event;
+      this.dispatchAssistantAction(action);
       }
     });
     this.assistant.on("start", (event) => {
       console.log(`assistant.on(start)`, event);
     });
-
   }
- 
-  
+
+  dispatchAssistantAction (action) {
+    console.log('dispatchAssistantAction', action);
+    if (action) {
+      switch (action.type) {
+        case 'to_feed':
+          return this.Change_img(1);
+
+        case 'to_play':
+          return this.Change_img(2);
+
+        case 'to_sleep':
+          return this.Change_img(3);
+        
+        case 'set_name':
+          if (action.note !== undefined){
+            this.setState({name : action.note});
+          }
+          break;
+        default:
+          //throw new Error();
+      }
+    }
+  }
+
   getStateForAssistant () {
     console.log('getStateForAssistant: this.state:', this.state)
     const state = {
@@ -121,11 +165,19 @@ export class App extends React.Component {
     
   }
 
+  convertIdInGroupName() {
+    console.log("convertIdInGroupName")
+    for (let group of groups) {
+      if (this.state.groupId === String(group.id)) {
+        this.setState({group : group.name})
+      }
+    }
+  }
 
   convertGroupNameInId(){
-    for (let i of groups) {
-      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
-        this.state.groupId = i.id
+    for (let group of groups) {
+      if (this.state.group.toLowerCase() === group.name.toLowerCase()) {
+        this.state.groupId = group.id
         console.log(`groupId ${this.state.groupId}`)
       }
     }
@@ -489,7 +541,7 @@ export class App extends React.Component {
           className="editText"
           placeholder="1 или 2"
           color="var(--plasma-colors-voice-phrase-gradient)"
-          value={this.state.subgroup}
+          value={this.state.subGroup}
           onChange={(s) =>
             this.setState({
               subGroup: s.target.value,
@@ -502,7 +554,7 @@ export class App extends React.Component {
           className="editText"
           placeholder="Напиши номер своей группы по английскому"
           color="var(--plasma-colors-voice-phrase-gradient)"
-          value={this.state.eng}
+          value={this.state.engGroup}
           onChange={(e) =>
             this.setState({
               engGroup: e.target.value,
