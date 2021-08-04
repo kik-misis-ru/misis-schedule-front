@@ -33,10 +33,11 @@ import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconPersone} from "
 
 import {
   createUser,
-  getUser,
+  getSchedule,
   updateUser,
 } from "./APIHelper.js";
 import { m } from "@sberdevices/plasma-core/mixins";
+import { isConstructorDeclaration } from "typescript";
 
 const initializeAssistant = (getState/*: any*/) => {
   if (process.env.NODE_ENV === "development") {
@@ -65,8 +66,10 @@ export class App extends React.Component {
       flag: false,
       description: "Привет",
       group: "",
+      groupId: "",
       subGroup: "",
       engGroup: "", 
+      res: "",
       correct: null,
       label_group: "",
     }
@@ -82,7 +85,6 @@ export class App extends React.Component {
         console.log('event.sub', event.sub);
       console.log(`assistant.on(data)`, event);
       const { action } = event;
-      
       }
     });
     this.assistant.on("start", (event) => {
@@ -118,6 +120,70 @@ export class App extends React.Component {
     })
     
   }
+
+
+  convertGroupNameInId(){
+    for (let i of groups) {
+      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
+        this.state.groupId = i.id
+        console.log(`groupId ${this.state.groupId}`)
+      }
+    }
+  }
+
+
+  // сколько миллисекунд в n днях
+  msInDay(n) {
+    return n * 24 * 3600000
+  }
+
+
+  // форматирование даты в "YYYY-MM-DD"
+  formatearFecha = fecha => {
+    const mes = fecha.getMonth() + 1; 
+    const dia = fecha.getDate();
+    return `${fecha.getFullYear()}-${(mes < 10 ? '0' : '').concat(mes)}-${(dia < 10 ? '0' : '').concat(dia)}`;
+  };
+
+
+  // получить дату первого дня недели
+  getFirstDayWeek(date) {
+    // номер дня недели
+    this.weekDay = date.getDay()
+    console.log(this.weekDay)
+    if (this.weekDay === 0) return null
+    else if (this.weekDay === 1) return this.formatearFecha(date)
+    else {
+        // число первого дня недели
+        this.firstDay = date - this.msInDay(this.weekDay - 1) 
+    } return this.formatearFecha(new Date(this.firstDay))
+  }
+  
+
+  showSchedule(schedule, timeParam) {
+    this.schedule = JSON.parse(schedule);
+    let date = new Date(Date.parse("05/10/2021") + 10800000)
+    let day_num = date.getDay()
+    if (timeParam === "tomorrow") {day_num += 1}
+    for (let bell in this.schedule["schedule"]) {
+      if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
+        console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
+      }
+    }
+  }
+
+  showWeekSchedule(schedule) {
+    this.schedule = JSON.parse(schedule);
+    for (let day_num = 1; day_num < 7; day_num++) {
+      for (let bell in this.schedule["schedule"]) {
+        if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
+          console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
+        }
+      }
+      console.log()
+    }
+  }
+  
 
   Navigator(){
     return (
@@ -258,9 +324,18 @@ export class App extends React.Component {
         </Header>
 
         <div >
-        <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }}/>
-        <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}/>
-        <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}/>
+        <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} 
+          onClick={()=>getSchedule(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
+            this.showSchedule(scheduleStr, "today")
+        })} />
+        <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}
+          onClick={()=>getSchedule(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
+            this.showSchedule(scheduleStr, "tomorrow")
+        })}/>
+        <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}
+          onClick={()=>getSchedule(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
+            this.showWeekSchedule(scheduleStr)
+        })}/>
         
         </div>
 
@@ -417,7 +492,7 @@ export class App extends React.Component {
           value={this.state.subgroup}
           onChange={(s) =>
             this.setState({
-              subgroup: s.target.value,
+              subGroup: s.target.value,
             })
           }
         />
@@ -430,7 +505,7 @@ export class App extends React.Component {
           value={this.state.eng}
           onChange={(e) =>
             this.setState({
-              eng: e.target.value,
+              engGroup: e.target.value,
             })
           }
         />
@@ -443,15 +518,17 @@ export class App extends React.Component {
   }
 
   isCorrect(){
-    
     this.setState({correct: false})
     for (let i of groups) {
       if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
-        this.state.correct=true;
+        this.state.correct = true
+        console.log(`Correct ${this.state.correct}`)
+        this.convertGroupNameInId()
     } 
   }
   if (this.state.correct===true){
-    createUser("222", "808", String(this.state.group), String(this.state.subGroup), String(this.state.engGroup));
+    console.log("ok")
+    createUser("577", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
     } else this.setState({label_group: "Некорректно. Проверьте формат группы: *-*-*"});
   }
