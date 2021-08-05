@@ -33,6 +33,7 @@ import {
   createUser,
   getScheduleFromDb,
   getUser,
+  putScheduleIntoDb,
   updateUser,
 } from "./APIHelper.js";
 import { m } from "@sberdevices/plasma-core/mixins";
@@ -377,20 +378,21 @@ export class App extends React.Component {
 
         <div >
         <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} 
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/10/2021") + 10800000))).then((response)=>{
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 10800000))).then((response)=>{
             console.log(response)
             this.showSchedule(response, "today")
-            // if(response.slice(2,5) !== "_id") {
-
-            // }
         })} />
         <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
-            this.showSchedule(scheduleStr, "tomorrow")
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+            this.showSchedule(response, "tomorrow")
+        })}/>
+        <Button size="s" pin="circle-circle" text="Текущая неделя" style={{ margin: "0.1em" }}
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+            this.showWeekSchedule(response)
         })}/>
         <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((scheduleStr)=>{
-            this.showWeekSchedule(scheduleStr)
+          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+            this.showSchedule(response, "tomorrow")
         })}/>
         
         </div>

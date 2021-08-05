@@ -4,9 +4,14 @@ const API_URL = "http://127.0.0.1:8000/";
 // const API_URL = "https://serene-inlet-82302.herokuapp.com/";
 
 // export async function putScheduleIntoDb(schedule) {
-//   return await axios.post(`${API_URL}schedule`, {
-
-//   });
+//   console.log(`${schedule}`)
+//   console.log(typeof schedule)
+//   schedule = JSON.stringify(schedule)
+//   return await axios.post(`${API_URL}schedule?file=${schedule}`, {
+//     headers: {
+//     // Overwrite Axios's automatically set Content-Type
+//     'Content-Type': 'application/json'
+//   }} );
 // }
 
 
@@ -17,7 +22,6 @@ export async function getScheduleFromDb(groupId, date) {
       date: date
     },
   })
-  //console.log(`answer ${answer}`);
   return answer;
 }
 
