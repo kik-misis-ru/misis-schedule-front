@@ -609,7 +609,7 @@ export class App extends React.Component {
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Вторник</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Вторник {this.state.week[0][2]}</TextBoxBigTitle>
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
                   </CardParagraph1>
@@ -655,7 +655,7 @@ export class App extends React.Component {
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Среда</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Среда {this.state.week[0][3]}</TextBoxBigTitle>
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
                   </CardParagraph1>
@@ -701,7 +701,7 @@ export class App extends React.Component {
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Четверг</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Четвер {this.state.week[0][4]}г</TextBoxBigTitle>
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
                   </CardParagraph1>
@@ -747,7 +747,7 @@ export class App extends React.Component {
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Пятница</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Пятница {this.state.week[0][5]}</TextBoxBigTitle>
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
                   </CardParagraph1>
@@ -793,7 +793,7 @@ export class App extends React.Component {
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Суббота</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Суббота {this.state.week[0][1]}</TextBoxBigTitle>
                   <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
                   </CardParagraph1>
