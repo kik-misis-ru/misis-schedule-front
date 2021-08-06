@@ -1,4 +1,4 @@
-{
+var schedule = {
   "status": "FOUND",
   "start_date": "2021-05-10",
   "start_date_show": "10 мая 2021",
@@ -701,3 +701,4 @@
     }
   }
 }
+export default schedule;

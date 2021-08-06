@@ -2,7 +2,7 @@
   "name": "salute-demo-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://krynegal.github.io/sber_tamagotchi/",
+  "homepage": "",
   "dependencies": {
     "@sberdevices/assistant-client": "^2.11.9",
     "@sberdevices/plasma-core": "^1.8.0",
