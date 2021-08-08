@@ -3,7 +3,7 @@ import logo0 from "../src/unnamed.gif";
 import logo from "../src/logo_new.png";
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header} from '@sberdevices/plasma-ui';
+import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
@@ -19,8 +19,7 @@ import {
   TextBox,
   TextBoxSubTitle,
   CardParagraph1,
-  CardParagraph2,
-  Spinner,
+  CardParagraph2
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -857,8 +856,6 @@ export class App extends React.Component {
   Home(){
     let disabled=true;
     if (this.state.groupId!==undefined) disabled=false;
-    console.log("id",this.state.groupId);
-    console.log("disabled",disabled);
     return (
       <div class="body">
         <Container style = {{padding: 0}}>
@@ -933,10 +930,28 @@ export class App extends React.Component {
     this.state.userId="101";
     createUser("101", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
-    } else this.setState({label_group: "Некорректно"});
-    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-      this.showWeekSchedule(response)
+      getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+      this.showWeekSchedule(response);
   });
+    } else this.setState({label_group: "Некорректно"});
+    
+  }
+
+  Spinner(){
+    return(
+      <div class="body">
+        <Container style = {{padding: 0}}>
+        {/* <Header
+            logo={logo}
+            title={`Привет, студент!`}
+            style={{backgroundColor: "white"}}
+        > <Button class="button" view='secondary' disabled={disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
+        </Header> */}
+        <Spinner color="var(--plasma-colors-button-accent)" style={{position:" absolute", top: "40%", left:" 45%", marginRight: "-50%"}}/>
+        
+        </Container>
+      </div>
+    )
   }
 
   render() {
@@ -954,8 +969,11 @@ export class App extends React.Component {
         return  this.RaspisanieToday("today");
       case 5:
         return this.RaspisanieToday("tomorrow");
+      case 6:
+        return this.Spinner();
       default:
         break;
       }
   }
 }
+
