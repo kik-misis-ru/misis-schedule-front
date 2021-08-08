@@ -62,7 +62,7 @@ export class App extends React.Component {
       //
       userId: "",
       //
-      state: 0,
+      page: 0,
       logo: logo0, 
       flag: false,
       description: "Привет",
@@ -126,10 +126,13 @@ export class App extends React.Component {
           bell_5: []
         }
     }, 
+    disabled: true,
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
     this.Navigator = this.Navigator.bind(this);
+    this.Raspisanie = this.Raspisanie.bind(this);
+    this.RaspisanieToday = this.RaspisanieToday.bind(this);
   }
  
   componentDidMount() {   
@@ -149,6 +152,7 @@ export class App extends React.Component {
       getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
         this.showWeekSchedule(response)
     });
+    this.setState({disabled: false, page: 2})
     })
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -293,6 +297,11 @@ export class App extends React.Component {
           this.state.week[`${day_num}`][`bell_${bell}`][0]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["subject_name"];
           this.state.week[`${day_num}`][`bell_${bell}`][1]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
           this.state.week[`${day_num}`][`bell_${bell}`][2]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+        } else {
+          this.state.week[`${day_num}`][`bell_${bell}`][0]="";
+          this.state.week[`${day_num}`][`bell_${bell}`][1]="";
+          this.state.week[`${day_num}`][`bell_${bell}`][2]="";
+        
         }
       }
       console.log()
@@ -371,7 +380,7 @@ export class App extends React.Component {
             logo={logo}
             title={`Ответы на вопросы уже здесь`}
             style={{backgroundColor: "white"}}
-        > <Button class="button" contentLeft={<IconPersone size="s" color="inherit"/>} view='secondary' size="s" pin="circle-circle"  onClick={()=>this.setState({ state: 0 })} style={{margin: "1em"}}/>
+        > <Button class="button" contentLeft={<IconPersone size="s" color="inherit"/>} view='secondary' size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 0 })} style={{margin: "1em"}}/>
         </Header>
         <Row >
         
@@ -382,7 +391,7 @@ export class App extends React.Component {
         size="l"
         view="secondary"
         pin="square-square"
-        onClick={()=>this.setState({ state: 2 })}
+        onClick={()=>this.setState({ page: 2 })}
         />
         </Row>
         <Row >
@@ -394,7 +403,7 @@ export class App extends React.Component {
         size="l"
         view="secondary"
         pin="square-square"
-        onClick={()=>this.setState({ state: 3 })}
+        onClick={()=>this.setState({ page: 3 })}
         />
         </Row>
         
@@ -444,16 +453,16 @@ export class App extends React.Component {
             title={`Расписание`}
             style={{backgroundColor: "white"}}
         > 
-        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ state: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
+        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
+        <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ page: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
         </Header>
 
         <div >
         <Tabs view="secondary">
-            <TabItem isActive={false} onClick={()=>this.setState({ state: 2 })}>Текущая неделя
+            <TabItem isActive={false} onClick={()=>this.setState({ page: 2 })}>Текущая неделя
             </TabItem>
-            <TabItem isActive={!flag} onClick={()=>this.setState({ state: 4 })}>Сегодня</TabItem>
-            <TabItem isActive={flag} onClick={()=>this.setState({state: 5})}>Завтра</TabItem>
+            <TabItem isActive={!flag} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
+            <TabItem isActive={flag} onClick={()=>this.setState({page: 5})}>Завтра</TabItem>
           </Tabs>
         {/* <Button size="s" pin="circle-circle" text="Текущая неделя" style={{ margin: "0.1em" }}
           /> */}
@@ -476,41 +485,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.week[0][day_num]}</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[day_num]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[day_num]["bell_1"][1]} {this.state.week[day_num]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[day_num]["bell_1"][1]} {this.state.week[day_num]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[day_num]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[day_num]["bell_2"][1]} {this.state.week[day_num]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[day_num]["bell_2"][1]} {this.state.week[day_num]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[day_num]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[day_num]["bell_3"][1]} {this.state.week[day_num]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[day_num]["bell_3"][1]} {this.state.week[day_num]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[day_num]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[day_num]["bell_4"][1]} {this.state.week[day_num]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[day_num]["bell_4"][1]} {this.state.week[day_num]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[day_num]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[day_num]["bell_5"][1]} {this.state.week[day_num]["bell_5"][2]}</TextBoxSubTitle>
+                  <CardParagraph1> {this.state.week[day_num]["bell_5"][1]} {this.state.week[day_num]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -532,16 +541,16 @@ export class App extends React.Component {
             title={`Расписание`}
             style={{backgroundColor: "white"}}
         > 
-        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ state: 0 })}><IconPersone size="s" color="inherit"/></Button>
+        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
         <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
         </Header>
 
         <div >
           <Tabs view="secondary">
-            <TabItem isActive={true} onClick={()=>this.setState({ state: 2 })}>Текущая неделя
+            <TabItem isActive={true} onClick={()=>this.setState({ page: 2 })}>Текущая неделя
             </TabItem>
-            <TabItem isActive={false} onClick={()=>this.setState({ state: 4 })}>Сегодня</TabItem>
-            <TabItem isActive={false} onClick={()=>this.setState({state: 5})}>Завтра</TabItem>
+            <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
+            <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem>
           </Tabs>
         {/* <Button size="s" pin="circle-circle" text="Текущая неделя" style={{ margin: "0.1em" }}
           onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
@@ -564,41 +573,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Понедельник {this.state.week[0][1]}</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[1]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[1]["bell_1"][1]} {this.state.week[1]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[1]["bell_1"][1]} {this.state.week[1]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[1]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[1]["bell_2"][1]} {this.state.week[1]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[1]["bell_2"][1]} {this.state.week[1]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[1]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[1]["bell_3"][1]} {this.state.week[1]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                 < CardParagraph1> {this.state.week[1]["bell_3"][1]} {this.state.week[1]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[1]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[1]["bell_4"][1]} {this.state.week[1]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                 < CardParagraph1> {this.state.week[1]["bell_4"][1]} {this.state.week[1]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[1]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[1]["bell_5"][1]} {this.state.week[1]["bell_5"][2]}</TextBoxSubTitle>
+                  <CardParagraph1> {this.state.week[1]["bell_5"][1]} {this.state.week[1]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -610,41 +619,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Вторник {this.state.week[0][2]}</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[2]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[2]["bell_1"][1]} {this.state.week[2]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[2]["bell_1"][1]} {this.state.week[2]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[2]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[2]["bell_2"][1]} {this.state.week[2]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                 < CardParagraph1> {this.state.week[2]["bell_2"][1]} {this.state.week[2]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[2]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[2]["bell_3"][1]} {this.state.week[2]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[2]["bell_3"][1]} {this.state.week[2]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[2]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[2]["bell_4"][1]} {this.state.week[2]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[2]["bell_4"][1]} {this.state.week[2]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[2]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[2]["bell_5"][1]} {this.state.week[2]["bell_5"][2]}</TextBoxSubTitle>
+                  <CardParagraph1> {this.state.week[2]["bell_5"][1]} {this.state.week[2]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -656,41 +665,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Среда {this.state.week[0][3]}</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[3]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[3]["bell_1"][1]} {this.state.week[3]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[3]["bell_1"][1]} {this.state.week[3]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[3]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[3]["bell_2"][1]} {this.state.week[3]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[3]["bell_2"][1]} {this.state.week[3]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[3]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[3]["bell_3"][1]} {this.state.week[3]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[3]["bell_3"][1]} {this.state.week[3]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[3]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[3]["bell_4"][1]} {this.state.week[3]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[3]["bell_4"][1]} {this.state.week[3]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[3]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[3]["bell_5"][1]} {this.state.week[3]["bell_5"][2]}</TextBoxSubTitle>
+                  <CardParagraph1> {this.state.week[3]["bell_5"][1]} {this.state.week[3]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -702,41 +711,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Четвер {this.state.week[0][4]}г</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[4]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[4]["bell_1"][1]} {this.state.week[4]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                 < CardParagraph1> {this.state.week[4]["bell_1"][1]} {this.state.week[4]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[4]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[4]["bell_2"][1]} {this.state.week[4]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[4]["bell_2"][1]} {this.state.week[4]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[4]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[4]["bell_3"][1]} {this.state.week[4]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[4]["bell_3"][1]} {this.state.week[4]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[4]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[4]["bell_4"][1]} {this.state.week[4]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[4]["bell_4"][1]} {this.state.week[4]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[4]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[4]["bell_5"][1]} {this.state.week[4]["bell_5"][2]}</TextBoxSubTitle>
+                 < CardParagraph1> {this.state.week[4]["bell_5"][1]} {this.state.week[4]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -748,41 +757,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Пятница {this.state.week[0][5]}</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[5]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[5]["bell_1"][1]} {this.state.week[5]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[5]["bell_1"][1]} {this.state.week[5]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[5]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[5]["bell_2"][1]} {this.state.week[5]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[5]["bell_2"][1]} {this.state.week[5]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[5]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[5]["bell_3"][1]} {this.state.week[5]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[5]["bell_3"][1]} {this.state.week[5]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[5]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[5]["bell_4"][1]} {this.state.week[5]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[5]["bell_4"][1]} {this.state.week[5]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[5]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[5]["bell_5"][1]} {this.state.week[5]["bell_5"][2]}</TextBoxSubTitle>
+                  <CardParagraph1> {this.state.week[5]["bell_5"][1]} {this.state.week[5]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -794,41 +803,41 @@ export class App extends React.Component {
               <CardContent>
                 <TextBox>
                   <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Суббота {this.state.week[0][1]}</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     9:00-10:35
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[6]["bell_1"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[6]["bell_1"][1]} {this.state.week[6]["bell_1"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[6]["bell_1"][1]} {this.state.week[6]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     10:50-12:25
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[6]["bell_2"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[6]["bell_2"][1]} {this.state.week[6]["bell_2"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[6]["bell_2"][1]} {this.state.week[6]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   12:40-14:15
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[6]["bell_3"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[6]["bell_3"][1]} {this.state.week[6]["bell_3"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[6]["bell_3"][1]} {this.state.week[6]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   14:30-16:05
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[6]["bell_4"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[6]["bell_4"][1]} {this.state.week[6]["bell_4"][2]}</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
+                  <CardParagraph1> {this.state.week[6]["bell_4"][1]} {this.state.week[6]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     16:20-17:55
-                  </CardParagraph1>
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
                   {this.state.week[6]["bell_5"][0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> {this.state.week[6]["bell_5"][1]} {this.state.week[6]["bell_5"][2]}</TextBoxSubTitle>
+                  <CardParagraph1> {this.state.week[6]["bell_5"][1]} {this.state.week[6]["bell_5"][2]}</CardParagraph1>
                 </TextBox>
                 <br />
                 
@@ -854,7 +863,7 @@ export class App extends React.Component {
             logo={logo}
             title={`Привет, студент!`}
             style={{backgroundColor: "white"}}
-        > <Button class="button" view='secondary' text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ state: 1 })} style={{margin: "1em"}}/> 
+        > <Button class="button" view='secondary' disabled={this.state.disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
         </Header>
         
         <div class="chat">
@@ -916,7 +925,8 @@ export class App extends React.Component {
     } 
   }
   if (this.state.correct===true){
-    console.log("ok")
+    console.log("ok");
+    this.state.disabled=false;
     createUser("577", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
     } else this.setState({label_group: "Некорректно"});
@@ -927,15 +937,12 @@ export class App extends React.Component {
 
   render() {
     console.log('render');
-    switch(this.state.state){
+    switch(this.state.page){
       case 0:
         return this.Home();
       case 1:
         return this.Menu();
       case 2:
-        getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-          this.showWeekSchedule(response)
-      });
         return this.Raspisanie();
       case 3:
         return this.Navigator();
