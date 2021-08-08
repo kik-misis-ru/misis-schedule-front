@@ -125,8 +125,7 @@ export class App extends React.Component {
           bell_4: [],
           bell_5: []
         }
-    }, 
-    disabled: true,
+    }
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
@@ -143,7 +142,7 @@ export class App extends React.Component {
     функцию getUser нужно будет переместить ниже, после условия if (event.sub !== undefined)
     и передавать ей userId
     */
-    getUser("577").then((user)=>{
+    getUser("101").then((user)=>{
       console.log(user)
       this.setState({groupId: user["group_id"]})
       this.setState({subGroup: user["subgroup_name"]})
@@ -152,7 +151,6 @@ export class App extends React.Component {
       getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
         this.showWeekSchedule(response)
     });
-    this.setState({disabled: false, page: 2})
     })
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -292,6 +290,7 @@ export class App extends React.Component {
     for (let day_num = 1; day_num < 7; day_num++) {
       this.state.week[0][day_num]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell=1; bell<=5; bell++) {
+        if (this.schedule["schedule"][`bell_${bell}`] !== undefined) 
         if (this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0] !== undefined) {
           // console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
           this.state.week[`${day_num}`][`bell_${bell}`][0]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["subject_name"];
@@ -856,6 +855,10 @@ export class App extends React.Component {
   }
   
   Home(){
+    let disabled=true;
+    if (this.state.groupId!==undefined) disabled=false;
+    console.log("id",this.state.groupId);
+    console.log("disabled",disabled);
     return (
       <div class="body">
         <Container style = {{padding: 0}}>
@@ -863,7 +866,7 @@ export class App extends React.Component {
             logo={logo}
             title={`Привет, студент!`}
             style={{backgroundColor: "white"}}
-        > <Button class="button" view='secondary' disabled={this.state.disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
+        > <Button class="button" view='secondary' disabled={disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
         </Header>
         
         <div class="chat">
@@ -927,7 +930,8 @@ export class App extends React.Component {
   if (this.state.correct===true){
     console.log("ok");
     this.state.disabled=false;
-    createUser("577", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+    this.state.userId="101";
+    createUser("101", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
     } else this.setState({label_group: "Некорректно"});
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
