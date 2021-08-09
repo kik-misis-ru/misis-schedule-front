@@ -167,7 +167,8 @@ export class App extends React.Component {
               getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
                 this.showWeekSchedule(response)
               });
-              this.setState({page: 6})
+              // this.setState({page: 6});
+              this.setState({description: "Здесь можно изменить данные"});
             } 
           })
         }
@@ -278,43 +279,65 @@ export class App extends React.Component {
         this.firstDay = date - this.msInDay(this.weekDay - 1) 
     } return this.formatearFecha(new Date(this.firstDay))
   }
-  
-
-  showSchedule(schedule, timeParam) {
-    this.schedule = JSON.parse(schedule);
-    let date = new Date(Date.parse("05/10/2021") + 10800000)
-    let day_num = date.getDay()
-    if (timeParam === "tomorrow") {day_num += 1}
-    for (let bell in this.schedule["schedule"]) {
-      if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
-        console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
-      }
-    }
-  }
 
   showWeekSchedule(schedule) {
     this.schedule = JSON.parse(schedule);
+    if ((this.state.subGroup==="")||(this.state.subGroup===undefined)){
+      console.log("sub",this.state.subGroup);
     for (let day_num = 1; day_num < 7; day_num++) {
+          this.state.day[day_num-1][1]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+          for (let bell in this.schedule["schedule"]) { //проверка 
+              if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
+              this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+              this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+              this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+              this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
+            
+            } else {
+              this.state.days[day_num-1][bell][0]="";
+              this.state.days[day_num-1][bell][1]="";
+              this.state.days[day_num-1][bell][2]="";
+              this.state.days[day_num-1][bell][3]="";
+              }
+            }
+          } 
+    } else {for (let day_num = 1; day_num < 7; day_num++) {
       this.state.day[day_num-1][1]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
-        if (this.schedule["schedule"][bell]!==undefined)
-        if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
+        if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) )
+        {
            
           this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
           this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
           this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
-        } else {
+        } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup) ){
           this.state.days[day_num-1][bell][0]="";
           this.state.days[day_num-1][bell][1]="";
           this.state.days[day_num-1][bell][2]="";
           this.state.days[day_num-1][bell][3]="";
+          }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
+          this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+          this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+          this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
         
+        }  else {
+            this.state.days[day_num-1][bell][0]="";
+          this.state.days[day_num-1][bell][1]="";
+          this.state.days[day_num-1][bell][2]="";
+          this.state.days[day_num-1][bell][3]="";
+          }
         }
-      }
+      } 
+      console.log("subgroup",this.state.subGroup);
+        
+          this.state.spinner=true;
+          
+      
       this.state.spinner=true;
-      console.log()
-    }
+      }
+    
   }
   
 
@@ -444,18 +467,10 @@ export class App extends React.Component {
   }
 
   RaspisanieToday(timeParam){
-    // this.schedule = JSON.parse(schedule);
-    
     let date = new Date(Date.parse("05/10/2021") + 10800000)
     let day_num = date.getDay() - 1;
     let flag = false;
     if (timeParam === "tomorrow") {day_num += 1; flag = true;  }
-    console.log(this.state.days[day_num]["bell_2"][0]);
-    // for (let bell in this.schedule["schedule"]) {
-    //   if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
-    //     console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
-    //   }
-    // }
   return(
     <div  >
         <Container style = {{padding: 0}}>
