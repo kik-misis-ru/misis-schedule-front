@@ -470,14 +470,16 @@ export class App extends React.Component {
     return (
       <div  >
         <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Расписание`}
+        <HeaderRoot
             style={{backgroundColor: "black"}}
-        > 
-        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        {/* <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button> */}
-        </Header>
+        >  <HeaderLogo src={logo} alt="МИСиС" style={{height: "15px", width: "15px", margin:"1em"}}/> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle>
+        <HeaderContent><Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
+        
+        </HeaderContent>
+        </HeaderRoot>
+        <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
+        
 
         <div >
           <Tabs view="black" size="m" style={{margin: "0.75em"}}>
@@ -493,14 +495,14 @@ export class App extends React.Component {
         <CarouselGridWrapper>
                     <Carousel
                         as={Row}
-                        axis="y"
+                        axis="x"
                         index={this.state.i}
                         scrollSnapType="mandatory"
                         detectActive
                         detectThreshold={0.5}
                         
                         onIndexChange={() => this.state.i++}
-                        paddingStart="5%"
+                        paddingStart="70%"
                         paddingEnd="50%"
                     >
                         {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
