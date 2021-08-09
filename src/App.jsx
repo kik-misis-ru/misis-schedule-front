@@ -301,6 +301,7 @@ export class App extends React.Component {
               }
             }
           } 
+        this.state.spinner=true;
     } else {for (let day_num = 1; day_num < 7; day_num++) {
       this.state.day[day_num-1][1]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
@@ -331,11 +332,7 @@ export class App extends React.Component {
         }
       } 
       console.log("subgroup",this.state.subGroup);
-        
           this.state.spinner=true;
-          
-      
-      this.state.spinner=true;
       }
     
   }
