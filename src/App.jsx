@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo0 from "../src/unnamed.gif";
-import logo from "../src/logo_new.png";
+import logo from "../src/misis.svg";
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header} from '@sberdevices/plasma-ui';
+import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
@@ -20,7 +20,12 @@ import {
   TextBoxSubTitle,
   CardParagraph1,
   CardParagraph2,
-  Spinner,
+  HeaderLogo,
+  HeaderRoot,
+  HeaderTitle,
+  CarouselGridWrapper,
+  Carousel, CarouselCol,
+  Note
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -62,7 +67,7 @@ export class App extends React.Component {
       //
       userId: "",
       //
-      state: 0,
+      page: 0,
       logo: logo0, 
       flag: false,
       description: "Привет",
@@ -72,38 +77,100 @@ export class App extends React.Component {
       engGroup: "", 
       res: "",
       correct: null,
-      label_group: "",
+      labelGroup: "Номер академической группы",
+      labelSubgroup: "",
+      labelEnggroup: "",
+      i: 0,
+      day: [['Понедельник', '' ], ['Вторник', ''], ['Среда', ''], ['Четверг', ''], ['Пятница', ''], ['Суббота', '']],
+      days: [{
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+       },
+      {
+          
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      }],
+      spinner: false
+        
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
     this.Navigator = this.Navigator.bind(this);
+    this.Raspisanie = this.Raspisanie.bind(this);
+    this.RaspisanieToday = this.RaspisanieToday.bind(this);
   }
  
   componentDidMount() {   
-
     console.log('componentDidMount');
-    /*
-    функцию getUser нужно будет переместить ниже, после условия if (event.sub !== undefined)
-    и передавать ей userId
-    */
-    getUser("577").then((user)=>{
-      console.log(user)
-      this.setState({groupId: user["group_id"]})
-      this.setState({subGroup: user["subgroup_name"]})
-      this.setState({engGroup: user["eng_group"]})
-      this.convertIdInGroupName()
-    })
-
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
     this.assistant.on("data", (event) => {
       if (event.type === "smart_app_data") {
         console.log("User");
         console.log(event);
-        console.log('event.sub', event.sub);
         if (event.sub !== undefined) {
           console.log("Sub", event.sub);
           this.state.userId = event.sub;
-          console.log(this.userId)
+          getUser(this.state.userId).then((user)=>{
+            if (user !== "0") {
+              console.log('user', user)
+              this.setState({groupId: user["group_id"]})
+              this.setState({subGroup: user["subgroup_name"]})
+              this.setState({engGroup: user["eng_group"]})
+              this.convertIdInGroupName()
+              getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+                this.showWeekSchedule(response)
+              });
+            } else {
+              /* Держать кнопку "Расписание" в профиле заблокированной */
+            }
+          })
         }
       console.log(`assistant.on(data)`, event);
       const { action } = event;
@@ -113,6 +180,7 @@ export class App extends React.Component {
     this.assistant.on("start", (event) => {
       console.log(`assistant.on(start)`, event);
     });
+    
   }
 
   dispatchAssistantAction (action) {
@@ -228,11 +296,24 @@ export class App extends React.Component {
   showWeekSchedule(schedule) {
     this.schedule = JSON.parse(schedule);
     for (let day_num = 1; day_num < 7; day_num++) {
-      for (let bell in this.schedule["schedule"]) {
+      this.state.day[day_num-1][1]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+      for (let bell in this.schedule["schedule"]) { //проверка 
+        if (this.schedule["schedule"][bell]!==undefined)
         if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
-          console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
+           
+          this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+          this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+          this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
+        } else {
+          this.state.days[day_num-1][bell][0]="";
+          this.state.days[day_num-1][bell][1]="";
+          this.state.days[day_num-1][bell][2]="";
+          this.state.days[day_num-1][bell][3]="";
+        
         }
       }
+      this.state.spinner=true;
       console.log()
     }
   }
@@ -240,12 +321,12 @@ export class App extends React.Component {
 
   Navigator(){
     return (
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
         <Header
             logo={logo}
             title={`Навигатор`}
-            style={{backgroundColor: "white"}}
+            style={{backgroundColor: "black"}}
         > 
         <Button size="s" pin="circle-circle" onClick={()=>this.setState({ state: 0 })}><IconPersone size="s" color="inherit"/></Button>
         <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
@@ -277,13 +358,13 @@ export class App extends React.Component {
           </Col>
           <Col size={4}>
           <div class="chatbox">
-          <h4 style={{margin: "1em", color: "#5487a4"}}>Корпус «Б» (главный)</h4>
+          <h5 style={{margin: "1em", color: "#5487a4"}}>Корпус «Б» (главный)</h5>
           <h5 style={{margin: "1em", color: "#5487a4"}}>Ленинский проспект, дом 4</h5>
-          <h4 style={{margin: "1em", color: "#72aa9f"}}>Корпус «К» </h4>
+          <h5 style={{margin: "1em", color: "#72aa9f"}}>Корпус «К» </h5>
           <h5 style={{margin: "1em", color: "#72aa9f"}}>Крымский вал, дом 3</h5>
-          <h4 style={{margin: "1em", color: "#906aa3"}}>Корпус «Г» (горный)</h4>
+          <h5 style={{margin: "1em", color: "#906aa3"}}>Корпус «Г» (горный)</h5>
           <h5 style={{margin: "1em", color: "#906aa3"}}>Ленинский проспект, дом 6, строение 1</h5>         
-          <h4 style={{margin: "1em", color: "#41588f"}}>Корпус «А» </h4>
+          <h5 style={{margin: "1em", color: "#41588f"}}>Корпус «А» </h5>
           <h5 style={{margin: "1em", color: "#41588f"}}>Ленинский проспект, дом 6, строение 2</h5>
         </div>
           
@@ -303,43 +384,43 @@ export class App extends React.Component {
   Menu(){
     console.log("Menu");
     return(
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
         <Header
             logo={logo}
             title={`Ответы на вопросы уже здесь`}
-            style={{backgroundColor: "white"}}
-        > <Button class="button" contentLeft={<IconPersone size="s" color="inherit"/>} view='secondary' size="s" pin="circle-circle"  onClick={()=>this.setState({ state: 0 })} style={{margin: "1em"}}/>
+            style={{backgroundColor: "black"}}
+        > <Button class="button" contentLeft={<IconPersone size="s" color="inherit"/>} view='secondary' size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 0 })} style={{margin: "1em"}}/>
         </Header>
         <Row >
         
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text='Расписание'
         size="l"
         view="secondary"
         pin="square-square"
-        onClick={()=>this.setState({ state: 2 })}
+        onClick={()=>this.setState({ page: 2 })}
         />
         </Row>
         <Row >
         
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text='Навигатор'
         size="l"
         view="secondary"
         pin="square-square"
-        onClick={()=>this.setState({ state: 3 })}
+        onClick={()=>this.setState({ page: 3 })}
         />
         </Row>
         
         <Row>
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text=' Контакты '
         size='l'
         view="secondary"
@@ -351,7 +432,7 @@ export class App extends React.Component {
         
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text="  Помощь  "
         size='l'
         view="secondary"
@@ -363,147 +444,141 @@ export class App extends React.Component {
     )
   }
 
+  RaspisanieToday(timeParam){
+    // this.schedule = JSON.parse(schedule);
+    let date = new Date(Date.parse("05/10/2021") + 10800000)
+    let day_num = date.getDay()
+    let flag = false;
+    if (timeParam === "tomorrow") {day_num += 1; flag = true;}
+    // for (let bell in this.schedule["schedule"]) {
+    //   if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
+    //     console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
+    //   }
+    // }
+  return(
+    <div  >
+        
+          </div>
+  );
+  }
+
+  Index(){
+    if (this.state.i<7){
+      this.state.i++;
+    } else if (this.state.i>0)
+    this.state.i--;
+  }
+
   Raspisanie(){
+    this.state.i=0;
     return (
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Расписание`}
-            style={{backgroundColor: "white"}}
-        > 
-        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ state: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
-        </Header>
+        <HeaderRoot
+            style={{backgroundColor: "black"}}
+        >  <HeaderLogo src={logo} alt="МИСиС" style={{height: "15px", width: "15px", margin:"1em"}}/> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle>
+        <HeaderContent><Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
+        
+        </HeaderContent>
+        </HeaderRoot>
+        <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
+        
 
         <div >
-        <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} 
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 10800000))).then((response)=>{
-            console.log(response)
-            this.showSchedule(response, "today")
-        })} />
-        <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-            this.showSchedule(response, "tomorrow")
-        })}/>
-        <Button size="s" pin="circle-circle" text="Текущая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-            this.showWeekSchedule(response)
-        })}/>
-        <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-            this.showSchedule(response, "tomorrow")
-        })}/>
+          <Tabs view="black" size="m" style={{margin: "0.75em"}}>
+            <TabItem isActive={true} onClick={()=>this.setState({ page: 2 })}>Текущая неделя
+            </TabItem>
+            <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
+            <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem>
+          </Tabs>
         
         </div>
 
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "20rem", margin: "1em" }}>
+        <CarouselGridWrapper>
+                    <Carousel
+                        as={Row}
+                        axis="x"
+                        index={this.state.i}
+                        scrollSnapType="mandatory"
+                        detectActive
+                        detectThreshold={0.5}
+                        
+                        onIndexChange={() => {this.Index(); console.log("this.state.i", this.state.i)}}
+                        paddingStart="5%"
+                        paddingEnd="50%"
+                    >
+                        {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
+                            <CarouselCol key={`item:${i}`}>
+                               <Card style={{ width: "35vh", margin: "0.5em", paddingRight: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Понедельник 28.05.21</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </CardParagraph1>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[i][0]} {this.state.day[i][1]}</TextBoxBigTitle>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                    {bell_1[3]}
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
-                    Матанализ
+                  {bell_1[0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> Б-908, Левшина</TextBoxSubTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </CardParagraph1>
+                  <CardParagraph1> {bell_1[1]} {bell_1[2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_2[3]}
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
-                    Технология программирования
+                  {bell_2[0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> К-312, Широков</TextBoxSubTitle>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Вторник</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    12:40-14:15
-                  </CardParagraph1>
+                  <CardParagraph1> {bell_2[1]} {bell_2[2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_3[3]}
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
-                    Физкультура
+                  {bell_3[0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle>Спорткомплекс</TextBoxSubTitle>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Среда</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:40-18:05
-                  </CardParagraph1>
+                  <CardParagraph1> {bell_3[1]} {bell_3[2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_4[3]}
+                  </TextBoxSubTitle>
                   <CardParagraph2 >
-                    Сетевые технологии
+                  {bell_4[0]}
                   </CardParagraph2>
-                  <TextBoxSubTitle> Л-521, Крынецкая</TextBoxSubTitle>
-                </TextBox>
+                  <CardParagraph1> {bell_4[1]} {bell_4[2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_5[3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {bell_5[0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {bell_5[1]} {bell_5[2]}</CardParagraph1>
+                 
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_6[3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {bell_6[0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {bell_6[1]} {bell_6[2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_7[3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {bell_7[0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {bell_7[1]} {bell_7[2]}</CardParagraph1>
+                  </TextBox>
+                
                 <br />
                 
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Четверг</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:40-18:05
-                  </CardParagraph1>
-                  <TextBoxSubTitle>Сетевые технологии, Л-521, Крынецкая</TextBoxSubTitle>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Пятница</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:40-18:05
-                  </CardParagraph1>
-                  <TextBoxSubTitle>Сетевые технологии, Л-521, Крынецкая</TextBoxSubTitle>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Суббота</TextBoxBigTitle>
-                  <CardParagraph1 style={{ marginTop: "0.75rem" }} lines={8}>
-                    
-                  </CardParagraph1>
-                  <TextBoxSubTitle></TextBoxSubTitle>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
+
+                            </CarouselCol>
+                        ))}
+                    </Carousel>
+                </CarouselGridWrapper>
+          
           <div style={{
         width:  '150px',
         height: '150px',
@@ -516,60 +591,66 @@ export class App extends React.Component {
   }
   
   Home(){
+    let disabled=true;
+    if (this.state.groupId!==undefined) disabled=false;
     return (
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Привет, студент!`}
-            style={{backgroundColor: "white"}}
-        > <Button class="button" view='secondary' text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ state: 1 })} style={{margin: "1em"}}/> 
-        </Header>
+        <HeaderRoot
+            style={{backgroundColor: "black"}}
+        >  <HeaderLogo src={logo} alt="МИСиС" style={{height: "15px", width: "15px", margin:"1em"}}/> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle>
+        <HeaderContent>
+        <Button class="button" view='secondary' disabled={disabled} text='Расписание' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 6 })} style={{margin: "1em"}}/> 
+        </HeaderContent>
+        </HeaderRoot>
         
-        <div class="chat">
-          <h3 style={{margin: '1em'}}>Моя академическая группа</h3>
+        <div >
+          <h3 style={{margin: '2em', textAlign: "center"}}>Привет, студент! </h3>
+          <h5 color="var(--plasma-colors-button-white-secondary)" style={{margin: '2em', textAlign: "center"}}>Заполни данные ниже</h5>
           <TextField
           id="tf"
-          label={this.state.label_group}
+          label={this.state.labelGroup}
+
           className="editText"
-          placeholder="Напиши номер своей академической группы"
-          color="var(--plasma-colors-voice-phrase-gradient)"
+          // placeholder="Напиши номер своей академической группы"
           value={this.state.group}
+          style={{margin: "2em"}}
           onChange={(v) =>
             this.setState({
               group: v.target.value,
             })
           }
         />
-        <h3 style={{margin: '1em'}}>Номер подгруппы</h3>
+        
           <TextField
           id="tf"
           className="editText"
-          placeholder="1 или 2"
-          color="var(--plasma-colors-voice-phrase-gradient)"
+          label="Номер подгруппы: 1 или 2"
           value={this.state.subGroup}
+          style={{margin: "2em"}}
           onChange={(s) =>
             this.setState({
               subGroup: s.target.value,
             })
           }
         />
-        <h3 style={{margin: '1em'}}>Группа по английскому</h3>
+        
           <TextField
           id="tf"
           className="editText"
-          placeholder="Напиши номер своей группы по английскому"
-          color="var(--plasma-colors-voice-phrase-gradient)"
+          label="Номер группы по английскому"
           value={this.state.engGroup}
+          style={{margin: "2em"}}
           onChange={(e) =>
             this.setState({
               engGroup: e.target.value,
             })
           }
         />
-          
-          <Button text="Сохранить" view="primary" style={{alignSelf: "center", marginTop: "auto"}} onClick={()=>this.isCorrect()}/>
-        </div>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "3em"}}>
+          <Button text="Сохранить" view="primary"  onClick={()=>this.isCorrect()}/>
+        </Row></div>
         </Container>
       </div>
     )
@@ -585,15 +666,46 @@ export class App extends React.Component {
     } 
   }
   if (this.state.correct===true){
-    console.log("ok")
-    createUser("577", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+    console.log("ok");
+    this.state.disabled=false;
+    this.state.spinner=false;
+    createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
-    } else this.setState({label_group: "Некорректно. Проверьте формат группы: *-*-*"});
+      getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+      this.showWeekSchedule(response);
+  });
+    } else this.setState({label_group: "Некорректно"});
+    
+  }
+
+  Spinner(){
+    
+    var myinterval =setInterval(() => {
+      if (this.state.spinner === true){
+    this.setState({page: 2});
+    clearInterval(myinterval)}
+    console.log("clear");
+    }, 100);
+    
+    return(
+      <div  >
+        <Container style = {{padding: 0}}>
+        {/* <Header
+            logo={logo}
+            title={`Привет, студент!`}
+            style={{backgroundColor: "black"}}
+        > <Button class="button" view='secondary' disabled={disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
+        </Header> */}
+        <Spinner color="var(--plasma-colors-button-accent)" style={{position:" absolute", top: "40%", left:" 45%", marginRight: "-50%"}}/>
+        
+        </Container>
+      </div>
+    )
   }
 
   render() {
     console.log('render');
-    switch(this.state.state){
+    switch(this.state.page){
       case 0:
         return this.Home();
       case 1:
@@ -602,6 +714,12 @@ export class App extends React.Component {
         return this.Raspisanie();
       case 3:
         return this.Navigator();
+      case 4:
+        return  this.RaspisanieToday("today");
+      case 5:
+        return this.RaspisanieToday("tomorrow");
+      case 6:
+        return this.Spinner();
       default:
         break;
       }
