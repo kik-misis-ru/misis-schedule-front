@@ -2,7 +2,7 @@ import React from 'react';
 // createGlobalStyle нужен для создания глобальных стилей
 import { createGlobalStyle } from 'styled-components';
 // получаем тему персонажа
-import {lightEva} from '@sberdevices/plasma-tokens/themes';
+import {darkEva} from '@sberdevices/plasma-tokens/themes';
 // получаем цвета для нашего интерфейса
 import { text, background, gradient } from '@sberdevices/plasma-tokens';
 import misis from "../src/1.jpg";
@@ -19,7 +19,7 @@ const DocStyles = createGlobalStyle`
 `;
 
 // создаем react-компонент для персонажа
-const Theme = createGlobalStyle(lightEva);
+const Theme = createGlobalStyle(darkEva);
 
 const GlobalStyle = () => {
     return (

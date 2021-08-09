@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo0 from "../src/unnamed.gif";
-import logo from "../src/logo_new.png";
+import logo from "../src/misis.svg";
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner} from '@sberdevices/plasma-ui';
+import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
@@ -19,7 +19,13 @@ import {
   TextBox,
   TextBoxSubTitle,
   CardParagraph1,
-  CardParagraph2
+  CardParagraph2,
+  HeaderLogo,
+  HeaderRoot,
+  HeaderTitle,
+  CarouselGridWrapper,
+  Carousel, CarouselCol,
+  Note
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -71,60 +77,68 @@ export class App extends React.Component {
       engGroup: "", 
       res: "",
       correct: null,
-      label_group: "",
-      week: { 
-        0:{
-            1: " ",
-            2: " ",
-            3: " ",
-            4: " ",
-            5: " ",
-            6: " ",
-        },
-        1:{
-            bell_1: [],
-            bell_2: [],
-            bell_3: [],
-            bell_4: [],
-            bell_5: []
-        },
-        2:{
-            
-          bell_1: [],
-          bell_2: [],
-          bell_3: [],
-          bell_4: [],
-          bell_5: []
-        },
-        3:{
-          bell_1: [],
-          bell_2: [],
-          bell_3: [],
-          bell_4: [],
-          bell_5: []
-        },
-        4:{
-          bell_1: [],
-          bell_2: [],
-          bell_3: [],
-          bell_4: [],
-          bell_5: []
-        },
-        5:{
-          bell_1: [],
-          bell_2: [],
-          bell_3: [],
-          bell_4: [],
-          bell_5: []
-        },
-        6:{
-          bell_1: [],
-          bell_2: [],
-          bell_3: [],
-          bell_4: [],
-          bell_5: []
-        }
-    }
+      labelGroup: "Номер академической группы",
+      labelSubgroup: "",
+      labelEnggroup: "",
+      i: 1,
+      day: [['Понедельник', '' ], ['Вторник', ''], ['Среда', ''], ['Четверг', ''], ['Пятница', ''], ['Суббота', '']],
+      days: [{
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+       },
+      {
+          
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      },
+      {
+        bell_1: ["", "", ""],
+        bell_2: ["", "", ""],
+        bell_3: ["", "", ""],
+        bell_4: ["", "", ""],
+        bell_5: ["", "", ""],
+        bell_6: ["", "", ""],
+        bell_7: ["", "", ""]
+      }],
+      spinner: false
+        
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
@@ -136,7 +150,6 @@ export class App extends React.Component {
   componentDidMount() {   
 
     console.log('componentDidMount');
-    
     /*
     функцию getUser нужно будет переместить ниже, после условия if (event.sub !== undefined)
     и передавать ей userId
@@ -287,21 +300,24 @@ export class App extends React.Component {
   showWeekSchedule(schedule) {
     this.schedule = JSON.parse(schedule);
     for (let day_num = 1; day_num < 7; day_num++) {
-      this.state.week[0][day_num]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
-      for (let bell=1; bell<=5; bell++) {
-        if (this.schedule["schedule"][`bell_${bell}`] !== undefined) 
-        if (this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0] !== undefined) {
-          // console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
-          this.state.week[`${day_num}`][`bell_${bell}`][0]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["subject_name"];
-          this.state.week[`${day_num}`][`bell_${bell}`][1]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-          this.state.week[`${day_num}`][`bell_${bell}`][2]=this.schedule["schedule"][`bell_${bell}`][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+      this.state.day[day_num-1][1]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+      for (let bell in this.schedule["schedule"]) { //проверка 
+        if (this.schedule["schedule"][bell]!==undefined)
+        if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
+           
+          this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+          this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+          this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
         } else {
-          this.state.week[`${day_num}`][`bell_${bell}`][0]="";
-          this.state.week[`${day_num}`][`bell_${bell}`][1]="";
-          this.state.week[`${day_num}`][`bell_${bell}`][2]="";
+          this.state.days[day_num-1][bell][0]="";
+          this.state.days[day_num-1][bell][1]="";
+          this.state.days[day_num-1][bell][2]="";
+          this.state.days[day_num-1][bell][3]="";
         
         }
       }
+      this.state.spinner=true;
       console.log()
     }
   }
@@ -309,12 +325,12 @@ export class App extends React.Component {
 
   Navigator(){
     return (
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
         <Header
             logo={logo}
             title={`Навигатор`}
-            style={{backgroundColor: "white"}}
+            style={{backgroundColor: "black"}}
         > 
         <Button size="s" pin="circle-circle" onClick={()=>this.setState({ state: 0 })}><IconPersone size="s" color="inherit"/></Button>
         <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
@@ -346,13 +362,13 @@ export class App extends React.Component {
           </Col>
           <Col size={4}>
           <div class="chatbox">
-          <h4 style={{margin: "1em", color: "#5487a4"}}>Корпус «Б» (главный)</h4>
+          <h5 style={{margin: "1em", color: "#5487a4"}}>Корпус «Б» (главный)</h5>
           <h5 style={{margin: "1em", color: "#5487a4"}}>Ленинский проспект, дом 4</h5>
-          <h4 style={{margin: "1em", color: "#72aa9f"}}>Корпус «К» </h4>
+          <h5 style={{margin: "1em", color: "#72aa9f"}}>Корпус «К» </h5>
           <h5 style={{margin: "1em", color: "#72aa9f"}}>Крымский вал, дом 3</h5>
-          <h4 style={{margin: "1em", color: "#906aa3"}}>Корпус «Г» (горный)</h4>
+          <h5 style={{margin: "1em", color: "#906aa3"}}>Корпус «Г» (горный)</h5>
           <h5 style={{margin: "1em", color: "#906aa3"}}>Ленинский проспект, дом 6, строение 1</h5>         
-          <h4 style={{margin: "1em", color: "#41588f"}}>Корпус «А» </h4>
+          <h5 style={{margin: "1em", color: "#41588f"}}>Корпус «А» </h5>
           <h5 style={{margin: "1em", color: "#41588f"}}>Ленинский проспект, дом 6, строение 2</h5>
         </div>
           
@@ -372,19 +388,19 @@ export class App extends React.Component {
   Menu(){
     console.log("Menu");
     return(
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
         <Header
             logo={logo}
             title={`Ответы на вопросы уже здесь`}
-            style={{backgroundColor: "white"}}
+            style={{backgroundColor: "black"}}
         > <Button class="button" contentLeft={<IconPersone size="s" color="inherit"/>} view='secondary' size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 0 })} style={{margin: "1em"}}/>
         </Header>
         <Row >
         
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text='Расписание'
         size="l"
         view="secondary"
@@ -396,7 +412,7 @@ export class App extends React.Component {
         
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text='Навигатор'
         size="l"
         view="secondary"
@@ -408,7 +424,7 @@ export class App extends React.Component {
         <Row>
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text=' Контакты '
         size='l'
         view="secondary"
@@ -420,7 +436,7 @@ export class App extends React.Component {
         
         <Button
         class = "button"
-        style={{margin: '1em', color: "white"}}
+        style={{margin: '1em', color: "black"}}
         text="  Помощь  "
         size='l'
         view="secondary"
@@ -444,404 +460,119 @@ export class App extends React.Component {
     //   }
     // }
   return(
-    <div class="body">
-        <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Расписание`}
-            style={{backgroundColor: "white"}}
-        > 
-        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ page: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
-        </Header>
-
-        <div >
-        <Tabs view="secondary">
-            <TabItem isActive={false} onClick={()=>this.setState({ page: 2 })}>Текущая неделя
-            </TabItem>
-            <TabItem isActive={!flag} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
-            <TabItem isActive={flag} onClick={()=>this.setState({page: 5})}>Завтра</TabItem>
-          </Tabs>
-        {/* <Button size="s" pin="circle-circle" text="Текущая неделя" style={{ margin: "0.1em" }}
-          /> */}
-        {/* <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} 
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 10800000))).then((response)=>{
-            this.showSchedule(response, "today")
-        })} /> */}
-        {/* <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}
-          onClick={()=>this.setState({state: 5})}/> */}
-        {/* <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-            this.showSchedule(response, "tomorrow")
-        })}/> */}
+    <div  >
         
-        </div>
-
-        <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.week[0][day_num]}</TextBoxBigTitle>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[day_num]["bell_1"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[day_num]["bell_1"][1]} {this.state.week[day_num]["bell_1"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[day_num]["bell_2"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[day_num]["bell_2"][1]} {this.state.week[day_num]["bell_2"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[day_num]["bell_3"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[day_num]["bell_3"][1]} {this.state.week[day_num]["bell_3"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[day_num]["bell_4"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[day_num]["bell_4"][1]} {this.state.week[day_num]["bell_4"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[day_num]["bell_5"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[day_num]["bell_5"][1]} {this.state.week[day_num]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          </div>
-          </Container>
           </div>
   );
   }
 
   Raspisanie(){
     return (
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
         <Header
             logo={logo}
             title={`Расписание`}
-            style={{backgroundColor: "white"}}
+            style={{backgroundColor: "black"}}
         > 
         <Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
+        {/* <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button> */}
         </Header>
 
         <div >
-          <Tabs view="secondary">
+          <Tabs view="black" size="m" style={{margin: "0.75em"}}>
             <TabItem isActive={true} onClick={()=>this.setState({ page: 2 })}>Текущая неделя
             </TabItem>
             <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
             <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem>
           </Tabs>
-        {/* <Button size="s" pin="circle-circle" text="Текущая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-            this.showWeekSchedule(response)
-        })}/> */}
-        {/* <Button size="s" pin="circle-circle" text="Сегодня" style={{ margin: "0.1em" }} 
-          onClick={()=>this.setState({ state: 4 })} />
-        <Button size="s" pin="circle-circle" text="Завтра" style={{ margin: "0.1em" }}
-          onClick={()=>this.setState({state: 5})}/> */}
-        {/* <Button size="s" pin="circle-circle" text="Следующая неделя" style={{ margin: "0.1em" }}
-          onClick={()=>getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-            this.showSchedule(response, "tomorrow")
-        })}/> */}
         
         </div>
 
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "20rem", margin: "1em" }}>
+        <CarouselGridWrapper>
+                    <Carousel
+                        as={Row}
+                        axis="y"
+                        index={this.state.i}
+                        scrollSnapType="mandatory"
+                        detectActive
+                        detectThreshold={0.5}
+                        
+                        onIndexChange={() => this.state.i++}
+                        paddingStart="5%"
+                        paddingEnd="50%"
+                    >
+                        {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
+                            <CarouselCol key={`item:${i}`}>
+                               <Card style={{ width: "90%", margin: "1em", paddingRight: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Понедельник {this.state.week[0][1]}</TextBoxBigTitle>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[i][0]} {this.state.day[i][1]}</TextBoxBigTitle>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
+                    {bell_1[3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.week[1]["bell_1"][0]}
+                  {bell_1[0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.week[1]["bell_1"][1]} {this.state.week[1]["bell_1"][2]}</CardParagraph1>
+                  <CardParagraph1> {bell_1[1]} {bell_1[2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
+                  {bell_2[3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.week[1]["bell_2"][0]}
+                  {bell_2[0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.week[1]["bell_2"][1]} {this.state.week[1]["bell_2"][2]}</CardParagraph1>
+                  <CardParagraph1> {bell_2[1]} {bell_2[2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
+                  {bell_3[3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.week[1]["bell_3"][0]}
+                  {bell_3[0]}
                   </CardParagraph2>
-                 < CardParagraph1> {this.state.week[1]["bell_3"][1]} {this.state.week[1]["bell_3"][2]}</CardParagraph1>
+                  <CardParagraph1> {bell_3[1]} {bell_3[2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
+                  {bell_4[3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.week[1]["bell_4"][0]}
+                  {bell_4[0]}
                   </CardParagraph2>
-                 < CardParagraph1> {this.state.week[1]["bell_4"][1]} {this.state.week[1]["bell_4"][2]}</CardParagraph1>
+                  <CardParagraph1> {bell_4[1]} {bell_4[2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
+                  {bell_5[3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.week[1]["bell_5"][0]}
+                  {bell_5[0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.week[1]["bell_5"][1]} {this.state.week[1]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
+                  <CardParagraph1> {bell_5[1]} {bell_5[2]}</CardParagraph1>
+                 
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_6[3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {bell_6[0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {bell_6[1]} {bell_6[2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {bell_7[3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {bell_7[0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {bell_7[1]} {bell_7[2]}</CardParagraph1>
+                  </TextBox>
+                
                 <br />
                 
               </CardContent>
             </CardBody>
           </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Вторник {this.state.week[0][2]}</TextBoxBigTitle>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[2]["bell_1"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[2]["bell_1"][1]} {this.state.week[2]["bell_1"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[2]["bell_2"][0]}
-                  </CardParagraph2>
-                 < CardParagraph1> {this.state.week[2]["bell_2"][1]} {this.state.week[2]["bell_2"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[2]["bell_3"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[2]["bell_3"][1]} {this.state.week[2]["bell_3"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[2]["bell_4"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[2]["bell_4"][1]} {this.state.week[2]["bell_4"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[2]["bell_5"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[2]["bell_5"][1]} {this.state.week[2]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Среда {this.state.week[0][3]}</TextBoxBigTitle>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[3]["bell_1"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[3]["bell_1"][1]} {this.state.week[3]["bell_1"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[3]["bell_2"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[3]["bell_2"][1]} {this.state.week[3]["bell_2"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[3]["bell_3"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[3]["bell_3"][1]} {this.state.week[3]["bell_3"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[3]["bell_4"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[3]["bell_4"][1]} {this.state.week[3]["bell_4"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[3]["bell_5"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[3]["bell_5"][1]} {this.state.week[3]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Четвер {this.state.week[0][4]}г</TextBoxBigTitle>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[4]["bell_1"][0]}
-                  </CardParagraph2>
-                 < CardParagraph1> {this.state.week[4]["bell_1"][1]} {this.state.week[4]["bell_1"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[4]["bell_2"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[4]["bell_2"][1]} {this.state.week[4]["bell_2"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[4]["bell_3"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[4]["bell_3"][1]} {this.state.week[4]["bell_3"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[4]["bell_4"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[4]["bell_4"][1]} {this.state.week[4]["bell_4"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[4]["bell_5"][0]}
-                  </CardParagraph2>
-                 < CardParagraph1> {this.state.week[4]["bell_5"][1]} {this.state.week[4]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Пятница {this.state.week[0][5]}</TextBoxBigTitle>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[5]["bell_1"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[5]["bell_1"][1]} {this.state.week[5]["bell_1"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[5]["bell_2"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[5]["bell_2"][1]} {this.state.week[5]["bell_2"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[5]["bell_3"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[5]["bell_3"][1]} {this.state.week[5]["bell_3"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[5]["bell_4"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[5]["bell_4"][1]} {this.state.week[5]["bell_4"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[5]["bell_5"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[5]["bell_5"][1]} {this.state.week[5]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
-          <Card style={{ width: "20rem", margin: "1em" }}>
-            <CardBody>
-              <CardContent>
-                <TextBox>
-                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>Суббота {this.state.week[0][1]}</TextBoxBigTitle>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    9:00-10:35
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[6]["bell_1"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[6]["bell_1"][1]} {this.state.week[6]["bell_1"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    10:50-12:25
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[6]["bell_2"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[6]["bell_2"][1]} {this.state.week[6]["bell_2"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  12:40-14:15
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[6]["bell_3"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[6]["bell_3"][1]} {this.state.week[6]["bell_3"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  14:30-16:05
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[6]["bell_4"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[6]["bell_4"][1]} {this.state.week[6]["bell_4"][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    16:20-17:55
-                  </TextBoxSubTitle>
-                  <CardParagraph2 >
-                  {this.state.week[6]["bell_5"][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.week[6]["bell_5"][1]} {this.state.week[6]["bell_5"][2]}</CardParagraph1>
-                </TextBox>
-                <br />
-                
-              </CardContent>
-            </CardBody>
-          </Card>
+
+                            </CarouselCol>
+                        ))}
+                    </Carousel>
+                </CarouselGridWrapper>
+          
           <div style={{
         width:  '150px',
         height: '150px',
@@ -857,59 +588,63 @@ export class App extends React.Component {
     let disabled=true;
     if (this.state.groupId!==undefined) disabled=false;
     return (
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Привет, студент!`}
-            style={{backgroundColor: "white"}}
-        > <Button class="button" view='secondary' disabled={disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
-        </Header>
+        <HeaderRoot
+            style={{backgroundColor: "black"}}
+        >  <HeaderLogo src={logo} alt="МИСиС" style={{height: "15px", width: "15px", margin:"1em"}}/> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle>
+        <HeaderContent>
+        <Button class="button" view='secondary' disabled={disabled} text='Расписание' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 6 })} style={{margin: "1em"}}/> 
+        </HeaderContent>
+        </HeaderRoot>
         
-        <div class="chat">
-          <h3 style={{margin: '1em'}}>Моя академическая группа</h3>
+        <div >
+          <h3 style={{margin: '2em', textAlign: "center"}}>Привет, студент! </h3>
+          <h5 color="var(--plasma-colors-button-white-secondary)" style={{margin: '2em', textAlign: "center"}}>Заполни данные ниже</h5>
           <TextField
           id="tf"
-          label={this.state.label_group}
+          label={this.state.labelGroup}
+
           className="editText"
-          placeholder="Напиши номер своей академической группы"
-          color="var(--plasma-colors-voice-phrase-gradient)"
+          // placeholder="Напиши номер своей академической группы"
           value={this.state.group}
+          style={{margin: "2em"}}
           onChange={(v) =>
             this.setState({
               group: v.target.value,
             })
           }
         />
-        <h3 style={{margin: '1em'}}>Номер подгруппы</h3>
+        
           <TextField
           id="tf"
           className="editText"
-          placeholder="1 или 2"
-          color="var(--plasma-colors-voice-phrase-gradient)"
+          label="Номер подгруппы: 1 или 2"
           value={this.state.subGroup}
+          style={{margin: "2em"}}
           onChange={(s) =>
             this.setState({
               subGroup: s.target.value,
             })
           }
         />
-        <h3 style={{margin: '1em'}}>Группа по английскому</h3>
+        
           <TextField
           id="tf"
           className="editText"
-          placeholder="Напиши номер своей группы по английскому"
-          color="var(--plasma-colors-voice-phrase-gradient)"
+          label="Номер группы по английскому"
           value={this.state.engGroup}
+          style={{margin: "2em"}}
           onChange={(e) =>
             this.setState({
               engGroup: e.target.value,
             })
           }
         />
-          
-          <Button text="Сохранить" view="primary" style={{alignSelf: "center", marginTop: "auto"}} onClick={()=>this.isCorrect()}/>
-        </div>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "3em"}}>
+          <Button text="Сохранить" view="primary"  onClick={()=>this.isCorrect()}/>
+        </Row></div>
         </Container>
       </div>
     )
@@ -927,6 +662,7 @@ export class App extends React.Component {
   if (this.state.correct===true){
     console.log("ok");
     this.state.disabled=false;
+    this.state.spinner=false;
     this.state.userId="101";
     createUser("101", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({label_group: "Группа сохранена"});
@@ -938,13 +674,20 @@ export class App extends React.Component {
   }
 
   Spinner(){
+    
+    var myinterval =setInterval(() => {
+      if (this.state.spinner === true){
+    this.setState({page: 2});
+    clearInterval(myinterval)}
+    }, 100);
+    
     return(
-      <div class="body">
+      <div  >
         <Container style = {{padding: 0}}>
         {/* <Header
             logo={logo}
             title={`Привет, студент!`}
-            style={{backgroundColor: "white"}}
+            style={{backgroundColor: "black"}}
         > <Button class="button" view='secondary' disabled={disabled} text='Меню' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 1 })} style={{margin: "1em"}}/> 
         </Header> */}
         <Spinner color="var(--plasma-colors-button-accent)" style={{position:" absolute", top: "40%", left:" 45%", marginRight: "-50%"}}/>
