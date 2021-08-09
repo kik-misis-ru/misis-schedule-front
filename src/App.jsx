@@ -515,7 +515,7 @@ export class App extends React.Component {
                     >
                         {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
                             <CarouselCol key={`item:${i}`}>
-                               <Card style={{ width: "33vh", margin: "1em", paddingRight: "1em" }}>
+                               <Card style={{ width: "35vh", margin: "0.5em", paddingRight: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
