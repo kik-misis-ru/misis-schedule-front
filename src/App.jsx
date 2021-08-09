@@ -70,7 +70,7 @@ export class App extends React.Component {
       page: 0,
       logo: logo0, 
       flag: false,
-      description: "Привет",
+      description: "Заполни свои данные",
       group: "",
       groupId: "",
       subGroup: "",
@@ -83,7 +83,7 @@ export class App extends React.Component {
       i: 0,
       day: [['Понедельник', '' ], ['Вторник', ''], ['Среда', ''], ['Четверг', ''], ['Пятница', ''], ['Суббота', '']],
       days: [{
-        bell_1: ["", "", ""],
+        bell_1: ["1", "", ""],
         bell_2: ["", "", ""],
         bell_3: ["", "", ""],
         bell_4: ["", "", ""],
@@ -148,33 +148,28 @@ export class App extends React.Component {
   }
  
   componentDidMount() {   
-
     console.log('componentDidMount');
-    /*
-    функцию getUser нужно будет переместить ниже, после условия if (event.sub !== undefined)
-    и передавать ей userId
-    */
-    getUser("101").then((user)=>{
-      console.log(user)
-      this.setState({groupId: user["group_id"]})
-      this.setState({subGroup: user["subgroup_name"]})
-      this.setState({engGroup: user["eng_group"]})
-      this.convertIdInGroupName()
-      getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-        this.showWeekSchedule(response)
-    });
-    })
-
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
     this.assistant.on("data", (event) => {
       if (event.type === "smart_app_data") {
         console.log("User");
         console.log(event);
-        console.log('event.sub', event.sub);
         if (event.sub !== undefined) {
           console.log("Sub", event.sub);
           this.state.userId = event.sub;
-          console.log(this.userId)
+          getUser(this.state.userId).then((user)=>{
+            if (user !== "0") {
+              console.log('user', user)
+              this.setState({groupId: user["group_id"]})
+              this.setState({subGroup: user["subgroup_name"]})
+              this.setState({engGroup: user["eng_group"]})
+              this.convertIdInGroupName()
+              getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+                this.showWeekSchedule(response)
+              });
+              this.setState({page: 6})
+            } 
+          })
         }
       console.log(`assistant.on(data)`, event);
       const { action } = event;
@@ -450,10 +445,12 @@ export class App extends React.Component {
 
   RaspisanieToday(timeParam){
     // this.schedule = JSON.parse(schedule);
+    
     let date = new Date(Date.parse("05/10/2021") + 10800000)
-    let day_num = date.getDay()
+    let day_num = date.getDay() - 1;
     let flag = false;
-    if (timeParam === "tomorrow") {day_num += 1; flag = true;}
+    if (timeParam === "tomorrow") {day_num += 1; flag = true;  }
+    console.log(this.state.days[day_num]["bell_2"][0]);
     // for (let bell in this.schedule["schedule"]) {
     //   if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined) {
     //     console.log(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"])
@@ -461,7 +458,95 @@ export class App extends React.Component {
     // }
   return(
     <div  >
+        <Container style = {{padding: 0}}>
+        <HeaderRoot
+            style={{backgroundColor: "black"}}
+        >  <HeaderLogo src={logo} alt="МИСиС" style={{height: "15px", width: "15px", margin:"1em"}}/> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle>
+        <HeaderContent><Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
         
+        </HeaderContent>
+        </HeaderRoot>
+        <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
+
+        <div >
+        <Tabs view="black" size="m" style={{margin: "0.75em"}}>
+            <TabItem isActive={false} onClick={()=>this.setState({ page: 2 })}>Текущая неделя
+            </TabItem>
+            <TabItem isActive={!flag} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
+            <TabItem isActive={flag} onClick={()=>this.setState({page: 5})}>Завтра</TabItem>
+          </Tabs>
+        
+        </div>
+
+        <div style={{ flexDirection: "column" }}>
+          <Card style={{ width: "40vh", marginLeft: "2em", marginTop: "0.5em", paddingRight: "1em" }}>
+            <CardBody>
+              <CardContent>
+              <TextBox>
+                  <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[day_num][0]} {this.state.day[day_num][1]}</TextBoxBigTitle>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                    {this.state.days[day_num]["bell_1"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_1"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_1"][1]} {this.state.days[day_num]["bell_1"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {this.state.days[day_num]["bell_2"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_2"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_2"][1]} {this.state.days[day_num]["bell_2"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {this.state.days[day_num]["bell_3"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_3"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_3"][1]} {this.state.days[day_num]["bell_3"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {this.state.days[day_num]["bell_4"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_4"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_4"][1]} {this.state.days[day_num]["bell_4"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {this.state.days[day_num]["bell_5"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_5"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_5"][1]} {this.state.days[day_num]["bell_5"][2]}</CardParagraph1>
+                 
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {this.state.days[day_num]["bell_6"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_6"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_6"][1]} {this.state.days[day_num]["bell_6"][2]}</CardParagraph1>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  {this.state.days[day_num]["bell_7"][3]}
+                  </TextBoxSubTitle>
+                  <CardParagraph2 >
+                  {this.state.days[day_num]["bell_7"][0]}
+                  </CardParagraph2>
+                  <CardParagraph1> {this.state.days[day_num]["bell_7"][1]} {this.state.days[day_num]["bell_7"][2]}</CardParagraph1>
+                  </TextBox>
+                <br />
+                
+              </CardContent>
+            </CardBody>
+          </Card>
+          </div>
+          <div style={{
+        width:  '200px',
+        height: '200px',
+        }}></div>
+          </Container>
           </div>
   );
   }
@@ -473,7 +558,7 @@ export class App extends React.Component {
     this.state.i--;
   }
 
-  Raspisanie(){
+  Raspisanie(timeParam){
     this.state.i=0;
     return (
       <div  >
@@ -486,7 +571,7 @@ export class App extends React.Component {
         
         </HeaderContent>
         </HeaderRoot>
-        <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
+        <h4 style={{margin: "1em"}}>Расписание {this.state.group} </h4>
         
 
         <div >
@@ -515,7 +600,7 @@ export class App extends React.Component {
                     >
                         {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
                             <CarouselCol key={`item:${i}`}>
-                               <Card style={{ width: "35vh", margin: "0.5em", paddingRight: "1em" }}>
+                               <Card style={{ width: "40vh", margin: "0.5em", paddingRight: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -596,7 +681,8 @@ export class App extends React.Component {
   
   Home(){
     let disabled=true;
-    if (this.state.groupId!==undefined) disabled=false;
+    if (this.state.groupId!=="") disabled=false;
+    console.log(this.state.groupId);
     return (
       <div  >
         <Container style = {{padding: 0}}>
@@ -611,7 +697,7 @@ export class App extends React.Component {
         
         <div >
           <h3 style={{margin: '2em', textAlign: "center"}}>Привет, студент! </h3>
-          <h5 color="var(--plasma-colors-button-white-secondary)" style={{margin: '2em', textAlign: "center"}}>Заполни данные ниже</h5>
+          <h5 color="var(--plasma-colors-button-white-secondary)" style={{margin: '2em', textAlign: "center"}}>{this.state.description}</h5>
           <TextField
           id="tf"
           label={this.state.labelGroup}
@@ -673,13 +759,12 @@ export class App extends React.Component {
     console.log("ok");
     this.state.disabled=false;
     this.state.spinner=false;
-    this.state.userId="101";
-    createUser("101", "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
-      this.setState({label_group: "Группа сохранена"});
+    createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+      this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
       getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
       this.showWeekSchedule(response);
   });
-    } else this.setState({label_group: "Некорректно"});
+    } else this.setState({description: "Некорректно"});
     
   }
 
