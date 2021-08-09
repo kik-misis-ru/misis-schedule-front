@@ -80,7 +80,7 @@ export class App extends React.Component {
       labelGroup: "Номер академической группы",
       labelSubgroup: "",
       labelEnggroup: "",
-      i: 1,
+      i: 0,
       day: [['Понедельник', '' ], ['Вторник', ''], ['Среда', ''], ['Четверг', ''], ['Пятница', ''], ['Суббота', '']],
       days: [{
         bell_1: ["", "", ""],
@@ -466,7 +466,15 @@ export class App extends React.Component {
   );
   }
 
+  Index(){
+    if (this.state.i<7){
+      this.state.i++;
+    } else if (this.state.i>0)
+    this.state.i--;
+  }
+
   Raspisanie(){
+    this.state.i=0;
     return (
       <div  >
         <Container style = {{padding: 0}}>
@@ -501,13 +509,13 @@ export class App extends React.Component {
                         detectActive
                         detectThreshold={0.5}
                         
-                        onIndexChange={() => this.state.i++}
-                        paddingStart="70%"
+                        onIndexChange={() => {this.Index(); console.log("this.state.i", this.state.i)}}
+                        paddingStart="5%"
                         paddingEnd="50%"
                     >
                         {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
                             <CarouselCol key={`item:${i}`}>
-                               <Card style={{ width: "90%", margin: "1em", paddingRight: "1em" }}>
+                               <Card style={{ width: "33vh", margin: "1em", paddingRight: "1em" }}>
             <CardBody>
               <CardContent>
                 <TextBox>
@@ -681,6 +689,7 @@ export class App extends React.Component {
       if (this.state.spinner === true){
     this.setState({page: 2});
     clearInterval(myinterval)}
+    console.log("clear");
     }, 100);
     
     return(
@@ -721,4 +730,3 @@ export class App extends React.Component {
       }
   }
 }
-
