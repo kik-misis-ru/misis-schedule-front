@@ -193,22 +193,14 @@ export class App extends React.Component {
     if (action) {
       switch (action.type) {
         case 'for_today':
-          return this.setState({page: 4});
+          return this.setState({page: this.state.today});
 
         case 'for_tomorrow':
-          return this.setState({page: 5});
+          return this.setState({page: this.state.today+1});
         
           case 'for_week':
-            return this.setState({page: 2});
+            return this.setState({page: 1});
 
-        case 'to_sleep':
-          return this.Change_img(3);
-        
-        case 'set_name':
-          if (action.note !== undefined){
-            this.setState({name : action.note});
-          }
-          break;
         default:
           //throw new Error();
       }
