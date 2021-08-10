@@ -174,10 +174,10 @@ export class App extends React.Component {
           });
               // this.setState({page: 6});
               this.setState({description: "Здесь можно изменить данные", page: 7});
-            } 
+            } else {
+          this.setState({description: "Здесь можно изменить данные", page: 0});
+        } 
           })
-        } else {
-          this.setState({page: 0});
         }
       console.log(`assistant.on(data)`, event);
       const { action } = event;
@@ -697,12 +697,16 @@ export class App extends React.Component {
   Spinner(){
     
     var myinterval =setInterval(() => {
-      if (this.state.spinner === true){
-        if(this.state.today===0) {this.setState({page: 8})}
+      // console.log(this.state.spinner);
+      // if ((this.state.groupId==="")||(this.state.groupId===undefined)) {this.setState({page: 0}); console.log(this.state.groupId);}
+      //  else 
+       if (this.state.spinner === true){
+       if(this.state.today===0) {this.setState({page: 8})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
-    clearInterval(myinterval)}
-    console.log("clear");
+    clearInterval(myinterval)} 
+    // else {this.setState({page: 0}); }
+    
     }, 100);
     
     return(
