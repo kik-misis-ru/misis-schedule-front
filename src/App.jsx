@@ -67,7 +67,7 @@ export class App extends React.Component {
       //
       userId: "",
       //
-      page: 0,
+      page: 7,
       logo: logo0, 
       flag: true,
       description: "Заполни данные, чтобы открывать расписание одной фразой",
@@ -176,6 +176,8 @@ export class App extends React.Component {
               this.setState({description: "Здесь можно изменить данные", page: 7});
             } 
           })
+        } else {
+          this.setState({page: 0});
         }
       console.log(`assistant.on(data)`, event);
       const { action } = event;
