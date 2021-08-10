@@ -67,7 +67,7 @@ export class App extends React.Component {
       //
       userId: "",
       //
-      page: 7,
+      page: 0,
       logo: logo0, 
       flag: true,
       description: "Заполни данные, чтобы открывать расписание одной фразой",
