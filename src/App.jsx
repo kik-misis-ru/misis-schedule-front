@@ -82,7 +82,7 @@ export class App extends React.Component {
       labelEnggroup: "",
       i: 0,
       j: 0,
-      day: [{ title: 'Пн', date: ["",""] }, { title: 'Вт', date: ["",""] }, { title: 'Ср', date: ["",""] }, { title: 'Чт', date: ["",""] }, { title: 'Пт', date: ["",""] }, { title: 'Сб', date: ["",""] }],
+      day: [{ title: 'Пн', date: ["",""], count: [0, 0] }, { title: 'Вт', date: ["",""], count: [0, 0] }, { title: 'Ср', date: ["",""], count: [0, 0] }, { title: 'Чт', date: ["",""], count: [0, 0] }, { title: 'Пт', date: ["",""], count: [0, 0] }, { title: 'Сб', date: ["",""], count: [0, 0] }],
       days: [{
         bell_1: [["", "", ""], ["", "", ""]],
         bell_2: [["", "", ""], ["", "", ""]],
@@ -173,7 +173,7 @@ export class App extends React.Component {
               this.showWeekSchedule(response, 1)
           });
               // this.setState({page: 6});
-              this.setState({description: "Здесь можно изменить данные"});
+              this.setState({description: "Здесь можно изменить данные", page: 7});
             } 
           })
         }
@@ -289,14 +289,14 @@ export class App extends React.Component {
     if ((this.state.subGroup==="")||(this.state.subGroup===undefined)){
       console.log("sub",this.state.subGroup);
     for (let day_num = 1; day_num < 7; day_num++) {
-          this.state.day[day_num-1]["date"][0]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+          this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
           for (let bell in this.schedule["schedule"]) { //проверка 
               if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
               this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
               this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
               this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
               this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
-            
+              this.state.day[day_num-1]["count"][i]++;
             } else {
               this.state.days[day_num-1][bell][i][0]="";
               this.state.days[day_num-1][bell][i][1]="";
@@ -307,7 +307,7 @@ export class App extends React.Component {
           } 
         this.state.spinner=true;
     } else {for (let day_num = 1; day_num < 7; day_num++) {
-      this.state.day[day_num-1]["date"][0]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+      this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
         if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) )
         {
@@ -335,7 +335,7 @@ export class App extends React.Component {
           }
         }
       } 
-      console.log("subgroup",this.state.subGroup);
+      console.log(this.state.day["title"]);
           this.state.spinner=true;
       }
     
@@ -513,7 +513,7 @@ export class App extends React.Component {
                     >
                         {this.state.day.map(({ title, date }, i) => (
                           
-                            <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.j}) }}/></CarouselCol>
+                            <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.j}) }}/></CarouselCol>
                         ))}
                     </Carousel>
                 </CarouselGridWrapper>
