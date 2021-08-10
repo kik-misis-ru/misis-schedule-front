@@ -69,7 +69,7 @@ export class App extends React.Component {
       //
       page: 7,
       logo: logo0, 
-      flag: false,
+      flag: true,
       description: "Заполни данные, чтобы открывать расписание одной фразой",
       group: "",
       groupId: "",
@@ -81,70 +81,69 @@ export class App extends React.Component {
       labelSubgroup: "",
       labelEnggroup: "",
       i: 0,
-      day: [{ title: 'Пн', date: "" }, { title: 'Вт', date: "" }, { title: 'Ср', date: "" }, { title: 'Чт', date: "" }, { title: 'Пт', date: "" }, { title: 'Сб', date: "" }],
-      //day: [['Понедельник', '' ], ['Вторник', ''], ['Среда', ''], ['Четверг', ''], ['Пятница', ''], ['Суббота', '']],
+      j: 0,
+      day: [{ title: 'Пн', date: ["",""] }, { title: 'Вт', date: ["",""] }, { title: 'Ср', date: ["",""] }, { title: 'Чт', date: ["",""] }, { title: 'Пт', date: ["",""] }, { title: 'Сб', date: ["",""] }],
       days: [{
-        bell_1: ["1", "", ""],
-        bell_2: ["", "", ""],
-        bell_3: ["", "", ""],
-        bell_4: ["", "", ""],
-        bell_5: ["", "", ""],
-        bell_6: ["", "", ""],
-        bell_7: ["", "", ""]
+        bell_1: [["", "", ""], ["", "", ""]],
+        bell_2: [["", "", ""], ["", "", ""]],
+        bell_3: [["", "", ""], ["", "", ""]],
+        bell_4: [["", "", ""], ["", "", ""]],
+        bell_5: [["", "", ""], ["", "", ""]],
+        bell_6: [["", "", ""], ["", "", ""]],
+        bell_7: [["", "", ""], ["", "", ""]],
        },
       {
-          
-        bell_1: ["", "", ""],
-        bell_2: ["", "", ""],
-        bell_3: ["", "", ""],
-        bell_4: ["", "", ""],
-        bell_5: ["", "", ""],
-        bell_6: ["", "", ""],
-        bell_7: ["", "", ""]
+        bell_1: [["", "", ""], ["", "", ""]],
+        bell_2: [["", "", ""], ["", "", ""]],
+        bell_3: [["", "", ""], ["", "", ""]],
+        bell_4: [["", "", ""], ["", "", ""]],
+        bell_5: [["", "", ""], ["", "", ""]],
+        bell_6: [["", "", ""], ["", "", ""]],
+        bell_7: [["", "", ""], ["", "", ""]],
       },
       {
-        bell_1: ["", "", ""],
-        bell_2: ["", "", ""],
-        bell_3: ["", "", ""],
-        bell_4: ["", "", ""],
-        bell_5: ["", "", ""],
-        bell_6: ["", "", ""],
-        bell_7: ["", "", ""]
+        bell_1: [["", "", ""], ["", "", ""]],
+        bell_2: [["", "", ""], ["", "", ""]],
+        bell_3: [["", "", ""], ["", "", ""]],
+        bell_4: [["", "", ""], ["", "", ""]],
+        bell_5: [["", "", ""], ["", "", ""]],
+        bell_6: [["", "", ""], ["", "", ""]],
+        bell_7: [["", "", ""], ["", "", ""]],
       },
       {
-        bell_1: ["", "", ""],
-        bell_2: ["", "", ""],
-        bell_3: ["", "", ""],
-        bell_4: ["", "", ""],
-        bell_5: ["", "", ""],
-        bell_6: ["", "", ""],
-        bell_7: ["", "", ""]
+        bell_1: [["", "", ""], ["", "", ""]],
+        bell_2: [["", "", ""], ["", "", ""]],
+        bell_3: [["", "", ""], ["", "", ""]],
+        bell_4: [["", "", ""], ["", "", ""]],
+        bell_5: [["", "", ""], ["", "", ""]],
+        bell_6: [["", "", ""], ["", "", ""]],
+        bell_7: [["", "", ""], ["", "", ""]],
       },
       {
-        bell_1: ["", "", ""],
-        bell_2: ["", "", ""],
-        bell_3: ["", "", ""],
-        bell_4: ["", "", ""],
-        bell_5: ["", "", ""],
-        bell_6: ["", "", ""],
-        bell_7: ["", "", ""]
+        bell_1: [["", "", ""], ["", "", ""]],
+        bell_2: [["", "", ""], ["", "", ""]],
+        bell_3: [["", "", ""], ["", "", ""]],
+        bell_4: [["", "", ""], ["", "", ""]],
+        bell_5: [["", "", ""], ["", "", ""]],
+        bell_6: [["", "", ""], ["", "", ""]],
+        bell_7: [["", "", ""], ["", "", ""]],
       },
       {
-        bell_1: ["", "", ""],
-        bell_2: ["", "", ""],
-        bell_3: ["", "", ""],
-        bell_4: ["", "", ""],
-        bell_5: ["", "", ""],
-        bell_6: ["", "", ""],
-        bell_7: ["", "", ""]
+        bell_1: [["", "", ""], ["", "", ""]],
+        bell_2: [["", "", ""], ["", "", ""]],
+        bell_3: [["", "", ""], ["", "", ""]],
+        bell_4: [["", "", ""], ["", "", ""]],
+        bell_5: [["", "", ""], ["", "", ""]],
+        bell_6: [["", "", ""], ["", "", ""]],
+        bell_7: [["", "", ""], ["", "", ""]],
       }],
       spinner: false,
       date: Date.parse("05/12/2021"),
-      today: null,
+      today: 0,
     }
     this.Home = this.Home.bind(this);
     this.Menu = this.Menu.bind(this);
-    this.Navigator = this.Navigator.bind(this);
+    // this.Navigator = this.Navigator.bind(this);
     this.Raspisanie = this.Raspisanie.bind(this);
     
   }
@@ -168,8 +167,11 @@ export class App extends React.Component {
               this.setState({engGroup: user["eng_group"]})
               this.convertIdInGroupName()
               getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
-                this.showWeekSchedule(response)
+                this.showWeekSchedule(response, 0)
             });
+            getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 604800000))).then((response)=>{
+              this.showWeekSchedule(response, 1)
+          });
               // this.setState({page: 6});
               this.setState({description: "Здесь можно изменить данные"});
             } 
@@ -289,54 +291,55 @@ export class App extends React.Component {
     } return this.formatearFecha(new Date(this.firstDay))
   }
 
-  showWeekSchedule(schedule) {
+  showWeekSchedule(schedule, i) {
+    this.state.spinner=false;
     this.schedule = JSON.parse(schedule);
     if ((this.state.subGroup==="")||(this.state.subGroup===undefined)){
       console.log("sub",this.state.subGroup);
     for (let day_num = 1; day_num < 7; day_num++) {
-          this.state.day[day_num-1]["date"]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+          this.state.day[day_num-1]["date"][0]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
           for (let bell in this.schedule["schedule"]) { //проверка 
               if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
-              this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
-              this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-              this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-              this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
+              this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+              this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+              this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+              this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
             
             } else {
-              this.state.days[day_num-1][bell][0]="";
-              this.state.days[day_num-1][bell][1]="";
-              this.state.days[day_num-1][bell][2]="";
-              this.state.days[day_num-1][bell][3]="";
+              this.state.days[day_num-1][bell][i][0]="";
+              this.state.days[day_num-1][bell][i][1]="";
+              this.state.days[day_num-1][bell][i][2]="";
+              this.state.days[day_num-1][bell][i][3]="";
               }
             }
           } 
         this.state.spinner=true;
     } else {for (let day_num = 1; day_num < 7; day_num++) {
-      this.state.day[day_num-1]["date"]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+      this.state.day[day_num-1]["date"][0]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
         if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) )
         {
            
-          this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
-          this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-          this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-          this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
+          this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+          this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+          this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
         } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup) ){
-          this.state.days[day_num-1][bell][0]="";
-          this.state.days[day_num-1][bell][1]="";
-          this.state.days[day_num-1][bell][2]="";
-          this.state.days[day_num-1][bell][3]="";
+          this.state.days[day_num-1][bell][i][0]="";
+          this.state.days[day_num-1][bell][i][1]="";
+          this.state.days[day_num-1][bell][i][2]="";
+          this.state.days[day_num-1][bell][i][3]="";
           }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
-          this.state.days[day_num-1][bell][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
-          this.state.days[day_num-1][bell][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-          this.state.days[day_num-1][bell][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-          this.state.days[day_num-1][bell][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
+          this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+          this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+          this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
         
         }  else {
-            this.state.days[day_num-1][bell][0]="";
-          this.state.days[day_num-1][bell][1]="";
-          this.state.days[day_num-1][bell][2]="";
-          this.state.days[day_num-1][bell][3]="";
+            this.state.days[day_num-1][bell][i][0]="";
+          this.state.days[day_num-1][bell][i][1]="";
+          this.state.days[day_num-1][bell][i][2]="";
+          this.state.days[day_num-1][bell][i][3]="";
           }
         }
       } 
@@ -344,70 +347,6 @@ export class App extends React.Component {
           this.state.spinner=true;
       }
     
-  }
-  
-  
-
-  Navigator(){
-    return (
-      <div  >
-        <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Навигатор`}
-            style={{backgroundColor: "black"}}
-        > 
-        <Button size="s" pin="circle-circle" onClick={()=>this.setState({ state: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        <Button size="s" pin="circle-circle" style={{margin: "1em"}} onClick={()=>this.setState({ state: 1 })}><IconMoreVertical size="s" color="inherit"/></Button>
-        </Header>
-        <Row><Col sizeXL={10} offset={1}>
-              <div >
-            <Tabs
-            size='s'
-            view= 'secondary'
-            
-        >
-                <TabItem
-                isActive = {!this.state.flag}
-                onClick={()=>this.setState({ flag: true})}
-                >
-                    Корпуса
-                </TabItem>
-                <TabItem
-                isActive = {this.state.flag}
-                onClick={()=>this.setState({ flag: false})}
-                >
-                    Столовые 
-                </TabItem>
-        </Tabs> </div>
-              </Col></Row>
-        <Row>
-          <Col type="calc" size={8}>
-          <img src={karta} class="img" />
-          </Col>
-          <Col size={4}>
-          <div class="chatbox">
-          <h5 style={{margin: "1em", color: "#5487a4"}}>Корпус «Б» (главный)</h5>
-          <h5 style={{margin: "1em", color: "#5487a4"}}>Ленинский проспект, дом 4</h5>
-          <h5 style={{margin: "1em", color: "#72aa9f"}}>Корпус «К» </h5>
-          <h5 style={{margin: "1em", color: "#72aa9f"}}>Крымский вал, дом 3</h5>
-          <h5 style={{margin: "1em", color: "#906aa3"}}>Корпус «Г» (горный)</h5>
-          <h5 style={{margin: "1em", color: "#906aa3"}}>Ленинский проспект, дом 6, строение 1</h5>         
-          <h5 style={{margin: "1em", color: "#41588f"}}>Корпус «А» </h5>
-          <h5 style={{margin: "1em", color: "#41588f"}}>Ленинский проспект, дом 6, строение 2</h5>
-        </div>
-          
-          </Col>
-        </Row>
-       <Row>
-         <div style={{
-        width:  '200px',
-        height: '200px',
-        }}></div>
-       </Row>
-        </Container>
-      </div>
-    )
   }
 
   Menu(){
@@ -476,11 +415,71 @@ export class App extends React.Component {
     )
   }
 
-  Raspisanie(timeParam){
+  Sunday(){
     this.state.i=0;
-    console.log(timeParam)
+    return(
+      <div  >
+          <Container style = {{padding: 0}}>
+          <HeaderRoot
+              style={{backgroundColor: "black"}}
+          >  <HeaderLogo src={logo} alt="МИСиС" /> 
+          <HeaderTitle>Мой МИСиС</HeaderTitle>
+          <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
+          
+          </HeaderContent>
+          </HeaderRoot>
+          <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
+  
+          
+          <div >
+            <Tabs view="black" size="m" style={{margin: "0.75em"}}>
+              <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 2 })}>Верхняя неделя
+              </TabItem>
+              <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 2 })}>Нижняя неделя
+              </TabItem>
+              {/* <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
+              <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem> */}
+            </Tabs>
+          
+          </div>
+          <CarouselGridWrapper >
+                      <Carousel
+                          as={Row}
+                          axis="x"
+                          index={this.state.i}
+                          scrollSnapType="mandatory"
+                          animatedScrollByIndex="true"
+                          detectActive= "true"
+                          detectThreshold={0.5}
+                          
+                          onIndexChange={() => this.Index()}
+                          paddingStart="5%"
+                          paddingEnd="50%"
+                      >
+                          {this.state.day.map(({ title, date }, i) => (
+                            
+                              <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date}`} onClick={()=>{this.setState({page: i+1}) }}/></CarouselCol>
+                          ))}
+                      </Carousel>
+                  </CarouselGridWrapper>
+            
+            <div style={{
+          width:  '200px',
+          height: '200px',
+          }}></div>
+            </Container>
+            </div>
+    );
+    
+  }
+
+  Raspisanie(timeParam, weekParam){
+    this.state.i=0;
     let day_num = timeParam-1;
     let index=timeParam;
+    if (weekParam===1){
+      this.state.j = 8;
+    } else this.state.j=0;
   return(
     <div  >
         <Container style = {{padding: 0}}>
@@ -492,14 +491,14 @@ export class App extends React.Component {
         
         </HeaderContent>
         </HeaderRoot>
-        <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
+        <h3 style={{margin: "1em"}}>Расписание {this.state.group}</h3>
 
         
         <div >
           <Tabs view="black" size="m" style={{margin: "0.75em"}}>
-            <TabItem isActive={true} onClick={()=>this.setState({ page: 2 })}>Верхняя неделя
+            <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Верхняя неделя
             </TabItem>
-            <TabItem isActive={false} onClick={()=>this.setState({ page: 2 })}>Нижняя неделя
+            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 7, flag: false })}>Нижняя неделя
             </TabItem>
             {/* <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
             <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem> */}
@@ -517,12 +516,12 @@ export class App extends React.Component {
                         detectThreshold={0.5}
                         
                         onIndexChange={() => this.Index()}
-                        paddingStart="5%"
+                        paddingStart="1%"
                         paddingEnd="50%"
                     >
                         {this.state.day.map(({ title, date }, i) => (
                           
-                            <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1}); console.log(i+1, index)}}/></CarouselCol>
+                            <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.j}) }}/></CarouselCol>
                         ))}
                     </Carousel>
                 </CarouselGridWrapper>
@@ -534,55 +533,55 @@ export class App extends React.Component {
               <TextBox>
                   {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[day_num]["title"]} {this.state.day[day_num]["date"]}</TextBoxBigTitle> */}
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                    {this.state.days[day_num]["bell_1"][3]}
+                    {this.state.days[day_num]["bell_1"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_1"][0]}
+                  {this.state.days[day_num]["bell_1"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_1"][1]} {this.state.days[day_num]["bell_1"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_1"][weekParam][1]} {this.state.days[day_num]["bell_1"][weekParam][2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  {this.state.days[day_num]["bell_2"][3]}
+                  {this.state.days[day_num]["bell_2"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_2"][0]}
+                  {this.state.days[day_num]["bell_2"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_2"][1]} {this.state.days[day_num]["bell_2"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_2"][weekParam][1]} {this.state.days[day_num]["bell_2"][weekParam][2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  {this.state.days[day_num]["bell_3"][3]}
+                  {this.state.days[day_num]["bell_3"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_3"][0]}
+                  {this.state.days[day_num]["bell_3"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_3"][1]} {this.state.days[day_num]["bell_3"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_3"][weekParam][1]} {this.state.days[day_num]["bell_3"][weekParam][2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  {this.state.days[day_num]["bell_4"][3]}
+                  {this.state.days[day_num]["bell_4"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_4"][0]}
+                  {this.state.days[day_num]["bell_4"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_4"][1]} {this.state.days[day_num]["bell_4"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_4"][weekParam][1]} {this.state.days[day_num]["bell_4"][weekParam][2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  {this.state.days[day_num]["bell_5"][3]}
+                  {this.state.days[day_num]["bell_5"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_5"][0]}
+                  {this.state.days[day_num]["bell_5"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_5"][1]} {this.state.days[day_num]["bell_5"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_5"][weekParam][1]} {this.state.days[day_num]["bell_5"][weekParam][2]}</CardParagraph1>
                  
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  {this.state.days[day_num]["bell_6"][3]}
+                  {this.state.days[day_num]["bell_6"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_6"][0]}
+                  {this.state.days[day_num]["bell_6"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_6"][1]} {this.state.days[day_num]["bell_6"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_6"][weekParam][1]} {this.state.days[day_num]["bell_6"][weekParam][2]}</CardParagraph1>
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-                  {this.state.days[day_num]["bell_7"][3]}
+                  {this.state.days[day_num]["bell_7"][weekParam][3]}
                   </TextBoxSubTitle>
                   <CardParagraph2 >
-                  {this.state.days[day_num]["bell_7"][0]}
+                  {this.state.days[day_num]["bell_7"][weekParam][0]}
                   </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_7"][1]} {this.state.days[day_num]["bell_7"][2]}</CardParagraph1>
+                  <CardParagraph1> {this.state.days[day_num]["bell_7"][weekParam][1]} {this.state.days[day_num]["bell_7"][weekParam][2]}</CardParagraph1>
                   </TextBox>
                 <br />
                 
@@ -606,145 +605,6 @@ export class App extends React.Component {
     this.state.i--;
   }
 
-  // Raspisanie(timeParam){
-  //   this.state.i=0;
-  //   return (
-  //     <div  >
-  //       <Container style = {{padding: 0}}>
-  //       <HeaderRoot
-  //           style={{backgroundColor: "black"}}
-  //       >  <HeaderLogo src={logo} alt="МИСиС" style={{height: "15px", width: "15px", margin:"1em"}}/> 
-  //       <HeaderTitle>Мой МИСиС</HeaderTitle>
-  //       <HeaderContent><Button size="s" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
-        
-  //       </HeaderContent>
-  //       </HeaderRoot>
-  //       <h4 style={{margin: "1em"}}>Расписание {this.state.group} </h4>
-        
-
-  //       <div >
-  //         <Tabs view="black" size="m" style={{margin: "0.75em"}}>
-  //           <TabItem isActive={true} onClick={()=>this.setState({ page: 2 })}>Верхняя неделя
-  //           </TabItem>
-  //           <TabItem isActive={false} onClick={()=>this.setState({ page: 2 })}>Нижняя неделя
-  //           </TabItem>
-  //           {/* <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
-  //           <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem> */}
-  //         </Tabs>
-        
-  //       </div>
-  //       <CarouselGridWrapper>
-  //                   <Carousel
-  //                       as={Row}
-  //                       axis="x"
-  //                       index={this.state.i}
-  //                       scrollSnapType="mandatory"
-  //                       detectActive
-  //                       detectThreshold={0.5}
-                        
-  //                       onIndexChange={() => this.Index()}
-  //                       paddingStart="5%"
-  //                       paddingEnd="50%"
-  //                   >
-  //                       {this.state.day.map(({ title }, i) => (
-  //                           <CarouselCol key={`item:${i}`}><Button size="s" text={title}/></CarouselCol>
-  //                       ))}
-  //                   </Carousel>
-  //               </CarouselGridWrapper>
-  //       <div style={{ flexDirection: "column" }}>
-  //       <CarouselGridWrapper>
-  //                   <Carousel
-  //                       as={Row}
-  //                       axis="x"
-  //                       index={this.state.i}
-  //                       scrollSnapType="mandatory"
-  //                       detectActive
-  //                       detectThreshold={0.5}
-                        
-  //                       onIndexChange={() => {this.Index(); console.log("this.state.i", this.state.i)}}
-  //                       paddingStart="5%"
-  //                       paddingEnd="50%"
-  //                   >
-  //                       {this.state.days.map(({ bell_1, bell_2, bell_3, bell_4, bell_5, bell_6, bell_7 }, i) => (
-  //                           <CarouselCol key={`item:${i}`}>
-  //                              <Card style={{ width: "40vh", margin: "0.5em", paddingRight: "1em" }}>
-  //           <CardBody>
-  //             <CardContent>
-  //               <TextBox>
-  //                 <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[i]["title"]} {this.state.day[i]["date"]}</TextBoxBigTitle>
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                   {bell_1[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_1[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_1[1]} {bell_1[2]}</CardParagraph1>
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                 {bell_2[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_2[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_2[1]} {bell_2[2]}</CardParagraph1>
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                 {bell_3[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_3[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_3[1]} {bell_3[2]}</CardParagraph1>
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                 {bell_4[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_4[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_4[1]} {bell_4[2]}</CardParagraph1>
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                 {bell_5[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_5[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_5[1]} {bell_5[2]}</CardParagraph1>
-                 
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                 {bell_6[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_6[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_6[1]} {bell_6[2]}</CardParagraph1>
-  //                 <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
-  //                 {bell_7[3]}
-  //                 </TextBoxSubTitle>
-  //                 <CardParagraph2 >
-  //                 {bell_7[0]}
-  //                 </CardParagraph2>
-  //                 <CardParagraph1> {bell_7[1]} {bell_7[2]}</CardParagraph1>
-  //                 </TextBox>
-                
-  //               <br />
-                
-  //             </CardContent>
-  //           </CardBody>
-  //         </Card>
-
-  //                           </CarouselCol>
-  //                       ))}
-  //                   </Carousel>
-  //               </CarouselGridWrapper>
-          
-  //         <div style={{
-  //       width:  '150px',
-  //       height: '150px',
-  //       }}></div>
-  //       </div>
-
-  //       </Container>
-  //     </div>
-  //   )
-  // }
   
   Home(){
     let disabled=true;
@@ -830,8 +690,11 @@ export class App extends React.Component {
     createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
       getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date +10800000))).then((response)=>{
-      this.showWeekSchedule(response);
+      this.showWeekSchedule(response, 0);
   });
+  getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date +604800000))).then((response)=>{
+    this.showWeekSchedule(response, 1);
+});
     } else this.setState({description: "Некорректно"});
     
   }
@@ -840,7 +703,9 @@ export class App extends React.Component {
     
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
-    this.setState({page: 1});
+        if(this.state.today===0) {this.setState({page: 8})}
+     else if (this.state.flag===true) this.setState({page: this.state.today});
+     else this.setState({page: 9});
     clearInterval(myinterval)}
     console.log("clear");
     }, 100);
@@ -860,19 +725,33 @@ export class App extends React.Component {
       case 0:
         return this.Home();
       case 1:
-        return this.Raspisanie(1);
+        return this.Raspisanie(1, 0);
       case 2:
-        return this.Raspisanie(2);
+        return this.Raspisanie(2, 0);
       case 3:
-        return this.Raspisanie(3);
+        return this.Raspisanie(3, 0);
       case 4:
-        return this.Raspisanie(4);
+        return this.Raspisanie(4, 0);
       case 5:
-        return this.Raspisanie(5);
+        return this.Raspisanie(5, 0);
       case 6:
-        return this.Raspisanie(6);
+        return this.Raspisanie(6, 0);
       case 7:
         return this.Spinner();
+      case 8:
+        return this.Sunday();
+      case 9:
+        return this.Raspisanie(1, 1);
+      case 10:
+          return this.Raspisanie(2, 1);
+      case 11:
+          return this.Raspisanie(3, 1);
+      case 12:
+          return this.Raspisanie(4, 1);
+      case 13:
+          return this.Raspisanie(5, 1);
+      case 14:
+          return this.Raspisanie(6, 1);
       default:
         break;
       }
