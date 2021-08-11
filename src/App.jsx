@@ -84,58 +84,58 @@ export class App extends React.Component {
       j: 0,
       day: [{ title: 'Пн', date: ["",""], count: [0, 0] }, { title: 'Вт', date: ["",""], count: [0, 0] }, { title: 'Ср', date: ["",""], count: [0, 0] }, { title: 'Чт', date: ["",""], count: [0, 0] }, { title: 'Пт', date: ["",""], count: [0, 0] }, { title: 'Сб', date: ["",""], count: [0, 0] }],
       days: [{
-        bell_1: [["", "", ""], ["", "", ""]],
-        bell_2: [["", "", ""], ["", "", ""]],
-        bell_3: [["", "", ""], ["", "", ""]],
-        bell_4: [["", "", ""], ["", "", ""]],
-        bell_5: [["", "", ""], ["", "", ""]],
-        bell_6: [["", "", ""], ["", "", ""]],
-        bell_7: [["", "", ""], ["", "", ""]],
+        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
        },
       {
-        bell_1: [["", "", ""], ["", "", ""]],
-        bell_2: [["", "", ""], ["", "", ""]],
-        bell_3: [["", "", ""], ["", "", ""]],
-        bell_4: [["", "", ""], ["", "", ""]],
-        bell_5: [["", "", ""], ["", "", ""]],
-        bell_6: [["", "", ""], ["", "", ""]],
-        bell_7: [["", "", ""], ["", "", ""]],
+        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", ""], ["", "", ""]],
-        bell_2: [["", "", ""], ["", "", ""]],
-        bell_3: [["", "", ""], ["", "", ""]],
-        bell_4: [["", "", ""], ["", "", ""]],
-        bell_5: [["", "", ""], ["", "", ""]],
-        bell_6: [["", "", ""], ["", "", ""]],
-        bell_7: [["", "", ""], ["", "", ""]],
+        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", ""], ["", "", ""]],
-        bell_2: [["", "", ""], ["", "", ""]],
-        bell_3: [["", "", ""], ["", "", ""]],
-        bell_4: [["", "", ""], ["", "", ""]],
-        bell_5: [["", "", ""], ["", "", ""]],
-        bell_6: [["", "", ""], ["", "", ""]],
-        bell_7: [["", "", ""], ["", "", ""]],
+        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", ""], ["", "", ""]],
-        bell_2: [["", "", ""], ["", "", ""]],
-        bell_3: [["", "", ""], ["", "", ""]],
-        bell_4: [["", "", ""], ["", "", ""]],
-        bell_5: [["", "", ""], ["", "", ""]],
-        bell_6: [["", "", ""], ["", "", ""]],
-        bell_7: [["", "", ""], ["", "", ""]],
+        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", ""], ["", "", ""]],
-        bell_2: [["", "", ""], ["", "", ""]],
-        bell_3: [["", "", ""], ["", "", ""]],
-        bell_4: [["", "", ""], ["", "", ""]],
-        bell_5: [["", "", ""], ["", "", ""]],
-        bell_6: [["", "", ""], ["", "", ""]],
-        bell_7: [["", "", ""], ["", "", ""]],
+        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
       }],
       spinner: false,
       date: Date.parse("05/12/2021"),
@@ -175,10 +175,10 @@ export class App extends React.Component {
               // this.setState({page: 6});
               this.setState({description: "Здесь можно изменить данные", page: 7});
             } else {
-          this.setState({description: "Здесь можно изменить данные", page: 0});
-        } 
-          })
+          this.setState({page: 0});
         }
+          })
+        } 
       console.log(`assistant.on(data)`, event);
       const { action } = event;
       this.dispatchAssistantAction(action);
@@ -186,8 +186,75 @@ export class App extends React.Component {
     });
     this.assistant.on("start", (event) => {
       console.log(`assistant.on(start)`, event);
-    });
-    
+    }); 
+  }
+
+
+  // определяет когда начинаются пары сегодня или завтра
+  getStartFirstLesson(day) {
+    let dict = {"today": 1, "tomorrow": 0}
+    day = dict[day]
+    for (let bell in this.state.days[this.state.today - day]) {
+      if (this.state.days[this.state.today - day][bell][0][3] !== "") {
+        return this.state.days[this.state.today - day][bell][0][3].slice(0,6)
+      }
+    }
+  }
+
+  // определяет когда кончаются пары сегодня или завтра
+  getEndLastLesson(day) {
+    let dict = {"today": 1, "tomorrow": 0}
+    day = dict[day]
+    for (let bell = 7; bell > 0; bell--) {
+      if (this.state.days[this.state.today - day][`bell_${bell}`][0][2] !== "") {
+        return this.state.days[this.state.today - day][`bell_${bell}`][0][3].slice(8)
+      }
+    }
+  }
+
+  // определяет начало или конец энной пары сегодня или завтра
+  getBordersRequestLesson(type, day, lessonNum) {
+    let dict = {"today": 1, "tomorrow": 0}
+    day = dict[day]
+    if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
+      if (type === "start") {
+        return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 6)
+      } else {
+        return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(8)
+      }
+    }
+  }
+
+  getStartEndLesson(type, day, lessonNum) {
+    if (type === "start") {
+      if (day === "today") {
+        if (lessonNum === "0") {
+          return [type, day, this.getStartFirstLesson(day)]
+        } else {
+          return this.getBordersRequestLesson(type, day, lessonNum)
+        }
+      } else {
+        if (lessonNum === "0") {
+          return this.getStartFirstLesson(day)
+        } else {
+          return this.getBordersRequestLesson(type, day, lessonNum)
+        }
+      }
+    } else if (type === "end") {
+      if (day === "today") {
+        if (lessonNum === "0") {
+          return this.getEndLastLesson(day)
+        } else {
+          return this.getBordersRequestLesson(type, day, lessonNum)
+        }
+      } else {
+        if (lessonNum === "0") {
+          return this.getEndLastLesson(day)
+        } else {
+          return this.getBordersRequestLesson(type, day, lessonNum)
+        }
+      }
+    }
   }
 
   dispatchAssistantAction (action) {
@@ -200,8 +267,25 @@ export class App extends React.Component {
         case 'for_tomorrow':
           return this.setState({page: this.state.today+1});
         
-          case 'for_week':
-            return this.setState({page: 1});
+        case 'for_week':
+          return this.setState({page: 1});
+
+        case 'when_lesson':
+          let answer = this.getStartEndLesson(action.note[0], action.note[1], action.note[2])  
+          console.log("answer", answer) 
+          ///
+          this.assistant.sendData({
+            action: {
+              action_id: "say",
+              parameters: {
+                type: answer[0],
+                day: answer[1],
+                time: answer[2]
+              },
+            },
+          })
+          if (answer[1]==='today') this.setState({page: this.state.today});
+          else this.setState({page: this.state.today+1});
 
         default:
           //throw new Error();
@@ -697,16 +781,12 @@ export class App extends React.Component {
   Spinner(){
     
     var myinterval =setInterval(() => {
-      // console.log(this.state.spinner);
-      // if ((this.state.groupId==="")||(this.state.groupId===undefined)) {this.setState({page: 0}); console.log(this.state.groupId);}
-      //  else 
-       if (this.state.spinner === true){
-       if(this.state.today===0) {this.setState({page: 8})}
+      if (this.state.spinner === true){
+        if(this.state.today===0) {this.setState({page: 8})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
-    clearInterval(myinterval)} 
-    // else {this.setState({page: 0}); }
-    
+    clearInterval(myinterval)}
+    console.log("clear");
     }, 100);
     
     return(
