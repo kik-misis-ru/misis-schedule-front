@@ -257,6 +257,25 @@ export class App extends React.Component {
     }
   }
 
+  // форматировние даты в вид "DD.MM.YY"
+  getDateWithDots(date) {
+    const month = date.getMonth() + 1; 
+    const day = date.getDate();
+    const year = String(date.getFullYear()).slice(2,4)
+    return `${(day < 10 ? '0' : '').concat(day)}.${(month < 10 ? '0' : '').concat(month)}.${year}`;
+  }
+
+  // подсчет количества пар в указанную дату
+  getAmountOfLessons(date) {
+    for (let day of this.state.day) {
+      for (let week = 0; week < 2; week++) {
+        if (this.getDateWithDots(date) === day.date[week]) {
+          return [day.title, day.count[week]]
+        }
+      }
+    }
+  }
+
   dispatchAssistantAction (action) {
     console.log('dispatchAssistantAction', action);
     if (action) {
@@ -297,6 +316,44 @@ export class App extends React.Component {
           })
           if (params.day === 'today') this.setState({page: this.state.today});
           else this.setState({page: this.state.today+1});
+          break
+
+        case 'how_many':
+          const threeMonthDiff = 7862400000
+          let response
+          let day
+          let lesson
+          if (action.note !== undefined) {
+            console.log(action.note)
+            response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
+            if (String(this.state.today + 1) === action.note.dayOfWeek) { day = "today"}
+            else if (String(this.state.today + 2) === action.note.dayOfWeek) {day = "tomorrow"}
+          } else {
+            response = this.getAmountOfLessons(new Date(Date.now() - threeMonthDiff))
+            day = "today"
+          }
+          const dayNameDict = {"Пн":"В понедельник", "Вт":"Во вторник", "Ср":"В среду", "Чт":"В четверг", "Пт":"В пятницу", "Сб":"В субботу"}
+          if (response[1] === 1) {
+            lesson = "пара"
+          } else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {
+            lesson = "пары"
+          } else {
+            lesson = "пар"
+          }
+          let howManyParams = {
+            lesson: lesson,
+            day: day,
+            dayName: dayNameDict[response[0]],
+            amount: response[1]  
+          }
+          console.log(howManyParams)
+          this.assistant.sendData({
+            action: {
+              action_id: "say1",
+              parameters: howManyParams,
+            },
+          })
+          break
 
         default:
           //throw new Error();
