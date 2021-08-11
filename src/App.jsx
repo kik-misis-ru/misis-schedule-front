@@ -229,9 +229,9 @@ export class App extends React.Component {
     if (type === "start") {
       if (day === "today") {
         if (lessonNum === "0") {
-          return [type, day, this.getStartFirstLesson(day)]
+          return this.getStartFirstLesson(day)
         } else {
-          return this.getBordersRequestLesson(type, day, lessonNum)
+          return  this.getBordersRequestLesson(type, day, lessonNum)
         }
       } else {
         if (lessonNum === "0") {
@@ -273,15 +273,26 @@ export class App extends React.Component {
         case 'when_lesson':
           let answer = this.getStartEndLesson(action.note[0], action.note[1], action.note[2])  
           console.log("answer", answer) 
-          ///
+          let toOrdinal = {
+            "1": "первая",
+            "2": "вторая",
+            "3": "третья",
+            "4": "четвертая",
+            "5": "пятая",
+            "6": "шестая",
+            "7": "седьмая"
+          }
+          let params = {
+            type: action.note[0],
+            day: action.note[1],
+            ordinal: toOrdinal[action.note[2]],
+            time: answer
+          }
+          console.log("params", params)
           this.assistant.sendData({
             action: {
               action_id: "say",
-              parameters: {
-                type: answer[0],
-                day: answer[1],
-                time: answer[2]
-              },
+              parameters: params,
             },
           })
 
