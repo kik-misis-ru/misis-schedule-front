@@ -333,6 +333,7 @@ export class App extends React.Component {
             day = "today"
           }
           const dayNameDict = {"Пн":"В понедельник", "Вт":"Во вторник", "Ср":"В среду", "Чт":"В четверг", "Пт":"В пятницу", "Сб":"В субботу"}
+          const numPron = {1:"одна", 2:"две", 3:"три", 4:"четыре", 5:"пять", 6:"шесть", 7:"семь"}
           if (response[1] === 1) {
             lesson = "пара"
           } else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {
@@ -344,7 +345,7 @@ export class App extends React.Component {
             lesson: lesson,
             day: day,
             dayName: dayNameDict[response[0]],
-            amount: response[1]  
+            amount: numPron[response[1]] 
           }
           console.log(howManyParams)
           this.assistant.sendData({
