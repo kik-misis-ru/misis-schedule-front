@@ -372,9 +372,11 @@ export class App extends React.Component {
   showWeekSchedule(schedule, i) { //заполнение данными расписания из бд
     this.state.spinner=false;
     this.schedule = JSON.parse(schedule);
-      for (let day_num = 1; day_num < 7; day_num++) {
-      
+    
+    
+    for (let day_num = 1; day_num < 7; day_num++) {
       if (this.schedule["schedule"]!==null)
+      
       {this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
         
@@ -539,7 +541,7 @@ export class App extends React.Component {
                 </CarouselGridWrapper>
 
         <div style={{ flexDirection: "column" }}>
-          <Card style={{background: "rgba(0, 0, 0, 0)", width: "auto", marginLeft: "2em", marginTop: "0.5em", paddingRight: "1em" }}>
+          <Card style={{background: "rgba(0, 0, 0, 0)", width: "auto", marginLeft: "1em", marginTop: "0.5em" }}>
             <CardBody>
               <CardContent compact >
               <Cell content={
