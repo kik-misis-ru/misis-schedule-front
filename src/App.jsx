@@ -25,7 +25,8 @@ import {
   CarouselGridWrapper,
   Carousel, CarouselCol,
   Note,
-  Badge
+  Badge,
+  TextBoxLabel
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -84,58 +85,58 @@ export class App extends React.Component {
       j: 0,
       day: [{ title: 'Пн', date: ["",""], count: [0, 0] }, { title: 'Вт', date: ["",""], count: [0, 0] }, { title: 'Ср', date: ["",""], count: [0, 0] }, { title: 'Чт', date: ["",""], count: [0, 0] }, { title: 'Пт', date: ["",""], count: [0, 0] }, { title: 'Сб', date: ["",""], count: [0, 0] }],
       days: [{
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
        },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
       }],
       spinner: false,
       date: Date.parse("05/12/2021"),
@@ -372,6 +373,7 @@ export class App extends React.Component {
     this.state.spinner=false;
     this.schedule = JSON.parse(schedule);
       for (let day_num = 1; day_num < 7; day_num++) {
+      
       if (this.schedule["schedule"]!==null)
       {this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
@@ -383,6 +385,8 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
           this.state.days[day_num-1][bell][i][4]="var(--plasma-colors-button-accent)          ";
+          this.state.days[day_num-1][bell][i][5]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
+          this.state.days[day_num-1][bell][i][6]=`${bell.slice(5, 6)}. `;
           this.state.day[day_num-1]["count"][i]++;
         } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.state.subGroup!=="") ){
           
@@ -391,6 +395,9 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][2]="";
           this.state.days[day_num-1][bell][i][3]="";
           this.state.days[day_num-1][bell][i][4]="rgba(0, 0, 0, 0)";
+          this.state.days[day_num-1][bell][i][5]="";
+          this.state.days[day_num-1][bell][i][6]="";
+          
           }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
           
             this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
@@ -398,6 +405,8 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
           this.state.days[day_num-1][bell][i][4]="var(--plasma-colors-button-accent)          ";
+          this.state.days[day_num-1][bell][i][5]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
+          this.state.days[day_num-1][bell][i][6]=`${bell.slice(5, 6)}. `;
           this.state.day[day_num-1]["count"][i]++;
         }  else {
             this.state.days[day_num-1][bell][i][0]="";
@@ -405,6 +414,8 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][2]="";
           this.state.days[day_num-1][bell][i][3]="";
           this.state.days[day_num-1][bell][i][4]="rgba(0, 0, 0, 0)";
+          this.state.days[day_num-1][bell][i][5]="";
+          this.state.days[day_num-1][bell][i][6]="";
           }
         }
        if (this.state.day[day_num-1]["count"][i]===0)
@@ -534,26 +545,28 @@ export class App extends React.Component {
               <Cell content={
               <TextBox>
                   {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[day_num]["title"]} {this.state.day[day_num]["date"]}</TextBoxBigTitle> */}
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                     {this.state.days[day_num]["bell_1"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_1"][weekParam][6]}
                   {this.state.days[day_num]["bell_1"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_1"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel> {this.state.days[day_num]["bell_1"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
                 }
                 contentRight={<Badge text={this.state.days[day_num]["bell_1"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_1"][weekParam][4]}`}}/>}
                 
                 />
                   <Cell content={
-              <TextBox> <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+              <TextBox> <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                   {this.state.days[day_num]["bell_2"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_2"][weekParam][6]}
                   {this.state.days[day_num]["bell_2"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_2"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel> {this.state.days[day_num]["bell_2"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
                 }
                 contentRight={<Badge text={this.state.days[day_num]["bell_2"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_2"][weekParam][4]}`}}/>}
@@ -561,39 +574,42 @@ export class App extends React.Component {
                 />
                   
                   <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                   {this.state.days[day_num]["bell_3"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_3"][weekParam][6]}
                   {this.state.days[day_num]["bell_3"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_3"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel> {this.state.days[day_num]["bell_3"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
                 }
                 contentRight={<Badge text={this.state.days[day_num]["bell_3"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_3"][weekParam][4]}`}}/>}
                 
                 />
                   <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                   {this.state.days[day_num]["bell_4"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_4"][weekParam][6]}
                   {this.state.days[day_num]["bell_4"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_4"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel>{this.state.days[day_num]["bell_4"][weekParam][5]} </TextBoxLabel>
                   </TextBox>
                 }
                 contentRight={<Badge text={this.state.days[day_num]["bell_4"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_4"][weekParam][4]}`}}/>}
                 
                 />
                   <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                   {this.state.days[day_num]["bell_5"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_5"][weekParam][6]}
                   {this.state.days[day_num]["bell_5"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_5"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel> {this.state.days[day_num]["bell_5"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
                 }
                 contentRight={<Badge text={this.state.days[day_num]["bell_5"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_5"][weekParam][4]}`}}/>}
@@ -601,13 +617,14 @@ export class App extends React.Component {
                 />
                   
                   <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                   {this.state.days[day_num]["bell_6"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_6"][weekParam][6]}
                   {this.state.days[day_num]["bell_6"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_6"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel> {this.state.days[day_num]["bell_6"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
                 }
                 contentRight={<Badge text={this.state.days[day_num]["bell_6"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_6"][weekParam][4]}`}}/>}
@@ -615,13 +632,14 @@ export class App extends React.Component {
                 />
                   <Cell content={
               <TextBox>
-                <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
                   {this.state.days[day_num]["bell_7"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >
+                  <TextBoxBigTitle >{this.state.days[day_num]["bell_7"][weekParam][6]}
                   {this.state.days[day_num]["bell_7"][weekParam][0]}
                   </TextBoxBigTitle>
                   <TextBoxTitle> {this.state.days[day_num]["bell_7"][weekParam][1]} </TextBoxTitle>
+                  <TextBoxLabel> {this.state.days[day_num]["bell_7"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
                 } 
                 contentRight={<Badge text={this.state.days[day_num]["bell_7"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_7"][weekParam][4]}`}}/>}
