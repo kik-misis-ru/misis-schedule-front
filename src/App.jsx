@@ -3,7 +3,7 @@ import logo0 from "../src/unnamed.gif";
 import logo from "../src/logo.png";
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent} from '@sberdevices/plasma-ui';
+import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
@@ -18,14 +18,14 @@ import {
   TextBoxBigTitle,
   TextBox,
   TextBoxSubTitle,
-  CardParagraph1,
-  CardParagraph2,
+  TextBoxTitle,
   HeaderLogo,
   HeaderRoot,
   HeaderTitle,
   CarouselGridWrapper,
   Carousel, CarouselCol,
-  Note
+  Note,
+  Badge
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -84,65 +84,64 @@ export class App extends React.Component {
       j: 0,
       day: [{ title: 'Пн', date: ["",""], count: [0, 0] }, { title: 'Вт', date: ["",""], count: [0, 0] }, { title: 'Ср', date: ["",""], count: [0, 0] }, { title: 'Чт', date: ["",""], count: [0, 0] }, { title: 'Пт', date: ["",""], count: [0, 0] }, { title: 'Сб', date: ["",""], count: [0, 0] }],
       days: [{
-        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
        },
       {
-        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
       },
       {
-        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
       },
       {
-        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
       },
       {
-        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
       },
       {
-        bell_1: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_2: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_3: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_4: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_5: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_6: [["", "", "", "", ""], ["", "", "", "", ""]],
-        bell_7: [["", "", "", "", ""], ["", "", "", "", ""]],
+        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
+        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)"], ["", "", "", "", "rgba(0, 0, 0, 0)"]],
       }],
       spinner: false,
       date: Date.parse("05/12/2021"),
       today: 0,
     }
     this.Home = this.Home.bind(this);
-    this.Menu = this.Menu.bind(this);
     // this.Navigator = this.Navigator.bind(this);
     this.Raspisanie = this.Raspisanie.bind(this);
     
@@ -369,130 +368,53 @@ export class App extends React.Component {
     } return this.formatearFecha(new Date(this.firstDay))
   }
 
-  showWeekSchedule(schedule, i) {
+  showWeekSchedule(schedule, i) { //заполнение данными расписания из бд
     this.state.spinner=false;
     this.schedule = JSON.parse(schedule);
-    if ((this.state.subGroup==="")||(this.state.subGroup===undefined)){
-      console.log("sub",this.state.subGroup);
-    for (let day_num = 1; day_num < 7; day_num++) {
-          this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
-          for (let bell in this.schedule["schedule"]) { //проверка 
-              if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
-              this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
-              this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-              this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-              this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
-              this.state.day[day_num-1]["count"][i]++;
-            } else {
-              this.state.days[day_num-1][bell][i][0]="";
-              this.state.days[day_num-1][bell][i][1]="";
-              this.state.days[day_num-1][bell][i][2]="";
-              this.state.days[day_num-1][bell][i][3]="";
-              }
-            }
-          } 
-        this.state.spinner=true;
-    } else {for (let day_num = 1; day_num < 7; day_num++) {
-      this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+      for (let day_num = 1; day_num < 7; day_num++) {
+      if (this.schedule["schedule"]!==null)
+      {this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
-        if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) )
+        
+        if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) &&(this.state.subGroup!==""))
         {
-           
           this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
           this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
+          this.state.days[day_num-1][bell][i][4]="var(--plasma-colors-button-accent)          ";
           this.state.day[day_num-1]["count"][i]++;
-        } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup) ){
+        } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.state.subGroup!=="") ){
+          
           this.state.days[day_num-1][bell][i][0]="";
           this.state.days[day_num-1][bell][i][1]="";
           this.state.days[day_num-1][bell][i][2]="";
           this.state.days[day_num-1][bell][i][3]="";
+          this.state.days[day_num-1][bell][i][4]="rgba(0, 0, 0, 0)";
           }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
-          this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          
+            this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
           this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-          this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`
+          this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
+          this.state.days[day_num-1][bell][i][4]="var(--plasma-colors-button-accent)          ";
           this.state.day[day_num-1]["count"][i]++;
         }  else {
             this.state.days[day_num-1][bell][i][0]="";
           this.state.days[day_num-1][bell][i][1]="";
           this.state.days[day_num-1][bell][i][2]="";
           this.state.days[day_num-1][bell][i][3]="";
+          this.state.days[day_num-1][bell][i][4]="rgba(0, 0, 0, 0)";
           }
         }
-      } 
-      console.log(this.state.day[0]["count"][0]);
+       if (this.state.day[day_num-1]["count"][i]===0)
+        this.state.days[day_num-1]["bell_1"][i][0]="Пар нет 🎉";
           this.state.spinner=true;
+      } else {this.state.spinner=true;
+        this.state.days[day_num-1]["bell_1"][i][0]="Пар нет 🎉";}
       }
-    
   }
 
-  Menu(){
-    return(
-      <div  >
-        <Container style = {{padding: 0}}>
-        <Header
-            logo={logo}
-            title={`Мой МИСиС`}
-            style={{backgroundColor: "black"}}
-        > <Button class="button" contentLeft={<IconPersone size="s" color="inherit"/>} view='secondary' size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 0 })} style={{margin: "1em"}}/>
-        </Header>
-        <Row >
-
-          <Row style={{margin: "2em"}}>
-            <h2>{this.state.day[0][0]}, {this.state.day[0][1]}</h2>
-          </Row>
-        
-        <Button
-        class = "button"
-        style={{margin: '1em', color: "black"}}
-        text='Расписание'
-        size="l"
-        view="secondary"
-        pin="square-square"
-        onClick={()=>this.setState({ page: 2 })}
-        />
-        </Row>
-        <Row >
-        
-        <Button
-        class = "button"
-        style={{margin: '1em', color: "black"}}
-        text='Навигатор'
-        size="l"
-        view="secondary"
-        pin="square-square"
-        onClick={()=>this.setState({ page: 3 })}
-        />
-        </Row>
-        
-        <Row>
-        <Button
-        class = "button"
-        style={{margin: '1em', color: "black"}}
-        text=' Контакты '
-        size='l'
-        view="secondary"
-        pin="square-square"
-        />
-        
-        </Row>
-        <Row >
-        
-        <Button
-        class = "button"
-        style={{margin: '1em', color: "black"}}
-        text="  Помощь  "
-        size='l'
-        view="secondary"
-        pin="square-square"
-        />
-        </Row>
-        </Container>
-        </div>
-    )
-  }
 
   Sunday(){
     this.state.i=0;
@@ -606,64 +528,104 @@ export class App extends React.Component {
                 </CarouselGridWrapper>
 
         <div style={{ flexDirection: "column" }}>
-          <Card style={{background: "rgba(0, 0, 0, 0)", width: "40vh", marginLeft: "2em", marginTop: "0.5em", paddingRight: "1em" }}>
+          <Card style={{background: "rgba(0, 0, 0, 0)", width: "auto", marginLeft: "2em", marginTop: "0.5em", paddingRight: "1em" }}>
             <CardBody>
-              <CardContent>
+              <CardContent compact >
+              <Cell content={
               <TextBox>
                   {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[day_num]["title"]} {this.state.day[day_num]["date"]}</TextBoxBigTitle> */}
                   <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                     {this.state.days[day_num]["bell_1"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_1"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_1"][weekParam][1]} {this.state.days[day_num]["bell_1"][weekParam][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_1"][weekParam][1]} </TextBoxTitle>
+                  </TextBox>
+                }
+                contentRight={<Badge text={this.state.days[day_num]["bell_1"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_1"][weekParam][4]}`}}/>}
+                
+                />
+                  <Cell content={
+              <TextBox> <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   {this.state.days[day_num]["bell_2"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_2"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_2"][weekParam][1]} {this.state.days[day_num]["bell_2"][weekParam][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_2"][weekParam][1]} </TextBoxTitle>
+                  </TextBox>
+                }
+                contentRight={<Badge text={this.state.days[day_num]["bell_2"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_2"][weekParam][4]}`}}/>}
+                
+                />
+                  
+                  <Cell content={
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   {this.state.days[day_num]["bell_3"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_3"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_3"][weekParam][1]} {this.state.days[day_num]["bell_3"][weekParam][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_3"][weekParam][1]} </TextBoxTitle>
+                  </TextBox>
+                }
+                contentRight={<Badge text={this.state.days[day_num]["bell_3"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_3"][weekParam][4]}`}}/>}
+                
+                />
+                  <Cell content={
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   {this.state.days[day_num]["bell_4"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_4"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_4"][weekParam][1]} {this.state.days[day_num]["bell_4"][weekParam][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_4"][weekParam][1]} </TextBoxTitle>
+                  </TextBox>
+                }
+                contentRight={<Badge text={this.state.days[day_num]["bell_4"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_4"][weekParam][4]}`}}/>}
+                
+                />
+                  <Cell content={
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   {this.state.days[day_num]["bell_5"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_5"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_5"][weekParam][1]} {this.state.days[day_num]["bell_5"][weekParam][2]}</CardParagraph1>
-                 
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_5"][weekParam][1]} </TextBoxTitle>
+                  </TextBox>
+                }
+                contentRight={<Badge text={this.state.days[day_num]["bell_5"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_5"][weekParam][4]}`}}/>}
+                
+                />
+                  
+                  <Cell content={
+              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   {this.state.days[day_num]["bell_6"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_6"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_6"][weekParam][1]} {this.state.days[day_num]["bell_6"][weekParam][2]}</CardParagraph1>
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_6"][weekParam][1]} </TextBoxTitle>
+                  </TextBox>
+                }
+                contentRight={<Badge text={this.state.days[day_num]["bell_6"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_6"][weekParam][4]}`}}/>}
+                
+                />
+                  <Cell content={
+              <TextBox>
+                <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}>
                   {this.state.days[day_num]["bell_7"][weekParam][3]}
                   </TextBoxSubTitle>
-                  <CardParagraph2 >
+                  <TextBoxBigTitle >
                   {this.state.days[day_num]["bell_7"][weekParam][0]}
-                  </CardParagraph2>
-                  <CardParagraph1> {this.state.days[day_num]["bell_7"][weekParam][1]} {this.state.days[day_num]["bell_7"][weekParam][2]}</CardParagraph1>
+                  </TextBoxBigTitle>
+                  <TextBoxTitle> {this.state.days[day_num]["bell_7"][weekParam][1]} </TextBoxTitle>
                   </TextBox>
-                <br />
-                
+                } 
+                contentRight={<Badge text={this.state.days[day_num]["bell_7"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_7"][weekParam][4]}`}}/>}
+                />
               </CardContent>
             </CardBody>
           </Card>
@@ -786,7 +748,6 @@ export class App extends React.Component {
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
     clearInterval(myinterval)}
-    console.log("clear");
     }, 100);
     
     return(
