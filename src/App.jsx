@@ -44,6 +44,7 @@ import {
 } from "./APIHelper.js";
 import { m } from "@sberdevices/plasma-core/mixins";
 import { isConstructorDeclaration } from "typescript";
+//import { Console } from "console";
 
 
 const initializeAssistant = (getState) => {
@@ -266,6 +267,7 @@ export class App extends React.Component {
   }
 
   // подсчет количества пар в указанную дату
+  // возвращает массив с днем недели и количеством пар в этот день
   getAmountOfLessons(date) {
     for (let day of this.state.day) {
       for (let week = 0; week < 2; week++) {
@@ -276,8 +278,38 @@ export class App extends React.Component {
     }
   }
 
+  // получить текущее время в формате "HH:MM"
+  getTime(date) {
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    return `${hours}:${(minutes < 10 ? '0' : '').concat(minutes)}`
+  }
+
+  getCurrentLesson(date) {
+    for (let bell in this.state.days[this.state.today - 1]) {
+      if (this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
+      this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8) &&
+      this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
+        console.log(bell)
+      }
+    }
+  }
+
+  // возвращает количество оставшихся на сегодня пар
+  getAmountOfRemainingLessons(date) {
+    let countRemainingLessons = 0
+    for (let bell in this.state.days[this.state.today - 1]) {
+      if (this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
+      this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
+        countRemainingLessons += 1
+      }
+    }
+    return countRemainingLessons
+  }
+
   dispatchAssistantAction (action) {
     console.log('dispatchAssistantAction', action);
+    const numPron = {1:"одна", 2:"две", 3:"три", 4:"четыре", 5:"пять", 6:"шесть", 7:"семь"}
     if (action) {
       switch (action.type) {
         case 'for_today':
@@ -333,25 +365,34 @@ export class App extends React.Component {
             day = "today"
           }
           const dayNameDict = {"Пн":"В понедельник", "Вт":"Во вторник", "Ср":"В среду", "Чт":"В четверг", "Пт":"В пятницу", "Сб":"В субботу"}
-          const numPron = {1:"одна", 2:"две", 3:"три", 4:"четыре", 5:"пять", 6:"шесть", 7:"семь"}
-          if (response[1] === 1) {
-            lesson = "пара"
-          } else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {
-            lesson = "пары"
-          } else {
-            lesson = "пар"
-          }
+          
+          if (response[1] === 1) {lesson = "пара"} else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {lesson = "пары"} else {lesson = "пар"}
           let howManyParams = {
             lesson: lesson,
             day: day,
             dayName: dayNameDict[response[0]],
             amount: numPron[response[1]] 
           }
-          console.log(howManyParams)
           this.assistant.sendData({
             action: {
               action_id: "say1",
               parameters: howManyParams,
+            },
+          })
+          break
+
+        case 'how_many_left':
+          //console.log('current', this.getCurrentLesson(new Date(Date.now() - 10800000)))
+          this.getCurrentLesson(new Date(Date.now() - 10800000))
+          let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date(Date.now()))
+          let howManyLeftParams = {
+            amount: amountOfRemainingLessons,
+            pron: numPron[amountOfRemainingLessons]
+          }
+          this.assistant.sendData({
+            action: {
+              action_id: "say2",
+              parameters: howManyLeftParams,
             },
           })
           break
@@ -471,7 +512,7 @@ export class App extends React.Component {
           
           }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
           
-            this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+          this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
           this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
