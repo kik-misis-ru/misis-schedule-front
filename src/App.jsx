@@ -209,6 +209,9 @@ export class App extends React.Component {
     this.assistant.on("start", (event) => {
       console.log(`assistant.on(start)`, event);
     }); 
+    this.assistant.on("ANSWER_TO_USER", (event) => {
+      console.log(`assistant.on(raw)`, event);
+    }); 
   }
 
 
@@ -303,15 +306,16 @@ export class App extends React.Component {
   getTime(date) {
     const hours = date.getHours()
     const minutes = date.getMinutes()
-    return `${hours}:${(minutes < 10 ? '0' : '').concat(minutes)}`
+    return `${(hours < 10 ? '0' : '').concat(hours)}:${(minutes < 10 ? '0' : '').concat(minutes)}`
   }
 
+  // получить текущую пару
   getCurrentLesson(date) {
     for (let bell in this.state.days[this.state.today - 1]) {
       if (this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
       this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8) &&
       this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
-        console.log(bell)
+        return this.state.days[this.state.today - 1][bell][0][6][0]
       }
     }
   }
@@ -326,6 +330,76 @@ export class App extends React.Component {
       }
     }
     return countRemainingLessons
+  }
+
+  // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
+  whereWillLesson(date, will) {
+    let nextLessonRoom
+    console.log('текущее время', this.getTime(date))
+    console.log("will", will)
+    // ключ - номер пары, значение - перерыв до этой пары
+    let breaks = {'1':'09:00', '2':'10:35-10:50', '3':'12:25-12:40', '4':'14:15-14:30', '5':'16:05-16:20', '6':'17:55-18:10', '7':'19:45'}
+    let numberNearestLesson
+    // определяем номер ближайшей пары
+    for (let i in breaks) {
+      if (this.getTime(date) < breaks['1']) {numberNearestLesson = '1'; break}
+      else if (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) {numberNearestLesson = i; break}
+      else if (this.getTime(date) > breaks['7']) {numberNearestLesson = null}
+      else {console.log(this.getTime(date))}
+    }
+    console.log("numberNearestLesson", numberNearestLesson)
+    if (numberNearestLesson !== undefined) {
+      console.log(this.state.days)
+      for (let bell in this.state.days[this.state.today - 1]) {
+        // если пара с таким номером есть в расписании
+        if (this.state.days[this.state.today - 1][bell][0][6][0] === numberNearestLesson) {
+          // выводим эту пару
+          console.log(this.state.days[this.state.today - 1][bell][0])
+          return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"inSchedule"}
+        } else {
+          // сообщаем, что такой пары нет
+          console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
+          for (let bell in this.state.days[this.state.today - 1]) {
+            if (this.state.days[this.state.today - 1][bell][0][6][0] !== numberNearestLesson) {
+              console.log(this.state.days[this.state.today - 1][bell][0][0])
+              return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"notInSchedule"}
+            }
+          }
+        }
+      }
+    } 
+    if (numberNearestLesson === undefined && will === "now") {
+      // вернуть номер текущей пары
+      let whereCurrentLesson
+      console.log('сейчас идет пара номер', this.getCurrentLesson(date))
+      for (let bell in this.state.days[this.state.today - 1]) {
+        if (this.state.days[this.state.today - 1][bell][0][6][0] === this.getCurrentLesson(date)) {
+          console.log(this.state.days[this.state.today - 1][bell][0][0])
+          whereCurrentLesson = this.state.days[this.state.today - 1][bell][0][2]
+          //console.log('whereCurrentLesson', whereCurrentLesson)
+          // return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"current"}
+        }
+      }
+      if (whereCurrentLesson === "") {console.log("here yoo"); return {exist: "notInSchedule"}}
+      else {return {audience:whereCurrentLesson, type:"current"}}
+    }
+    if (numberNearestLesson === undefined && will === "will") {
+      console.log("here")
+      for (let bell in this.state.days[this.state.today - 1]) {
+        // не работает, если сейчас пары нет, а следующая есть
+        console.log('номер следующей пары',Number(this.getCurrentLesson(date)) + 1)
+        if (this.state.days[this.state.today - 1][bell][0][6][0] === String(Number(this.getCurrentLesson(date)) + 1)) {
+          console.log('следующей будет пара номер', String(Number(this.getCurrentLesson(date)) + 1))
+          console.log(this.state.days[this.state.today - 1][bell][0][0])
+          nextLessonRoom = this.state.days[this.state.today - 1][bell][0][2]
+        }
+      }
+      if (nextLessonRoom !== "") { return {audience:nextLessonRoom, type:"next"}}
+      else {
+        console.log('пар больше нет')
+        return {exist: "endLessons"}
+      }
+    }
   }
 
   dispatchAssistantAction (action) {
@@ -371,42 +445,40 @@ export class App extends React.Component {
           else this.setState({page: this.state.today+1});
           break
 
-        case 'how_many':
-          const threeMonthDiff = 7862400000
-          let response
-          let day
-          let lesson
-          let page = 8;
-          if (action.note !== undefined) {
-            console.log(action.note)
-            response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
-            if (String(this.state.today + 1) === action.note.dayOfWeek) { day = "today"; page=0}
-            else if (String(this.state.today + 2) === action.note.dayOfWeek) {day = "tomorrow"; page = 0}
-          } else {
-            response = this.getAmountOfLessons(new Date(Date.now() - threeMonthDiff))
-            day = "today"
-          }
-          const dayNameDict = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
-          
-          if (response[1] === 1) {lesson = "пара"} else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {lesson = "пары"} else {lesson = "пар"}
-          let howManyParams = {
-            lesson: lesson,
-            day: day,
-            dayName: dayNameDict[response[0]][0],
-            amount: numPron[response[1]] 
-          }
-          this.assistant.sendData({
-            action: {
-              action_id: "say1",
-              parameters: howManyParams,
-            },
-          })
-          this.setState({page: dayNameDict[response[0]][1]+page})
-          break
+          case 'how_many':
+            const threeMonthDiff = 7862400000
+            let response
+            let day
+            let lesson
+            let page = 8;
+            if (action.note !== undefined) {
+              console.log(action.note)
+              response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
+              if (String(this.state.today + 1) === action.note.dayOfWeek) { day = "today"; page=0}
+              else if (String(this.state.today + 2) === action.note.dayOfWeek) {day = "tomorrow"; page = 0}
+            } else {
+              response = this.getAmountOfLessons(new Date(Date.now() - threeMonthDiff))
+              day = "today"
+            }
+            const dayNameDict = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
+            
+            if (response[1] === 1) {lesson = "пара"} else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {lesson = "пары"} else {lesson = "пар"}
+            let howManyParams = {
+              lesson: lesson,
+              day: day,
+              dayName: dayNameDict[response[0]][0],
+              amount: numPron[response[1]] 
+            }
+            this.assistant.sendData({
+              action: {
+                action_id: "say1",
+                parameters: howManyParams,
+              },
+            })
+            this.setState({page: dayNameDict[response[0]][1]+page})
+            break
 
         case 'how_many_left':
-          //console.log('current', this.getCurrentLesson(new Date(Date.now() - 10800000)))
-          this.getCurrentLesson(new Date(Date.now() - 10800000))
           let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date(Date.now()))
           let howManyLeftParams = {
             amount: amountOfRemainingLessons,
@@ -418,7 +490,25 @@ export class App extends React.Component {
               parameters: howManyLeftParams,
             },
           })
-          this.setState({page: this.state.today})
+          this.setState({page: this.state.today});
+          break
+
+        case 'where':
+          // console.log("getCurrentLesson")
+          // console.log(this.getCurrentLesson(new Date(Date.now() + 36000000 + 7200000)))
+          console.log('ok')
+          if (action.note === undefined) {
+            action.note = {"when": "now"}
+          }
+          let whereLessonParams
+          whereLessonParams = this.whereWillLesson(new Date(Date.now() - 25800000), action.note.when)
+          this.assistant.sendData({
+            action: {
+              action_id: "say3",
+              parameters: whereLessonParams,
+            },
+          })
+          this.setState({page: this.state.today});
           break
 
         default:
