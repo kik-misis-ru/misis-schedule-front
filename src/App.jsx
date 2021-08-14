@@ -78,7 +78,7 @@ export class App extends React.Component {
       page: 7,
       logo: logo0, 
       flag: true,
-      checked: null,
+      checked: true,
       description: "Заполни данные, чтобы открывать расписание одной фразой",
       group: "",
       groupId: "",
@@ -230,6 +230,7 @@ export class App extends React.Component {
   getEndLastLesson(day) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
+    if ((this.state.today!==0)&&(this.state.today+1!==7 ))
     for (let bell = 7; bell > 0; bell--) {
       if (this.state.days[this.state.today - day][`bell_${bell}`][0][3] !== "") {
         return this.state.days[this.state.today - day][`bell_${bell}`][0][3].slice(8)
@@ -241,6 +242,7 @@ export class App extends React.Component {
   getBordersRequestLesson(type, day, lessonNum) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
+    if ((this.state.today!==0)&&(this.state.today+1!==7 ))
     if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
       if (type === "start") {
         return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 6)
@@ -311,6 +313,7 @@ export class App extends React.Component {
 
   // получить текущую пару
   getCurrentLesson(date) {
+    if ((this.state.today!==0)&&(this.state.today+1!==7 ))
     for (let bell in this.state.days[this.state.today - 1]) {
       if (this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
       this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8) &&
@@ -323,6 +326,7 @@ export class App extends React.Component {
   // возвращает количество оставшихся на сегодня пар
   getAmountOfRemainingLessons(date) {
     let countRemainingLessons = 0
+    if ((this.state.today!==0)&&(this.state.today+1!==7 ))
     for (let bell in this.state.days[this.state.today - 1]) {
       if (this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
       this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
@@ -373,7 +377,7 @@ export class App extends React.Component {
       let whereCurrentLesson
       console.log('сейчас идет пара номер', this.getCurrentLesson(date))
       for (let bell in this.state.days[this.state.today - 1]) {
-        if (this.state.days[this.state.today - 1][bell][0][6][0] === this.getCurrentLesson(date)) {
+        if (this.state.days[this.state.today - 1][bell][0][5][0] === this.getCurrentLesson(date)) {
           console.log(this.state.days[this.state.today - 1][bell][0][0])
           whereCurrentLesson = this.state.days[this.state.today - 1][bell][0][2]
           //console.log('whereCurrentLesson', whereCurrentLesson)
@@ -388,7 +392,7 @@ export class App extends React.Component {
       for (let bell in this.state.days[this.state.today - 1]) {
         // не работает, если сейчас пары нет, а следующая есть
         console.log('номер следующей пары',Number(this.getCurrentLesson(date)) + 1)
-        if (this.state.days[this.state.today - 1][bell][0][6][0] === String(Number(this.getCurrentLesson(date)) + 1)) {
+        if (this.state.days[this.state.today - 1][bell][0][5][0] === String(Number(this.getCurrentLesson(date)) + 1)) {
           console.log('следующей будет пара номер', String(Number(this.getCurrentLesson(date)) + 1))
           console.log(this.state.days[this.state.today - 1][bell][0][0])
           nextLessonRoom = this.state.days[this.state.today - 1][bell][0][2]
@@ -408,10 +412,13 @@ export class App extends React.Component {
     if (action) {
       switch (action.type) {
         case 'for_today':
-          return this.setState({page: this.state.today});
+          if (this.state.today === 0) return this.setState({page: 8});
+          else return this.setState({page: this.state.today});
 
         case 'for_tomorrow':
-          return this.setState({page: this.state.today+1});
+          console.log()
+          if (this.state.today+1 === 7) return this.setState({page: 8});
+          else return this.setState({page: this.state.today+1});
         
         case 'for_week':
           return this.setState({page: 1});
@@ -441,7 +448,9 @@ export class App extends React.Component {
               parameters: params,
             },
           })
-          if (params.day === 'today') this.setState({page: this.state.today});
+          if ((params.day === 'today')&&(this.state.today === 0)) return this.setState({page: 8});
+          else if ((params.day === 'today')&&(this.state.today !== 0)) return this.setState({page: this.state.today});
+          else if (this.state.today+1 === 7) return this.setState({page: 8});
           else this.setState({page: this.state.today+1});
           break
 
@@ -954,7 +963,6 @@ export class App extends React.Component {
   }
 
   Spinner(){
-    
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
         if(this.state.today===0) {this.setState({page: 8})}
