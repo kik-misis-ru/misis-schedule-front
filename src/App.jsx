@@ -26,7 +26,11 @@ import {
   Carousel, CarouselCol,
   Note,
   Badge,
-  TextBoxLabel
+  TextBoxLabel,
+  Showcase, 
+  Checkbox,
+  CellListItem,
+  CardHeadline3
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -34,7 +38,7 @@ import {
 } from "@sberdevices/assistant-client";
 import "./App.css";
 import { TextField, ActionButton } from "@sberdevices/plasma-ui";
-import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconPersone} from "@sberdevices/plasma-icons";
+import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconSettings, IconDisclosureRight, IconChevronRight, IconLocation} from "@sberdevices/plasma-icons";
 import {
   createUser,
   getScheduleFromDb,
@@ -59,6 +63,8 @@ const initializeAssistant = (getState) => {
 };
 
 
+
+
 export class App extends React.Component {
   constructor(props) {
     super(props);
@@ -72,6 +78,7 @@ export class App extends React.Component {
       page: 7,
       logo: logo0, 
       flag: true,
+      checked: true,
       description: "Заполни данные, чтобы открывать расписание одной фразой",
       group: "",
       groupId: "",
@@ -83,61 +90,69 @@ export class App extends React.Component {
       labelSubgroup: "",
       labelEnggroup: "",
       i: 0,
-      j: 0,
+      timeParam: 0,
       day: [{ title: 'Пн', date: ["",""], count: [0, 0] }, { title: 'Вт', date: ["",""], count: [0, 0] }, { title: 'Ср', date: ["",""], count: [0, 0] }, { title: 'Чт', date: ["",""], count: [0, 0] }, { title: 'Пт', date: ["",""], count: [0, 0] }, { title: 'Сб', date: ["",""], count: [0, 0] }],
       days: [{
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_1: [[ //текущая неделя
+          "", //название пары
+          "", //фамилия преподавателя
+          "", //кабинет
+          "", //время начала и конца через дефис
+          "", //тип пары
+          ""], //порядковый номер с точкой
+          [ //следующая неделя
+            "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
        },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_1: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_1: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_1: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_1: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_2: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_3: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_4: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_5: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_6: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
-        bell_7: [["", "", "", "", "rgba(0, 0, 0, 0)", "", ""], ["", "", "", "", "rgba(0, 0, 0, 0)", "", ""]],
+        bell_1: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
       }],
       spinner: false,
       date: Date.parse("05/12/2021"),
@@ -154,7 +169,14 @@ export class App extends React.Component {
     
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
     this.assistant.on("data", (event) => {
-      if (event.type === "smart_app_data") {
+      switch (event.type) {
+        case "character":
+          if (event.character.id === "timeParamoy") {
+            this.state.description="Заполни данные, чтобы открывать расписание одной фразой"
+          } else this.state.description="Чтобы посмотреть расписание, укажите данные учебной группы"
+          break;
+        
+     case "smart_app_data": 
         console.log("User");
         console.log(event);
         if (event.sub !== undefined) {
@@ -173,8 +195,7 @@ export class App extends React.Component {
             getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 604800000))).then((response)=>{
               this.showWeekSchedule(response, 1)
           });
-              // this.setState({page: 6});
-              this.setState({description: "Здесь можно изменить данные", page: 7});
+              this.setState({description: "Здесь можно изменить данные", page: 7, checked: true});
             } else {
           this.setState({page: 0});
         }
@@ -209,6 +230,7 @@ export class App extends React.Component {
   getEndLastLesson(day) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
+    if ((this.state.today!==0))
     for (let bell = 7; bell > 0; bell--) {
       if (this.state.days[this.state.today - day][`bell_${bell}`][0][3] !== "") {
         return this.state.days[this.state.today - day][`bell_${bell}`][0][3].slice(8)
@@ -220,6 +242,7 @@ export class App extends React.Component {
   getBordersRequestLesson(type, day, lessonNum) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
+    if ((this.state.today!==0))
     if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
       if (type === "start") {
         return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 6)
@@ -272,6 +295,7 @@ export class App extends React.Component {
   // подсчет количества пар в указанную дату
   // возвращает массив с днем недели и количеством пар в этот день
   getAmountOfLessons(date) {
+    let res
     for (let day of this.state.day) {
       for (let week = 0; week < 2; week++) {
         if (this.getDateWithDots(date) === day.date[week]) {
@@ -279,6 +303,8 @@ export class App extends React.Component {
         }
       }
     }
+    // if (res !== undefined) {return res}
+    // else {return null}
   }
 
   // получить текущее время в формате "HH:MM"
@@ -290,11 +316,13 @@ export class App extends React.Component {
 
   // получить текущую пару
   getCurrentLesson(date) {
-    for (let bell in this.state.days[this.state.today - 1]) {
-      if (this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
-      this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8) &&
-      this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
-        return this.state.days[this.state.today - 1][bell][0][6][0]
+    if (this.state.today !== 0) {
+      for (let bell in this.state.days[this.state.today - 1]) {
+        if (this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
+        this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8) &&
+        this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
+          return this.state.days[this.state.today - 1][bell][0][5][0]
+        }
       }
     }
   }
@@ -302,6 +330,7 @@ export class App extends React.Component {
   // возвращает количество оставшихся на сегодня пар
   getAmountOfRemainingLessons(date) {
     let countRemainingLessons = 0
+    if ((this.state.today!==0)&&(this.state.today+1!==7 ))
     for (let bell in this.state.days[this.state.today - 1]) {
       if (this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
       this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
@@ -319,65 +348,71 @@ export class App extends React.Component {
     // ключ - номер пары, значение - перерыв до этой пары
     let breaks = {'1':'09:00', '2':'10:35-10:50', '3':'12:25-12:40', '4':'14:15-14:30', '5':'16:05-16:20', '6':'17:55-18:10', '7':'19:45'}
     let numberNearestLesson
-    // определяем номер ближайшей пары
-    for (let i in breaks) {
-      if (this.getTime(date) < breaks['1']) {numberNearestLesson = '1'; break}
-      else if (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) {numberNearestLesson = i; break}
-      else if (this.getTime(date) > breaks['7']) {numberNearestLesson = null}
-      else {console.log(this.getTime(date))}
-    }
-    console.log("numberNearestLesson", numberNearestLesson)
-    if (numberNearestLesson !== undefined) {
-      console.log(this.state.days)
-      for (let bell in this.state.days[this.state.today - 1]) {
-        // если пара с таким номером есть в расписании
-        if (this.state.days[this.state.today - 1][bell][0][6][0] === numberNearestLesson) {
-          // выводим эту пару
-          console.log(this.state.days[this.state.today - 1][bell][0])
-          return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"inSchedule"}
-        } else {
-          // сообщаем, что такой пары нет
-          console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
-          for (let bell in this.state.days[this.state.today - 1]) {
-            if (this.state.days[this.state.today - 1][bell][0][6][0] !== numberNearestLesson) {
-              console.log(this.state.days[this.state.today - 1][bell][0][0])
-              return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"notInSchedule"}
+    // проверяем, что сегодня не воскресенье
+    if (this.state.today !== 0) { 
+      // определяем номер ближайшей пары
+      for (let i in breaks) {
+        if (this.getTime(date) < breaks['1']) {numberNearestLesson = '1'; break}
+        else if (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) {numberNearestLesson = i; break}
+        else if (this.getTime(date) > breaks['7']) {numberNearestLesson = null}
+        else {console.log(this.getTime(date))}
+      }
+      console.log("numberNearestLesson", numberNearestLesson)
+      if (numberNearestLesson !== undefined) {
+        console.log(this.state.days)
+        for (let bell in this.state.days[this.state.today - 1]) {
+          // если пара с таким номером есть в расписании
+          if (this.state.days[this.state.today - 1][bell][0][6][0] === numberNearestLesson) {
+            // выводим эту пару
+            console.log(this.state.days[this.state.today - 1][bell][0])
+            return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"inSchedule"}
+          } else {
+            // сообщаем, что такой пары нет
+            console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
+            for (let bell in this.state.days[this.state.today - 1]) {
+              if (this.state.days[this.state.today - 1][bell][0][6][0] !== numberNearestLesson) {
+                console.log(this.state.days[this.state.today - 1][bell][0][0])
+                return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"notInSchedule"}
+              }
             }
           }
         }
+      } 
+      if (numberNearestLesson === undefined && will === "now") {
+        // вернуть номер текущей пары
+        let whereCurrentLesson
+        console.log('сейчас идет пара номер', this.getCurrentLesson(date))
+        for (let bell in this.state.days[this.state.today - 1]) {
+          if (this.state.days[this.state.today - 1][bell][0][5][0] === this.getCurrentLesson(date)) {
+            console.log(this.state.days[this.state.today - 1][bell][0][0])
+            whereCurrentLesson = this.state.days[this.state.today - 1][bell][0][2]
+            //console.log('whereCurrentLesson', whereCurrentLesson)
+            // return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"current"}
+          }
+        }
+        if (whereCurrentLesson === "") {console.log("here yoo"); return {exist: "notInSchedule"}}
+        else {return {audience:whereCurrentLesson, type:"current"}}
       }
-    } 
-    if (numberNearestLesson === undefined && will === "now") {
-      // вернуть номер текущей пары
-      let whereCurrentLesson
-      console.log('сейчас идет пара номер', this.getCurrentLesson(date))
-      for (let bell in this.state.days[this.state.today - 1]) {
-        if (this.state.days[this.state.today - 1][bell][0][6][0] === this.getCurrentLesson(date)) {
-          console.log(this.state.days[this.state.today - 1][bell][0][0])
-          whereCurrentLesson = this.state.days[this.state.today - 1][bell][0][2]
-          //console.log('whereCurrentLesson', whereCurrentLesson)
-          // return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"current"}
+      if (numberNearestLesson === undefined && will === "will") {
+        console.log("here")
+        for (let bell in this.state.days[this.state.today - 1]) {
+          // не работает, если сейчас пары нет, а следующая есть
+          console.log('номер следующей пары', Number(this.getCurrentLesson(date)) + 1)
+          if (this.state.days[this.state.today - 1][bell][0][5][0] === String(Number(this.getCurrentLesson(date)) + 1)) {
+            console.log('следующей будет пара номер', String(Number(this.getCurrentLesson(date)) + 1))
+            console.log(this.state.days[this.state.today - 1][bell][0][0])
+            nextLessonRoom = this.state.days[this.state.today - 1][bell][0][2]
+          }
+        }
+        if (nextLessonRoom !== "") { return {audience:nextLessonRoom, type:"next"}}
+        else {
+          console.log('пар больше нет')
+          return {exist: "endLessons"}
         }
       }
-      if (whereCurrentLesson === "") {console.log("here yoo"); return {exist: "notInSchedule"}}
-      else {return {audience:whereCurrentLesson, type:"current"}}
     }
-    if (numberNearestLesson === undefined && will === "will") {
-      console.log("here")
-      for (let bell in this.state.days[this.state.today - 1]) {
-        // не работает, если сейчас пары нет, а следующая есть
-        console.log('номер следующей пары',Number(this.getCurrentLesson(date)) + 1)
-        if (this.state.days[this.state.today - 1][bell][0][6][0] === String(Number(this.getCurrentLesson(date)) + 1)) {
-          console.log('следующей будет пара номер', String(Number(this.getCurrentLesson(date)) + 1))
-          console.log(this.state.days[this.state.today - 1][bell][0][0])
-          nextLessonRoom = this.state.days[this.state.today - 1][bell][0][2]
-        }
-      }
-      if (nextLessonRoom !== "") { return {audience:nextLessonRoom, type:"next"}}
-      else {
-        console.log('пар больше нет')
-        return {exist: "endLessons"}
-      }
+    else {
+      return {exist: "sunday"}
     }
   }
 
@@ -387,15 +422,19 @@ export class App extends React.Component {
     if (action) {
       switch (action.type) {
         case 'for_today':
-          return this.setState({page: this.state.today});
+          if (this.state.today === 0) return this.setState({page: 8});
+          else return this.setState({page: this.state.today});
 
         case 'for_tomorrow':
-          return this.setState({page: this.state.today+1});
+          console.log()
+          if (this.state.today+1 === 7) return this.setState({page: 8});
+          else return this.setState({page: this.state.today+1});
         
         case 'for_week':
           return this.setState({page: 1});
 
         case 'when_lesson':
+          let params
           let answer = this.getStartEndLesson(action.note[0], action.note[1], action.note[2])  
           console.log("answer", answer) 
           let toOrdinal = {
@@ -407,11 +446,16 @@ export class App extends React.Component {
             "6": "шестая",
             "7": "седьмая"
           }
-          let params = {
-            type: action.note[0],
-            day: action.note[1],
-            ordinal: toOrdinal[action.note[2]],
-            time: answer
+          if (answer === undefined) {
+            params = {day: "sunday"}
+          }
+          else {
+            params = {
+              type: action.note[0],
+              day: action.note[1],
+              ordinal: toOrdinal[action.note[2]],
+              time: answer
+            }
           }
           console.log("params", params)
           this.assistant.sendData({
@@ -420,40 +464,53 @@ export class App extends React.Component {
               parameters: params,
             },
           })
-          if (params.day === 'today') this.setState({page: this.state.today});
+          if ((params.day === 'today')&&(this.state.today === 0)) return this.setState({page: 8});
+          else if ((params.day === 'today')&&(this.state.today !== 0)) return this.setState({page: this.state.today});
+          else if (this.state.today+1 === 7) return this.setState({page: 8});
           else this.setState({page: this.state.today+1});
           break
 
-        case 'how_many':
-          const threeMonthDiff = 7862400000
-          let response
-          let day
-          let lesson
-          if (action.note !== undefined) {
-            console.log(action.note)
-            response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
-            if (String(this.state.today + 1) === action.note.dayOfWeek) { day = "today"}
-            else if (String(this.state.today + 2) === action.note.dayOfWeek) {day = "tomorrow"}
-          } else {
-            response = this.getAmountOfLessons(new Date(Date.now() - threeMonthDiff))
-            day = "today"
-          }
-          const dayNameDict = {"Пн":"В понедельник", "Вт":"Во вторник", "Ср":"В среду", "Чт":"В четверг", "Пт":"В пятницу", "Сб":"В субботу"}
-          
-          if (response[1] === 1) {lesson = "пара"} else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {lesson = "пары"} else {lesson = "пар"}
-          let howManyParams = {
-            lesson: lesson,
-            day: day,
-            dayName: dayNameDict[response[0]],
-            amount: numPron[response[1]] 
-          }
-          this.assistant.sendData({
-            action: {
-              action_id: "say1",
-              parameters: howManyParams,
-            },
-          })
-          break
+          case 'how_many':
+            const threeMonthDiff = 7862400000
+            let response
+            let day
+            let lesson
+            let page = 8;
+            if (action.note !== undefined) {
+              console.log(action.note)
+              response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
+              if (String(this.state.today + 1) === action.note.dayOfWeek) { day = "today"; page=0}
+              else if (String(this.state.today + 2) === action.note.dayOfWeek) {day = "tomorrow"; page = 0}
+            } else {
+              response = this.getAmountOfLessons(new Date(Date.now() - threeMonthDiff))
+              day = "today"
+            }
+            const dayNameDict = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
+            console.log("response", response)
+            let howManyParams
+            if (response === undefined) {
+              howManyParams = {day: "sunday"}
+              this.setState({page: 8})
+            }
+            else {
+              if (response[1] === 1) {lesson = "пара"} else if (response[1] === 2 || response[1] === 3 || response[1] === 4) {lesson = "пары"} else {lesson = "пар"}
+              howManyParams = {
+                lesson: lesson,
+                day: day,
+                dayName: dayNameDict[response[0]][0],
+                amount: numPron[response[1]] 
+              }
+              this.setState({page: dayNameDict[response[0]][1]+page})
+            }
+            
+            this.assistant.sendData({
+              action: {
+                action_id: "say1",
+                parameters: howManyParams,
+              },
+            })
+            
+            break
 
         case 'how_many_left':
           let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date(Date.now()))
@@ -467,6 +524,7 @@ export class App extends React.Component {
               parameters: howManyLeftParams,
             },
           })
+          this.setState({page: this.state.today});
           break
 
         case 'where':
@@ -484,6 +542,7 @@ export class App extends React.Component {
               parameters: whereLessonParams,
             },
           })
+          this.setState({page: this.state.today});
           break
 
         default:
@@ -574,6 +633,7 @@ export class App extends React.Component {
     
     
     for (let day_num = 1; day_num < 7; day_num++) {
+      this.state.day[day_num-1]["count"][i]=0;
       if (this.schedule["schedule"]!==null)
       
       {this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
@@ -585,9 +645,8 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
-          this.state.days[day_num-1][bell][i][4]="var(--plasma-colors-button-accent)          ";
-          this.state.days[day_num-1][bell][i][5]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
-          this.state.days[day_num-1][bell][i][6]=`${bell.slice(5, 6)}. `;
+          this.state.days[day_num-1][bell][i][4]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
+          this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}. `;
           this.state.day[day_num-1]["count"][i]++;
         } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.state.subGroup!=="") ){
           
@@ -595,28 +654,24 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][1]="";
           this.state.days[day_num-1][bell][i][2]="";
           this.state.days[day_num-1][bell][i][3]="";
-          this.state.days[day_num-1][bell][i][4]="rgba(0, 0, 0, 0)";
+          this.state.days[day_num-1][bell][i][4]="";
           this.state.days[day_num-1][bell][i][5]="";
-          this.state.days[day_num-1][bell][i][6]="";
           
           }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
-          
-          this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
-          this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-          this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-          this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
-          this.state.days[day_num-1][bell][i][4]="var(--plasma-colors-button-accent)          ";
-          this.state.days[day_num-1][bell][i][5]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
-          this.state.days[day_num-1][bell][i][6]=`${bell.slice(5, 6)}. `;
+            this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
+            this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
+            this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
+            this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
+            this.state.days[day_num-1][bell][i][4]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
+            this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}. `;
           this.state.day[day_num-1]["count"][i]++;
         }  else {
-            this.state.days[day_num-1][bell][i][0]="";
+          this.state.days[day_num-1][bell][i][0]="";
           this.state.days[day_num-1][bell][i][1]="";
           this.state.days[day_num-1][bell][i][2]="";
           this.state.days[day_num-1][bell][i][3]="";
-          this.state.days[day_num-1][bell][i][4]="rgba(0, 0, 0, 0)";
+          this.state.days[day_num-1][bell][i][4]="";
           this.state.days[day_num-1][bell][i][5]="";
-          this.state.days[day_num-1][bell][i][6]="";
           }
         }
        if (this.state.day[day_num-1]["count"][i]===0)
@@ -630,221 +685,161 @@ export class App extends React.Component {
 
   Sunday(){
     this.state.i=0;
+    let sub = "";
+    let index=0;
+    if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
     return(
       <div  >
           <Container style = {{padding: 0}}>
-          <HeaderRoot
-              style={{backgroundColor: "black"}}
-          >  <HeaderLogo src={logo} alt="МИСиС" /> 
-          <HeaderTitle>Мой МИСиС</HeaderTitle>
-          <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
-          
-          </HeaderContent>
-          </HeaderRoot>
-          <h4 style={{margin: "1em"}}>Расписание {this.state.group}</h4>
-  
-          
-          <div >
-            <Tabs view="black" size="m" style={{margin: "0.75em"}}>
-              <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 2 })}>Верхняя неделя
-              </TabItem>
-              <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 2 })}>Нижняя неделя
-              </TabItem>
-              {/* <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
-              <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem> */}
-            </Tabs>
-          
-          </div>
-          <CarouselGridWrapper >
-                      <Carousel
-                          as={Row}
-                          axis="x"
-                          index={this.state.i}
-                          scrollSnapType="mandatory"
-                          animatedScrollByIndex="true"
-                          detectActive= "true"
-                          detectThreshold={0.5}
-                          
-                          onIndexChange={() => this.Index()}
-                          paddingStart="5%"
-                          paddingEnd="50%"
-                      >
-                          {this.state.day.map(({ title, date }, i) => (
-                            
-                              <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date}`} onClick={()=>{this.setState({page: i+1}) }}/></CarouselCol>
-                          ))}
-                      </Carousel>
-                  </CarouselGridWrapper>
-            
-            <div style={{
-          width:  '200px',
-          height: '200px',
-          }}></div>
-            </Container>
+        <HeaderRoot
+            style={{backgroundColor: "black"}}
+        >  <HeaderLogo src={logo} alt="МИСиС" /> 
+        <HeaderTitle>MISIS Hub</HeaderTitle>
+        <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
+        
+        </HeaderContent>
+        </HeaderRoot>
+        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
+        <h3 style={{margin: "1em"}}>Расписание {this.state.group} {sub}</h3></Row>
+
+        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
+        <div>
+          <Tabs view="black" size="m" >
+            <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Текущая неделя
+            </TabItem>
+            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 9, flag: false })}>Следующая неделя
+            </TabItem>
+          </Tabs>
+        </div>
+        </Row>
+        <Row style={{marginLeft: "1em"}}>
+        <CarouselGridWrapper >
+                    <Carousel
+                        as={Row}
+                        axis="x"
+                        scrollAlign="center"
+                        index={this.state.i}
+                        scrollSnapType="mandatory"
+                        animatedScrollByIndex="true"
+                        detectActive= "true"
+                        detectThreshold={0.5}
+                        onIndexChange={() => this.Index()}
+                        paddingStart="0%"
+                        paddingEnd="50%"
+                        
+                    >
+                        {this.state.day.map(({ title, date }, i) => this.state.today === i+1 ? ( 
+                            <CarouselCol key={`item:${i}`} ><Button view = "primary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
+                        ): (<CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
+                        )}
+                    </Carousel>
+                </CarouselGridWrapper>
+        </Row>
+        <Row style={{position:" absolute", top: "50%", left:" 35%", marginRight: "-50%"}}>
+          <TextBox>
+            <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
+          </TextBox>
+        </Row>
+          <div style={{
+        width:  '200px',
+        height: '200px',
+        }}></div>
+          </Container>
             </div>
     );
     
   }
+
 
   Raspisanie(timeParam, weekParam){
     this.state.i=0;
     let day_num = timeParam-1;
     let index=timeParam;
     if (weekParam===1){
-      this.state.j = 8;
-    } else this.state.j=0;
+      this.state.timeParam = 8;
+      this.state.flag=false;
+    } else {this.state.timeParam=0;
+      this.state.flag=true;
+    }
+    let sub = "";
+    if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
+    let today = ""
+    if ((this.state.today === timeParam)&&(weekParam===0)) today = "сегодня";
+    else if ((this.state.today+1 === timeParam)&&(weekParam===0)) today = "завтра";
   return(
     <div  >
         <Container style = {{padding: 0}}>
         <HeaderRoot
             style={{backgroundColor: "black"}}
         >  <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitle>Мой МИСиС</HeaderTitle>
-        <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconPersone size="s" color="inherit"/></Button>
+        <HeaderTitle>MISIS Hub</HeaderTitle>
+        <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
         
         </HeaderContent>
         </HeaderRoot>
-        <h3 style={{margin: "1em"}}>Расписание {this.state.group}</h3>
+        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
+        <h3 style={{margin: "1em"}}>Расписание {this.state.group} {sub}</h3></Row>
 
-        
-        <div >
-          <Tabs view="black" size="m" style={{margin: "0.75em"}}>
-            <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Верхняя неделя
+        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
+        <div>
+          <Tabs view="black" size="m" >
+            <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Текущая неделя
             </TabItem>
-            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 7, flag: false })}>Нижняя неделя
+            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 7, flag: false })}>Следующая неделя
             </TabItem>
-            {/* <TabItem isActive={false} onClick={()=>this.setState({ page: 4 })}>Сегодня</TabItem>
-            <TabItem isActive={false} onClick={()=>this.setState({page: 5})}>Завтра</TabItem> */}
           </Tabs>
-        
         </div>
+        </Row>
+        <Row style={{marginLeft: "1em"}}>
         <CarouselGridWrapper >
                     <Carousel
                         as={Row}
                         axis="x"
+                        scrollAlign="center"
                         index={this.state.i}
                         scrollSnapType="mandatory"
                         animatedScrollByIndex="true"
                         detectActive= "true"
                         detectThreshold={0.5}
-                        
                         onIndexChange={() => this.Index()}
-                        paddingStart="1%"
+                        paddingStart="0%"
                         paddingEnd="50%"
+                        
                     >
-                        {this.state.day.map(({ title, date }, i) => (
-                          
-                            <CarouselCol key={`item:${i}`}><Button style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.j}) }}/></CarouselCol>
-                        ))}
+                        {this.state.day.map(({ title, date }, i) => this.state.today === i+1&&weekParam===0 ? ( 
+                            <CarouselCol key={`item:${i}`} ><Button view = "primary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[weekParam]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
+                        ): (<CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[weekParam]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
+                        )}
                     </Carousel>
                 </CarouselGridWrapper>
-
+        </Row>
         <div style={{ flexDirection: "column" }}>
-          <Card style={{background: "rgba(0, 0, 0, 0)", width: "auto", marginLeft: "1em", marginTop: "0.5em" }}>
+          <Card style={{ width: "92%", marginLeft: "1em", marginTop: "0.5em" }}>
             <CardBody>
               <CardContent compact >
-              <Cell content={
-              <TextBox>
-                  {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}>{this.state.day[day_num]["title"]} {this.state.day[day_num]["date"]}</TextBoxBigTitle> */}
-                  <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                    {this.state.days[day_num]["bell_1"][weekParam][3]}
+              <CardContent compact >
+                <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)}, {today} {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle>
+              { 
+              this.state.days.map((bell_$, i) =>  this.state.days[day_num][`bell_${i+1}`][weekParam][0]!=="" ? (                
+              <CellListItem key={`item:${i}`} content={
+              <TextBox>                
+                  <TextBoxSubTitle  lines={8}> 
+                    {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_1"][weekParam][6]}
-                  {this.state.days[day_num]["bell_1"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_1"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel> {this.state.days[day_num]["bell_1"][weekParam][5]}</TextBoxLabel>
-                  </TextBox>
-                }
-                contentRight={<Badge text={this.state.days[day_num]["bell_1"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_1"][weekParam][4]}`}}/>}
-                
-                />
-                  <Cell content={
-              <TextBox> <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                  {this.state.days[day_num]["bell_2"][weekParam][3]}
-                  </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_2"][weekParam][6]}
-                  {this.state.days[day_num]["bell_2"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_2"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel> {this.state.days[day_num]["bell_2"][weekParam][5]}</TextBoxLabel>
-                  </TextBox>
-                }
-                contentRight={<Badge text={this.state.days[day_num]["bell_2"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_2"][weekParam][4]}`}}/>}
-                
-                />
+                  < CardHeadline3 >{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
+                  </ CardHeadline3>
+                  <TextBoxTitle> {this.state.days[day_num][`bell_${i+1}`][weekParam][1]} </TextBoxTitle>
                   
-                  <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                  {this.state.days[day_num]["bell_3"][weekParam][3]}
-                  </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_3"][weekParam][6]}
-                  {this.state.days[day_num]["bell_3"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_3"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel> {this.state.days[day_num]["bell_3"][weekParam][5]}</TextBoxLabel>
                   </TextBox>
-                }
-                contentRight={<Badge text={this.state.days[day_num]["bell_3"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_3"][weekParam][4]}`}}/>}
-                
+                }               
+                contentRight={
+                  <TextBox>
+                <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][2]} contentLeft={<IconLocation size="xs"/>} style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
+                 <TextBoxLabel> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxLabel>
+              </TextBox>}                
                 />
-                  <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                  {this.state.days[day_num]["bell_4"][weekParam][3]}
-                  </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_4"][weekParam][6]}
-                  {this.state.days[day_num]["bell_4"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_4"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel>{this.state.days[day_num]["bell_4"][weekParam][5]} </TextBoxLabel>
-                  </TextBox>
-                }
-                contentRight={<Badge text={this.state.days[day_num]["bell_4"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_4"][weekParam][4]}`}}/>}
-                
-                />
-                  <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                  {this.state.days[day_num]["bell_5"][weekParam][3]}
-                  </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_5"][weekParam][6]}
-                  {this.state.days[day_num]["bell_5"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_5"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel> {this.state.days[day_num]["bell_5"][weekParam][5]}</TextBoxLabel>
-                  </TextBox>
-                }
-                contentRight={<Badge text={this.state.days[day_num]["bell_5"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_5"][weekParam][4]}`}}/>}
-                
-                />
-                  
-                  <Cell content={
-              <TextBox><TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                  {this.state.days[day_num]["bell_6"][weekParam][3]}
-                  </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_6"][weekParam][6]}
-                  {this.state.days[day_num]["bell_6"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_6"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel> {this.state.days[day_num]["bell_6"][weekParam][5]}</TextBoxLabel>
-                  </TextBox>
-                }
-                contentRight={<Badge text={this.state.days[day_num]["bell_6"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_6"][weekParam][4]}`}}/>}
-                
-                />
-                  <Cell content={
-              <TextBox>
-                <TextBoxSubTitle style={{ marginTop: "0.75rem" }} lines={8}> 
-                  {this.state.days[day_num]["bell_7"][weekParam][3]}
-                  </TextBoxSubTitle>
-                  <TextBoxBigTitle >{this.state.days[day_num]["bell_7"][weekParam][6]}
-                  {this.state.days[day_num]["bell_7"][weekParam][0]}
-                  </TextBoxBigTitle>
-                  <TextBoxTitle> {this.state.days[day_num]["bell_7"][weekParam][1]} </TextBoxTitle>
-                  <TextBoxLabel> {this.state.days[day_num]["bell_7"][weekParam][5]}</TextBoxLabel>
-                  </TextBox>
-                } 
-                contentRight={<Badge text={this.state.days[day_num]["bell_7"][weekParam][2]} style={{background: `${this.state.days[day_num]["bell_7"][weekParam][4]}`}}/>}
-                />
+                ) : (<div></div>))}</CardContent>
               </CardContent>
             </CardBody>
           </Card>
@@ -867,9 +862,8 @@ export class App extends React.Component {
 
   
   Home(){
-    let disabled=true;
+    let disabled = true;
     if (this.state.groupId!=="") disabled=false;
-    console.log(this.state.groupId);
     return (
       <div  >
         <Container style = {{padding: 0}}>
@@ -878,7 +872,8 @@ export class App extends React.Component {
         >  <HeaderLogo src={logo} alt="МИСиС" /> 
         <HeaderTitle>Мой МИСиС</HeaderTitle>
         <HeaderContent>
-        <Button class="button" view='secondary' disabled={disabled} text='Расписание' contentRight={<IconMoreVertical size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> 
+        
+        <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> 
         </HeaderContent>
         </HeaderRoot>
         
@@ -888,11 +883,11 @@ export class App extends React.Component {
           <TextField
           id="tf"
           label={this.state.labelGroup}
-
+          
           className="editText"
           // placeholder="Напиши номер своей академической группы"
           value={this.state.group}
-          style={{margin: "2em"}}
+          style={{margin: "1em"}}
           onChange={(v) =>
             this.setState({
               group: v.target.value,
@@ -905,33 +900,36 @@ export class App extends React.Component {
           className="editText"
           label="Номер подгруппы: 1 или 2"
           value={this.state.subGroup}
-          style={{margin: "2em"}}
+          style={{margin: "1em"}}
           onChange={(s) =>
             this.setState({
               subGroup: s.target.value,
             })
           }
         />
-        
-          {/* <TextField
-          id="tf"
-          className="editText"
-          label="Номер группы по английскому"
-          value={this.state.engGroup}
-          style={{margin: "2em"}}
-          onChange={(e) =>
-            this.setState({
-              engGroup: e.target.value,
-            })
-          }
-        /> */}
-          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "3em"}}>
-          <Button text="Сохранить" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "0.5em"}}/>
-          {/* <Button text="Потом" view="secondary"  onClick={()=>this.isCorrect()} style={{margin: "0.5em"}}/> */}
+        <Row style={{margin: "1.1em"}}><Checkbox  label="Запомнить эту группу " checked={this.state.checked} onChange={(event) => {
+                        this.setState({checked: event.target.checked });
+                        console.log(this.state.checked);
+                        }
+            }/></Row>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
+          
+          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "0.5em"}}/>
         </Row></div>
         </Container>
       </div>
     )
+  }
+
+  CreateUser(checked){
+    switch(checked){
+      case true:
+        return this.Home();
+      case false:
+        return this.Raspisanie(1, 0);
+      default:
+        break;
+    }
   }
 
   isCorrect(){
@@ -945,22 +943,51 @@ export class App extends React.Component {
   }
   if (this.state.correct===true){
     console.log("ok");
-    this.state.disabled=false;
-    this.state.spinner=false;
-    createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
-      this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
+    if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+      //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
       getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date +10800000))).then((response)=>{
       this.showWeekSchedule(response, 0);
-  });
+  }); 
+    this.state.spinner=false;
+    
   getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date +604800000))).then((response)=>{
     this.showWeekSchedule(response, 1);
+    this.setState({page: 7});
 });
-    } else this.setState({description: "Некорректно"});
+    } else if (this.state.group===""){this.setState({description: "Поле с номером группы является обязательным для ввода"})}
+    else this.setState({description: "Некорректно"});
     
   }
 
+  Para(count){
+    switch(count){
+      case 1:
+        return "одна пара";
+      case 2:
+        return "две пары";
+      case 3:
+        return "три пары";
+      case 4:
+        return "четыре пары";
+      default:
+        return `${count} пар`;
+    }
+  }
+
+  Type(type){
+    switch(type){
+      case "Лекционные":
+        return "Лекция";
+      case "Практические":
+        return "Практика";
+      case "Лабораторные":
+        return "Лаба";
+      default:
+        break;
+    }
+  }
+
   Spinner(){
-    
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
         if(this.state.today===0) {this.setState({page: 8})}
