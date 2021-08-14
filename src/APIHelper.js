@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/";
-// const API_URL = "https://serene-inlet-82302.herokuapp.com/";
+const API_URL = "https://misis-hub.herokuapp.com/";
 
 
 export async function getScheduleFromDb(groupId, date) {

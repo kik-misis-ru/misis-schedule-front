@@ -189,10 +189,10 @@ export class App extends React.Component {
               this.setState({subGroup: user["subgroup_name"]})
               this.setState({engGroup: user["eng_group"]})
               this.convertIdInGroupName()
-              getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 10800000))).then((response)=>{
+              getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 10800000))).then((response)=>{
                 this.showWeekSchedule(response, 0)
             });
-            getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/12/2021") + 604800000))).then((response)=>{
+            getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 604800000))).then((response)=>{
               this.showWeekSchedule(response, 1)
           });
               this.setState({description: "Здесь можно изменить данные", page: 7, checked: true});
@@ -242,12 +242,13 @@ export class App extends React.Component {
   getBordersRequestLesson(type, day, lessonNum) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
-    if ((this.state.today!==0))
-    if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
-      if (type === "start") {
-        return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 6)
-      } else {
-        return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(8)
+    if (this.state.today!==0) {
+      if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
+        if (type === "start") {
+          return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 6)
+        } else {
+          return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(8)
+        }
       }
     }
   }
@@ -362,7 +363,7 @@ export class App extends React.Component {
         console.log(this.state.days)
         for (let bell in this.state.days[this.state.today - 1]) {
           // если пара с таким номером есть в расписании
-          if (this.state.days[this.state.today - 1][bell][0][6][0] === numberNearestLesson) {
+          if (this.state.days[this.state.today - 1][bell][0][5][0] === numberNearestLesson) {
             // выводим эту пару
             console.log(this.state.days[this.state.today - 1][bell][0])
             return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"inSchedule"}
@@ -370,7 +371,7 @@ export class App extends React.Component {
             // сообщаем, что такой пары нет
             console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
             for (let bell in this.state.days[this.state.today - 1]) {
-              if (this.state.days[this.state.today - 1][bell][0][6][0] !== numberNearestLesson) {
+              if (this.state.days[this.state.today - 1][bell][0][5][0] !== numberNearestLesson) {
                 console.log(this.state.days[this.state.today - 1][bell][0][0])
                 return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"notInSchedule"}
               }
@@ -422,13 +423,46 @@ export class App extends React.Component {
     if (action) {
       switch (action.type) {
         case 'for_today':
-          if (this.state.today === 0) return this.setState({page: 8});
-          else return this.setState({page: this.state.today});
+          if (this.state.today === 0) {
+              this.assistant.sendData({
+                action: {
+                  action_id: "todaySchedule",
+                  parameters: {day: "sunday"},
+                },
+              })
+            return this.setState({page: 8});
+          }
+          else {
+            this.assistant.sendData({
+              action: {
+                action_id: "todaySchedule",
+                parameters: {day: "notSunday"},
+              },
+            })
+            return this.setState({page: this.state.today});
+          } 
 
         case 'for_tomorrow':
-          console.log()
-          if (this.state.today+1 === 7) return this.setState({page: 8});
-          else return this.setState({page: this.state.today+1});
+          if (this.state.today + 1 === 7) {
+            this.assistant.sendData({
+              action: {
+                action_id: "tomorrowSchedule",
+                parameters: {day: "sunday"},
+              },
+            })
+            return this.setState({page: 8});
+          }
+          else {
+            this.assistant.sendData({
+              action: {
+                action_id: "tomorrowSchedule",
+                parameters: {day: "notSunday"},
+              },
+            })
+            return this.setState({page: this.state.today+1});
+          }
+
+
         
         case 'for_week':
           return this.setState({page: 1});
