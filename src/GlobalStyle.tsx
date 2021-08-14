@@ -27,6 +27,7 @@ const GlobalStyle = () => {
             {/* Используем глобальные react-компоненты один раз */}
             <DocStyles />
             <Theme />
+            
         </div>
     );
 };
