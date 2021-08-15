@@ -155,7 +155,8 @@ export class App extends React.Component {
         bell_7: [["", "", "", "", "", ""], ["", "", "", "", "", ""]],
       }],
       spinner: false,
-      date: Date.parse("05/12/2021"),
+      // date: Date.parse("05/12/2021"),
+      date: Date.now(),
       today: 0,
     }
     this.Home = this.Home.bind(this);
@@ -176,34 +177,38 @@ export class App extends React.Component {
           } else this.state.description="Чтобы посмотреть расписание, укажите данные учебной группы"
           break;
         
-     case "smart_app_data": 
-        console.log("User");
-        console.log(event);
-        if (event.sub !== undefined) {
-          console.log("Sub", event.sub);
-          this.state.userId = event.sub;
-          getUser(this.state.userId).then((user)=>{
-            if (user !== "0") {
-              console.log('user', user)
-              this.setState({groupId: user["group_id"]})
-              this.setState({subGroup: user["subgroup_name"]})
-              this.setState({engGroup: user["eng_group"]})
-              this.convertIdInGroupName()
-              getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 10800000))).then((response)=>{
-                this.showWeekSchedule(response, 0)
-            });
-            getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(Date.parse("05/17/2021") + 604800000))).then((response)=>{
-              this.showWeekSchedule(response, 1)
-          });
-              this.setState({description: "Здесь можно изменить данные", page: 7, checked: true});
-            } else {
-          this.setState({page: 0});
-        }
-          })
-        } 
-      console.log(`assistant.on(data)`, event);
-      const { action } = event;
-      this.dispatchAssistantAction(action);
+        case "smart_app_data": 
+          console.log("User");
+          console.log(event);
+          if (event.sub !== undefined) {
+            console.log("Sub", event.sub);
+            this.state.userId = event.sub;
+            getUser(this.state.userId).then((user)=> {
+              if (user !== "0") {
+                console.log('user', user)
+                this.setState({groupId: user["group_id"]})
+                this.setState({subGroup: user["subgroup_name"]})
+                this.setState({engGroup: user["eng_group"]})
+                this.convertIdInGroupName()
+                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
+                  this.showWeekSchedule(response, 0)
+                });
+                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
+                  this.showWeekSchedule(response, 1)
+                });
+                this.setState({description: "Здесь можно изменить данные", page: 7, checked: true});
+              } else {
+                this.setState({page: 0});
+                }
+              })
+            } 
+          console.log(`assistant.on(data)`, event);
+          const { action } = event;
+          this.dispatchAssistantAction(action);
+          break
+
+      default:
+        break
       }
     });
     this.assistant.on("start", (event) => {
@@ -219,9 +224,10 @@ export class App extends React.Component {
   getStartFirstLesson(day) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
+    console.log("getStartFirstLesson")
     for (let bell in this.state.days[this.state.today - day]) {
       if (this.state.days[this.state.today - day][bell][0][3] !== "") {
-        return this.state.days[this.state.today - day][bell][0][3].slice(0,6)
+        return this.state.days[this.state.today - day][bell][0][3].slice(0,5)
       }
     }
   }
@@ -230,7 +236,6 @@ export class App extends React.Component {
   getEndLastLesson(day) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
-    if ((this.state.today!==0))
     for (let bell = 7; bell > 0; bell--) {
       if (this.state.days[this.state.today - day][`bell_${bell}`][0][3] !== "") {
         return this.state.days[this.state.today - day][`bell_${bell}`][0][3].slice(8)
@@ -242,18 +247,18 @@ export class App extends React.Component {
   getBordersRequestLesson(type, day, lessonNum) {
     let dict = {"today": 1, "tomorrow": 0}
     day = dict[day]
-    if (this.state.today!==0) {
-      if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
-        if (type === "start") {
-          return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 6)
-        } else {
-          return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(8)
-        }
+    if (this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3] !== "") {
+      if (type === "start") {
+        return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(0, 5)
+      } else {
+        return this.state.days[this.state.today - day][`bell_${lessonNum}`][0][3].slice(8)
       }
     }
   }
 
   getStartEndLesson(type, day, lessonNum) {
+    if (day === "today" && this.state.today === 0) {return [day, "sunday"]}
+    if (day === "tomorrow" && this.state.today === 6) {return [day, "sunday"]}
     if (type === "start") {
       if (day === "today") {
         if (lessonNum === "0") {
@@ -296,9 +301,10 @@ export class App extends React.Component {
   // подсчет количества пар в указанную дату
   // возвращает массив с днем недели и количеством пар в этот день
   getAmountOfLessons(date) {
-    let res
     for (let day of this.state.day) {
       for (let week = 0; week < 2; week++) {
+        console.log("this.getDateWithDots(date)",this.getDateWithDots(date))
+        console.log("day.date[week]", day.date[week])
         if (this.getDateWithDots(date) === day.date[week]) {
           return [day.title, day.count[week]]
         }
@@ -357,6 +363,10 @@ export class App extends React.Component {
         else if (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) {numberNearestLesson = i; break}
         else if (this.getTime(date) > breaks['7']) {numberNearestLesson = null}
         else {console.log(this.getTime(date))}
+      }
+      console.log(this.getAmountOfLessons(date))
+      if (this.getAmountOfLessons(date)[1] === 0) {
+        return {exist: "empty"}
       }
       console.log("numberNearestLesson", numberNearestLesson)
       if (numberNearestLesson !== undefined) {
@@ -423,6 +433,7 @@ export class App extends React.Component {
     if (action) {
       switch (action.type) {
         case 'for_today':
+          console.log(this.state.days)
           if (this.state.today === 0) {
               this.assistant.sendData({
                 action: {
@@ -480,8 +491,8 @@ export class App extends React.Component {
             "6": "шестая",
             "7": "седьмая"
           }
-          if (answer === undefined) {
-            params = {day: "sunday"}
+          if (answer !== undefined && answer[1] === "sunday") {
+            params = {type: answer[0], day: answer[1]}
           }
           else {
             params = {
@@ -492,13 +503,14 @@ export class App extends React.Component {
             }
           }
           console.log("params", params)
+          console.log("today", this.state.today)
           this.assistant.sendData({
             action: {
               action_id: "say",
               parameters: params,
             },
           })
-          if ((params.day === 'today')&&(this.state.today === 0)) return this.setState({page: 8});
+          if (params.day === "sunday") {return this.setState({page: 8})}
           else if ((params.day === 'today')&&(this.state.today !== 0)) return this.setState({page: this.state.today});
           else if (this.state.today+1 === 7) return this.setState({page: 8});
           else this.setState({page: this.state.today+1});
@@ -536,21 +548,24 @@ export class App extends React.Component {
               }
               this.setState({page: dayNameDict[response[0]][1]+page})
             }
-            
             this.assistant.sendData({
               action: {
                 action_id: "say1",
                 parameters: howManyParams,
               },
             })
-            
             break
 
         case 'how_many_left':
+          let howManyLeftParams
           let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date(Date.now()))
-          let howManyLeftParams = {
-            amount: amountOfRemainingLessons,
-            pron: numPron[amountOfRemainingLessons]
+          if (this.state.today === 0) {
+            howManyLeftParams = {day: "sunday"}
+          } else {
+            howManyLeftParams = {
+              amount: amountOfRemainingLessons,
+              pron: numPron[amountOfRemainingLessons]
+            }
           }
           this.assistant.sendData({
             action: {
@@ -558,7 +573,11 @@ export class App extends React.Component {
               parameters: howManyLeftParams,
             },
           })
-          this.setState({page: this.state.today});
+          if (this.state.today === 0) {
+            this.setState({page: 8})
+          } else {
+            this.setState({page: this.state.today})
+          }
           break
 
         case 'where':
@@ -569,14 +588,19 @@ export class App extends React.Component {
             action.note = {"when": "now"}
           }
           let whereLessonParams
-          whereLessonParams = this.whereWillLesson(new Date(Date.now() - 25800000), action.note.when)
+          whereLessonParams = this.whereWillLesson(new Date(this.state.date - 7862400000), action.note.when)
           this.assistant.sendData({
             action: {
               action_id: "say3",
               parameters: whereLessonParams,
             },
           })
-          this.setState({page: this.state.today});
+          if (whereLessonParams.exist === "sunday") {
+            this.setState({page: 8})
+          } else {
+            this.setState({page: this.state.today});
+          }
+      
           break
 
         default:
@@ -976,22 +1000,21 @@ export class App extends React.Component {
         this.convertGroupNameInId()
     } 
   }
-  if (this.state.correct===true){
+  if (this.state.correct===true) {
     console.log("ok");
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
-      getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date +10800000))).then((response)=>{
+      getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
       this.showWeekSchedule(response, 0);
-  }); 
+    }); 
     this.state.spinner=false;
     
-  getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date +604800000))).then((response)=>{
-    this.showWeekSchedule(response, 1);
-    this.setState({page: 7});
-});
-    } else if (this.state.group===""){this.setState({description: "Поле с номером группы является обязательным для ввода"})}
+    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
+      this.showWeekSchedule(response, 1);
+      this.setState({page: 7});
+    });
+  } else if (this.state.group==="") {this.setState({description: "Поле с номером группы является обязательным для ввода"})}
     else this.setState({description: "Некорректно"});
-    
   }
 
   Para(count){
