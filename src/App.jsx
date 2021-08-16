@@ -776,7 +776,7 @@ export class App extends React.Component {
           <Tabs view="black" size="m" >
             <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Текущая неделя
             </TabItem>
-            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 9, flag: false })}>Следующая неделя
+            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 7, flag: false })}>Следующая неделя
             </TabItem>
           </Tabs>
         </div>
@@ -854,7 +854,7 @@ export class App extends React.Component {
           <Tabs view="black" size="m" >
             <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Текущая неделя
             </TabItem>
-            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 9, flag: false })}>Следующая неделя
+            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 7, flag: false })}>Следующая неделя
             </TabItem>
           </Tabs>
         </div>
