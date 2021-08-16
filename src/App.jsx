@@ -81,7 +81,7 @@ export class App extends React.Component {
       logo: logo0, 
       flag: true,
       checked: true,
-      description: "Заполни данные, чтобы открывать расписание одной фразой",
+      description: "Поле с номером группы является обязательным для ввода",
       group: "",
       groupId: "",
       subGroup: "",
@@ -160,6 +160,8 @@ export class App extends React.Component {
       // date: Date.parse("05/12/2021"),
       date: Date.now(),
       today: 0,
+      color_group: "var(--plasma-colors-white-secondary)",
+      color_sub: "var(--plasma-colors-white-secondary)",
     }
     this.Home = this.Home.bind(this);
     // this.Navigator = this.Navigator.bind(this);
@@ -969,7 +971,7 @@ export class App extends React.Component {
           className="editText"
           // placeholder="Напиши номер своей академической группы"
           value={this.state.group}
-          style={{margin: "1em"}}
+          style={{margin: "1em", color: `${this.state.color_group}`}}
           onChange={(v) =>
             this.setState({
               group: v.target.value,
@@ -982,7 +984,7 @@ export class App extends React.Component {
           className="editText"
           label="Номер подгруппы: 1 или 2"
           value={this.state.subGroup}
-          style={{margin: "1em"}}
+          style={{margin: "1em", color: `${this.state.color_sub}`}}
           onChange={(s) =>
             this.setState({
               subGroup: s.target.value,
@@ -1016,6 +1018,7 @@ export class App extends React.Component {
 
   isCorrect(){
     this.setState({correct: false})
+    let correct_sub = false;
     for (let i of groups) {
       if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
         this.state.correct = true
@@ -1023,7 +1026,8 @@ export class App extends React.Component {
         this.convertGroupNameInId()
     } 
   }
-  if (this.state.correct===true) {
+  if ((this.state.subGroup==="")||(this.state.subGroup==="1")||(this.state.subGroup==="")) correct_sub=true;
+  if ((this.state.correct===true)&&(correct_sub===true)) {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
@@ -1036,8 +1040,9 @@ export class App extends React.Component {
     console.log(this.state.spinner);
     this.state.flag=true;
     this.setState({page: 7});
-  } else if (this.state.group==="") {this.setState({description: "Поле с номером группы является обязательным для ввода"})}
-    else this.setState({description: "Некорректно"});
+  } else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "var(--plasma-colors-critical)  "})}
+  else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "var(--plasma-colors-critical)  "})}
+    if (correct_sub===false) {this.setState({labelGroup: "Некорректно введен номер подгруппы", color_sub: "var(--plasma-colors-critical)  "})}
   }
 
   Para(count){
