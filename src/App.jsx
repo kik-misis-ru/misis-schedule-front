@@ -744,10 +744,12 @@ export class App extends React.Component {
         }
        if (this.state.day[day_num-1]["count"][i]===0)
         this.state.days[day_num-1]["bell_1"][i][0]="Пар нет 🎉";
-          this.state.spinner=true;
-      } else {this.state.spinner=true;
+     
+      } else {
         this.state.days[day_num-1]["bell_1"][i][0]="Пар нет 🎉";}
-      }
+      } 
+      console.log("заполнилось");
+      this.state.spinner=true;
   }
 
 
@@ -1013,18 +1015,20 @@ export class App extends React.Component {
     } 
   }
   if (this.state.correct===true) {
-    console.log("ok");
-    this.state.spinner=false;   
+
+    this.state.spinner=false;       
+    console.log(this.state.spinner);
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
-      getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
-      this.showWeekSchedule(response, 0);
+    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
+    this.showWeekSchedule(response, 0);
     }); 
-   
+    this.state.spinner=false;
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
       this.showWeekSchedule(response, 1);
     });
-
+    console.log(this.state.spinner);
+    this.state.flag=true;
     this.setState({page: 7});
   } else if (this.state.group==="") {this.setState({description: "Поле с номером группы является обязательным для ввода"})}
     else this.setState({description: "Некорректно"});
@@ -1061,6 +1065,7 @@ export class App extends React.Component {
   Spinner(){
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
+        console.log("spinner");
         if(this.state.today===0) {this.setState({page: 8})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
