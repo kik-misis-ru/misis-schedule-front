@@ -195,9 +195,11 @@ export class App extends React.Component {
                 getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
                   this.showWeekSchedule(response, 0)
                 });
+                
                 getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
                   this.showWeekSchedule(response, 1)
                 });
+                console.log(this.state.spinner);
                 this.setState({description: "Здесь можно изменить данные", page: 7, checked: true});
               } else {
                 this.setState({page: 0});
@@ -482,9 +484,9 @@ export class App extends React.Component {
             this.state.flag=false;
           return this.setState({page: 7});}
         
-        case 'for_week':
+        case 'for_this_week':
           if (this.state.group!==""){
-            this.state.flag=true;
+          this.state.flag=true;
           return this.setState({page: 7});}
 
         case 'when_lesson':
@@ -753,7 +755,7 @@ export class App extends React.Component {
         this.state.days[day_num-1]["bell_1"][i][0]="Пар нет 🎉";}
       } 
       console.log("заполнилось");
-      this.state.spinner=true;
+      this.setState({spinner: true});
   }
 
 
@@ -806,7 +808,9 @@ export class App extends React.Component {
                         {this.state.day.map(({ title, date }, i) => this.state.today === i+1 ? ( 
                             <CarouselCol key={`item:${i}`} ><Button view = "primary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
                         ): (<CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
-                        )}
+                        )
+                        
+                        }
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
@@ -889,7 +893,7 @@ export class App extends React.Component {
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
-        
+        { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="92%" height="25rem" roundness={16} style={{ marginLeft: "1em", marginTop: "0.5em" }}/>) : (
         <div style={{ flexDirection: "column" }}>
           <Card style={{ width: "92%", marginLeft: "1em", marginTop: "0.5em" }}>
             <CardBody>
@@ -920,7 +924,8 @@ export class App extends React.Component {
               </CardContent>
             </CardBody>
           </Card>
-          </div>
+          </div>)
+  }
           <div style={{
         width:  '200px',
         height: '200px',
@@ -1019,15 +1024,12 @@ export class App extends React.Component {
     } 
   }
   if (this.state.correct===true) {
-
-    this.state.spinner=false;       
-    console.log(this.state.spinner);
+   
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
     this.showWeekSchedule(response, 0);
     }); 
-    this.state.spinner=false;
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
       this.showWeekSchedule(response, 1);
     });
@@ -1074,7 +1076,10 @@ export class App extends React.Component {
         if(this.state.today===0) {this.setState({page: 8})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
-    clearInterval(myinterval)}, 100)}
+     
+    }, 100);
+    console.log(this.state.days[0]["bell_1"][0][0]);
+    clearInterval(myinterval)}
     }, 100);
     
     return(
