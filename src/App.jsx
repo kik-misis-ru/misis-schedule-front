@@ -477,11 +477,15 @@ export class App extends React.Component {
             return this.setState({page: this.state.today+1});
           }
 
-
+        case 'for_next_week':
+          if (this.state.group!==""){
+            this.state.flag=false;
+          return this.setState({page: 7});}
         
         case 'for_week':
-          if (this.state.group!=="")
-          return this.setState({page: 1});
+          if (this.state.group!==""){
+            this.state.flag=true;
+          return this.setState({page: 7});}
 
         case 'when_lesson':
           if (this.state.group!==""){
@@ -1066,10 +1070,11 @@ export class App extends React.Component {
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
         console.log("spinner");
+        setTimeout(()=>{
         if(this.state.today===0) {this.setState({page: 8})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
-    clearInterval(myinterval)}
+    clearInterval(myinterval)}, 100)}
     }, 100);
     
     return(
