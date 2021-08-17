@@ -355,7 +355,7 @@ export class App extends React.Component {
         (this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "")) {
           console.log(this.state.days[this.state.today - 1][bell][0][5][0]);
           return this.state.days[this.state.today - 1][bell][0][5][0]
-        }
+        } 
       }
     }
   }
@@ -373,8 +373,39 @@ export class App extends React.Component {
     return countRemainingLessons
   }
 
-  whatLesson(date, when){ //определяет название пары, которая идет или будет 
+  getTimeFirstLesson(daynum){ 
+    let first;
+    let num;
+    for (let bell in this.state.days[daynum - 1]) {
+      if (this.state.days[daynum - 1][bell][0][5][3] !== "") {
+        first = this.state.days[daynum - 1][bell][0][3];
+        num = this.state.days[daynum-1][bell][0][5];
+        break
+      }
+    }
+    return [time, num];
+  }
 
+  whatLesson(date){ //определяет название пары, которая идет или будет 
+    // ключ - номер пары, значение - перерыв до этой пары
+    let breaks = {'1':'09:00', '2':'10:35-10:50', '3':'12:25-12:40', '4':'14:15-14:30', '5':'16:05-16:20', '6':'17:55-18:10', '7':'19:45'}
+    
+    if (this.state.today!==0)  
+        if (this.getCurrentLesson(date)!==undefined)
+        for (let bell in this.state.days[this.state.today - 1]) {
+          if ((this.state.days[this.state.today - 1][bell][0][5] === this.getCurrentLesson(date))&&(this.state.days[this.state.today - 1][bell][0][5]!=="")) {
+            return {lesson:this.state.days[this.state.today - 1][bell][0][0], type:"now"};
+          }
+        } 
+        if (this.getCurrentLesson(date)+1!==undefined)
+        for (let bell in this.state.days[this.state.today - 1]) {
+          if ((this.state.days[this.state.today - 1][bell][0][5] === this.getCurrentLesson(date)+1)&&(this.state.days[this.state.today - 1][bell][0][5]!=="")) {
+            return {lesson:this.state.days[this.state.today - 1][bell][0][0], type:"next"};
+          }
+        } else if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5)) return {lesson:this.state.days[this.state.today - 1][`bell_${this.getTimeFirstLesson(this.state.today)[1]+1}`][0][0], type:"next"};
+          else for (let i in breaks) {
+            if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6))&&(this.state.days[this.state.today - 1][`bell_${i}`][0][5]!=="")) return {lesson:this.state.days[this.state.today - 1][`bell_${i}`][0][0], type:"current"};
+          }
   }
 
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
@@ -403,7 +434,7 @@ export class App extends React.Component {
         console.log(this.state.days)
         for (let bell in this.state.days[this.state.today - 1]) {
           // если пара с таким номером есть в расписании
-          if (this.state.days[this.state.today - 1][bell][0][5][0] === numberNearestLesson) {
+          if (this.state.days[this.state.today - 1][bell][0][5] === numberNearestLesson) {
             // выводим эту пару
             console.log(this.state.days[this.state.today - 1][bell][0])
             return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"inSchedule"}
@@ -411,7 +442,7 @@ export class App extends React.Component {
             // сообщаем, что такой пары нет
             console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
             for (let bell in this.state.days[this.state.today - 1]) {
-              if (this.state.days[this.state.today - 1][bell][0][5][0] !== numberNearestLesson) {
+              if (this.state.days[this.state.today - 1][bell][0][5] !== numberNearestLesson) {
                 console.log(this.state.days[this.state.today - 1][bell][0][0])
                 return {audience:this.state.days[this.state.today - 1][bell][0][2], type:"nearest", exist:"notInSchedule"}
               }
@@ -645,6 +676,17 @@ export class App extends React.Component {
       
           break
 
+          case 'what':
+          
+          if (this.state.group!=="")
+          if (this.state.today===0) {
+            this.setState({page: 8})
+          } else {
+            this.setState({page: this.state.today});
+          }
+      
+          break
+
         default:
           //throw new Error();
       }
@@ -746,7 +788,7 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
           this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
           this.state.days[day_num-1][bell][i][4]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
-          this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}. `;
+          this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}`;
           this.state.day[day_num-1]["count"][i]++;
         } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.state.subGroup!=="") ){
           
@@ -763,7 +805,7 @@ export class App extends React.Component {
             this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
             this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
             this.state.days[day_num-1][bell][i][4]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
-            this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}. `;
+            this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}`;
           this.state.day[day_num-1]["count"][i]++;
         }  else {
           this.state.days[day_num-1][bell][i][0]="";
@@ -875,7 +917,7 @@ export class App extends React.Component {
 
   Raspisanie(timeParam, weekParam){
     this.state.i=0;
-    let current = this.getCurrentLesson(new Date(Date.now() - 36000000 - 7862400000 ));
+    let current = this.getCurrentLesson(new Date(Date.now() - 7862400000 ));
     let day_num = timeParam-1;
     let index=timeParam;
     if (weekParam===1){
@@ -981,12 +1023,12 @@ export class App extends React.Component {
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
-                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5].slice(0, 1) === current ? (
-                    < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5] === current ? (
+                    < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}. 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                     </ CardHeadline3>
                   ) : (
-                  < CardHeadline3 >{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                  < CardHeadline3 >{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}. 
                   {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                   </ CardHeadline3>)
               }
