@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo0 from "../src/unnamed.gif";
 import logo from "../src/logo.png";
+import image from "../src/frame.png"
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
 import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell, HeaderSubtitle} from '@sberdevices/plasma-ui';
@@ -204,7 +205,7 @@ export class App extends React.Component {
                   this.showWeekSchedule(response, 1)
                 });
                 console.log(this.state.spinner);
-                this.setState({description: "Здесь можно изменить данные", page: 7, checked: true});
+                this.setState({ page: 7, checked: true});
               } else {
                 this.setState({page: 0});
                 }
@@ -772,17 +773,20 @@ export class App extends React.Component {
     return(
       <div  >
           <Container style = {{padding: 0}}>
-        <HeaderRoot
-            style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
-        >  <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitle>Мой МИСиС</HeaderTitle>
-        <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
-        
-        </HeaderContent>
-        </HeaderRoot>
-        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
-        <h3 style={{margin: "1em"}}>Расписание {this.state.group} {sub}</h3></Row>
-
+          <Row style={{margin: "1em"}}>
+          <Col style={{ maxWidth: '3rem' }}>
+          <Image src={logo} ratio="1 / 1"/>
+          </Col>
+          <Col style={{marginLeft: "0.5em"}}>
+          <TextBox 
+          subTitle={`${this.state.group} ${sub}`}
+          title="Расписание занятий"
+          />
+          </Col>
+          <Col style={{marginLeft: "auto"}}>
+            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
+          </Col>
+        </Row>
         <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
         <div>
           <Tabs view="black" size="m" >
@@ -875,7 +879,7 @@ export class App extends React.Component {
           title="Расписание занятий"
           />
           </Col>
-          <Col style={{marginLeft: "auto"}}>
+          <Col style={{margin: "0 0 0 auto"}}>
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
           </Col>
         </Row>
@@ -889,7 +893,7 @@ export class App extends React.Component {
           </Tabs>
         </div>
         </Row>
-        <Row style={{marginLeft: "1em"}}>
+        <Row style={{margin: "0.5em"}}>
         <CarouselGridWrapper >
                     <Carousel
                         as={Row}
@@ -913,9 +917,9 @@ export class App extends React.Component {
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
-        { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="90%" height="25rem" roundness={16} style={{ marginLeft: "1em", marginTop: "0.5em" }}/>) : (
+        { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="90%" height="25rem" roundness={16} style={{ marginLeft: "5%", marginTop: "5%" }}/>) : (
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "90%", marginLeft: "1em", marginTop: "0.5em" }}>
+          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" }}>
             <CardBody>
               <CardContent compact >
               <CardContent compact >
@@ -975,20 +979,26 @@ export class App extends React.Component {
     return (
       <div  >
         <Container style = {{padding: 0}}>
-        <HeaderRoot
+        {/* <HeaderRoot
             style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
         >  
-        {/* <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitle>Мой МИСиС</HeaderTitle> */}
+        <HeaderLogo src={logo} alt="МИСиС" /> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle>
         <HeaderContent>
         
-        <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> 
         </HeaderContent>
-        </HeaderRoot>
+        </HeaderRoot> */}
+        <Row >
+          <Col style={{marginLeft: "auto"}}>
+            <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> 
         
-        <div >
-          <h2 style={{margin: '2em', textAlign: "center"}}>Привет, студент! </h2>
-          <h4 color="var(--plasma-colors-button-white-secondary)" style={{margin: '2em', textAlign: "center"}}>{this.state.description}</h4>
+          </Col>
+        </Row>
+        <div style={{marginTop:"2em"}}>
+          <TextBox>
+          <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
+          <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{margin: '1.5em', textAlign: "center"}}>{this.state.description}</TextBoxSubTitle>
+          </TextBox>
           <TextField
           id="tf"
           label={this.state.labelGroup}
@@ -1024,7 +1034,11 @@ export class App extends React.Component {
           <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
           
           <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "0.5em"}}/>
-        </Row></div>
+        </Row>
+        {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
+          <Image src={image} style={{width: "250px"}}/>
+        </Row> */}
+        </div>
         </Container>
       </div>
     )
