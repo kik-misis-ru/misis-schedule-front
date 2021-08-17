@@ -8,7 +8,6 @@ import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceTheme
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
-import { text, background, gradient } from '@sberdevices/plasma-tokens';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   MarkedList,
@@ -42,6 +41,9 @@ import {
   createAssistant,
 } from "@sberdevices/assistant-client";
 import "./App.css";
+import { createGlobalStyle } from "styled-components";
+import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
+import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import { TextField, ActionButton } from "@sberdevices/plasma-ui";
 import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconSettings, IconDisclosureRight, IconChevronRight, IconLocation} from "@sberdevices/plasma-icons";
 import {
@@ -67,8 +69,18 @@ const initializeAssistant = (getState) => {
   return createAssistant({ getState });
 };
 
+const ThemeBackgroundEva = createGlobalStyle(darkEva);
+const ThemeBackgroundSber = createGlobalStyle(darkSber);
+const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
 
-
+const DocStyle = createGlobalStyle`
+    html:root {
+        min-height: 100vh;
+        color: ${text};
+        background-color: ${background};
+        background-image: ${gradient};
+    }
+`;
 
 export class App extends React.Component {
   constructor(props) {
@@ -165,6 +177,7 @@ export class App extends React.Component {
       today: 0,
       color_group: "var(--plasma-colors-white-secondary)",
       color_sub: "var(--plasma-colors-white-secondary)",
+      character: "sber"
     }
     this.Home = this.Home.bind(this);
     // this.Navigator = this.Navigator.bind(this);
@@ -179,7 +192,10 @@ export class App extends React.Component {
     this.assistant.on("data", (event) => {
       switch (event.type) {
         case "character":
+        console.log(event.character.id);
+        this.state.character=event.character.id;
           if (event.character.id === "timeParamoy") {
+            
             this.state.description="Заполни данные, чтобы открывать расписание одной фразой"
           } else this.state.description="Чтобы посмотреть расписание, укажите данные учебной группы"
           break;
@@ -771,6 +787,20 @@ export class App extends React.Component {
     this.state.timeParam=0;
     if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
     return(
+      <DeviceThemeProvider>
+        <DocStyle />
+        {(() => {
+          switch (this.state.character) {
+            case "sber":
+              return <ThemeBackgroundSber />;
+            case "eva":
+              return <ThemeBackgroundEva />;
+            case "joy":
+              return <ThemeBackgroundJoy />;
+            default:
+              return;
+          }
+        })()}
       <div  >
           <Container style = {{padding: 0}}>
           <Row style={{margin: "1em"}}>
@@ -833,6 +863,7 @@ export class App extends React.Component {
         }}></div>
           </Container>
             </div>
+            </DeviceThemeProvider>
     );
     
   }
@@ -854,6 +885,20 @@ export class App extends React.Component {
     if ((this.state.today === timeParam)&&(weekParam===0)) today = "сегодня";
     else if ((this.state.today+1 === timeParam)&&(weekParam===0)) today = "завтра";
   return(
+    <DeviceThemeProvider>
+        <DocStyle />
+        {(() => {
+          switch (this.state.character) {
+            case "sber":
+              return <ThemeBackgroundSber />;
+            case "eva":
+              return <ThemeBackgroundEva />;
+            case "joy":
+              return <ThemeBackgroundJoy />;
+            default:
+              return;
+          }
+        })()}
     <div  >
         <Container style = {{padding: 0}}>
         {/* <HeaderRoot
@@ -962,6 +1007,7 @@ export class App extends React.Component {
         }}></div>
           </Container>
           </div>
+         </DeviceThemeProvider>
   );
   }
 
@@ -977,6 +1023,20 @@ export class App extends React.Component {
     let disabled = true;
     if (this.state.groupId!=="") disabled=false;
     return (
+      <DeviceThemeProvider>
+        <DocStyle />
+        {(() => {
+          switch (this.state.character) {
+            case "sber":
+              return <ThemeBackgroundSber />;
+            case "eva":
+              return <ThemeBackgroundEva />;
+            case "joy":
+              return <ThemeBackgroundJoy />;
+            default:
+              return;
+          }
+        })()}
       <div  >
         <Container style = {{padding: 0}}>
         {/* <HeaderRoot
@@ -1041,6 +1101,7 @@ export class App extends React.Component {
         </div>
         </Container>
       </div>
+      </DeviceThemeProvider>
     )
   }
 
@@ -1125,11 +1186,26 @@ export class App extends React.Component {
     }, 100);
     
     return(
+      <DeviceThemeProvider>
+        <DocStyle />
+        {(() => {
+          switch (this.state.character) {
+            case "sber":
+              return <ThemeBackgroundSber />;
+            case "eva":
+              return <ThemeBackgroundEva />;
+            case "joy":
+              return <ThemeBackgroundJoy />;
+            default:
+              return;
+          }
+        })()}
       <div  >
         <Container style = {{padding: 0}}>
         <Spinner color="var(--plasma-colors-button-accent)" style={{position:" absolute", top: "40%", left:" 45%", marginRight: "-50%"}}/>
         </Container>
       </div>
+      </DeviceThemeProvider>
     )
   }
 
