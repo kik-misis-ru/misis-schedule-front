@@ -33,7 +33,8 @@ import {
   CardHeadline3,
   ButtonSkeleton,
   RectSkeleton,
-  HeaderTitleWrapper
+  HeaderTitleWrapper,
+  Image
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -851,20 +852,33 @@ export class App extends React.Component {
   return(
     <div  >
         <Container style = {{padding: 0}}>
-        <HeaderRoot
+        {/* <HeaderRoot
             style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
         >  
         <HeaderLogo src={logo} alt="МИСиС" /> 
         <HeaderTitleWrapper>
-        <HeaderTitle>Расписание занятий</HeaderTitle>
-        <HeaderSubtitle>  {this.state.group} {sub}</HeaderSubtitle>
+        <HeaderTitle></HeaderTitle>
+        <HeaderSubtitle>  </HeaderSubtitle>
         </HeaderTitleWrapper>
-        <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
+        <HeaderContent>
         
         </HeaderContent>
-        </HeaderRoot>
-        <Row></Row>
-        <Row></Row>
+        </HeaderRoot> */}
+
+        <Row style={{margin: "1em"}}>
+          <Col style={{ maxWidth: '3rem' }}>
+          <Image src={logo} ratio="1 / 1"/>
+          </Col>
+          <Col style={{marginLeft: "0.5em"}}>
+          <TextBox 
+          subTitle={`${this.state.group} ${sub}`}
+          title="Расписание занятий"
+          />
+          </Col>
+          <Col style={{marginLeft: "auto"}}>
+            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
+          </Col>
+        </Row>
         <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
         <div>
           <Tabs view="black" size="m" >
