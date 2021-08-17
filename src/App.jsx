@@ -3,7 +3,7 @@ import logo0 from "../src/unnamed.gif";
 import logo from "../src/logo.png";
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell} from '@sberdevices/plasma-ui';
+import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell, HeaderSubtitle} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
@@ -32,7 +32,8 @@ import {
   CellListItem,
   CardHeadline3,
   ButtonSkeleton,
-  RectSkeleton
+  RectSkeleton,
+  HeaderTitleWrapper
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -331,9 +332,10 @@ export class App extends React.Component {
   getCurrentLesson(date) {
     if (this.state.today !== 0) {
       for (let bell in this.state.days[this.state.today - 1]) {
-        if (this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) && 
-        this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8) &&
-        this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "") {
+        if ((this.getTime(date) > this.state.days[this.state.today - 1][bell][0][3].slice(0, 6)) && 
+        (this.getTime(date) < this.state.days[this.state.today - 1][bell][0][3].slice(8)) &&
+        (this.state.days[this.state.today - 1][bell][0][3].slice(0, 6) !== "")) {
+          console.log(this.state.days[this.state.today - 1][bell][0][5][0]);
           return this.state.days[this.state.today - 1][bell][0][5][0]
         }
       }
@@ -756,7 +758,6 @@ export class App extends React.Component {
       } else {
         this.state.days[day_num-1]["bell_1"][i][0]="Пар нет 🎉";}
       } 
-      console.log("заполнилось");
       this.setState({spinner: true});
   }
 
@@ -771,7 +772,7 @@ export class App extends React.Component {
       <div  >
           <Container style = {{padding: 0}}>
         <HeaderRoot
-            style={{backgroundColor: "black"}}
+            style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
         >  <HeaderLogo src={logo} alt="МИСиС" /> 
         <HeaderTitle>Мой МИСиС</HeaderTitle>
         <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
@@ -851,16 +852,19 @@ export class App extends React.Component {
     <div  >
         <Container style = {{padding: 0}}>
         <HeaderRoot
-            style={{backgroundColor: "black"}}
-        >  <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitle>Мой МИСиС</HeaderTitle>
+            style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
+        >  
+        <HeaderLogo src={logo} alt="МИСиС" /> 
+        <HeaderTitleWrapper>
+        <HeaderTitle>Расписание занятий</HeaderTitle>
+        <HeaderSubtitle>  {this.state.group} {sub}</HeaderSubtitle>
+        </HeaderTitleWrapper>
         <HeaderContent><Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
         
         </HeaderContent>
         </HeaderRoot>
-        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
-        <h3 style={{margin: "1em"}}>Расписание {this.state.group} {sub}</h3></Row>
-
+        <Row></Row>
+        <Row></Row>
         <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
         <div>
           <Tabs view="black" size="m" >
@@ -889,19 +893,19 @@ export class App extends React.Component {
                     >
                         {this.state.day.map(({ title, date }, i) =>  
                         this.state.today === i+1&&weekParam===0 ? ( 
-                            <CarouselCol key={`item:${i}`} ><Button view = "primary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[weekParam]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
-                        ): (<CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[weekParam]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
+                            <CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
+                        ): (<CarouselCol key={`item:${i}`} ><Button view = "clear" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
                         ) }
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
-        { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="92%" height="25rem" roundness={16} style={{ marginLeft: "1em", marginTop: "0.5em" }}/>) : (
+        { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="90%" height="25rem" roundness={16} style={{ marginLeft: "1em", marginTop: "0.5em" }}/>) : (
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "92%", marginLeft: "1em", marginTop: "0.5em" }}>
+          <Card style={{ width: "90%", marginLeft: "1em", marginTop: "0.5em" }}>
             <CardBody>
               <CardContent compact >
               <CardContent compact >
-                <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)}, {today} {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle>
+                {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
               { 
               this.state.days.map((bell_$, i) =>  this.state.days[day_num][`bell_${i+1}`][weekParam][0]!=="" ? (                
               <CellListItem key={`item:${i}`} content={
@@ -909,9 +913,15 @@ export class App extends React.Component {
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5] === this.getCurrentLesson(new Date(this.state.date - 7862400000 - 36000000)) ? (
+                    < CardHeadline3 style={{backgroundColor: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                    {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
+                    </ CardHeadline3>
+                  ) : (
                   < CardHeadline3 >{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
                   {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
-                  </ CardHeadline3>
+                  </ CardHeadline3>)
+              }
                   <TextBoxTitle> {this.state.days[day_num][`bell_${i+1}`][weekParam][1]} </TextBoxTitle>
                   
                   </TextBox>
@@ -952,9 +962,10 @@ export class App extends React.Component {
       <div  >
         <Container style = {{padding: 0}}>
         <HeaderRoot
-            style={{backgroundColor: "black"}}
-        >  <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitle>Мой МИСиС</HeaderTitle>
+            style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
+        >  
+        {/* <HeaderLogo src={logo} alt="МИСиС" /> 
+        <HeaderTitle>Мой МИСиС</HeaderTitle> */}
         <HeaderContent>
         
         <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> 
@@ -1076,14 +1087,12 @@ export class App extends React.Component {
   Spinner(){
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
-        console.log("spinner");
         setTimeout(()=>{
         if(this.state.today===0) {this.setState({page: 8})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
      
     }, 100);
-    console.log(this.state.days[0]["bell_1"][0][0]);
     clearInterval(myinterval)}
     }, 100);
     
