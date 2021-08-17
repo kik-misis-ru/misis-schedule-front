@@ -8,10 +8,11 @@ import GlobalStyle from "./GlobalStyle" // Тема оформления (цве
 
 
 ReactDOM.render(
-  <DeviceThemeProvider>
-  <GlobalStyle />
+  // <DeviceThemeProvider>
+  // <GlobalStyle />
   <App />
-</DeviceThemeProvider>,
+// </DeviceThemeProvider>
+,
 document.getElementById('root'),
 );
 
