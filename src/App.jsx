@@ -373,6 +373,10 @@ export class App extends React.Component {
     return countRemainingLessons
   }
 
+  whatLesson(date, when){ //определяет название пары, которая идет или будет 
+
+  }
+
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
   whereWillLesson(date, will) {
     let nextLessonRoom
@@ -871,6 +875,7 @@ export class App extends React.Component {
 
   Raspisanie(timeParam, weekParam){
     this.state.i=0;
+    let current = this.getCurrentLesson(new Date(Date.now() - 36000000 - 7862400000 ));
     let day_num = timeParam-1;
     let index=timeParam;
     if (weekParam===1){
@@ -976,8 +981,8 @@ export class App extends React.Component {
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
-                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5] === this.getCurrentLesson(new Date(this.state.date - 7862400000 - 36000000)) ? (
-                    < CardHeadline3 style={{backgroundColor: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5].slice(0, 1) === current ? (
+                    < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                     </ CardHeadline3>
                   ) : (
