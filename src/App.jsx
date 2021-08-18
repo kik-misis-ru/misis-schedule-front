@@ -377,7 +377,7 @@ export class App extends React.Component {
     let first;
     let num;
     for (let bell in this.state.days[daynum - 1]) {
-      if (this.state.days[daynum - 1][bell][0][5][0] !== "") {
+      if (this.state.days[daynum - 1][bell][0][5] !== "") {
         first = this.state.days[daynum - 1][bell][0][3];
         num = this.state.days[daynum-1][bell][0][5][0];
         break
@@ -386,26 +386,33 @@ export class App extends React.Component {
     return [first, num];
   }
 
-  whatLesson(date){ //определяет название пары, которая идет или будет 
+  whatLesson(date, when){ //определяет название пары, которая идет или будет 
     // ключ - номер пары, значение - перерыв до этой пары
+    if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5)) console.log(true)
     let breaks = {'1':'09:00', '2':'10:35-10:50', '3':'12:25-12:40', '4':'14:15-14:30', '5':'16:05-16:20', '6':'17:55-18:10', '7':'19:45'}
-    
+    console.log(" что за пара", this.getTime(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0,5))
     if (this.state.today!==0)  
-        if (this.getCurrentLesson(date)!==undefined)
+      
+        if ((this.getCurrentLesson(date)!==undefined)&&(when==="now"))
         for (let bell in this.state.days[this.state.today - 1]) {
           if ((this.state.days[this.state.today - 1][bell][0][5][0] === this.getCurrentLesson(date))&&(this.state.days[this.state.today - 1][bell][0][5][0]!=="")) {
             return {lesson:this.state.days[this.state.today - 1][bell][0][0], type:"now"};
           }
         } 
-        if (this.getCurrentLesson(date)+1!==undefined)
-        for (let bell in this.state.days[this.state.today - 1]) {
-          if ((this.state.days[this.state.today - 1][bell][0][5][0] === this.getCurrentLesson(date)+1)&&(this.state.days[this.state.today - 1][bell][0][5][0]!=="")) {
+      else
+        if ((when==="will")&&(this.getCurrentLesson(date)!==undefined)&&(parseInt(this.getCurrentLesson(date))+1<8)){
+        console.log("будет")
+          for (let bell in this.state.days[this.state.today - 1]) {
+          if ((when==="will")&&(this.state.days[this.state.today - 1][bell][0][5][0] === toString(parseInt(this.getCurrentLesson(date))+1))&&(this.state.days[this.state.today - 1][bell][0][5][0]!=="")) {
             return {lesson:this.state.days[this.state.today - 1][bell][0][0], type:"next"};
           }
-        } else if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5)) return {lesson:this.state.days[this.state.today - 1][`bell_${this.getTimeFirstLesson(this.state.today)[1]+1}`][0][0], type:"next"};
+        } 
+      }
+        else if ((this.getTimeFirstLesson(this.state.today)[0].slice(0,5)!==undefined)&&(this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5))){console.log(this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]); return {lesson:this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0], type:"next"} }
           else for (let i in breaks) {
-            if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6))&&(this.state.days[this.state.today - 1][`bell_${i}`][0][5][0]!=="")) return {lesson:this.state.days[this.state.today - 1][`bell_${i}`][0][0], type:"current"};
+            if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6))&&(this.state.days[this.state.today - 1][`bell_${i}`][0][5][0]!=="")) return {lesson:this.state.days[this.state.today - 1][`bell_${i}`][0][0], type:"will"};
           }
+          else return {lesson:undefined, type: when};
   }
 
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
@@ -591,7 +598,7 @@ export class App extends React.Component {
             let response
             let day
             let lesson
-            let page = 8;
+            let page = 0;
             if (action.note !== undefined) {
               console.log(action.note)
               response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
@@ -602,7 +609,7 @@ export class App extends React.Component {
               day = "today"
             }
             const dayNameDict = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
-            console.log("response", response)
+            console.log("response", response[1])
             let howManyParams
             if (this.state.group!=="")
             if (response === undefined) {
@@ -617,6 +624,7 @@ export class App extends React.Component {
                 dayName: dayNameDict[response[0]][0],
                 amount: numPron[response[1]] 
               }
+              if (dayNameDict[response[0]][1]<this.state.today) page=8;
               this.setState({page: dayNameDict[response[0]][1]+page})
             }
             this.assistant.sendData({
@@ -660,7 +668,7 @@ export class App extends React.Component {
             action.note = {"when": "now"}
           }
           let whereLessonParams
-          whereLessonParams = this.whereWillLesson(new Date(this.state.date - 7862400000), action.note.when)
+          whereLessonParams = this.whereWillLesson(new Date(this.state.date - 7862400000 ), action.note.when)
           this.assistant.sendData({
             action: {
               action_id: "say3",
@@ -676,9 +684,22 @@ export class App extends React.Component {
       
           break
 
-          case 'what':
-          
+          case 'what_lesson':
+          console.log("какая пара")
           if (this.state.group!=="")
+          console.log(action.note)
+          if (action.note === undefined) {
+            action.note = {"when": "now"}
+          }
+          let whatlesson 
+          whatlesson = this.whatLesson(new Date(Date.now() - 7862400000 ), action.note.when);
+          console.log(this.whatLesson(new Date(Date.now() - 7862400000 ), action.note.when))
+          this.assistant.sendData({
+            action: {
+              action_id: "say4",
+              parameters: whatlesson,
+            },
+          })
           if (this.state.today===0) {
             this.setState({page: 8})
           } else {
@@ -1023,7 +1044,7 @@ export class App extends React.Component {
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
-                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current ? (
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current && this.state.days[day_num][`bell_${i+1}`][weekParam][1] !=="" ? (
                     < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                     </ CardHeadline3>
