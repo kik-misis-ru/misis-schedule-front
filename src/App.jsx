@@ -500,6 +500,8 @@ export class App extends React.Component {
     const numPron = {1:"одна", 2:"две", 3:"три", 4:"четыре", 5:"пять", 6:"шесть", 7:"семь"}
     if (action) {
       switch (action.type) {
+        case 'profile': 
+        return this.setState({page: 0});
         case 'for_today':
           console.log(this.state.days)
           if (this.state.group!=="")
@@ -708,7 +710,58 @@ export class App extends React.Component {
           }
       
           break
-
+        
+          case 'first_lesson':
+            let number
+            let day1
+            let page1 = 0;
+            if (action.note !== undefined) {
+              console.log(action.note)
+              console.log(this.getTimeFirstLesson(new Date(action.note.timestamp - 7862400000))[1]);
+              number = this.getTimeFirstLesson(new Date(action.note.timestamp - 7862400000))[1]
+              if (String(this.state.today + 1) === action.note.dayOfWeek) { day1 = "today"; page1=0}
+              else if (String(this.state.today + 2) === action.note.dayOfWeek) {day1 = "tomorrow"; page1 = 0}
+            } else {
+              console.log(this.getTimeFirstLesson(new Date(Date.now() - 7862400000))[1]);
+              number = this.getTimeFirstLesson(new Date(Date.now() - 7862400000))[1];
+              day = "today"
+            }
+            const dayNameDict1 = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
+            console.log("response", number)
+            let whichFirst
+            if (this.state.group!=="")
+            if (number === undefined) {
+              whichFirst = {day1: "sunday"}
+              this.setState({page: 8})
+            }
+            else {
+              whichFirst = {
+                num: number[0],
+                day: day1,
+                dayName: dayNameDict1[number[0]][0]
+              }
+              if (dayNameDict1[number[0]][1]<this.state.today) page1=8;
+              this.setState({page: dayNameDict1[number[0]][1]+page1})
+            }
+            this.assistant.sendData({
+              action: {
+                action_id: "say5",
+                parameters: whichFirst,
+              },
+            })
+            break
+          case 'group': 
+            if (action.note[0] === 0) { 
+            console.log(action.note[1].data.groupName[0]);
+            this.setState({group: action.note[1].data.groupName[0].toUpperCase()});
+            } 
+            else { 
+            console.log(action.note[1].data.groupName[1])
+            this.setState({group: action.note[1].data.groupName[1].toUpperCase()}) 
+            } 
+            break
+          case 'show_schedule':
+            return this.isCorrect();
         default:
           //throw new Error();
       }
@@ -881,7 +934,7 @@ export class App extends React.Component {
           title="Расписание занятий"
           />
           </Col>
-          <Col style={{marginLeft: "auto"}}>
+          <Col style={{margin: "0 0 0 auto"}}>
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
           </Col>
         </Row>
@@ -895,7 +948,7 @@ export class App extends React.Component {
           </Tabs>
         </div>
         </Row>
-        <Row style={{marginLeft: "1em"}}>
+        <Row style={{margin: "0.5em"}}>
         <CarouselGridWrapper >
                     <Carousel
                         as={Row}
@@ -911,12 +964,12 @@ export class App extends React.Component {
                         paddingEnd="50%"
                         
                     >
-                        {this.state.day.map(({ title, date }, i) => this.state.today === i+1 ? ( 
-                            <CarouselCol key={`item:${i}`} ><Button view = "primary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
-                        ): (<CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={` ${title} ${date[0]}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
-                        )
-                        
-                        }
+                        {this.state.day.map(({ title, date }, i) =>  
+                        this.state.today === i+1
+                         ? ( 
+                            <CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[0].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
+                        ): (<CarouselCol key={`item:${i}`} ><Button view = "clear" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[0].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
+                        ) }
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
