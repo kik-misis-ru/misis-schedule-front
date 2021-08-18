@@ -391,7 +391,7 @@ export class App extends React.Component {
     if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5)) console.log(true)
     let breaks = {'1':'09:00', '2':'10:35-10:50', '3':'12:25-12:40', '4':'14:15-14:30', '5':'16:05-16:20', '6':'17:55-18:10', '7':'19:45'}
     console.log(" что за пара", this.getTime(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0,5))
-    if (this.state.today!==0)  
+    if (this.state.today!==0)  {
       
         if ((this.getCurrentLesson(date)!==undefined)&&(when==="now"))
         for (let bell in this.state.days[this.state.today - 1]) {
@@ -411,8 +411,8 @@ export class App extends React.Component {
         else if ((this.getTimeFirstLesson(this.state.today)[0].slice(0,5)!==undefined)&&(this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5))){console.log(this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]); return {lesson:this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0], type:"next"} }
           else for (let i in breaks) {
             if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6))&&(this.state.days[this.state.today - 1][`bell_${i}`][0][5][0]!=="")) return {lesson:this.state.days[this.state.today - 1][`bell_${i}`][0][0], type:"will"};
+          else return {lesson:undefined, type: when};}
           }
-          else return {lesson:undefined, type: when};
   }
 
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
@@ -700,6 +700,7 @@ export class App extends React.Component {
               parameters: whatlesson,
             },
           })
+          console.log(whatlesson.lesson)
           if (this.state.today===0) {
             this.setState({page: 8})
           } else {
