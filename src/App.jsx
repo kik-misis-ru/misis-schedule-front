@@ -713,21 +713,21 @@ export class App extends React.Component {
         
           case 'first_lesson':
             let number
-            let day1
+            let day1 
             let page1 = 0;
             if (action.note !== undefined) {
               console.log(action.note)
-              console.log(this.getTimeFirstLesson(new Date(action.note.timestamp - 7862400000))[1]);
-              number = this.getTimeFirstLesson(new Date(action.note.timestamp - 7862400000))[1]
+              console.log(parseInt(action.note.dayOfWeek)-1);
+              number = this.getTimeFirstLesson(parseInt(action.note.dayOfWeek)-1)[1]
               if (String(this.state.today + 1) === action.note.dayOfWeek) { day1 = "today"; page1=0}
               else if (String(this.state.today + 2) === action.note.dayOfWeek) {day1 = "tomorrow"; page1 = 0}
             } else {
-              console.log(this.getTimeFirstLesson(new Date(Date.now() - 7862400000))[1]);
-              number = this.getTimeFirstLesson(new Date(Date.now() - 7862400000))[1];
+              console.log(this.getTimeFirstLesson(parseInt(action.note.dayOfWeek)-1)[1]);
+              number = this.getTimeFirstLesson(parseInt(action.note.dayOfWeek)-1)[1];
               day = "today"
             }
-            const dayNameDict1 = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
-            console.log("response", number)
+            const dayNameDict1 = {1:["В понедельник", 1], 2:["Во вторник", 2], 3:["В среду", 3], 4:["В четверг", 4], 5:["В пятницу", 5], 6:["В субботу", 6]}
+            console.log("response", number, parseInt(action.note.dayOfWeek)-1)
             let whichFirst
             if (this.state.group!=="")
             if (number === undefined) {
@@ -738,10 +738,10 @@ export class App extends React.Component {
               whichFirst = {
                 num: number[0],
                 day: day1,
-                dayName: dayNameDict1[number[0]][0]
+                dayName: dayNameDict1[parseInt(action.note.dayOfWeek)-1][0]
               }
-              if (dayNameDict1[number[0]][1]<this.state.today) page1=8;
-              this.setState({page: dayNameDict1[number[0]][1]+page1})
+              if (dayNameDict1[parseInt(action.note.dayOfWeek)-1][1]<this.state.today) page1=8;
+              this.setState({page: dayNameDict1[parseInt(action.note.dayOfWeek)-1][1]+page1})
             }
             this.assistant.sendData({
               action: {
