@@ -692,7 +692,6 @@ export class App extends React.Component {
           case 'what_lesson':
           console.log("какая пара")
           if (this.state.group!=="")
-          console.log(action.note)
           if (action.note === undefined) {
             action.note = {"when": "now"}
           }
