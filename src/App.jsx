@@ -852,7 +852,15 @@ export class App extends React.Component {
   showWeekSchedule(schedule, i) { //заполнение данными расписания из бд
     this.state.spinner=false;
     this.schedule = JSON.parse(schedule);
-    
+    for (let day in this.state.days)
+      for (let bell in this.state.days[day])
+    {
+        this.state.days[day][bell][i][0]="";
+        this.state.days[day][bell][i][1]="";
+        this.state.days[day][bell][i][2]="";
+        this.state.days[day][bell][i][3]="";
+        this.state.days[day][bell][i][4]="";
+        this.state.days[day][bell][i][5]="";}
     
     for (let day_num = 1; day_num < 7; day_num++) {
       this.state.day[day_num-1]["count"][i]=0;
@@ -1266,7 +1274,7 @@ export class App extends React.Component {
     });
     console.log(this.state.spinner);
     this.state.flag=true;
-    this.setState({page: 7});
+    this.setState({page: 7, labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"});
   } else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "var(--plasma-colors-critical)  "})}
   else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "var(--plasma-colors-critical)  "})}
     if (correct_sub===false) {this.setState({labelGroup: "Некорректно введен номер подгруппы", color_sub: "var(--plasma-colors-critical)  "})}
