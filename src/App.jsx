@@ -376,10 +376,12 @@ export class App extends React.Component {
   getTimeFirstLesson(daynum){ 
     let first;
     let num;
+    let week = 0;
+    if (daynum<this.state.today) week=1;
     for (let bell in this.state.days[daynum - 1]) {
-      if (this.state.days[daynum - 1][bell][0][5] !== "") {
-        first = this.state.days[daynum - 1][bell][0][3];
-        num = this.state.days[daynum-1][bell][0][5][0];
+      if (this.state.days[daynum - 1][bell][week][5] !== "") {
+        first = this.state.days[daynum - 1][bell][week][3];
+        num = this.state.days[daynum-1][bell][week][5][0];
         break
       }
     }
@@ -403,12 +405,13 @@ export class App extends React.Component {
         if ((when==="will")&&(this.getCurrentLesson(date)!==undefined)&&(parseInt(this.getCurrentLesson(date))+1<8)){
         console.log("будет")
           for (let bell in this.state.days[this.state.today - 1]) {
-          if ((when==="will")&&(this.state.days[this.state.today - 1][bell][0][5][0] === toString(parseInt(this.getCurrentLesson(date))+1))&&(this.state.days[this.state.today - 1][bell][0][5][0]!=="")) {
+            console.log(parseInt(this.getCurrentLesson(date))+1);
+          if ((this.state.days[this.state.today - 1][bell][0][5][0] == parseInt(this.getCurrentLesson(date))+1)&&(this.state.days[this.state.today - 1][bell][0][5][0]!=="")) {
             return {lesson:this.state.days[this.state.today - 1][bell][0][0], type:"next"};
           }
         } 
       }
-        else if ((this.getTimeFirstLesson(this.state.today)[0].slice(0,5)!==undefined)&&(this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0,5))){console.log(this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]); return {lesson:this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0], type:"next"} }
+        else if ((this.getTimeFirstLesson(this.state.today)[0].slice(0,5)!==undefined)&&(this.getTime(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0,5))){console.log(this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]); return {lesson:this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0], type:"will"} }
           else for (let i in breaks) {
             if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6))&&(this.state.days[this.state.today - 1][`bell_${i}`][0][5][0]!=="")) return {lesson:this.state.days[this.state.today - 1][`bell_${i}`][0][0], type:"will"};
           else return {lesson:undefined, type: when};}
@@ -702,7 +705,6 @@ export class App extends React.Component {
               parameters: whatlesson,
             },
           })
-          console.log(whatlesson.lesson)
           if (this.state.today===0) {
             this.setState({page: 8})
           } else {
@@ -712,6 +714,7 @@ export class App extends React.Component {
           break
         
           case 'first_lesson':
+            const num = {1:"первой", 2:"второй", 3:"третьей", 4:"четвертой", 5:"пятой", 6:"шестой", 7:"седьмой"}
             let number
             let day1 
             let page1 = 0;
@@ -735,8 +738,8 @@ export class App extends React.Component {
               this.setState({page: 8})
             }
             else {
-              whichFirst = {
-                num: number[0],
+              whichFirst = { 
+                num: num[number[0]],
                 day: day1,
                 dayName: dayNameDict1[parseInt(action.note.dayOfWeek)-1][0]
               }
@@ -753,14 +756,16 @@ export class App extends React.Component {
           case 'group': 
             if (action.note[0] === 0) { 
             console.log(action.note[1].data.groupName[0]);
-            this.setState({group: action.note[1].data.groupName[0].toUpperCase()});
+            this.setState({group: action.note[1].data.groupName[0].toUpperCase(), page: 0});
             } 
             else { 
             console.log(action.note[1].data.groupName[1])
-            this.setState({group: action.note[1].data.groupName[1].toUpperCase()}) 
+            this.setState({group: action.note[1].data.groupName[1].toUpperCase(), page: 0}) 
             } 
             break
           case 'show_schedule':
+            console.log("показать расписание");
+            if (this.state.page===0)
             return this.isCorrect();
         default:
           //throw new Error();
@@ -1176,7 +1181,7 @@ export class App extends React.Component {
         
           </Col>
         </Row>
-        <div style={{marginTop:"2em"}}>
+        <div style={{marginTop:"1.75em"}}>
           <TextBox>
           <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
           <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{margin: '1.5em', textAlign: "center"}}>{this.state.description}</TextBoxSubTitle>
