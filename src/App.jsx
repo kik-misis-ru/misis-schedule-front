@@ -766,6 +766,10 @@ export class App extends React.Component {
             console.log("показать расписание");
             if (this.state.page===0)
             return this.isCorrect();
+          case 'subgroup': 
+            console.log('subgroup', action) 
+            this.setState({subGroup: action.note, page: 0}); 
+            break
         default:
           //throw new Error();
       }
@@ -1188,7 +1192,7 @@ export class App extends React.Component {
         
           </Col>
         </Row>
-        <div style={{marginTop:"1.75em"}}>
+        <div style={{marginTop:"12%"}}>
           <TextBox>
           <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
           <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{margin: '1.5em', textAlign: "center"}}>{this.state.description}</TextBoxSubTitle>
