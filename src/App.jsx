@@ -104,7 +104,7 @@ export class App extends React.Component {
       res: "",
       correct: null,
       labelGroup: "Номер академической группы",
-      labelSubgroup: "",
+      labelSubgroup: "Номер подгруппы: 1 или 2",
       labelEnggroup: "",
       i: 0,
       timeParam: 0,
@@ -1188,11 +1188,13 @@ export class App extends React.Component {
         </HeaderRoot> */}
         <Row >
           <Col style={{marginLeft: "auto"}}>
-            <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> 
-        
+            {disabled===false ?(
+            <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> ) 
+            : (<Button view = "clear"/>)
+            }
           </Col>
         </Row>
-        <div style={{marginTop:"12%"}}>
+        <div style={{marginTop:"5%"}}>
           <TextBox>
           <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
           <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{margin: '1.5em', textAlign: "center"}}>{this.state.description}</TextBoxSubTitle>
@@ -1215,7 +1217,7 @@ export class App extends React.Component {
           <TextField
           id="tf"
           className="editText"
-          label="Номер подгруппы: 1 или 2"
+          label={this.state.labelSubgroup}
           value={this.state.subGroup}
           style={{margin: "1em", color: `${this.state.color_sub}`}}
           onChange={(s) =>
@@ -1224,14 +1226,13 @@ export class App extends React.Component {
             })
           }
         />
-        <Row style={{margin: "1.1em"}}><Checkbox  label="Запомнить эту группу " checked={this.state.checked} onChange={(event) => {
+        <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}><Checkbox  label="Запомнить эту группу " checked={this.state.checked} onChange={(event) => {
                         this.setState({checked: event.target.checked });
                         console.log(this.state.checked);
                         }
-            }/></Row>
-          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
-          
-          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "0.5em"}}/>
+            }/>
+          </Row><Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}>
+          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "1.5em"}}/>
         </Row>
         {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
           <Image src={image} style={{width: "250px"}}/>
@@ -1264,7 +1265,7 @@ export class App extends React.Component {
         this.convertGroupNameInId()
     } 
   }
-  if ((this.state.subGroup==="")||(this.state.subGroup==="1")||(this.state.subGroup==="")) correct_sub=true;
+  if ((this.state.subGroup==="")||(this.state.subGroup==="1")||(this.state.subGroup==="2")) correct_sub=true;
   if ((this.state.correct===true)&&(correct_sub===true)) {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
@@ -1278,9 +1279,11 @@ export class App extends React.Component {
     console.log(this.state.spinner);
     this.state.flag=true;
     this.setState({page: 7, labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"});
-  } else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "var(--plasma-colors-critical)  "})}
+  } else if (this.state.correct===true) {this.setState({labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"})}
+  else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "var(--plasma-colors-critical)  "})}
   else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "var(--plasma-colors-critical)  "})}
-    if (correct_sub===false) {this.setState({labelGroup: "Некорректно введен номер подгруппы", color_sub: "var(--plasma-colors-critical)  "})}
+    if (correct_sub===false) {this.setState({ color_sub: "var(--plasma-colors-critical)  "})}
+    else this.setState({ color_sub: "var(--plasma-colors-white-secondary)"});
   }
 
   Para(count){
