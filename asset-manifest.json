@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/Misis/static/css/main.55ac5c5d.chunk.css",
-    "main.js": "/Misis/static/js/main.127c1d6c.chunk.js",
-    "main.js.map": "/Misis/static/js/main.127c1d6c.chunk.js.map",
+    "main.js": "/Misis/static/js/main.9162b29b.chunk.js",
+    "main.js.map": "/Misis/static/js/main.9162b29b.chunk.js.map",
     "runtime-main.js": "/Misis/static/js/runtime-main.1296dd4f.js",
     "runtime-main.js.map": "/Misis/static/js/runtime-main.1296dd4f.js.map",
     "static/css/2.97503911.chunk.css": "/Misis/static/css/2.97503911.chunk.css",
-    "static/js/2.b3303658.chunk.js": "/Misis/static/js/2.b3303658.chunk.js",
-    "static/js/2.b3303658.chunk.js.map": "/Misis/static/js/2.b3303658.chunk.js.map",
+    "static/js/2.77fdd57d.chunk.js": "/Misis/static/js/2.77fdd57d.chunk.js",
+    "static/js/2.77fdd57d.chunk.js.map": "/Misis/static/js/2.77fdd57d.chunk.js.map",
     "static/js/3.8e98ab5c.chunk.js": "/Misis/static/js/3.8e98ab5c.chunk.js",
     "static/js/3.8e98ab5c.chunk.js.map": "/Misis/static/js/3.8e98ab5c.chunk.js.map",
     "index.html": "/Misis/index.html",
     "static/css/2.97503911.chunk.css.map": "/Misis/static/css/2.97503911.chunk.css.map",
     "static/css/main.55ac5c5d.chunk.css.map": "/Misis/static/css/main.55ac5c5d.chunk.css.map",
-    "static/js/2.b3303658.chunk.js.LICENSE.txt": "/Misis/static/js/2.b3303658.chunk.js.LICENSE.txt",
+    "static/js/2.77fdd57d.chunk.js.LICENSE.txt": "/Misis/static/js/2.77fdd57d.chunk.js.LICENSE.txt",
     "static/media/Karta.e347edc6.png": "/Misis/static/media/Karta.e347edc6.png",
     "static/media/unnamed.16989a75.gif": "/Misis/static/media/unnamed.16989a75.gif"
   },
   "entrypoints": [
     "static/js/runtime-main.1296dd4f.js",
     "static/css/2.97503911.chunk.css",
-    "static/js/2.b3303658.chunk.js",
+    "static/js/2.77fdd57d.chunk.js",
     "static/css/main.55ac5c5d.chunk.css",
-    "static/js/main.127c1d6c.chunk.js"
+    "static/js/main.9162b29b.chunk.js"
   ]
 }
