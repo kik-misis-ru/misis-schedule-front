@@ -1160,6 +1160,10 @@ export class App extends React.Component {
   Home(){
     let disabled = true;
     if (this.state.groupId!=="") disabled=false;
+    if (this.state.character === "joy") {
+            
+      this.state.description="Заполни данные, чтобы открывать расписание одной фразой"
+    } else this.state.description="Чтобы посмотреть расписание, укажите данные учебной группы"
     return (
       <DeviceThemeProvider>
         <DocStyle />
