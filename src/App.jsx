@@ -213,11 +213,11 @@ export class App extends React.Component {
                 this.setState({subGroup: user["subgroup_name"]})
                 this.setState({engGroup: user["eng_group"]})
                 this.convertIdInGroupName()
-                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 10519200000))).then((response)=>{
+                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
                   this.showWeekSchedule(response, 0)
                 });
                 
-                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 10519200000))).then((response)=>{
+                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
                   this.showWeekSchedule(response, 1)
                 });
                 console.log(this.state.spinner);
@@ -599,7 +599,7 @@ export class App extends React.Component {
           break
 
           case 'how_many':
-            const threeMonthDiff = 10519200000
+            const threeMonthDiff = 7862400000
             let response
             let day
             let lesson
@@ -673,7 +673,7 @@ export class App extends React.Component {
             action.note = {"when": "now"}
           }
           let whereLessonParams
-          whereLessonParams = this.whereWillLesson(new Date(this.state.date - 10519200000 ), action.note.when)
+          whereLessonParams = this.whereWillLesson(new Date(this.state.date - 7862400000 ), action.note.when)
           this.assistant.sendData({
             action: {
               action_id: "say3",
@@ -696,8 +696,8 @@ export class App extends React.Component {
             action.note = {"when": "now"}
           }
           let whatlesson 
-          whatlesson = this.whatLesson(new Date(Date.now() - 10519200000 ), action.note.when);
-          console.log(this.whatLesson(new Date(Date.now() - 10519200000 ), action.note.when))
+          whatlesson = this.whatLesson(new Date(Date.now() - 7862400000 ), action.note.when);
+          console.log(this.whatLesson(new Date(Date.now() - 7862400000 ), action.note.when))
           this.assistant.sendData({
             action: {
               action_id: "say4",
@@ -1008,7 +1008,7 @@ export class App extends React.Component {
 
   Raspisanie(timeParam, weekParam){
     this.state.i=0;
-    let current = this.getCurrentLesson(new Date(Date.now() - 10519200000 ));
+    let current = this.getCurrentLesson(new Date(Date.now() - 7862400000 ));
     let day_num = timeParam-1;
     let index=timeParam;
     if (weekParam===1){
@@ -1274,10 +1274,10 @@ export class App extends React.Component {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
       //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
-    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 10519200000))).then((response)=>{
+    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
     this.showWeekSchedule(response, 0);
     }); 
-    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 10519200000))).then((response)=>{
+    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
       this.showWeekSchedule(response, 1);
     });
     console.log(this.state.spinner);
