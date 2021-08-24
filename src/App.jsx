@@ -1022,6 +1022,7 @@ export class App extends React.Component {
     let today = ""
     if ((this.state.today === timeParam)&&(weekParam===0)) today = "сегодня";
     else if ((this.state.today+1 === timeParam)&&(weekParam===0)) today = "завтра";
+    console.log(this.state.today)
   return(
     <DeviceThemeProvider>
         <DocStyle />
@@ -1076,7 +1077,7 @@ export class App extends React.Component {
           </Tabs>
         </div>
         </Row>
-        <Row style={{margin: "0.5em"}}>
+        <Row style={{margin: "0.5em", marginRight: "0"}} >
         <CarouselGridWrapper >
                     <Carousel
                         as={Row}
@@ -1089,13 +1090,13 @@ export class App extends React.Component {
                         detectThreshold={0.5}
                         onIndexChange={() => this.Index()}
                         paddingStart="0%"
-                        paddingEnd="50%"
+                        paddingEnd="40%"
                         
                     >
                         {this.state.day.map(({ title, date }, i) =>  
                         this.state.today === i+1&&weekParam===0 ? ( 
-                            <CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
-                        ): (<CarouselCol key={`item:${i}`} ><Button view = "clear" style={{marginTop: "0.5em", marginBottom: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
+                            <CarouselCol key={`item:${i}`} ><Button view = "secondary" style={{margin: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> 
+                        ): (<CarouselCol key={`item:${i}`} ><Button view = "clear" style={{margin: "0.5em"}} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`} focused={i+1 === index} onClick={()=>{this.setState({page: i+1 + this.state.timeParam}) }}/></CarouselCol> )
                         ) }
                     </Carousel>
                 </CarouselGridWrapper>
@@ -1114,7 +1115,7 @@ export class App extends React.Component {
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
-                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current && this.state.days[day_num][`bell_${i+1}`][weekParam][1] !=="" ? (
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current && this.state.days[day_num][`bell_${i+1}`][weekParam][1] !=="" && this.state.today === timeParam? (
                     < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                     </ CardHeadline3>
@@ -1194,7 +1195,7 @@ export class App extends React.Component {
           <Col style={{marginLeft: "auto"}}>
             {disabled===false ?(
             <Button  view="clear" disabled={disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>this.setState({ page: 7 })} style={{margin: "1em"}}/> ) 
-            : (<Button view = "clear"/>)
+            : (<Button view = "clear" disabled={disabled}/>)
             }
           </Col>
         </Row>
