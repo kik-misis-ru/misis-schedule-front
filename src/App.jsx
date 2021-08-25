@@ -45,7 +45,7 @@ import { createGlobalStyle } from "styled-components";
 import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import { TextField, ActionButton } from "@sberdevices/plasma-ui";
-import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconSettings, IconDisclosureRight, IconChevronRight, IconLocation} from "@sberdevices/plasma-icons";
+import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconSettings, IconDisclosureRight, IconChevronRight, IconLocation, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
 import {
   createUser,
   getScheduleFromDb,
@@ -179,7 +179,9 @@ export class App extends React.Component {
       today: 0,
       color_group: "var(--plasma-colors-white-secondary)",
       color_sub: "var(--plasma-colors-white-secondary)",
-      character: "sber"
+      character: "sber",
+      star: false,
+      bd: null,
     }
     this.Home = this.Home.bind(this);
     // this.Navigator = this.Navigator.bind(this);
@@ -211,10 +213,9 @@ export class App extends React.Component {
             getUser(this.state.userId).then((user)=> {
               if (user !== "0") {
                 console.log('user', user)
-                this.setState({groupId: user["group_id"]})
-                this.setState({subGroup: user["subgroup_name"]})
-                this.setState({engGroup: user["eng_group"]})
+                this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"]})
                 this.convertIdInGroupName()
+                if (this.state.groupId!==""){
                 getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
                   this.showWeekSchedule(response, 0)
                 });
@@ -223,7 +224,8 @@ export class App extends React.Component {
                   this.showWeekSchedule(response, 1)
                 });
                 console.log(this.state.spinner);
-                this.setState({ page: 7, checked: true});
+                this.setState({ page: 7, checked: true, star: true, bd: this.state.groupId});}
+                else this.setState({page: 0});
               } else {
                 this.setState({page: 0});
                 }
@@ -845,7 +847,6 @@ export class App extends React.Component {
     var now= new Date();
     this.setState({today: now.getDay()});
     this.weekDay = date.getDay()
-    console.log(this.weekDay)
     if (this.weekDay === 0) return null
     else if (this.weekDay === 1) return this.formatearFecha(date)
     else {
@@ -931,6 +932,9 @@ export class App extends React.Component {
     let index=0;
     this.state.timeParam=0;
     if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
+    this.state.checked===true ? this.state.star=true : this.state.star=false;
+    this.convertGroupNameInId();
+    if (this.state.groupId==this.state.bd) this.state.star=true;
     return(
       <DeviceThemeProvider>
         <DocStyle />
@@ -959,6 +963,7 @@ export class App extends React.Component {
           />
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
+          <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
           </Col>
         </Row>
@@ -997,7 +1002,7 @@ export class App extends React.Component {
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
-        <Row style={{position:" absolute", top: "50%", left:" 35%", marginRight: "-50%"}}>
+        <Row style={{position:" absolute", top: "50%", left:" 40%", marginRight: "-50%"}}>
           <TextBox>
             <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
           </TextBox>
@@ -1010,6 +1015,20 @@ export class App extends React.Component {
             </div>
             </DeviceThemeProvider>
     );
+    
+  }
+
+  Star(){
+    
+    if (this.state.star === false){
+      createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+      this.setState({checked:true, bd: this.state.groupId});
+    } else {
+      createUser(this.state.userId, "", "", "", "");
+      this.setState({checked:false, bd: ""});
+    }
+    
+    console.log(this.state.star, "star");
     
   }
 
@@ -1027,11 +1046,9 @@ export class App extends React.Component {
     }
     let sub = "";
     if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
-    let today = ""
-    if ((this.state.today === timeParam)&&(weekParam===0)) today = "сегодня";
-    else if ((this.state.today+1 === timeParam)&&(weekParam===0)) today = "завтра";
-    console.log(this.state.today)
-    let color = "white";
+    this.state.checked===true ? this.state.star=true : this.state.star=false;
+    this.convertGroupNameInId();
+    if (this.state.groupId==this.state.bd) this.state.star=true;
   return(
     <DeviceThemeProvider>
         <DocStyle />
@@ -1049,18 +1066,6 @@ export class App extends React.Component {
         })()}
     <div  >
         <Container style = {{padding: 0}}>
-        {/* <HeaderRoot
-            style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
-        >  
-        <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitleWrapper>
-        <HeaderTitle></HeaderTitle>
-        <HeaderSubtitle>  </HeaderSubtitle>
-        </HeaderTitleWrapper>
-        <HeaderContent>
-        
-        </HeaderContent>
-        </HeaderRoot> */}
 
         <Row style={{margin: "1em"}}>
           <Col style={{ maxWidth: '3rem' }}>
@@ -1073,7 +1078,8 @@ export class App extends React.Component {
           />
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
-            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
+            <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
+            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
           </Col>
         </Row>
         <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
@@ -1194,15 +1200,6 @@ export class App extends React.Component {
         })()}
       <div  >
         <Container style = {{padding: 0}}>
-        {/* <HeaderRoot
-            style={{backgroundColor: "rgba(0, 0, 0, 0)"}}
-        >  
-        <HeaderLogo src={logo} alt="МИСиС" /> 
-        <HeaderTitle>Мой МИСиС</HeaderTitle>
-        <HeaderContent>
-        
-        </HeaderContent>
-        </HeaderRoot> */}
         <Row >
           <Col style={{marginLeft: "auto"}}>
             {disabled===false ?(
@@ -1261,17 +1258,6 @@ export class App extends React.Component {
     )
   }
 
-  CreateUser(checked){
-    switch(checked){
-      case true:
-        return this.Home();
-      case false:
-        return this.Raspisanie(1, 0);
-      default:
-        break;
-    }
-  }
-
   isCorrect(){
     this.setState({correct: false})
     let correct_sub = false;
@@ -1286,6 +1272,8 @@ export class App extends React.Component {
   if ((this.state.correct===true)&&(correct_sub===true)) {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
+
+  
       //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
     this.showWeekSchedule(response, 0);
@@ -1293,14 +1281,13 @@ export class App extends React.Component {
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
       this.showWeekSchedule(response, 1);
     });
-    console.log(this.state.spinner);
     this.state.flag=true;
     this.setState({page: 7, labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"});
-  } else if (this.state.correct===true) {this.setState({labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"})}
+  } else if (this.state.correct===true) {this.setState({labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"});}
   else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "var(--plasma-colors-critical)  "})}
   else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "var(--plasma-colors-critical)  "})}
     if (correct_sub===false) {this.setState({ color_sub: "var(--plasma-colors-critical)  "})}
-    else this.setState({ color_sub: "var(--plasma-colors-white-secondary)"});
+    else this.setState({ color_sub: "var(--plasma-colors-white-secondary)", star: false});
   }
 
   Para(count){
