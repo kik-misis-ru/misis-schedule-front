@@ -181,7 +181,7 @@ export class App extends React.Component {
       color_sub: "var(--plasma-colors-white-secondary)",
       character: "sber",
       star: false,
-      bd: null,
+      bd: "",
     }
     this.Home = this.Home.bind(this);
     // this.Navigator = this.Navigator.bind(this);
@@ -1035,6 +1035,7 @@ export class App extends React.Component {
 
   Raspisanie(timeParam, weekParam){
     this.state.i=0;
+    this.state.star=false;
     let current = this.getCurrentLesson(new Date(Date.now() - 7862400000 ));
     let day_num = timeParam-1;
     let index=timeParam;
@@ -1046,9 +1047,13 @@ export class App extends React.Component {
     }
     let sub = "";
     if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
-    this.state.checked===true ? this.state.star=true : this.state.star=false;
-    this.convertGroupNameInId();
-    if (this.state.groupId==this.state.bd) this.state.star=true;
+    if (this.state.checked===true) { this.state.star=true} 
+    else {
+      if (this.state.groupId==this.state.bd) {this.state.star=true;}
+    else this.state.star=false;
+  }
+    console.log(this.state.star, "star")
+    
   return(
     <DeviceThemeProvider>
         <DocStyle />
