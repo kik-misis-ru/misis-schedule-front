@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import logo0 from "../src/unnamed.gif";
 import logo from "../src/logo.png";
 import image from "../src/frame.png"
 import karta from "../src/Karta.png";
@@ -93,7 +92,7 @@ export class App extends React.Component {
       userId: "",
       //
       page: 7,
-      logo: logo0, 
+      logo: null, 
       flag: true,
       checked: true,
       description: "Поле с номером группы является обязательным для ввода",
@@ -101,7 +100,6 @@ export class App extends React.Component {
       groupId: "",
       subGroup: "",
       engGroup: "", 
-      res: "",
       correct: null,
       labelGroup: "Номер академической группы",
       labelSubgroup: "Номер подгруппы: 1 или 2",
@@ -560,7 +558,7 @@ export class App extends React.Component {
         case 'for_this_week':
           if (this.state.group!==""){
           this.state.flag=true;
-          return this.setState({page: 7});}
+          return this.setState({page: 1});}
 
         case 'when_lesson':
           if (this.state.group!==""){
@@ -928,13 +926,13 @@ export class App extends React.Component {
 
   Sunday(){
     this.state.i=0;
-    let sub = "";
     let index=0;
     this.state.timeParam=0;
-    if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
-    this.state.checked===true ? this.state.star=true : this.state.star=false;
-    this.convertGroupNameInId();
-    if (this.state.groupId==this.state.bd) this.state.star=true;
+    if (this.state.checked===true) { this.state.star=true} 
+    else {
+      if (this.state.groupId==this.state.bd) {this.state.star=true;}
+    else this.state.star=false;
+  }
     return(
       <DeviceThemeProvider>
         <DocStyle />
@@ -958,12 +956,12 @@ export class App extends React.Component {
           </Col>
           <Col style={{marginLeft: "0.5em"}}>
           <TextBox 
-          subTitle={`${this.state.group} ${sub}`}
+          subTitle={this.state.subGroup!="" ? `${this.state.group} (${this.state.subGroup})` : `${this.state.group} `}
           title="Расписание занятий"
           />
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
-          <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
+            <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}><IconSettings size="s" color="inherit"/></Button>
           </Col>
         </Row>
@@ -1028,8 +1026,6 @@ export class App extends React.Component {
       this.setState({checked:false, bd: ""});
     }
     
-    console.log(this.state.star, "star");
-    
   }
 
 
@@ -1045,14 +1041,11 @@ export class App extends React.Component {
     } else {this.state.timeParam=0;
       this.state.flag=true;
     }
-    let sub = "";
-    if (this.state.subGroup!="") sub = `(${this.state.subGroup})`
     if (this.state.checked===true) { this.state.star=true} 
     else {
       if (this.state.groupId==this.state.bd) {this.state.star=true;}
-    else this.state.star=false;
+      else this.state.star=false;
   }
-    console.log(this.state.star, "star")
     
   return(
     <DeviceThemeProvider>
@@ -1078,7 +1071,7 @@ export class App extends React.Component {
           </Col>
           <Col style={{marginLeft: "0.5em"}}>
           <TextBox 
-          subTitle={`${this.state.group} ${sub}`}
+          subTitle={this.state.subGroup!="" ? `${this.state.group} (${this.state.subGroup})` : `${this.state.group} `}
           title="Расписание занятий"
           />
           </Col>
@@ -1278,8 +1271,6 @@ export class App extends React.Component {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
 
-  
-      //this.setState({description: "Данные сохранены. Их можно будет изменить в любой момент в разделе профиля"});
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
     this.showWeekSchedule(response, 0);
     }); 

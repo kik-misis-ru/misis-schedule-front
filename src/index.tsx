@@ -4,7 +4,7 @@ import "./index.css";
 import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { DeviceThemeProvider } from '@sberdevices/plasma-ui/components/Device'; // Типографика, имеющая размеры, зависимые от типа устройства
-import GlobalStyle from "./GlobalStyle" // Тема оформления (цветовая схема)
+
 
 
 ReactDOM.render(
