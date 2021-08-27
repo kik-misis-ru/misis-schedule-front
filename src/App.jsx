@@ -508,7 +508,6 @@ export class App extends React.Component {
         case 'profile': 
         return this.setState({page: 0});
         case 'for_today':
-          console.log(this.state.days)
           if (this.state.group!=="")
           if (this.state.today === 0) {
               this.assistant.sendData({
@@ -1130,11 +1129,11 @@ export class App extends React.Component {
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
                   {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current && this.state.days[day_num][`bell_${i+1}`][weekParam][1] !=="" && this.state.today === timeParam? (
-                    < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                    < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                     </ CardHeadline3>
                   ) : (
-                  < CardHeadline3 >{this.state.days[day_num][`bell_${i+1}`][weekParam][5]}
+                  < CardHeadline3 >
                   {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                   </ CardHeadline3>)
               }
@@ -1148,7 +1147,10 @@ export class App extends React.Component {
                   <TextBox>
                 <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][2]} contentLeft={<IconLocation size="xs"/>} style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
                  <TextBoxLabel> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxLabel>
-              </TextBox>}                
+              </TextBox>} 
+              contentLeft={
+              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"1em" }} size="l"/>
+               }                
                 />
                 ) : (<div></div>))}</CardContent>
               </CardContent>
@@ -1209,7 +1211,7 @@ export class App extends React.Component {
         <div style={{marginTop:"5%"}}>
           <TextBox>
           <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
-          <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{margin: '1.5em', textAlign: "center"}}>{this.state.description}</TextBoxSubTitle>
+          <TextBoxSubTitle  style={{margin: '1.5em', textAlign: "center", color: "white"}}>{this.state.description}</TextBoxSubTitle>
           </TextBox>
           <TextField
           id="tf"
@@ -1243,7 +1245,13 @@ export class App extends React.Component {
                         console.log(this.state.checked);
                         }
             }/>
-          </Row><Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}>
+          </Row>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}>
+            <TextBox>
+            <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{ textAlign: "center"}}>Чтобы не вводить данные каждый раз</TextBoxSubTitle>
+            </TextBox>
+          </Row>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}>
           <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "1.5em"}}/>
         </Row>
         {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
