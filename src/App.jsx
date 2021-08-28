@@ -214,11 +214,11 @@ export class App extends React.Component {
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"]})
                 this.convertIdInGroupName()
                 if (this.state.groupId!==""){
-                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
+                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date  ))).then((response)=>{
                   this.showWeekSchedule(response, 0)
                 });
                 
-                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
+                getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000  ))).then((response)=>{
                   this.showWeekSchedule(response, 1)
                 });
                 console.log(this.state.spinner);
@@ -674,7 +674,7 @@ export class App extends React.Component {
             action.note = {"when": "now"}
           }
           let whereLessonParams
-          whereLessonParams = this.whereWillLesson(new Date(this.state.date - 7862400000 ), action.note.when)
+          whereLessonParams = this.whereWillLesson(new Date(this.state.date   ), action.note.when)
           this.assistant.sendData({
             action: {
               action_id: "say3",
@@ -697,8 +697,8 @@ export class App extends React.Component {
             action.note = {"when": "now"}
           }
           let whatlesson 
-          whatlesson = this.whatLesson(new Date(Date.now() - 7862400000 ), action.note.when);
-          console.log(this.whatLesson(new Date(Date.now() - 7862400000 ), action.note.when))
+          whatlesson = this.whatLesson(new Date(Date.now()   ), action.note.when);
+          console.log(this.whatLesson(new Date(Date.now()   ), action.note.when))
           this.assistant.sendData({
             action: {
               action_id: "say4",
@@ -1031,7 +1031,7 @@ export class App extends React.Component {
   Raspisanie(timeParam, weekParam){
     this.state.i=0;
     this.state.star=false;
-    let current = this.getCurrentLesson(new Date(Date.now() - 7862400000 ));
+    let current = this.getCurrentLesson(new Date(Date.now()   ));
     let day_num = timeParam-1;
     let index=timeParam;
     if (weekParam===1){
@@ -1142,16 +1142,18 @@ export class App extends React.Component {
                   <a href={this.state.days[day_num][`bell_${i+1}`][weekParam][6]} style={{color:"var(--plasma-colors-white-secondary)"}}>Ссылка на онлайн-конференцию</a>):(<div></div>)
               }
                   </TextBox>
-                }               
+                }   
+                            
                 contentRight={
                   <TextBox>
                 <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][2]} contentLeft={<IconLocation size="xs"/>} style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
                  <TextBoxLabel> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxLabel>
               </TextBox>} 
-              contentLeft={
-              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"1em" }} size="l"/>
+              contentLeft={this.state.days[day_num][`bell_${i+1}`][weekParam][1]!=="" ? (
+              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"1em" }} size="l"/>) : (<div></div>)
                }                
                 />
+              
                 ) : (<div></div>))}</CardContent>
               </CardContent>
             </CardBody>
@@ -1279,10 +1281,10 @@ export class App extends React.Component {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup));
 
-    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date - 7862400000))).then((response)=>{
+    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date  ))).then((response)=>{
     this.showWeekSchedule(response, 0);
     }); 
-    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000 - 7862400000))).then((response)=>{
+    getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000  ))).then((response)=>{
       this.showWeekSchedule(response, 1);
     });
     this.state.flag=true;
