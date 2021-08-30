@@ -756,6 +756,42 @@ export class App extends React.Component {
               },
             })
             break
+            case 'day_schedule':
+              let page2 = 0;
+              if ((action.note[1] === null)&&(action.note[2] === null)) {
+                if (this.state.flag===false) {
+                  console.log(this.state.flag);
+                  page2=8;} 
+                else page2=0; 
+              }
+              else {
+                console.log(action.note)
+                console.log(parseInt(action.note[0].dayOfWeek)-1);
+                if (action.note[1] !== null) {
+                  console.log(action.note[1]);
+                  page2=0; 
+                }
+                else if (action.note[2] !== null) {
+                  console.log(action.note[2]);
+                  page2=8; 
+                }
+              } 
+              const dayNameDict2 = {1:["понедельник", 1], 2:["вторник", 2], 3:["среду", 3], 4:["четверг", 4], 5:["пятницу", 5], 6:["субботу", 6], 0: ["воскресенье", 8]}
+              let daySchedule
+              if (this.state.group!==""){
+                daySchedule = { 
+                  dayName: dayNameDict2[parseInt(action.note[0].dayOfWeek)-1][0]
+                }
+                
+                this.setState({page: dayNameDict2[parseInt(action.note[0].dayOfWeek)-1][1]+page2})
+              }
+              this.assistant.sendData({
+                action: {
+                  action_id: "say6",
+                  parameters: daySchedule,
+                },
+              })
+              break
           case 'group': 
             if (action.note[0] === 0) { 
             console.log(action.note[1].data.groupName[0]);
