@@ -502,7 +502,7 @@ export class App extends React.Component {
 
   dispatchAssistantAction (action) {
     console.log('dispatchAssistantAction', action);
-    const numPron = {1:"одна", 2:"две", 3:"три", 4:"четыре", 5:"пять", 6:"шесть", 7:"семь"}
+    const numPron = {0: "ноль", 1:"одна", 2:"две", 3:"три", 4:"четыре", 5:"пять", 6:"шесть", 7:"семь"}
     if (action) {
       switch (action.type) {
         case 'profile': 
@@ -614,7 +614,7 @@ export class App extends React.Component {
               day = "today"
             }
             const dayNameDict = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
-            //console.log("response", response[1])
+            console.log("response", response[1])
             let howManyParams
             if (this.state.group!=="")
             if (response === undefined) {
