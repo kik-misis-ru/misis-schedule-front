@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/Misis/static/css/main.aa9ff431.chunk.css",
-    "main.js": "/Misis/static/js/main.60ca5434.chunk.js",
-    "main.js.map": "/Misis/static/js/main.60ca5434.chunk.js.map",
+    "main.js": "/Misis/static/js/main.0cd7cd36.chunk.js",
+    "main.js.map": "/Misis/static/js/main.0cd7cd36.chunk.js.map",
     "runtime-main.js": "/Misis/static/js/runtime-main.1296dd4f.js",
     "runtime-main.js.map": "/Misis/static/js/runtime-main.1296dd4f.js.map",
     "static/css/2.97503911.chunk.css": "/Misis/static/css/2.97503911.chunk.css",
@@ -21,6 +21,6 @@
     "static/css/2.97503911.chunk.css",
     "static/js/2.900310b2.chunk.js",
     "static/css/main.aa9ff431.chunk.css",
-    "static/js/main.60ca5434.chunk.js"
+    "static/js/main.0cd7cd36.chunk.js"
   ]
 }
