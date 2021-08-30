@@ -600,22 +600,21 @@ export class App extends React.Component {
           break
 
           case 'how_many':
-            const threeMonthDiff = 7862400000
             let response
             let day
             let lesson
             let page = 0;
             if (action.note !== undefined) {
               console.log(action.note)
-              response = this.getAmountOfLessons(new Date(action.note.timestamp - threeMonthDiff))
+              response = this.getAmountOfLessons(new Date(action.note.timestamp  ))
               if (String(this.state.today + 1) === action.note.dayOfWeek) { day = "today"; page=0}
               else if (String(this.state.today + 2) === action.note.dayOfWeek) {day = "tomorrow"; page = 0}
             } else {
-              response = this.getAmountOfLessons(new Date(Date.now() - threeMonthDiff))
+              response = this.getAmountOfLessons(new Date(Date.now()  ))
               day = "today"
             }
             const dayNameDict = {"Пн":["В понедельник", 1], "Вт":["Во вторник", 2], "Ср":["В среду", 3], "Чт":["В четверг", 4], "Пт":["В пятницу", 5], "Сб":["В субботу", 6]}
-            console.log("response", response[1])
+            //console.log("response", response[1])
             let howManyParams
             if (this.state.group!=="")
             if (response === undefined) {
