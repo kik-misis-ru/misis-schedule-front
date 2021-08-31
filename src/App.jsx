@@ -1249,9 +1249,9 @@ export class App extends React.Component {
             }
           </Col>
         </Row>
-        <div style={{marginTop:"2%"}}>
+        <div >
           <TextBox>
-          <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
+          <TextBoxBigTitle style={{margin: '3%', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
           <TextBoxSubTitle  style={{margin: '1.5em', textAlign: "center", color: "white"}}>{this.state.description}</TextBoxSubTitle>
           </TextBox>
           <TextField
@@ -1289,19 +1289,19 @@ export class App extends React.Component {
           </Row>
           <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
             <TextBox>
-            <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{ textAlign: "center"}}>Чтобы не вводить данные каждый раз</TextBoxSubTitle>
+            <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{ textAlign: "center"}}>Тогда не придётся вводить данные каждый раз</TextBoxSubTitle>
             </TextBox>
           </Row>
           <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1em"}}>
-          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "1.5em"}}/>
+          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "3%"}}/>
         </Row>
         {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
           <Image src={image} style={{width: "250px"}}/>
         </Row> */}
         </div>
         <div style={{
-        width:  '200px',
-        height: '200px',
+        width:  '100px',
+        height: '100px',
         }}></div>
         </Container>
       </div>
