@@ -1287,12 +1287,12 @@ export class App extends React.Component {
                         }
             }/>
           </Row>
-          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
             <TextBox>
             <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{ textAlign: "center"}}>Чтобы не вводить данные каждый раз</TextBoxSubTitle>
             </TextBox>
           </Row>
-          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1.1em"}}>
+          <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "1em"}}>
           <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.isCorrect()} style={{margin: "1.5em"}}/>
         </Row>
         {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
