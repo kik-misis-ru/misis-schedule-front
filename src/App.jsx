@@ -1249,7 +1249,7 @@ export class App extends React.Component {
             }
           </Col>
         </Row>
-        <div style={{marginTop:"5%"}}>
+        <div style={{marginTop:"2%"}}>
           <TextBox>
           <TextBoxBigTitle style={{margin: '1.5em', textAlign: "center"}}>Салют, студент! </TextBoxBigTitle>
           <TextBoxSubTitle  style={{margin: '1.5em', textAlign: "center", color: "white"}}>{this.state.description}</TextBoxSubTitle>
@@ -1299,6 +1299,10 @@ export class App extends React.Component {
           <Image src={image} style={{width: "250px"}}/>
         </Row> */}
         </div>
+        <div style={{
+        width:  '200px',
+        height: '200px',
+        }}></div>
         </Container>
       </div>
       </DeviceThemeProvider>
