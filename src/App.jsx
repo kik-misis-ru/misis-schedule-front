@@ -1167,7 +1167,7 @@ export class App extends React.Component {
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
                   </TextBoxSubTitle>
-                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current && this.state.days[day_num][`bell_${i+1}`][weekParam][1] !=="" && this.state.today === timeParam? (
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][5][0] === current && this.state.days[day_num][`bell_${i+1}`][weekParam][1] !=="" && this.state.today === timeParam &&weekParam===0 ? (
                     < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][0]}
                     </ CardHeadline3>
