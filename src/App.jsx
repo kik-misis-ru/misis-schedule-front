@@ -3,7 +3,7 @@ import logo from "../src/logo.png";
 import image from "../src/frame.png"
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import { Container, Row, Col, Button, Radiobox, Tabs, TabItem, Icon, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell, HeaderSubtitle} from '@sberdevices/plasma-ui';
+import { Container, Row, Col, Button, Tabs, TabItem, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell, HeaderSubtitle} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
@@ -23,10 +23,8 @@ import {
   HeaderTitle,
   CarouselGridWrapper,
   Carousel, CarouselCol,
-  Note,
   Badge,
   TextBoxLabel,
-  Showcase, 
   Checkbox,
   CellListItem,
   CardHeadline3,
@@ -44,7 +42,7 @@ import { createGlobalStyle } from "styled-components";
 import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import { TextField, ActionButton } from "@sberdevices/plasma-ui";
-import { IconMessage,  IconMoreVertical, IconMoreHorizontal, IconSettings, IconDisclosureRight, IconChevronRight, IconLocation, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
+import {  IconSettings, IconChevronRight, IconLocation, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
 import {
   createUser,
   getScheduleFromDb,
@@ -52,9 +50,6 @@ import {
   putScheduleIntoDb,
   updateUser,
 } from "./APIHelper.js";
-import { m } from "@sberdevices/plasma-core/mixins";
-import { isConstructorDeclaration } from "typescript";
-//import { Console } from "console";
 
 
 const initializeAssistant = (getState) => {
@@ -1128,7 +1123,7 @@ export class App extends React.Component {
           </Tabs>
         </div>
         </Row>
-        <Row style={{margin: "0.5em", marginRight: "0"}} >
+        <Row style={{margin: "0.5em", marginRight: "0", overflow: "hidden"}} >
         <CarouselGridWrapper >
                     <Carousel
                         as={Row}
@@ -1155,7 +1150,7 @@ export class App extends React.Component {
         </Row>
         { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="90%" height="25rem" roundness={16} style={{ marginLeft: "5%", marginTop: "5%" }}/>) : (
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" }}>
+          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" , overflow: "hidden"}}>
             <CardBody>
               <CardContent compact >
               <CardContent compact >
@@ -1396,7 +1391,7 @@ export class App extends React.Component {
         })()}
       <div  >
         <Container style = {{padding: 0}}>
-        <Spinner color="var(--plasma-colors-button-accent)" style={{position:" absolute", top: "40%", left:" 45%", marginRight: "-50%"}}/>
+        <Spinner color="var(--plasma-colors-button-accent)" style={{position:" absolute", top: "40%", left:" 43%", marginRight: "-50%"}}/>
         </Container>
       </div>
       </DeviceThemeProvider>
