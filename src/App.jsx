@@ -1096,7 +1096,7 @@ export class App extends React.Component {
           }
         })()}
     <div  >
-        <Container style = {{padding: 0}}>
+        <Container style = {{padding: 0, overflow: "hidden"}}>
 
         <Row style={{margin: "1em"}}>
           <Col style={{ maxWidth: '3rem' }}>
@@ -1150,7 +1150,7 @@ export class App extends React.Component {
         </Row>
         { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="90%" height="25rem" roundness={16} style={{ marginLeft: "5%", marginTop: "5%" }}/>) : (
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" , overflow: "hidden"}}>
+          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" }}>
             <CardBody>
               <CardContent compact >
               <CardContent compact >
