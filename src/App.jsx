@@ -208,6 +208,7 @@ export class App extends React.Component {
                 console.log('user', user)
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"]})
                 this.convertIdInGroupName()
+                console.log(this.getFirstDayWeek(new Date(this.state.date  )));
                 if (this.state.groupId!==""){
                 getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date  ))).then((response)=>{
                   this.showWeekSchedule(response, 0)
@@ -878,7 +879,10 @@ export class App extends React.Component {
     var now= new Date();
     this.setState({today: now.getDay()});
     this.weekDay = date.getDay()
-    if (this.weekDay === 0) return null
+    if (this.weekDay === 0) {
+      this.firstDay = date - this.msInDay(this.weekDay + 6) 
+      //return null
+    }
     else if (this.weekDay === 1) return this.formatearFecha(date)
     else {
         // число первого дня недели
