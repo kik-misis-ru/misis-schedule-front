@@ -208,15 +208,16 @@ export class App extends React.Component {
                 console.log('user', user)
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"]})
                 this.convertIdInGroupName()
-                console.log(this.getFirstDayWeek(new Date(this.state.date  )));
+                
                 if (this.state.groupId!==""){
                 getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date  ))).then((response)=>{
                   this.showWeekSchedule(response, 0)
                 });
-                
+                console.log(this.getFirstDayWeek(new Date(this.state.date)));
                 getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date(this.state.date + 604800000  ))).then((response)=>{
                   this.showWeekSchedule(response, 1)
                 });
+                console.log(this.getFirstDayWeek(new Date(this.state.date + 604800000 )));
                 console.log(this.state.spinner);
                 this.setState({ page: 7, checked: true, star: true, bd: this.state.groupId});}
                 else this.setState({page: 0});
@@ -879,8 +880,10 @@ export class App extends React.Component {
     var now= new Date();
     this.setState({today: now.getDay()});
     this.weekDay = date.getDay()
+    console.log(this.weekDay)
     if (this.weekDay === 0) {
       this.firstDay = date - this.msInDay(this.weekDay + 6) 
+      console.log(this.formatearFecha(new Date(this.firstDay)))
       //return null
     }
     else if (this.weekDay === 1) return this.formatearFecha(date)
@@ -892,6 +895,7 @@ export class App extends React.Component {
 
   showWeekSchedule(schedule, i) { //заполнение данными расписания из бд
     this.state.spinner=false;
+    console.log(i)
     this.schedule = JSON.parse(schedule);
     for (let day in this.state.days)
       for (let bell in this.state.days[day])
@@ -909,7 +913,8 @@ export class App extends React.Component {
       this.state.day[day_num-1]["count"][i]=0;
       if (this.schedule["schedule"]!==null)
       
-      {this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
+      { console.log(this.schedule["schedule_header"][`day_${day_num}`]["date"])
+        this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
         
         if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) &&(this.state.subGroup!==""))
@@ -1007,7 +1012,7 @@ export class App extends React.Component {
           <Tabs view="black" size="m" >
             <TabItem isActive={this.state.flag} onClick={()=>this.setState({ page: 7,  flag: true  })}>Текущая неделя
             </TabItem>
-            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 7, flag: false })}>Следующая неделя
+            <TabItem isActive={!this.state.flag} onClick={()=>this.setState({ page: 9, flag: false })}>Следующая неделя
             </TabItem>
           </Tabs>
         </div>
@@ -1038,8 +1043,8 @@ export class App extends React.Component {
                 </CarouselGridWrapper>
         </Row>
         <div style={{
-        width:  '200px',
-        height: '200px',
+        width:  '100px',
+        height: '100px',
         }}></div>
         <Row style={{display: "flex", flexDirection: "row", alignSelf: "center",  justifyContent:"center"}}>
           <TextBox>
