@@ -1162,14 +1162,15 @@ export class App extends React.Component {
         </Row>
         { this.state.day[0]["date"][weekParam]==="" ? (<RectSkeleton width="90%" height="25rem" roundness={16} style={{ marginLeft: "5%", marginTop: "5%" }}/>) : (
         <div style={{ flexDirection: "column" }}>
-          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" }}>
-            <CardBody>
-              <CardContent compact >
-              <CardContent compact >
+          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+            <CardBody  style={{ padding: "0 0 0 0"}}>
+              <CardContent compact style={{ padding: "0.3em 0.3em"}}>
+              <CardContent compact style={{ padding: "0.3em 0.3em"}}>
                 {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
               { 
               this.state.days.map((bell_$, i) =>  this.state.days[day_num][`bell_${i+1}`][weekParam][0]!=="" ? (                
-              <CellListItem key={`item:${i}`} content={
+              <CellListItem key={`item:${i}`} 
+              content={
               <TextBox>                
                   <TextBoxSubTitle  lines={8}> 
                     {this.state.days[day_num][`bell_${i+1}`][weekParam][3]}
@@ -1196,7 +1197,7 @@ export class App extends React.Component {
                  <TextBoxLabel> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxLabel>
               </TextBox>} 
               contentLeft={this.state.days[day_num][`bell_${i+1}`][weekParam][1]!=="" ? (
-              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="s"/>) : (<div></div>)
+              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="l"/>) : (<div></div>)
                }                
                 />
               
