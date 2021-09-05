@@ -1037,7 +1037,11 @@ export class App extends React.Component {
                     </Carousel>
                 </CarouselGridWrapper>
         </Row>
-        <Row style={{position:" absolute", top: "50%", left:" 40%", marginRight: "-50%"}}>
+        <div style={{
+        width:  '200px',
+        height: '200px',
+        }}></div>
+        <Row style={{display: "flex", flexDirection: "row", alignSelf: "center",  justifyContent:"center"}}>
           <TextBox>
             <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
           </TextBox>
