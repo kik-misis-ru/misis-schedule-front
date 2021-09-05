@@ -895,7 +895,6 @@ export class App extends React.Component {
 
   showWeekSchedule(schedule, i) { //заполнение данными расписания из бд
     this.state.spinner=false;
-    console.log(i)
     this.schedule = JSON.parse(schedule);
     for (let day in this.state.days)
       for (let bell in this.state.days[day])
@@ -913,7 +912,7 @@ export class App extends React.Component {
       this.state.day[day_num-1]["count"][i]=0;
       if (this.schedule["schedule"]!==null)
       
-      { console.log(this.schedule["schedule_header"][`day_${day_num}`]["date"])
+      {
         this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
         
@@ -1197,7 +1196,7 @@ export class App extends React.Component {
                  <TextBoxLabel> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxLabel>
               </TextBox>} 
               contentLeft={this.state.days[day_num][`bell_${i+1}`][weekParam][1]!=="" ? (
-              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"1em" }} size="l"/>) : (<div></div>)
+              <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="s"/>) : (<div></div>)
                }                
                 />
               
