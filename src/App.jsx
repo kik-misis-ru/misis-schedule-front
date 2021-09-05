@@ -1379,7 +1379,10 @@ export class App extends React.Component {
     var myinterval =setInterval(() => {
       if (this.state.spinner === true){
         setTimeout(()=>{
-        if(this.state.today===0) {this.setState({page: 8})}
+        if(this.state.today===0){
+          if(this.state.flag===true) 
+          this.setState({page: 8})
+        else this.setState({page: 9})}
      else if (this.state.flag===true) this.setState({page: this.state.today});
      else this.setState({page: 9});
      
