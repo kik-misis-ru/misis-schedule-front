@@ -110,61 +110,62 @@ export class App extends React.Component {
           "", //время начала и конца через дефис
           "", //тип пары
           "",//порядковый номер с точкой
-          "" //ссылка
+          "",//ссылка
+          ""//номер подгруппы
         ], 
           [ //следующая неделя
-            "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
+            "", "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
        },
       {
-        bell_1: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
+        bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
+        bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
+        bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
+        bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
       },
       {
-        bell_1: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", ""], ["", "", "", "", "", "", ""]],
+        bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
       }],
       spinner: false,
       // date: Date.parse("05/12/2021"),
@@ -906,6 +907,7 @@ export class App extends React.Component {
         this.state.days[day][bell][i][4]="";
         this.state.days[day][bell][i][5]="";
         this.state.days[day][bell][i][6]="";
+        this.state.days[day][bell][i][7]="";
       }
     
     for (let day_num = 1; day_num < 7; day_num++) {
@@ -915,28 +917,7 @@ export class App extends React.Component {
       {
         this.state.day[day_num-1]["date"][i]=this.schedule["schedule_header"][`day_${day_num}`]["date"];
       for (let bell in this.schedule["schedule"]) { //проверка 
-        
-        if ((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] ===this.state.subGroup) &&(this.state.subGroup!==""))
-        {
-          this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
-          this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
-          this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
-          this.state.days[day_num-1][bell][i][3]=`${this.schedule["schedule"][bell][`header`]["start_lesson"]} - ${this.schedule["schedule"][bell][`header`]["end_lesson"]}`;
-          this.state.days[day_num-1][bell][i][4]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
-          this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}. `;
-          this.state.days[day_num-1][bell][i][6]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["other"];
-          this.state.day[day_num-1]["count"][i]++;
-        } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.state.subGroup!=="") ){
-          
-          this.state.days[day_num-1][bell][i][0]="";
-          this.state.days[day_num-1][bell][i][1]="";
-          this.state.days[day_num-1][bell][i][2]="";
-          this.state.days[day_num-1][bell][i][3]="";
-          this.state.days[day_num-1][bell][i][4]="";
-          this.state.days[day_num-1][bell][i][5]="";
-          this.state.days[day_num-1][bell][i][6]="";
-          
-          }else  if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
+       if ((this.schedule["schedule"][bell]!==undefined) &&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)) {
             this.state.days[day_num-1][bell][i][0]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["subject_name"];
             this.state.days[day_num-1][bell][i][1]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["teachers"][0]["name"];
             this.state.days[day_num-1][bell][i][2]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["rooms"][0]["name"];
@@ -944,7 +925,9 @@ export class App extends React.Component {
             this.state.days[day_num-1][bell][i][4]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["type"];
             this.state.days[day_num-1][bell][i][5]=`${bell.slice(5, 6)}. `;
             this.state.days[day_num-1][bell][i][6]=this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["other"];
-          this.state.day[day_num-1]["count"][i]++;
+            if (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)
+            this.state.days[day_num-1][bell][i][7]= this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"];
+                     this.state.day[day_num-1]["count"][i]++;
         }  else {
           this.state.days[day_num-1][bell][i][0]="";
           this.state.days[day_num-1][bell][i][1]="";
@@ -953,6 +936,7 @@ export class App extends React.Component {
           this.state.days[day_num-1][bell][i][4]="";
           this.state.days[day_num-1][bell][i][5]="";
           this.state.days[day_num-1][bell][i][6]="";
+          this.state.days[day_num-1][bell][i][7]="";
           }
         }
        if (this.state.day[day_num-1]["count"][i]===0)
@@ -1185,6 +1169,9 @@ export class App extends React.Component {
                   </ CardHeadline3>)
               }
                   <TextBoxTitle> {this.state.days[day_num][`bell_${i+1}`][weekParam][1]} </TextBoxTitle>
+                  {this.state.days[day_num][`bell_${i+1}`][weekParam][7]!=="" ? (
+                   <TextBoxLabel> {this.state.days[day_num][`bell_${i+1}`][weekParam][7]} подгруппа</TextBoxLabel>) : (<div></div>)
+                  }
                   { this.state.days[day_num][`bell_${i+1}`][weekParam][6] !== ""&&this.state.days[day_num][`bell_${i+1}`][weekParam][6] !== null ? (
                   <a href={this.state.days[day_num][`bell_${i+1}`][weekParam][6]} style={{color:"var(--plasma-colors-white-secondary)"}}>Ссылка на онлайн-конференцию</a>):(<div></div>)
               }
@@ -1194,7 +1181,8 @@ export class App extends React.Component {
                 contentRight={
                   <TextBox>
                 <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][2]} contentLeft={<IconLocation size="xs"/>} style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
-                 <TextBoxLabel> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxLabel>
+                 <TextBoxTitle> {this.Type(this.state.days[day_num][`bell_${i+1}`][weekParam][4])}</TextBoxTitle>
+                 
               </TextBox>} 
               contentLeft={this.state.days[day_num][`bell_${i+1}`][weekParam][1]!=="" ? (
               <Badge text={this.state.days[day_num][`bell_${i+1}`][weekParam][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="l"/>) : (<div></div>)
