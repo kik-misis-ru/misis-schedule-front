@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
   CardBody,
+  CardBody2,
+  CardBody1,
   CardContent,
   CardMedia,
   CardParagraph1,
@@ -29,10 +31,13 @@ import {
   Checkbox,
   CellListItem,
   CardHeadline3,
+  CardHeadline2,
+  CardHeadline1,
   ButtonSkeleton,
   RectSkeleton,
   HeaderTitleWrapper,
-  Image
+  Image,
+  Link
 } from "@sberdevices/plasma-ui";
 import {
   createSmartappDebugger,
@@ -43,7 +48,7 @@ import { createGlobalStyle } from "styled-components";
 import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import { TextField, ActionButton } from "@sberdevices/plasma-ui";
-import {  IconSettings, IconChevronRight,  IconLocation, IconNavigationArrow, IconStar, IconStarFill, IconChevronLeft, IconMoreVertical} from "@sberdevices/plasma-icons";
+import {  IconSettings, IconChevronRight,  IconLocation, IconNavigationArrow, IconStar, IconStarFill, IconChevronLeft, IconMoreVertical, IconHouse} from "@sberdevices/plasma-icons";
 import {
   createUser,
   getScheduleFromDb,
@@ -251,7 +256,7 @@ export class App extends React.Component {
                   this.showWeekSchedule(response, 0)
                 });
                 
-                this.setState({ page: 7, checked: true, star: true, bd: this.state.groupId, student: true});}
+                this.setState({ page: 7 , checked: true, star: true, bd: this.state.groupId, student: true});}
                 else this.setState({page: 0});
               } else {
                 this.setState({page: 0});
@@ -1073,14 +1078,14 @@ export class App extends React.Component {
             : <TextBoxSubTitle>{groupname}</TextBoxSubTitle>}
           </TextBox>
           </Col>
-          <Col style={{margin: "0 0 0 auto"}}>
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 15 })}  contentRight={<IconNavigationArrow size="s" color="inherit"/>} />
-          {this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
+          <Col style={{margin: "0 0 0 auto"}}>{this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             ) : (
             <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             )}
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          </Col>
+            
+            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} />
+            </Col>
         </Row>
         <Row style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent:"center"}}>
         <div>
@@ -1210,14 +1215,14 @@ export class App extends React.Component {
             : <TextBoxSubTitle>{groupname}</TextBoxSubTitle>}
           </TextBox>
           </Col>
-          <Col style={{margin: "0 0 0 auto"}}>
-            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 15 })}  contentRight={<IconNavigationArrow size="s" color="inherit"/>} />
-            {this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
+          <Col style={{margin: "0 0 0 auto"}}>{this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             ) : (
             <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             )}
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          </Col>
+          
+            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} />
+            </Col>
         </Row>
         <Row style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent:"center"}}>
         <div>
@@ -1275,7 +1280,7 @@ export class App extends React.Component {
                   </ CardHeadline3>)
               }
                   {this.state.student===false&&this.state.teacher_correct===true ? (<TextBoxTitle> {this.state.days[day_num][`bell_${i+1}`][weekParam][7]} </TextBoxTitle>)
-                  :(<TextBoxTitle> {this.state.days[day_num][`bell_${i+1}`][weekParam][1]} </TextBoxTitle>) }
+                  :(<a onClick={()=>{this.isCorrectTeacher()}}> {this.state.days[day_num][`bell_${i+1}`][weekParam][1]} </a>) }
             
                   {/* {this.state.days[day_num][`bell_${i+1}`][weekParam][7]!=="" ? (
                    <TextBoxLabel> {this.state.days[day_num][`bell_${i+1}`][weekParam][7]} подгруппа</TextBoxLabel>) : (<div></div>)
@@ -1441,6 +1446,139 @@ export class App extends React.Component {
         </Container> 
           )
   }
+      </DeviceThemeProvider>
+    
+    )
+  }
+
+  Dashboard(){
+    let current = this.getCurrentLesson(new Date(Date.now()   ));
+    console.log(current+1);
+    return (
+      <DeviceThemeProvider>
+        <DocStyle />
+        {(() => {
+          switch (this.state.character) {
+            case "sber":
+              return <ThemeBackgroundSber />;
+            case "eva":
+              return <ThemeBackgroundEva />;
+            case "joy":
+              return <ThemeBackgroundJoy />;
+            default:
+              return;
+          }
+        })()}
+        <Container style = {{padding: 0 }}>
+        <Row style={{margin: "1em"}}>
+          <Col style={{ maxWidth: '3rem' }}>
+          <Image src={logo} ratio="1 / 1"/>
+          </Col>
+          <Col style={{ marginLeft: "0.5em", paddingTop: "0.5em"}}>
+          <TextBox 
+          >
+            <CardHeadline3>Мир МИСиС</CardHeadline3>
+          </TextBox>
+          </Col>
+          <Col style={{margin: "0 0 0 auto"}}>
+          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
+          </Col>
+        </Row>
+        {current !== undefined ? (
+        <Row style={{marginLeft: "1em"}}>
+          <Col style={{marginLeft: "1em"}}>
+          <TextBox >
+            <CardBody2>Сейчас</CardBody2>
+          </TextBox>
+          </Col>
+          <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+          <CardBody  style={{ padding: "0 0 0 0"}}>
+            <CardContent compact style={{ padding: "0.3em 0.3em"}}>
+            <CellListItem
+            content={
+            <TextBox>   
+                         
+                <TextBoxSubTitle  lines={8}> 
+                  {this.state.days[this.state.today-1][`bell_${current}`][0][3]}
+                </TextBoxSubTitle>
+                 < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
+                  {this.state.days[this.state.today-1][`bell_${current}`][0][0]}
+                  </ CardHeadline3>
+                
+                {this.state.student===false&&this.state.teacher_correct===true ? (<TextBoxTitle> {this.state.days[this.state.today-1][`bell_${current}`][0][7]} </TextBoxTitle>)
+                :( <a onClick={()=>{this.isCorrectTeacher()}}> {this.state.days[this.state.today-1][`bell_${current}`][0][1]} </a>) }
+          
+                { this.state.days[this.state.today-1][`bell_${current}`][0][6] !== ""&&this.state.days[this.state.today-1][`bell_${current}`][0][6] !== null ? (
+                <a href={this.state.days[this.state.today-1][`bell_${current}`][0][6]} style={{color:"var(--plasma-colors-white-secondary)"}}>Ссылка на онлайн-конференцию</a>):(<div></div>)
+            }
+                </TextBox>
+              }   
+                          
+              contentRight={
+                <TextBox>
+              <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][2]} contentLeft={<IconLocation size="xs"/>} 
+              style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
+               <TextBoxTitle> {this.Type(this.state.days[this.state.today-1][`bell_${current}`][0][4])}</TextBoxTitle>
+               
+            </TextBox>} 
+            contentLeft={this.state.days[this.state.today-1][`bell_${current}`][0][1]!=="" ? (
+            <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="l"/>) : (<div></div>)
+             }
+             ></CellListItem>   
+            </CardContent>
+          </CardBody>
+        </Card>
+        </Row>) : (<div></div>)
+  } 
+  {/* {
+    this.whatLesson(new Date(Date.now()   ), "next")!== undefined ? ( <Row style={{marginLeft: "1em"}}>
+    </TextBox>
+    </Col>
+    <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+    <CardBody  style={{ padding: "0 0 0 0"}}>
+      <CardContent compact style={{ padding: "0.3em 0.3em"}}>
+      <CellListItem
+      content={
+      <TextBox>   
+                   
+          <TextBoxSubTitle  lines={8}> 
+            {this.state.days[this.state.today-1][`bell_${current+1}`][0][3]}
+          </TextBoxSubTitle>
+           < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
+            {this.state.days[this.state.today-1][`bell_${current+1}`][0][0]}
+            </ CardHeadline3>
+          
+          {this.state.student===false&&this.state.teacher_correct===true ? (<TextBoxTitle> {this.state.days[this.state.today-1][`bell_${current}`][0][7]} </TextBoxTitle>)
+          :( <a onClick={()=>{this.isCorrectTeacher()}}> {this.state.days[this.state.today-1][`bell_${current}`][0][1]} </a>) }
+    
+          { this.state.days[this.state.today-1][`bell_${current}`][0][6] !== ""&&this.state.days[this.state.today-1][`bell_${current}`][0][6] !== null ? (
+          <a href={this.state.days[this.state.today-1][`bell_${current}`][0][6]} style={{color:"var(--plasma-colors-white-secondary)"}}>Ссылка на онлайн-конференцию</a>):(<div></div>)
+      }
+          </TextBox>
+        }   
+                    
+        contentRight={
+          <TextBox>
+        <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][2]} contentLeft={<IconLocation size="xs"/>} 
+        style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
+         <TextBoxTitle> {this.Type(this.state.days[this.state.today-1][`bell_${current}`][0][4])}</TextBoxTitle>
+         
+      </TextBox>} 
+      contentLeft={this.state.days[this.state.today-1][`bell_${current}`][0][1]!=="" ? (
+      <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="l"/>) : (<div></div>)
+       }
+       ></CellListItem>   
+      </CardContent>
+    </CardBody>
+  </Card>
+  </Row>) : (<div></div>)
+  } */}
+        
+          <div style={{
+        width:  '200px',
+        height: '300px',
+        }}></div>
+        </Container> 
       </DeviceThemeProvider>
     
     )
@@ -1614,14 +1752,12 @@ export class App extends React.Component {
   }
 
   isCorrectTeacher(){
-    let status
     this.setState({})
     getIdTeacherFromDb(this.state.teacher).then((id)=>{
       this.id = JSON.parse(id);
       
       //this.state.teacherId=this.id['id'];
       console.log(id)
-      status = this.id['status']
       console.log(this.id['status'], "status")
        if (this.id['status']=="-1") {console.log("status");
       this.setState({label_teacher: "Такого преподавателя нет в НИТУ МИСиС", color_teacher: "var(--plasma-colors-critical)  "})}
@@ -1634,9 +1770,6 @@ export class App extends React.Component {
     this.setState({teacherId: this.id['id'], teacher_correct: true, date: Date.now(), flag: true, page: 7, label_teacher: "Фамилия И. О.", color_teacher: "var(--plasma-colors-white-secondary)"});}
     if (this.state.teacher_checked===true) createUser(this.state.userId, "880", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup), String(this.state.teacherId));
     })
-    if (this.state.teacher==="") 
-  {this.setState({label_teacher: "Это обязательное поле для ввода", color_teacher: "var(--plasma-colors-critical)  "});}
-  
   }
 
   isCorrect(){
@@ -1768,6 +1901,8 @@ export class App extends React.Component {
           return this.Raspisanie(6, 1);
       case 15:
           return this.Navigator();
+      case 16:
+          return this.Dashboard();
       default:
         break;
       }
