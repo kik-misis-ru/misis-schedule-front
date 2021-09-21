@@ -1215,13 +1215,15 @@ export class App extends React.Component {
             : <TextBoxSubTitle>{groupname}</TextBoxSubTitle>}
           </TextBox>
           </Col>
-          <Col style={{margin: "0 0 0 auto"}}>{this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
+          <Col style={{margin: "0 0 0 auto"}}>
+          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 15})}  contentRight={<IconNavigationArrow size="s" color="inherit"/>} />
+            {this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             ) : (
             <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             )}
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
           
-            <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} />
+            {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
             </Col>
         </Row>
         <Row style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent:"center"}}>
