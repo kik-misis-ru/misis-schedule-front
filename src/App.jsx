@@ -1715,7 +1715,7 @@ export class App extends React.Component {
           </Row>
             <TextBox>
            
-            <TextBoxSubTitle  style={{margin: '1.5em', textAlign: "center", color: "white"}}>Чтобы посмотреть расписание, укажите фамилию и инициалы через пробел</TextBoxSubTitle>
+            <TextBoxSubTitle  style={{margin: '1.5em', textAlign: "center", color: "white"}}>Чтобы посмотреть расписание, укажите фамилию и инициалы через пробел и точку</TextBoxSubTitle>
             </TextBox>
             <TextField
             id="tf"
