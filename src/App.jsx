@@ -1383,7 +1383,7 @@ export class App extends React.Component {
                     </TextBoxSubTitle>
                     </TextBox>
                   }   
-                contentLeft={<Badge contentLeft={<IconLocation size="s"/>} style={{color: `${this.state.building[i]["color"]}`, backgroundColor: "rgba(0,0,0, 0)" }}/>
+                contentLeft={<Badge contentLeft={<IconLocation color = {this.state.building[i]["color"]} size="s"/>} style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
               }                
                   />
                 ) )}
@@ -1437,7 +1437,7 @@ export class App extends React.Component {
                     </TextBoxSubTitle>
                     </TextBox>
                   }   
-                contentLeft={<Badge contentLeft={<IconLocation size="s" />} style={{color: `${this.state.building[i]["color"]}`,  backgroundColor: "rgba(0,0,0, 0)" }}/>
+                contentLeft={<Badge contentLeft={<IconLocation color = {this.state.building[i]["color"]} size="s"/>}  style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
               }                
                   />
                 ) )}
