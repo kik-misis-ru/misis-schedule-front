@@ -1437,7 +1437,7 @@ export class App extends React.Component {
                     </TextBoxSubTitle>
                     </TextBox>
                   }   
-                contentLeft={<Badge contentLeft={<IconLocation size="s"/>} style={{color: `${this.state.building[i]["color"]}`, backgroundColor: "rgba(0,0,0, 0)" }}/>
+                contentLeft={<Badge contentLeft={<IconLocation size="s" />} style={{color: `${this.state.building[i]["color"]}`,  backgroundColor: "rgba(0,0,0, 0)" }}/>
               }                
                   />
                 ) )}
@@ -1810,7 +1810,7 @@ export class App extends React.Component {
   if ((this.state.subGroup==="")||(this.state.subGroup==="1")||(this.state.subGroup==="2")) correct_sub=true;
   if ((this.state.correct===true)&&(correct_sub===true)) {
    
-    if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup), String(this.state.teacherId));
+    if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup), "");
 
     getScheduleFromDb(this.state.groupId, this.getFirstDayWeek(new Date( Date.now() ))).then((response)=>{
     this.showWeekSchedule(response, 0);
