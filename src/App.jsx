@@ -3,6 +3,7 @@ import logo from "../src/logo.png";
 import image from "../src/frame.png"
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
+import eng from './eng.js';
 import Home from '../src/components/HomeView.jsx';
 import { Container, Row, Col, Button, Tabs, TabItem, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell, HeaderSubtitle} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
@@ -1653,8 +1654,8 @@ export class App extends React.Component {
       console.log(id)
       console.log(this.id['status'], "status")
        if (this.id['status']=="-1") {console.log("status");
-      this.setState({label_teacher: "Такого преподавателя нет в НИТУ МИСиС", color_teacher: "var(--plasma-colors-critical)  "})}
-       else if (this.id['status']=="-2") {this.setState({label_teacher: "Некорректно введены данные", color_teacher: "var(--plasma-colors-critical)  "})}
+      this.setState({label_teacher: "Такого преподавателя нет в НИТУ МИСиС", color_teacher: "error"})}
+       else if (this.id['status']=="-2") {this.setState({label_teacher: "Некорректно введены данные", color_teacher: "Предупреждение"})}
        else 
        {getScheduleTeacherFromDb(this.id['id'], this.getFirstDayWeek(new Date( Date.now() ))).then((response)=>{
     this.showWeekSchedule(response, 0);
@@ -1680,14 +1681,14 @@ export class App extends React.Component {
         this.convertGroupNameInId()
     } 
   }
-//   for (let i of eng) {
-//     if (this.state.engGroup == i) {
-//       correct_eng = true;
-//       console.log(`Correct ${correct_eng}`);
-//   } 
-// }
+    for (let i of eng) {
+      if ((this.state.engGroup == i)||(this.state.engGroup==="")) {
+        correct_eng = true;
+        console.log(`Correct ${correct_eng}`);
+    } 
+  }
   if ((this.state.subGroup==="")||(this.state.subGroup==="1")||(this.state.subGroup==="2")) correct_sub=true;
-  if ((this.state.correct===true)&&(correct_sub===true)) {
+  if ((this.state.correct===true)&&(correct_sub===true)&&(correct_eng===true)) {
    
     if (this.state.checked===true) createUser(this.state.userId, "808", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup), "");
 
@@ -1697,12 +1698,14 @@ export class App extends React.Component {
     console.log(String(this.state.engGroup));
     this.state.flag=true;
     this.convertIdInGroupName();
-    this.setState({ page: 7, labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"});
-  } else if (this.state.correct===true) {this.setState({labelGroup: "Номер академической группы", color_group: "var(--plasma-colors-white-secondary)"});}
-  else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "var(--plasma-colors-critical)  "})}
-  else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "var(--plasma-colors-critical)  "})}
-    if (correct_sub===false) {this.setState({ color_sub: "var(--plasma-colors-critical)  "})}
-    else this.setState({ color_sub: "var(--plasma-colors-white-secondary)", star: false});
+    this.setState({ page: 7, labelGroup: "Номер академической группы", color_group: "Предупреждение"});
+  } else if (this.state.correct===true) {this.setState({labelGroup: "Номер академической группы", color_group: "Предупреждение"});}
+  else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "error"})}
+  else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "error"})}
+    if (correct_sub===false) {this.setState({ color_sub: "Предупреждение"})}
+    else this.setState({ color_sub: "Предупреждение", star: false});
+    if (correct_eng===false) {this.setState({ color_enggroup: "error"})}
+    else this.setState({ color_enggroup: "Предупреждение", star: false});
   }
 
   Para(count){

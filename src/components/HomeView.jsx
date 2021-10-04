@@ -105,11 +105,11 @@ class Home extends React.Component{
           <TextField
           id="tf"
           label={this.props.state.labelGroup}
-          
+          status={this.props.state.color_group}
           className="editText"
           // placeholder="Напиши номер своей академической группы"
           value={this.props.state.group}
-          style={{margin: "1em", color: `${this.props.state.color_group}`}}
+          style={{margin: "1em"}}
           onChange={(v) =>{
             this.handleChange("group", v.target.value)
           }
@@ -121,7 +121,8 @@ class Home extends React.Component{
           className="editText"
           label={this.props.state.labelSubgroup}
           value={this.props.state.subGroup}
-          style={{margin: "1em", color: `${this.props.state.color_sub}`}}
+          status={this.props.state.color_sub}
+          style={{margin: "1em"}}
           onChange={(s) =>{
             this.handleChange("subGroup", s.target.value)
           }}
@@ -134,7 +135,8 @@ class Home extends React.Component{
               className="editText"
               // placeholder="Напиши номер своей академической группы"
               value={this.props.state.engGroup}
-              style={{margin: "1em", color: `${this.props.state.color_enggroup}`}}
+              status={this.props.state.color_enggroup}
+              style={{margin: "1em"}}
               onChange={(e) =>{
                 this.handleChange("engGroup", e.target.value)
               }}
@@ -197,7 +199,8 @@ class Home extends React.Component{
             className="editText"
             // placeholder="Напиши номер своей академической группы"
             value={this.props.state.teacher}
-            style={{margin: "1em", color: `${this.props.state.color_teacher}`}}
+            status={this.props.state.color_teacher}
+            style={{margin: "1em"}}
             onChange={(v) =>{
               this.handleChange("teacher", v.target.value)
             }}
