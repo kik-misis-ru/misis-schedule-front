@@ -84,7 +84,7 @@ class Home extends React.Component{
         <div >
           
             <TextBox>
-               <TextBoxBigTitle style={{margin: '1%', textAlign: "center"}}>Салют! </TextBoxBigTitle>
+               <TextBoxBigTitle style={{margin: '1.5%', textAlign: "center"}}>Салют! </TextBoxBigTitle>
               </TextBox>
           <Row style={{display: "flex", flexDirection:"row", alignItems: "center", justifyContent:"center"}}>
         <Tabs view="secondary" size="m" >
@@ -147,7 +147,7 @@ class Home extends React.Component{
             </TextBox>
           </Row> */}
           <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center",margin: "0.5em"}}>
-          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.props.isCorrect()} style={{margin: "3%"}}/>
+          <Button text="Посмотреть расписание" view="primary"  onClick={()=>this.props.isCorrect()} style={{margin: "1.5%"}}/>
         </Row>
         {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
           <Image src={image} style={{width: "250px"}}/>
