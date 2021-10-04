@@ -1702,7 +1702,7 @@ export class App extends React.Component {
   } else if (this.state.correct===true) {this.setState({labelGroup: "Номер академической группы", color_group: "Предупреждение"});}
   else if (this.state.group==="") {this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "error"})}
   else {this.setState({labelGroup: "Некорректно введен номер группы", color_group: "error"})}
-    if (correct_sub===false) {this.setState({ color_sub: "Предупреждение"})}
+    if (correct_sub===false) {this.setState({ color_sub: "error"})}
     else this.setState({ color_sub: "Предупреждение", star: false});
     if (correct_eng===false) {this.setState({ color_enggroup: "error"})}
     else this.setState({ color_enggroup: "Предупреждение", star: false});
