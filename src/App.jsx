@@ -213,7 +213,7 @@ export class App extends React.Component {
     this.Home = Home.bind(this);
     this.Navigator = this.Navigator.bind(this);
     this.Raspisanie = this.Raspisanie.bind(this);
-    
+    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
   }
  
   componentDidMount() {   
@@ -1672,6 +1672,7 @@ export class App extends React.Component {
   isCorrect(){
     this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
+    let correct_eng = false;
     for (let i of groups) {
       if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
         this.state.correct = true
@@ -1679,6 +1680,12 @@ export class App extends React.Component {
         this.convertGroupNameInId()
     } 
   }
+//   for (let i of eng) {
+//     if (this.state.engGroup == i) {
+//       correct_eng = true;
+//       console.log(`Correct ${correct_eng}`);
+//   } 
+// }
   if ((this.state.subGroup==="")||(this.state.subGroup==="1")||(this.state.subGroup==="2")) correct_sub=true;
   if ((this.state.correct===true)&&(correct_sub===true)) {
    
@@ -1769,7 +1776,7 @@ export class App extends React.Component {
     console.log('render');
     switch(this.state.page){
       case 0:
-        return  <Home state={this.state} isCorrect={this.isCorrect} isCorrectTeacher={this.isCorrectTeacher} setValue={this.setValue} ></Home>;//this.Home();
+        return  <Home state={this.state} isCorrect={this.isCorrect} isCorrectTeacher={this.isCorrectTeacher} setValue={this.setValue} convertIdInGroupName = {this.convertIdInGroupName} ></Home>;//this.Home();
       case 1:
         return this.Raspisanie(1, 0);
       case 2:

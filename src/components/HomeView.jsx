@@ -35,6 +35,7 @@ class Home extends React.Component{
         this.handleChange=this.handleChange.bind(this)
         this.isCorrect = this.isCorrect.bind(this);
         this.isCorrectTeacher = this.isCorrectTeacher.bind(this);
+        this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
         let disabled = true;
         if (props.state.groupId!=="") disabled=false;
         if (props.state.character === "joy") {          
@@ -50,6 +51,9 @@ class Home extends React.Component{
     }
     isCorrectTeacher(){
       this.props.isCorrectTeacher();
+    }
+    convertIdInGroupName(){
+      this.props.convertIdInGroupName();
     }
 
     render(){
@@ -75,7 +79,7 @@ class Home extends React.Component{
           <Col style={{marginLeft: "auto"}}>
           <Button size="s" view="clear" pin="circle-circle" onClick={()=>{this.handleChange("page", 15)}}  contentRight={<IconNavigationArrow size="s" color="inherit"/>} />
             {this.state.disabled===false ?(
-            <Button  view="clear" disabled={this.state.disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>{this.convertIdInGroupName(); this.handleChange("page", 7 )}} style={{marginTop: "1em", marginRight: "1em"}}/> ) 
+            <Button  view="clear" disabled={this.state.disabled} contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"  onClick={()=>{this.props.convertIdInGroupName(); this.handleChange("page", 7 )}} style={{marginTop: "1em", marginRight: "1em"}}/> ) 
             : (<Button view = "clear" disabled={this.state.disabled}/>)
             }
             
