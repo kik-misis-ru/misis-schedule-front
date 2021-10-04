@@ -1,13 +1,14 @@
 import axios from "axios";
 
- //const API_URL = "http://127.0.0.1:8000/";
-const API_URL = "https://misis-hub.herokuapp.com/";
+ const API_URL = "http://127.0.0.1:8000/";
+//const API_URL = "https://misis-hub.herokuapp.com/";
 
 
-export async function getScheduleFromDb(groupId, date) {
+export async function getScheduleFromDb(groupId, english_group_id, date) {
   const { data: answer } = await axios.get(`${API_URL}schedule`, {
     params: {
       group_id: groupId,
+      english_group_id: english_group_id,
       date: date
     },
   })
