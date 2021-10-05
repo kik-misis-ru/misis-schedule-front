@@ -35,6 +35,7 @@ class Home extends React.Component{
         this.handleChange=this.handleChange.bind(this)
         this.isCorrect = this.isCorrect.bind(this);
         this.isCorrectTeacher = this.isCorrectTeacher.bind(this);
+        this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
         let disabled = true;
         if (props.state.groupId!=="") disabled=false;
         if (props.state.character === "joy") {          
@@ -50,6 +51,9 @@ class Home extends React.Component{
     }
     isCorrectTeacher(){
       this.props.isCorrectTeacher();
+    }
+    convertIdInGroupName(){
+      this.props.convertIdInGroupName();
     }
 
     render(){
