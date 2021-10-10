@@ -111,7 +111,7 @@ export class App extends React.Component {
       subGroup: "",
       engGroup: "", 
       correct: null,
-      labelGroup: "Номер академической группы",
+      labelGroup: "Номер академической группы через дефисы",
       labelSubgroup: "Номер подгруппы: 1 или 2",
       labelEnggroup: "Число номера группы по английскому",
       label_teacher: "Фамилия И. О.",
@@ -1025,6 +1025,8 @@ export class App extends React.Component {
         this.state.days[day][bell][i][5]="";
         this.state.days[day][bell][i][6]="";
         this.state.days[day][bell][i][7]="";
+        // this.state.days[day][bell][i].forEach((element) => {element=""});
+        // console.log("обнуление", this.state.days[day][bell][i][0])
       }
     
     for (let day_num = 1; day_num < 7; day_num++) {
@@ -1046,7 +1048,8 @@ export class App extends React.Component {
           
           this.state.day[day_num-1]["count"][i]++;
         } else if((this.schedule["schedule"][bell]!==undefined)&& (this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !==this.state.subGroup)&&(this.schedule["schedule"][bell][`day_${day_num}`]["lessons"][0]["groups"][0]["subgroup_name"] !== undefined)&&(this.state.subGroup!=="") ){
-          
+          // this.state.days[day_num-1][bell][i].forEach((element) => {element=""});
+          // console.log("обнуление подгрупп", this.state.days[day_num-1][bell][i][0])
           this.state.days[day_num-1][bell][i][0]="";
           this.state.days[day_num-1][bell][i][1]="";
           this.state.days[day_num-1][bell][i][2]="";
@@ -1069,6 +1072,8 @@ export class App extends React.Component {
             }
           this.state.day[day_num-1]["count"][i]++;
         }  else {
+          // this.state.days[day_num-1][bell][i].forEach((element) => {element=""; console.log(element, "element")});
+          // console.log("обнуление групп", this.state.days[day_num-1][bell][i][0])
           this.state.days[day_num-1][bell][i][0]="";
           this.state.days[day_num-1][bell][i][1]="";
           this.state.days[day_num-1][bell][i][2]="";
@@ -1244,6 +1249,7 @@ export class App extends React.Component {
   }
     if (this.state.subGroup!=="")  groupname=`${this.state.group} (${this.state.subGroup})` 
     else groupname=`${this.state.group} `
+    //const { showToast, hideToast } = useToast()
   return(
     <DeviceThemeProvider>
         <DocStyle />
@@ -1261,7 +1267,7 @@ export class App extends React.Component {
         })()}
     <div  >
         <Container style = {{padding: 0, overflow: "hidden"}}>
-
+        
         <Row style={{margin: "1em"}}>
           <Col style={{ maxWidth: '3rem' }}>
           <Image src={logo} ratio="1 / 1" />
@@ -1277,7 +1283,7 @@ export class App extends React.Component {
           <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 15})}  contentRight={<IconNavigationArrow size="s" color="inherit"/>} />
             {this.state.student===false&&this.state.teacher_correct===true ? (<Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({teacher_star: !this.state.teacher_star});this.Star()}}  contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             ) : (
-            <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star()}}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
+            <Button size="s" view="clear"  pin="circle-circle" onClick={()=>{this.setState({star: !this.state.star});this.Star(); }}  contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> : <IconStar size="s" color="inherit"/>} />
             )}
             <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
           
