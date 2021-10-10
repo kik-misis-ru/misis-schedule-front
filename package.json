@@ -1,9 +1,8 @@
 {
-<<<<<<< HEAD
     "name": "salute-demo-app",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://gorgeousanya.github.io/Misis/",
+    "homepage": "https://github.com/kik-misis-ru/misis-schedule-front.git",
     "dependencies": {
         "@sberdevices/assistant-client": "^2.11.9",
         "@sberdevices/plasma-core": "^1.30.0",
@@ -54,60 +53,4 @@
     "devDependencies": {
         "gh-pages": "^3.2.0"
     }
-=======
-  "name": "salute-demo-app",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": "https://gorgeousanya.github.io/Misis/",
-  "dependencies": {
-    "@sberdevices/assistant-client": "^2.11.9",
-    "@sberdevices/plasma-core": "^1.30.0",
-    "@sberdevices/plasma-icons": "^1.28.0",
-    "@sberdevices/plasma-tokens": "^1.9.0",
-    "@sberdevices/plasma-ui": "^1.33.0",
-    "@testing-library/jest-dom": "^5.11.5",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.19.2",
-    "@types/react": "^16.9.53",
-    "@types/react-dom": "^16.9.8",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.0",
-    "react-toastify": "^7.0.4",
-    "styled-components": "^5.3.0",
-    "typescript": "^4.0.5",
-    "web-vitals": "^0.2.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build",
-    "predeploy": "npm run build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "gh-pages": "^3.2.0"
-  }
->>>>>>> dbec6aea5208f7992551fb918505b2266be4eb5e
 }
