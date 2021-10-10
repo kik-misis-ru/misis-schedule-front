@@ -3,8 +3,8 @@ import logo from "../src/logo.png";
 import image from "../src/frame.png"
 import karta from "../src/Karta.png";
 import groups from './groups_list.js';
-import eng from './eng.js';
 import Home from '../src/components/HomeView.jsx';
+import Navigator from '../src/components/Navigator.jsx';
 import { Container, Row, Col, Button, Tabs, TabItem, DeviceThemeProvider, Header, Spinner, HeaderContent, Cell, HeaderSubtitle} from '@sberdevices/plasma-ui';
 import { ToastContainer, toast } from 'react-toastify';
 import { useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
@@ -89,13 +89,16 @@ const DocStyle = createGlobalStyle`
 `;
 
 export class App extends React.Component {
+ 
   constructor(props) {
     super(props);
     this.setValue = this.setValue.bind(this)
     this.isCorrect = this.isCorrect.bind(this)
     this.isCorrectTeacher = this.isCorrectTeacher.bind(this)
+    this.convertIdInGroupName= this.convertIdInGroupName.bind(this);
     this.tfRef = React.createRef();
     console.log('constructor');
+    const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => "") )
     this.state = {
       notes: [],
       //
@@ -130,14 +133,14 @@ export class App extends React.Component {
         ], 
           [ //другая неделя
             "", "", "", "", "", "", "", ""]],
-        bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
-        bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
-        bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
-        bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
-        bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
-        bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+            bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+            bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+            bell_4: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+            bell_5: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+            bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
+            bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
        },
-      {
+       {
         bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
@@ -146,7 +149,7 @@ export class App extends React.Component {
         bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
        },
-      {
+       {
         bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
@@ -155,7 +158,7 @@ export class App extends React.Component {
         bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
        },
-      {
+       {
         bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
@@ -164,7 +167,7 @@ export class App extends React.Component {
         bell_6: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_7: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
        },
-      {
+       {
         bell_1: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_2: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
         bell_3: [["", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", ""]],
@@ -212,7 +215,7 @@ export class App extends React.Component {
       ]
     }
     this.Home = Home.bind(this);
-    this.Navigator = this.Navigator.bind(this);
+    this.Navigator = Navigator.bind(this);
     this.Raspisanie = this.Raspisanie.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
   }
@@ -1392,131 +1395,6 @@ export class App extends React.Component {
     this.state.i--;
   }
 
-  Navigator(){
-    console.log(detectDevice(), "device")
-    return (
-      <DeviceThemeProvider>
-        <DocStyle />
-        {(() => {
-          switch (this.state.character) {
-            case "sber":
-              return <ThemeBackgroundSber />;
-            case "eva":
-              return <ThemeBackgroundEva />;
-            case "joy":
-              return <ThemeBackgroundJoy />;
-            default:
-              return;
-          }
-        })()}
-      {detectDevice()==="mobile" ? (
-        <Container style = {{padding: 0}}>
-        <Row style={{margin: "1em"}}>
-          <Col style={{ maxWidth: '3rem' }}>
-          <Image src={logo} ratio="1 / 1"/>
-          </Col>
-          <Col style={{ marginLeft: "0.5em", paddingTop: "0.5em"}}>
-          <TextBox 
-          >
-            <CardParagraph1>Карта университета</CardParagraph1>
-          </TextBox>
-          </Col>
-          <Col style={{margin: "0 0 0 auto"}}>
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 7 })}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
-          </Col>
-        </Row>
-        
-        <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
-            <CardBody  style={{ padding: "0 0 0 0"}}>
-            <CardMedia src={karta}/>
-              <CardContent compact style={{ padding: "0.3em 0.3em"}}>
-              { 
-              this.state.building.map(({name, address, color},i)  =>   (                
-                <CellListItem key={`item:${i}`} 
-                content={
-                <TextBox>                
-                    
-                    <TextBoxTitle> {this.state.building[i]["name"]} </TextBoxTitle>
-                    <TextBoxSubTitle  > 
-                   { this.state.building[i]["address"]}
-                    </TextBoxSubTitle>
-                    </TextBox>
-                  }   
-                  contentLeft={<Badge contentLeft={<IconLocation color = {this.state.building[i]["color"]} size="s"/>}  style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
-                }                
-                  />
-                ) )}
-              </CardContent>
-            </CardBody>
-          </Card>
-          <div style={{
-        width:  '200px',
-        height: '300px',
-        }}></div>
-        </Container> ) : 
-          (
-            <Container style = {{padding: 0}}>
-        <Row style={{margin: "1em"}}>
-          <Col style={{ maxWidth: '3rem' }}>
-          <Image src={logo} ratio="1 / 1"/>
-          </Col>
-          <Col style={{ marginLeft: "0.5em", paddingTop: "0.5em"}}>
-          <TextBox 
-          >
-            <CardParagraph1>Карта университета</CardParagraph1>
-          </TextBox>
-          </Col>
-          <Col style={{margin: "0 0 0 auto"}}>
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 0 })}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 7 })}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
-          </Col>
-        </Row>
-        <Row >
-          <div style={{display: "flex", flexDirection:"row"}}>
-          
-          <Card style={{ width: "102vh", height: "60vh", marginLeft: "5%", marginTop: "0.5em"}}>
-            <CardBody>
-        <CardMedia src={karta} />
-        </CardBody>
-       
-        </Card>
-              <Card style={{ width: "30%", marginLeft: "3%", marginTop: "0.5em"}}>
-                
-            <CardBody  style={{ padding: "0 0 0 0"}}>
-              <CardContent compact style={{ padding: "0.3em 0.3em"}}>
-              { 
-              this.state.building.map(({name, address, color},i)  =>   (                
-                <CellListItem key={`item:${i}`} 
-                content={
-                <TextBox>                
-                    
-                    <TextBoxTitle> {this.state.building[i]["name"]} </TextBoxTitle>
-                    <TextBoxSubTitle  > 
-                   { this.state.building[i]["address"]}
-                    </TextBoxSubTitle>
-                    </TextBox>
-                  }   
-                  contentLeft={<Badge contentLeft={<IconLocation color = {this.state.building[i]["color"]} size="s"/>}  style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
-                }                
-                  />
-                ) )}
-              </CardContent>
-            </CardBody>
-          </Card>
-          </div>
-          </Row><div style={{
-        width:  '200px',
-        height: '300px',
-        }}></div>
-        </Container> 
-          )
-  }
-      </DeviceThemeProvider>
-    
-    )
-  }
-
   Dashboard(){
     let current = this.getCurrentLesson(new Date(Date.now()   ));
     console.log(current+1);
@@ -1785,7 +1663,7 @@ export class App extends React.Component {
     console.log('render');
     switch(this.state.page){
       case 0:
-        return  <Home state={this.state} isCorrect={this.isCorrect} isCorrectTeacher={this.isCorrectTeacher} setValue={this.setValue} convertIdInGroupName = {this.convertIdInGroupName} ></Home>;//this.Home();
+        return  <Home state={this.state} isCorrect={this.isCorrect} convertIdInGroupName={this.convertIdInGroupName} isCorrectTeacher={this.isCorrectTeacher} setValue={this.setValue} ></Home>;//this.Home();
       case 1:
         return this.Raspisanie(1, 0);
       case 2:
@@ -1815,7 +1693,7 @@ export class App extends React.Component {
       case 14:
           return this.Raspisanie(6, 1);
       case 15:
-          return this.Navigator();
+          return <Navigator state={this.state} setValue={this.setValue} ></Navigator>
       case 16:
           return this.Dashboard();
       default:
