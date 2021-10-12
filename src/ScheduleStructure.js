@@ -23,10 +23,3 @@ export class Bell{
         this.groupNumber = "";
     }
 }
-
-export class Day{
-    constructor(bells){
-        this.bells = bells
-    }
-}
-

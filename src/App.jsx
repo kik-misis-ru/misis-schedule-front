@@ -1174,22 +1174,25 @@ export class App extends React.Component {
             lesson_info_state.lessonName =lesson_info[ "subject_name" ];
             lesson_info_state.teacher = lesson_info[ "teachers" ][ 0 ][ "name" ];
             lesson_info_state.room = lesson_info[ "room_name" ];
-            lesson_info_state.startAndfinishTime = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
+            lesson_info_state.startAndfinishTime = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} 
+            - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
             lesson_info_state.lessonType = lesson_info[ "type" ];
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info[ "other" ];
 
             countLessons++;
           } else if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (lesson_info !== undefined)
-           && (lesson_info[ "subgroup_name" ] !== undefined) && (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] !== this.state.subGroup) 
+           && (lesson_info[ "subgroup_name" ] !== undefined) && (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] !==
+            this.state.subGroup) 
            && (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] !== undefined) && (this.state.subGroup !== "")) {
-            this.state.days[ day_num - 1 ][ bell ][ i ].reset()
+            lesson_info_state.reset()
           } else if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (lesson_info!== undefined)) {
 
             lesson_info_state.lessonName = lesson_info[ "subject_name" ];
             lesson_info_state.teacher = lesson_info[ "teachers" ][ 0 ][ "name" ];
             lesson_info_state.room = lesson_info[ "room_name" ];
-            lesson_info_state.startAndfinishTime = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
+            lesson_info_state.startAndfinishTime = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} 
+            - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
             lesson_info_state.lessonType= lesson_info[ "type" ];
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info[ "other" ];
@@ -1199,13 +1202,11 @@ export class App extends React.Component {
             }
             countLessons++;
           } else {
-            // this.state.days[day_num-1][bell][i].forEach((element) => {element=""; console.log(element, "element")});
-            // console.log("обнуление групп", this.state.days[day_num-1][bell][i][0])
-            this.state.days[ day_num - 1 ][ bell_num ][ i ].reset();
+            lesson_info_state.reset();
           }
         }
         if (countLessons === 0)
-         this.state.days[ day_num - 1 ][ 0 ][ i ].lessonName = "Пар нет 🎉";
+        this.state.days[ day_num - 1 ][ 0 ][ i ].lessonName = "Пар нет 🎉";
       
       } else {
         this.state.days[ day_num - 1 ][ 0 ][ i ].lessonName = "Пар нет 🎉";
@@ -1698,19 +1699,19 @@ export class App extends React.Component {
                         <TextBox>
 
                           <TextBoxSubTitle lines={8}>
-                            {this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 3 ]}
+                            {this.state.days[ this.state.today - 1 ][ current-1][ 0 ].startAndfinishTime}
                           </TextBoxSubTitle>
                           < CardHeadline3 style={{ color: "var(--plasma-colors-button-accent)" }}>
-                            {this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 0 ]}
+                            {this.state.days[ this.state.today - 1 ][ current-1 ][ 0 ].lessonName}
                           </ CardHeadline3>
 
                           {this.state.student === false && this.state.teacher_correct === true ? (
-                                                                                                 <TextBoxTitle> {this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 7 ]} </TextBoxTitle>)
+                                                                                                 <TextBoxTitle> {this.state.days[ this.state.today - 1 ][current-1][ 0 ].groupNumber} </TextBoxTitle>)
                                                                                                : (<a onClick={() => {
                               this.isCorrectTeacher()
                             }}> {this.state.days[ this.state.today - 1 ][ current-1 ][ 0 ][ 1 ]} </a>)}
 
-                          {this.state.days[ this.state.today - 1 ][ current-1 ][ 0 ].url !== "" && this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ].url!== null ? (
+                          {this.state.days[ this.state.today - 1 ][ current-1 ][ 0 ].url !== "" && this.state.days[ this.state.today - 1 ][current-1 ][ 0 ].url!== null ? (
                             <a href={this.state.days[ this.state.today - 1 ][current-1][ 0 ].url}
                                style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
                               онлайн-конференцию</a>) : (<div></div>)
@@ -1720,14 +1721,14 @@ export class App extends React.Component {
 
                       contentRight={
                         <TextBox>
-                          <Badge text={this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 2 ]}
+                          <Badge text={this.state.days[ this.state.today - 1 ][ current-1][ 0 ].room}
                                  contentLeft={<IconLocation size="xs"/>}
                                  style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
-                          <TextBoxTitle> {this.Type(this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 4 ])}</TextBoxTitle>
+                          <TextBoxTitle> {this.Type(this.state.days[ this.state.today - 1 ][ current-1][ 0 ].lessonType)}</TextBoxTitle>
 
                         </TextBox>}
-                      contentLeft={this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 1 ] !== "" ? (
-                        <Badge text={this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 5 ][ 0 ]}
+                      contentLeft={this.state.days[ this.state.today - 1 ][current-1][ 0 ].teacher !== "" ? (
+                        <Badge text={this.state.days[ this.state.today - 1 ][current-1][ 0 ].lessonNumber[ 0 ]}
                                view="primary" style={{ marginRight: "0.5em" }} size="l"/>) : (<div></div>)
                       }
                     ></CellListItem>
