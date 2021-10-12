@@ -14,7 +14,7 @@ import {IconChevronRight, IconNavigationArrow} from "@sberdevices/plasma-icons";
 import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
 import {text, background, gradient} from "@sberdevices/plasma-tokens";
 
-import {NAV_PAGE_NO} from '../App';
+import {NAV_PAGE_NO} from '../App.jsx';
 
 const ThemeBackgroundEva  = createGlobalStyle(darkEva);
 const ThemeBackgroundSber = createGlobalStyle(darkSber);

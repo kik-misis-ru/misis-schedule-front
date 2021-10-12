@@ -59,7 +59,7 @@ import {
   createAssistant,
 } from "@sberdevices/assistant-client";
 import "./App.css";
-import {createGlobalStyle} from "styled-components";
+import styled, {createGlobalStyle, div} from "styled-components";
 import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
 import {text, background, gradient} from "@sberdevices/plasma-tokens";
 import {TextField, ActionButton} from "@sberdevices/plasma-ui";
@@ -85,6 +85,8 @@ import {
   updateUser,
 } from "./APIHelper.js";
 import {verify} from "crypto";
+import eng from './eng.js'
+import {Bell, Day} from './ScheduleStructure.js'
 
 export const NAV_PAGE_NO = 15;
 
@@ -200,71 +202,7 @@ export class App extends React.Component {
         date:  [ "", "" ],
         count: [ 0, 0 ]
       }, { title: 'Пт', date: [ "", "" ], count: [ 0, 0 ] }, { title: 'Сб', date: [ "", "" ], count: [ 0, 0 ] } ],
-      days:            [ {
-        bell_1: [ [ //текущая неделя
-          "", //название пары
-          "", //фамилия преподавателя
-          "", //кабинет
-          "", //время начала и конца через дефис
-          "", //тип пары
-          "", //порядковый номер с точкой
-          "", //ссылка
-          "", //номер группы
-        ],
-                  [ //другая неделя
-                    "", "", "", "", "", "", "", "" ] ],
-        bell_2: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-        bell_3: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-        bell_4: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-        bell_5: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-        bell_6: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-        bell_7: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-      },
-                         {
-                           bell_1: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_2: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_3: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_4: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_5: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_6: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_7: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                         },
-                         {
-                           bell_1: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_2: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_3: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_4: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_5: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_6: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_7: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                         },
-                         {
-                           bell_1: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_2: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_3: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_4: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_5: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_6: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_7: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                         },
-                         {
-                           bell_1: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_2: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_3: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_4: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_5: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_6: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_7: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                         },
-                         {
-                           bell_1: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_2: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_3: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_4: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_5: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_6: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                           bell_7: [ [ "", "", "", "", "", "", "", "" ], [ "", "", "", "", "", "", "", "" ] ],
-                         } ],
+      days : [],
       spinner:         false,
       date:            Date.now(),
       today:           0,
@@ -552,11 +490,10 @@ export class App extends React.Component {
   getCurrentLesson(date) {
     if (this.state.today !== 0) {
       for (let bell in this.state.days[ this.state.today - 1 ]) {
-        if ((this.getTime(date) > this.state.days[ this.state.today - 1 ][ bell ][ 0 ][ 3 ].slice(0, 6)) &&
-          (this.getTime(date) < this.state.days[ this.state.today - 1 ][ bell ][ 0 ][ 3 ].slice(8)) &&
-          (this.state.days[ this.state.today - 1 ][ bell ][ 0 ][ 3 ].slice(0, 6) !== "")) {
-          console.log(this.state.days[ this.state.today - 1 ][ bell ][ 0 ][ 5 ][ 0 ]);
-          return this.state.days[ this.state.today - 1 ][ bell ][ 0 ][ 5 ][ 0 ]
+        if ((this.getTime(date) > this.state.days[ this.state.today - 1 ][ bell ][ 0 ].startAndfinishTime.slice(0, 6)) &&
+          (this.getTime(date) < this.state.days[ this.state.today - 1 ][ bell ][ 0 ].startAndfinishTime.slice(8)) &&
+          (this.state.days[ this.state.today - 1 ][ bell ][ 0 ].startAndfinishTime.slice(0, 6) !== "")) {
+          return this.state.days[ this.state.today - 1 ][ bell ][ 0 ][ 5 ].lessonName
         }
       }
     }
@@ -1211,79 +1148,69 @@ export class App extends React.Component {
   showWeekSchedule(schedule, i) { //заполнение данными расписания из бд
     this.state.spinner = false;
     this.schedule      = JSON.parse(schedule);
+    this.state.days = new Array(7).fill([])
+    console.log(this.state.days)
     for (let day in this.state.days) {
-      for (let bell in this.state.days[ day ]) {
-        this.state.days[ day ][ bell ][ i ][ 0 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 1 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 2 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 3 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 4 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 5 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 6 ] = "";
-        this.state.days[ day ][ bell ][ i ][ 7 ] = "";
-        // this.state.days[day][bell][i].forEach((element) => {element=""});
-        // console.log("обнуление", this.state.days[day][bell][i][0])
+      this.state.days[day]=Array(7).fill([])
+      for(let bell in  this.state.days[day]){
+        this.state.days[day][bell]=[new Bell(), new Bell()];
       }
+      console.log(this.state.days)
     }
 
     for (let day_num = 1; day_num < 7; day_num++) {
-      this.state.day[ day_num - 1 ][ "count" ][ i ] = 0;
+      let countLessons =  this.state.day[ day_num - 1 ][ "count" ][ i ]
+      countLessons = 0;
       if (this.schedule[ "schedule" ] !== null) {
         this.state.day[ day_num - 1 ][ "date" ][ i ] = this.schedule[ "schedule_header" ][ `day_${day_num}` ][ "date" ];
         for (let bell in this.schedule[ "schedule" ]) { //проверка
-          if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ][ 0 ][ "subgroup_name" ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ][ 0 ][ "subgroup_name" ] === this.state.subGroup) && (this.state.subGroup !== "")) {
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 0 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "subject_name" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 1 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "teachers" ][ 0 ][ "name" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 2 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "room_name" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 3 ] = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 4 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "type" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 5 ] = `${bell.slice(5, 6)}. `;
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 6 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "other" ];
+          let bell_num = Number(bell.slice(-1))-1
+          let lesson_info = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ]
+          let lesson_info_state = this.state.days[ day_num - 1 ][ bell_num ][ i ]
+          if ((this.schedule[ "schedule" ][ bell_num ] !== undefined) && (lesson_info !== undefined) && 
+          (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] !== undefined) && 
+          (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] === this.state.subGroup) && (this.state.subGroup !== "")) {
 
-            this.state.day[ day_num - 1 ][ "count" ][ i ]++;
-          } else if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ][ 0 ][ "subgroup_name" ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ][ 0 ][ "subgroup_name" ] !== this.state.subGroup) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ][ 0 ][ "subgroup_name" ] !== undefined) && (this.state.subGroup !== "")) {
-            // this.state.days[day_num-1][bell][i].forEach((element) => {element=""});
-            // console.log("обнуление подгрупп", this.state.days[day_num-1][bell][i][0])
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 0 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 1 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 2 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 3 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 4 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 5 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 6 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 7 ] = "";
+            lesson_info_state.lessonName =lesson_info[ "subject_name" ];
+            lesson_info_state.teacher = lesson_info[ "teachers" ][ 0 ][ "name" ];
+            lesson_info_state.room = lesson_info[ "room_name" ];
+            lesson_info_state.startAndfinishTime = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
+            lesson_info_state.lessonType = lesson_info[ "type" ];
+            lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            lesson_info_state.url = lesson_info[ "other" ];
 
-          } else if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ] !== undefined)) {
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 0 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "subject_name" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 1 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "teachers" ][ 0 ][ "name" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 2 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "room_name" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 3 ] = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 4 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "type" ];
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 5 ] = `${bell.slice(5, 6)}. `;
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 6 ] = this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "other" ];
-            for (let name in this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ]) {
-              this.state.days[ day_num - 1 ][ bell ][ i ][ 7 ] += `${this.schedule[ "schedule" ][ bell ][ `day_${day_num}` ][ "lessons" ][ 0 ][ "groups" ][ name ][ "name" ]} `;
+            countLessons++;
+          } else if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (lesson_info !== undefined)
+           && (lesson_info[ "subgroup_name" ] !== undefined) && (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] !== this.state.subGroup) 
+           && (lesson_info[ "groups" ][ 0 ][ "subgroup_name" ] !== undefined) && (this.state.subGroup !== "")) {
+            this.state.days[ day_num - 1 ][ bell ][ i ].reset()
+          } else if ((this.schedule[ "schedule" ][ bell ] !== undefined) && (lesson_info!== undefined)) {
+
+            lesson_info_state.lessonName = lesson_info[ "subject_name" ];
+            lesson_info_state.teacher = lesson_info[ "teachers" ][ 0 ][ "name" ];
+            lesson_info_state.room = lesson_info[ "room_name" ];
+            lesson_info_state.startAndfinishTime = `${this.schedule[ "schedule" ][ bell ][ `header` ][ "start_lesson" ]} - ${this.schedule[ "schedule" ][ bell ][ `header` ][ "end_lesson" ]}`;
+            lesson_info_state.lessonType= lesson_info[ "type" ];
+            lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            lesson_info_state.url = lesson_info[ "other" ];
+
+            for (let name in lesson_info[ "groups" ]) {
+              lesson_info_state.groupNumber += `${lesson_info[ "groups" ][ name ][ "name" ]} `;
             }
-            this.state.day[ day_num - 1 ][ "count" ][ i ]++;
+            countLessons++;
           } else {
             // this.state.days[day_num-1][bell][i].forEach((element) => {element=""; console.log(element, "element")});
             // console.log("обнуление групп", this.state.days[day_num-1][bell][i][0])
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 0 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 1 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 2 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 3 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 4 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 5 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 6 ] = "";
-            this.state.days[ day_num - 1 ][ bell ][ i ][ 7 ] = "";
+            this.state.days[ day_num - 1 ][ bell_num ][ i ].reset();
           }
         }
-        if (this.state.day[ day_num - 1 ][ "count" ][ i ] === 0)
-          this.state.days[ day_num - 1 ][ "bell_1" ][ i ][ 0 ] = "Пар нет 🎉";
-
+        if (countLessons === 0)
+         this.state.days[ day_num - 1 ][ 0 ][ i ].lessonName = "Пар нет 🎉";
+      
       } else {
-        this.state.days[ day_num - 1 ][ "bell_1" ][ i ][ 0 ] = "Пар нет 🎉";
+        this.state.days[ day_num - 1 ][ 0 ][ i ].lessonName = "Пар нет 🎉";
       }
+      
     }
     this.setState({ spinner: true });
   }
@@ -1632,48 +1559,48 @@ export class App extends React.Component {
                      <CardContent compact style={{ padding: "0.3em 0.3em" }}>
                        {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
                        {
-                         this.state.days.map((bell_$, i) => {
-                           const curr_day_obj       = days[ day_num ]
-                           const bell_id            = `bell_${i + 1}`;
+                         this.state.days.map((_,bellNumber) => {
+                           const curr_day_obj       = this.state.days[ day_num ]
+                           const bell_id            = bellNumber;
                            const curr_pair_obj      = curr_day_obj[ bell_id ];
                            const curr_pair_week_obj = curr_pair_obj[ weekParam ];
 
-                           return this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 0 ] !== "" ? (
+                           return this.state.days[ day_num ][bellNumber][ weekParam ].lessonName !== "" ? (
                              <CellListItem
-                               key={`item:${i}`}
+                               key={`item:${bellNumber}`}
                                content={
                                  <TextBox>
                                    <TextBoxSubTitle lines={8}>
-                                     {this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 3 ]}
+                                     {this.state.days[ day_num ][bellNumber][ weekParam ].startAndfinishTime}
                                    </TextBoxSubTitle>
                                    {
-                                     this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 5 ][ 0 ] === current
-                                     && this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 1 ] !== ""
+                                     this.state.days[ day_num ][bellNumber][ weekParam ].lessonNumber[ 0 ] === current
+                                     && this.state.days[ day_num ][bellNumber][ weekParam ].teacher !== ""
                                      && this.state.today === timeParam && weekParam === 0
                                      ? (
                                        < CardHeadline3 style={{ color: "var(--plasma-colors-button-accent)" }}>
-                                         {this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 0 ]}
+                                         {this.state.days[ day_num ][bellNumber][ weekParam ].lessonName}
                                        </ CardHeadline3>
                                      )
                                      : (
                                        < CardHeadline3>
-                                         {this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 0 ]}
+                                         {this.state.days[ day_num ][bellNumber][ weekParam ].lessonName}
                                        </ CardHeadline3>)
                                    }
                                    {this.state.student === false && this.state.teacher_correct === true
                                     ? (
-                                      <TextBoxTitle> {this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 7 ]} </TextBoxTitle>)
+                                      <TextBoxTitle> {this.state.days[ day_num ][bellNumber][ weekParam ].groupNumber} </TextBoxTitle>)
                                     : (
                                       <a onClick={() => {
-                                        this.state.teacher = this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 1 ];
+                                        this.state.teacher = this.state.days[ day_num ][ bellNumber][ weekParam ].teacher;
                                         this.isCorrectTeacher()
-                                      }}> {this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 1 ]} </a>)}
+                                      }}> {this.state.days[ day_num ][bellNumber][ weekParam ].teacher} </a>)}
 
                                    {/* {this.state.days[day_num][`bell_${i+1}`][weekParam][7]!=="" ? (
                    <TextBoxLabel> {this.state.days[day_num][`bell_${i+1}`][weekParam][7]} подгруппа</TextBoxLabel>) : (<div></div>)
                   } */}
-                                   {this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 6 ] !== "" && this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 6 ] !== null ? (
-                                     <a href={this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 6 ]}
+                                   {this.state.days[ day_num ][bellNumber ][ weekParam ].url!== "" && this.state.days[ day_num ][ bellNumber ][ weekParam ].url !== null ? (
+                                     <a href={this.state.days[ day_num ][ bellNumber ][ weekParam ].url}
                                         style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
                                        онлайн-конференцию</a>) : (<div></div>)
                                    }
@@ -1683,15 +1610,15 @@ export class App extends React.Component {
                                contentRight={
                                  <TextBox>
                                    <Badge
-                                     text={this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 2 ]}
+                                     text={this.state.days[ day_num ][bellNumber][ weekParam ].room}
                                      contentLeft={<IconLocation size="xs"/>}
                                      style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
-                                   <TextBoxTitle> {this.Type(this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 4 ])}</TextBoxTitle>
+                                   <TextBoxTitle> {this.Type(this.state.days[ day_num ][bellNumber][ weekParam ].lessonType)}</TextBoxTitle>
 
                                  </TextBox>}
-                               contentLeft={this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 1 ] !== "" ? (
+                               contentLeft={this.state.days[ day_num ][ bellNumber][ weekParam ].teacher !== "" ? (
                                  <Badge
-                                   text={this.state.days[ day_num ][ `bell_${i + 1}` ][ weekParam ][ 5 ][ 0 ]}
+                                   text={this.state.days[ day_num ][ bellNumber][ weekParam ].lessonNumber[ 0 ]}
                                    view="primary" style={{ marginRight: "0.5em" }} size="l"/>) : (<div></div>)
                                }
                              />
@@ -1781,10 +1708,10 @@ export class App extends React.Component {
                                                                                                  <TextBoxTitle> {this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 7 ]} </TextBoxTitle>)
                                                                                                : (<a onClick={() => {
                               this.isCorrectTeacher()
-                            }}> {this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 1 ]} </a>)}
+                            }}> {this.state.days[ this.state.today - 1 ][ current-1 ][ 0 ][ 1 ]} </a>)}
 
-                          {this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 6 ] !== "" && this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 6 ] !== null ? (
-                            <a href={this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ][ 6 ]}
+                          {this.state.days[ this.state.today - 1 ][ current-1 ][ 0 ].url !== "" && this.state.days[ this.state.today - 1 ][ `bell_${current}` ][ 0 ].url!== null ? (
+                            <a href={this.state.days[ this.state.today - 1 ][current-1][ 0 ].url}
                                style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
                               онлайн-конференцию</a>) : (<div></div>)
                           }
@@ -1819,29 +1746,24 @@ export class App extends React.Component {
       <CellListItem
       content={
       <TextBox>
-
           <TextBoxSubTitle  lines={8}>
             {this.state.days[this.state.today-1][`bell_${current+1}`][0][3]}
           </TextBoxSubTitle>
            < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
             {this.state.days[this.state.today-1][`bell_${current+1}`][0][0]}
             </ CardHeadline3>
-
           {this.state.student===false&&this.state.teacher_correct===true ? (<TextBoxTitle> {this.state.days[this.state.today-1][`bell_${current}`][0][7]} </TextBoxTitle>)
           :( <a onClick={()=>{this.isCorrectTeacher()}}> {this.state.days[this.state.today-1][`bell_${current}`][0][1]} </a>) }
-
           { this.state.days[this.state.today-1][`bell_${current}`][0][6] !== ""&&this.state.days[this.state.today-1][`bell_${current}`][0][6] !== null ? (
           <a href={this.state.days[this.state.today-1][`bell_${current}`][0][6]} style={{color:"var(--plasma-colors-white-secondary)"}}>Ссылка на онлайн-конференцию</a>):(<div></div>)
       }
           </TextBox>
         }
-
         contentRight={
           <TextBox>
         <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][2]} contentLeft={<IconLocation size="xs"/>}
         style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
          <TextBoxTitle> {this.Type(this.state.days[this.state.today-1][`bell_${current}`][0][4])}</TextBoxTitle>
-
       </TextBox>}
       contentLeft={this.state.days[this.state.today-1][`bell_${current}`][0][1]!=="" ? (
       <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="l"/>) : (<div></div>)
