@@ -8,13 +8,13 @@ import {
   Checkbox
 } from "@sberdevices/plasma-ui";
 import {createGlobalStyle} from "styled-components";
-import "../App.css";
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronRight, IconNavigationArrow} from "@sberdevices/plasma-icons";
 import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
 import {text, background, gradient} from "@sberdevices/plasma-tokens";
 
-import {NAV_PAGE_NO} from '../App.jsx';
+import "../App.css";
+import {NAV_PAGE_NO} from '../App';
 
 const ThemeBackgroundEva  = createGlobalStyle(darkEva);
 const ThemeBackgroundSber = createGlobalStyle(darkSber);

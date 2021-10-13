@@ -1,4 +1,4 @@
-var groups = [
+[
   {
     "id": 5090,
     "name": "АГРиРПИ-18-ГеоТех",
@@ -2355,4 +2355,3 @@ var groups = [
     "text": "СФП-21-1"
   }
 ]
-export default groups;
