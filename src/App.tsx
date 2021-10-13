@@ -164,6 +164,14 @@ const X = ({today, current, day_num, days, i, timeParam, weekParam}) => {
       </ CardHeadline3>)
 }
 
+interface ITeacherData {
+  first_name: string
+  mid_name: string
+  last_name: string
+  status: string
+  id: string
+}
+
 interface IBuilding {
   name: string
   address: string
@@ -171,7 +179,15 @@ interface IBuilding {
   short: string
 }
 
+type IScheduleDays = Bell[][][]
+
 interface IAppProps {
+}
+
+interface DayHeader {
+  title: string
+  date: string[]
+  count: number[]
 }
 
 interface IAppState {
@@ -192,8 +208,8 @@ interface IAppState {
   labelEnggroup: string
   label_teacher: string
   i: number
-  day: { title: string, date: string[], count: number[] }[]
-  days: any[]
+  day: DayHeader[]
+  days: IScheduleDays
   spinner: boolean
   date: number
   today: number
@@ -326,7 +342,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                         })
                       }
                     );
-                  getScheduleTeacherFromDb(this.state.teacherId, this.getFirstDayWeek(new Date(this.state.date)))
+                  getScheduleTeacherFromDb(
+                    this.state.teacherId,
+                    this.getFirstDayWeek(new Date(this.state.date)))
                     .then((response) => {
                       this.showWeekSchedule(response, 0)
                     });
@@ -418,9 +436,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет когда начинаются пары сегодня или завтра
-  getStartFirstLesson(day) {
+  getStartFirstLesson(todayOrTomorrow: string) {
     let dict = {"today": 1, "tomorrow": 0}
-    day = dict[day]
+    const day: number = dict[todayOrTomorrow]
     console.log("getStartFirstLesson")
     for (let bell in this.state.days[this.state.today - day]) {
       if (this.state.days[this.state.today - day][bell][0][3] !== "") {
@@ -492,7 +510,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // форматировние даты в вид "DD.MM.YY"
-  getDateWithDots(date) {
+  getDateWithDots(date: Date): string {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const year = String(date.getFullYear()).slice(2, 4)
@@ -1217,6 +1235,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   showWeekSchedule(rawSchedule: string, i) { //заполнение данными расписания из бд
     this.setState({spinner: false});
+
+    interface ScheduleData {
+      schedule
+      schedule_header
+    }
     const parsedSchedule = JSON.parse(rawSchedule);
     this.setState({days: new Array(7).fill([])});
     console.log(this.state.days)
@@ -1229,40 +1252,43 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
 
     for (let day_num = 1; day_num < 7; day_num++) {
-      let countLessons = this.state.day[day_num - 1]["count"][i]
+
+      // todo
+      let countLessons = this.state.day[day_num - 1].count[i]
       countLessons = 0;
-      if (parsedSchedule["schedule"] !== null) {
-        this.state.day[day_num - 1]["date"][i] = parsedSchedule["schedule_header"][`day_${day_num}`]["date"];
-        for (let bell in parsedSchedule["schedule"]) { //проверка
+
+      if (parsedSchedule.schedule !== null) {
+        this.state.day[day_num - 1].date[i] = parsedSchedule.schedule_header[`day_${day_num}`]["date"];
+        for (let bell in parsedSchedule.schedule) { //проверка
           let bell_num = Number(bell.slice(-1)) - 1
-          let lesson_info = parsedSchedule["schedule"][bell][`day_${day_num}`]["lessons"][0]
+          let lesson_info = parsedSchedule.schedule[bell][`day_${day_num}`]["lessons"][0]
           let lesson_info_state = this.state.days[day_num - 1][bell_num][i]
-          if ((parsedSchedule["schedule"][bell_num] !== undefined) && (lesson_info !== undefined) &&
+          if ((parsedSchedule.schedule[bell_num] !== undefined) && (lesson_info !== undefined) &&
             (lesson_info["groups"][0]["subgroup_name"] !== undefined) &&
             (lesson_info["groups"][0]["subgroup_name"] === this.state.subGroup) && (this.state.subGroup !== "")) {
 
             lesson_info_state.lessonName = lesson_info["subject_name"];
             lesson_info_state.teacher = lesson_info["teachers"][0]["name"];
             lesson_info_state.room = lesson_info["room_name"];
-            lesson_info_state.startAndfinishTime = `${parsedSchedule["schedule"][bell][`header`]["start_lesson"]} 
-            - ${parsedSchedule["schedule"][bell][`header`]["end_lesson"]}`;
+            lesson_info_state.startAndfinishTime = `${parsedSchedule.schedule[bell][`header`]["start_lesson"]} 
+            - ${parsedSchedule.schedule[bell][`header`]["end_lesson"]}`;
             lesson_info_state.lessonType = lesson_info["type"];
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info["other"];
 
             countLessons++;
-          } else if ((parsedSchedule["schedule"][bell] !== undefined) && (lesson_info !== undefined)
+          } else if ((parsedSchedule.schedule[bell] !== undefined) && (lesson_info !== undefined)
             && (lesson_info["subgroup_name"] !== undefined) && (lesson_info["groups"][0]["subgroup_name"] !==
               this.state.subGroup)
             && (lesson_info["groups"][0]["subgroup_name"] !== undefined) && (this.state.subGroup !== "")) {
             lesson_info_state.reset()
-          } else if ((parsedSchedule["schedule"][bell] !== undefined) && (lesson_info !== undefined)) {
+          } else if ((parsedSchedule.schedule[bell] !== undefined) && (lesson_info !== undefined)) {
 
             lesson_info_state.lessonName = lesson_info["subject_name"];
             lesson_info_state.teacher = lesson_info["teachers"][0]["name"];
             lesson_info_state.room = lesson_info["room_name"];
-            lesson_info_state.startAndfinishTime = `${parsedSchedule["schedule"][bell][`header`]["start_lesson"]} 
-            - ${parsedSchedule["schedule"][bell][`header`]["end_lesson"]}`;
+            lesson_info_state.startAndfinishTime = `${parsedSchedule.schedule[bell][`header`]["start_lesson"]} 
+            - ${parsedSchedule.schedule[bell][`header`]["end_lesson"]}`;
             lesson_info_state.lessonType = lesson_info["type"];
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info["other"];
@@ -1419,20 +1445,33 @@ export class App extends React.Component<IAppProps, IAppState> {
                   {this.state.day.map(({title, date}, i) =>
                     this.state.today === i + 1
                       ? (
-                        <CarouselCol key={`item:${i}`}><Button view="secondary"
-                                                               style={{marginTop: "0.5em", marginBottom: "0.5em"}}
-                                                               size="s" pin="circle-circle"
-                                                               text={`${title} ${date[0].slice(0, 5)}`}
-                                                               focused={i + 1 === index} onClick={() => {
-                          this.setState({page: i + 1})
-                        }}/></CarouselCol>
-                      ) : (<CarouselCol key={`item:${i}`}><Button view="clear"
-                                                                  style={{marginTop: "0.5em", marginBottom: "0.5em"}}
-                                                                  size="s" pin="circle-circle"
-                                                                  text={`${title} ${date[0].slice(0, 5)}`}
-                                                                  focused={i + 1 === index} onClick={() => {
-                        this.setState({page: i + 1})
-                      }}/></CarouselCol>)
+                        <CarouselCol key={`item:${i}`}>
+                          <Button
+                            view="secondary"
+                            style={{marginTop: "0.5em", marginBottom: "0.5em"}}
+                            size="s" pin="circle-circle"
+                            text={`${title} ${date[0].slice(0, 5)}`}
+                            focused={i + 1 === index}
+                            onClick={() => {
+                              this.setState({page: i + 1})
+                            }}
+                          />
+                        </CarouselCol>
+                      )
+                      : (
+                        <CarouselCol key={`item:${i}`}>
+                          <Button
+                            view="clear"
+                            style={{marginTop: "0.5em", marginBottom: "0.5em"}}
+                            size="s" pin="circle-circle"
+                            text={`${title} ${date[0].slice(0, 5)}`}
+                            focused={i + 1 === index}
+                            onClick={() => {
+                              this.setState({page: i + 1})
+                            }}
+                          />
+                        </CarouselCol>
+                      )
                   )}
                 </Carousel>
               </CarouselGridWrapper>
@@ -1742,7 +1781,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               </div>)
             }
             <MyDiv200/>
-{/*
+            {/*
             <div style={{
               width: '200px',
               height: '200px',
@@ -1904,15 +1943,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log(this.state.teacher);
 
     getInTeacherFromDb(this.state.teacher).then((rawTeacher) => {
-      interface ITeacherId {
-        first_name: string
-        mid_name: string
-        last_name: string
-        status: string
-        id: string
-      }
-
-      const parsedTeacher: ITeacherId = JSON.parse(rawTeacher);
+      const parsedTeacher: ITeacherData = JSON.parse(rawTeacher);
 
       //this.state.teacherId=this.id['id'];
       console.log(rawTeacher)
@@ -1972,7 +2003,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     let correct_eng = false;
     for (let i of groups) {
       if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
-        this.setState({ correct: true })
+        this.setState({correct: true})
         console.log(`Correct ${this.state.correct}`)
         this.convertGroupNameInId()
       }
@@ -1992,7 +2023,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.showWeekSchedule(response, 0);
       });
       console.log(String(this.state.engGroup));
-      this.setState({ flag: true });
+      this.setState({flag: true});
       this.convertIdInGroupName();
       this.setState({page: 7, labelGroup: "Номер академической группы", color_group: "Предупреждение"});
     } else if (this.state.correct === true) {
