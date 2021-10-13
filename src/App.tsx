@@ -150,6 +150,32 @@ const dayNameDict = {
   "Сб": ["В субботу", 6]
 }
 
+const DAY_TODAY = 'today';
+const DAY_TOMORROW = 'tomorrow';
+const TODAY_TOMORROW_DICT = {
+  [DAY_TODAY]: 1,
+  [DAY_TOMORROW]: 0,
+}
+
+const CHAR_SBER = 'sber';
+const CHAR_EVA = 'eva';
+const CHAR_JOY = 'joy';
+type Character = 'sber' | 'eva' | 'joy'
+
+
+export const getThemeBackgroundByChar = (character: Character) => {
+  switch (character) {
+    case CHAR_SBER:
+      return <ThemeBackgroundSber/>;
+    case CHAR_EVA:
+      return <ThemeBackgroundEva/>;
+    case CHAR_JOY:
+      return <ThemeBackgroundJoy/>;
+    default:
+      return;
+  }
+}
+
 const X = ({today, current, day_num, days, i, timeParam, weekParam}) => {
   //const day_num = props.day_num;
   //const days= props.days;
@@ -180,7 +206,8 @@ const X = ({today, current, day_num, days, i, timeParam, weekParam}) => {
     : (
       < CardHeadline3>
         {pairName}
-      </ CardHeadline3>)
+      </ CardHeadline3>
+    )
 }
 
 interface ITeacherData {
@@ -196,6 +223,60 @@ interface IBuilding {
   address: string
   color: string
   short: string
+}
+
+
+interface IScheduleTeacherData {
+  name: string
+}
+
+interface IScheduleGroup {
+  name: string
+  subgroup_name: string|undefined
+}
+
+interface IScheduleLessonInfo {
+  groups: IScheduleGroup[]
+  subject_name: string
+  teachers: IScheduleTeacherData[]
+  room_name: string
+  type: string
+  other: string
+}
+
+interface IScheduleBellHeader {
+  start_lesson: string
+  end_lesson: string
+}
+
+interface Schedule_ {
+  header: IScheduleBellHeader
+  day1: IScheduleLessonInfo
+  day2: IScheduleLessonInfo
+  day3: IScheduleLessonInfo
+  day4: IScheduleLessonInfo
+  day5: IScheduleLessonInfo
+  day6: IScheduleLessonInfo
+  day7: IScheduleLessonInfo
+}
+
+interface IScheduleHeaderDay {
+  date: string
+}
+
+interface ScheduleHeader {
+  day1: IScheduleHeaderDay,
+  day2: IScheduleHeaderDay,
+  day3: IScheduleHeaderDay,
+  day4: IScheduleHeaderDay,
+  day5: IScheduleHeaderDay,
+  day6: IScheduleHeaderDay,
+  day7: IScheduleHeaderDay,
+}
+
+interface IScheduleData {
+  schedule: Schedule_[]
+  schedule_header: ScheduleHeader
 }
 
 type IScheduleDays = Bell[][][]
@@ -236,7 +317,7 @@ interface IAppState {
   color_teacher: string
   color_sub: string
   color_enggroup?: string
-  character: string
+  character: Character
   star: boolean
   bd: string
   student: boolean
@@ -248,6 +329,14 @@ interface IAppState {
   teacher_correct: boolean
   building: IBuilding[]
 }
+
+interface IHeaderScheduleProps {
+  student: boolean,
+  teacher_correct: boolean,
+  teacher: string,
+  groupname: string
+}
+
 
 
 export class App extends React.Component<IAppProps, IAppState> {
@@ -298,7 +387,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       color_group: "var(--plasma-colors-white-secondary)",
       color_teacher: "var(--plasma-colors-white-secondary)",
       color_sub: "var(--plasma-colors-white-secondary)",
-      character: "sber",
+      character: CHAR_SBER,
       star: false,
       bd: "",
       student: true,
@@ -382,8 +471,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   });
                   this.ChangePage()
                   this.setState({page: 7, checked: true, star: true, bd: this.state.groupId, student: true});
-                } else 
-                {
+                } else {
                   this.ChangePage()
                   this.setState({page: 0});
                 }
@@ -409,6 +497,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log(`assistant.on(raw)`, event);
     });
   }
+
   setValue(key, value) {
     console.log(key, value)
     switch (key) {
@@ -442,22 +531,25 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     }
   }
-  HeaderSchedule(props){
-    return  <Col style={{marginLeft: "0.5em"}}>
-    <TextBox>
-      <TextBoxTitle>Расписание занятий</TextBoxTitle>
-      {props.student === false && props.teacher_correct === true ?
-        <TextBoxSubTitle>{props.teacher}</TextBoxSubTitle>
-        :
-        <TextBoxSubTitle>{props.groupname}</TextBoxSubTitle>}
-    </TextBox>
-  </Col>
+
+  HeaderSchedule(props: IHeaderScheduleProps) {
+    return (
+      <Col style={{marginLeft: "0.5em"}}>
+        <TextBox>
+          <TextBoxTitle>Расписание занятий</TextBoxTitle>
+          {
+            !props.student && props.teacher_correct
+              ? <TextBoxSubTitle>{props.teacher}</TextBoxSubTitle>
+              : <TextBoxSubTitle>{props.groupname}</TextBoxSubTitle>
+          }
+        </TextBox>
+      </Col>
+    )
   }
 
   // определяет когда начинаются пары сегодня или завтра
-  getStartFirstLesson(todayOrTomorrow: string) {
-    let dict = {"today": 1, "tomorrow": 0}
-    const day: number = dict[todayOrTomorrow]
+  getStartFirstLesson(todayOrTomorrow: string): string | undefined {
+    const day: number = TODAY_TOMORROW_DICT[todayOrTomorrow]
     console.log("getStartFirstLesson")
     for (let bell in this.state.days[this.state.today - day]) {
       if (this.state.days[this.state.today - day][bell][0].startAndfinishTime !== "") {
@@ -467,38 +559,36 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет когда кончаются пары сегодня или завтра
-  getEndLastLesson(day) {
-    let dict = {"today": 1, "tomorrow": 0}
-    day = dict[day]
+  getEndLastLesson(day): string | undefined {
+    day = TODAY_TOMORROW_DICT[day]
     for (let bell = 7; bell > 0; bell--) {
-      if (this.state.days[this.state.today - day][bell-1][0].startAndfinishTime!== "") {
-        return this.state.days[this.state.today - day][bell-1][0].startAndfinishTime.slice(8)
+      if (this.state.days[this.state.today - day][bell - 1][0].startAndfinishTime !== "") {
+        return this.state.days[this.state.today - day][bell - 1][0].startAndfinishTime.slice(8)
       }
     }
   }
 
   // определяет начало или конец энной пары сегодня или завтра
   getBordersRequestLesson(type, day, lessonNum) {
-    let dict = {"today": 1, "tomorrow": 0}
-    day = dict[day]
-    if (this.state.days[this.state.today - day][lessonNum-1][0].startAndfinishTime !== "") {
+    day = TODAY_TOMORROW_DICT[day]
+    if (this.state.days[this.state.today - day][lessonNum - 1][0].startAndfinishTime !== "") {
       if (type === "start") {
-        return this.state.days[this.state.today - day][lessonNum-1][0].startAndfinishTime.slice(0, 5)
+        return this.state.days[this.state.today - day][lessonNum - 1][0].startAndfinishTime.slice(0, 5)
       } else {
-        return this.state.days[this.state.today - day][lessonNum-1][0].startAndfinishTime.slice(8)
+        return this.state.days[this.state.today - day][lessonNum - 1][0].startAndfinishTime.slice(8)
       }
     }
   }
 
   getStartEndLesson(type, day, lessonNum) {
-    if (day === "today" && this.state.today === 0) {
+    if (day === DAY_TODAY && this.state.today === 0) {
       return [day, "sunday"]
     }
-    if (day === "tomorrow" && this.state.today === 6) {
+    if (day === DAY_TOMORROW && this.state.today === 6) {
       return [day, "sunday"]
     }
     if (type === "start") {
-      if (day === "today") {
+      if (day === DAY_TODAY) {
         if (lessonNum === "0") {
           return this.getStartFirstLesson(day)
         } else {
@@ -512,7 +602,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       }
     } else if (type === "end") {
-      if (day === "today") {
+      if (day === DAY_TODAY) {
         if (lessonNum === "0") {
           return this.getEndLastLesson(day)
         } else {
@@ -528,12 +618,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  // форматировние даты в вид "DD.MM.YY"
+  // форматирование даты в вид "DD.MM.YY"
   getDateWithDots(date: Date): string {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const year = String(date.getFullYear()).slice(2, 4)
-    return `${(day < 10 ? '0' : '').concat(''+day)}.${(month < 10 ? '0' : '').concat(''+month)}.${year}`;
+    return `${(day < 10 ? '0' : '').concat('' + day)}.${(month < 10 ? '0' : '').concat('' + month)}.${year}`;
   }
 
   // подсчет количества пар в указанную дату
@@ -553,14 +643,14 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // получить текущее время в формате "HH:MM"
-  getTime(date) {
+  getTime(date: Date): string {
     const hours = date.getHours()
     const minutes = date.getMinutes()
-    return `${(hours < 10 ? '0' : '').concat(hours)}:${(minutes < 10 ? '0' : '').concat(minutes)}`
+    return `${(hours < 10 ? '0' : '').concat('' + hours)}:${(minutes < 10 ? '0' : '').concat('' + minutes)}`
   }
 
   // получить текущую пару
-  getCurrentLesson(date) {
+  getCurrentLesson(date: Date) {
     if (this.state.today !== 0) {
       for (let bell in this.state.days[this.state.today - 1]) {
         if ((this.getTime(date) > this.state.days[this.state.today - 1][bell][0].startAndfinishTime.slice(0, 6)) &&
@@ -573,7 +663,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // возвращает количество оставшихся на сегодня пар
-  getAmountOfRemainingLessons(date) {
+  getAmountOfRemainingLessons(date: Date): number {
     let countRemainingLessons = 0
     if ((this.state.today !== 0) && (this.state.today + 1 !== 7))
       for (let bell in this.state.days[this.state.today - 1]) {
@@ -585,7 +675,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     return countRemainingLessons
   }
 
-  getTimeFirstLesson(daynum) {
+  getTimeFirstLesson(daynum: number) {
     let first;
     let num;
     let week = 0;
@@ -600,27 +690,37 @@ export class App extends React.Component<IAppProps, IAppState> {
     return [first, num];
   }
 
-  whatLesson(date, when) { //определяет название пары, которая идет или будет
+  whatLesson(date: Date, when: string): { lesson: string | undefined, type: string } { //определяет название пары, которая идет или будет
     // ключ - номер пары, значение - перерыв до этой пары
-    if (this.state.day[this.state.today - 1]["count"][0] == 0) return {lesson: undefined, type: when}
-    else {
-      console.log(this.state.day[this.state.today - 1]["count"][0], "count");
+    if (this.state.day[this.state.today - 1].count[0] == 0) {
+      return {
+        lesson: undefined,
+        type: when,
+      }
+    } else {
+      console.log(this.state.day[this.state.today - 1].count[0], "count");
       if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0, 5)) console.log(true)
       console.log(" что за пара", this.getTime(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
       if (this.state.today !== 0) {
 
-        if ((this.getCurrentLesson(date) !== undefined) && (when === "now"))
+        if ((this.getCurrentLesson(date) !== undefined) && (when === "now")) {
           for (let bell in this.state.days[this.state.today - 1]) {
             if ((this.state.days[this.state.today - 1][bell][0][5][0] === this.getCurrentLesson(date)) && (this.state.days[this.state.today - 1][bell][0][5][0] !== "")) {
-              return {lesson: this.state.days[this.state.today - 1][bell][0][0], type: "now"};
+              return {
+                lesson: this.state.days[this.state.today - 1][bell][0][0],
+                type: "now",
+              };
             }
           }
-        else if ((when === "will") && (this.getCurrentLesson(date) !== undefined) && (parseInt(this.getCurrentLesson(date)) + 1 < 8)) {
+        } else if ((when === "will") && (this.getCurrentLesson(date) !== undefined) && (parseInt(this.getCurrentLesson(date)) + 1 < 8)) {
           console.log("будет")
           for (let bell in this.state.days[this.state.today - 1]) {
             console.log(parseInt(this.getCurrentLesson(date)) + 1);
             if ((this.state.days[this.state.today - 1][bell][0][5][0] == parseInt(this.getCurrentLesson(date)) + 1) && (this.state.days[this.state.today - 1][bell][0][5][0] !== "")) {
-              return {lesson: this.state.days[this.state.today - 1][bell][0][0], type: "next"};
+              return {
+                lesson: this.state.days[this.state.today - 1][bell][0][0],
+                type: "next"
+              };
             }
           }
         } else if ((this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) && (this.getTime(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))) {
@@ -629,19 +729,31 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson: this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0],
             type: "will"
           }
-        } else for (let i in breaks) {
-          if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) && (this.state.days[this.state.today - 1][`bell_${i}`][0][5][0] !== "")) return {
-            lesson: this.state.days[this.state.today - 1][`bell_${i}`][0][0],
-            type: "will"
-          };
-          else return {lesson: undefined, type: when};
+        } else {
+          for (let i in breaks) {
+            if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) && (this.state.days[this.state.today - 1][`bell_${i}`][0][5][0] !== "")) {
+              return {
+                lesson: this.state.days[this.state.today - 1][`bell_${i}`][0][0],
+                type: "will"
+              };
+            } else {
+              return {
+                lesson: undefined,
+                type: when,
+              };
+            }
+          }
         }
       }
     }
+    return {
+      lesson: undefined,
+      type: when,
+    };
   }
 
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
-  whereWillLesson(date, will) {
+  whereWillLesson(date: Date, will: string) {
     let nextLessonRoom
     let numberNearestLesson
     // проверяем, что сегодня не воскресенье
@@ -660,7 +772,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
       const amountOfLessons = this.getAmountOfLessons(date);
       if (amountOfLessons && amountOfLessons[1] === 0) {
-        return {exist: "empty"}
+        return {
+          exist: "empty",
+        }
       }
       if (numberNearestLesson !== undefined) {
         for (let bell in this.state.days[this.state.today - 1]) {
@@ -669,7 +783,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             return {
               audience: this.state.days[this.state.today - 1][bell][0].room,
               type: "nearest",
-              exist: "inSchedule"
+              exist: "inSchedule",
             }
           } else {
             // сообщаем, что такой пары нет
@@ -679,7 +793,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return {
                   audience: this.state.days[this.state.today - 1][bell][0].room,
                   type: "nearest",
-                  exist: "notInSchedule"
+                  exist: "notInSchedule",
                 }
               }
             }
@@ -695,9 +809,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
         if (whereCurrentLesson === "") {
-          return {exist: "notInSchedule"}
+          return {
+            exist: "notInSchedule",
+          }
         } else {
-          return {audience: whereCurrentLesson, type: "current"}
+          return {
+            audience: whereCurrentLesson,
+            type: "current",
+          }
         }
       }
       if (numberNearestLesson === undefined && will === "will") {
@@ -707,13 +826,20 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
         if (nextLessonRoom !== "") {
-          return {audience: nextLessonRoom, type: "next"}
+          return {
+            audience: nextLessonRoom,
+            type: "next",
+          }
         } else {
-          return {exist: "endLessons"}
+          return {
+            exist: "endLessons",
+          }
         }
       }
     } else {
-      return {exist: "sunday"}
+      return {
+        exist: "sunday",
+      }
     }
   }
 
@@ -821,19 +947,16 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (params.day === "sunday") {
               this.ChangePage()
               return this.setState({page: 8})
-            } else if ((params.day === 'today') && (this.state.today !== 0)) {
+            } else if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
               this.ChangePage()
               return this.setState({page: this.state.today});
-            }
-            else if (this.state.today + 1 === 7)  {
+            } else if (this.state.today + 1 === 7) {
               this.ChangePage();
               return this.setState({page: 8});
-            }
-            else
-            { 
+            } else {
               this.ChangePage();
               this.setState({page: this.state.today + 1});
-          }
+            }
           }
           break
 
@@ -846,15 +969,15 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (action.note !== undefined) {
               response = this.getAmountOfLessons(new Date(action.note.timestamp))
               if (String(this.state.today + 1) === action.note.dayOfWeek) {
-                day = "today";
+                day = DAY_TODAY;
                 page = 0
               } else if (String(this.state.today + 2) === action.note.dayOfWeek) {
-                day = "tomorrow";
+                day = DAY_TOMORROW;
                 page = 0
               }
             } else {
               response = this.getAmountOfLessons(new Date(Date.now()))
-              day = "today"
+              day = DAY_TODAY
             }
             let howManyParams
             if (this.state.group !== "")
@@ -908,12 +1031,12 @@ export class App extends React.Component<IAppProps, IAppState> {
               },
             })
             if (this.state.group !== "")
-            this.ChangePage();
-              if (this.state.today === 0) {
-                this.setState({page: 8})
-              } else {
-                this.setState({page: this.state.today})
-              }
+              this.ChangePage();
+            if (this.state.today === 0) {
+              this.setState({page: 8})
+            } else {
+              this.setState({page: this.state.today})
+            }
           }
           break
 
@@ -983,16 +1106,16 @@ export class App extends React.Component<IAppProps, IAppState> {
               console.log(parseInt(action.note.dayOfWeek) - 1);
               number = this.getTimeFirstLesson(parseInt(action.note.dayOfWeek) - 1)[1]
               if (String(this.state.today + 1) === action.note.dayOfWeek) {
-                day1 = "today";
+                day1 = DAY_TODAY;
                 page1 = 0
               } else if (String(this.state.today + 2) === action.note.dayOfWeek) {
-                day1 = "tomorrow";
+                day1 = DAY_TOMORROW;
                 page1 = 0
               }
             } else {
               console.log(this.getTimeFirstLesson(parseInt(action.note.dayOfWeek) - 1)[1]);
               number = this.getTimeFirstLesson(parseInt(action.note.dayOfWeek) - 1)[1];
-              day = "today"
+              day = DAY_TODAY
             }
             let whichFirst
             if (this.state.group !== "")
@@ -1134,7 +1257,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   // сколько миллисекунд в n днях
   msInDay(n) {
-    return n * 24 * 3600000
+    return n * 24 * 60 * 60 * 1000
   }
 
 
@@ -1206,11 +1329,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   showWeekSchedule(rawSchedule: string, i) { //заполнение данными расписания из бд
     this.setState({spinner: false});
 
-    interface ScheduleData {
-      schedule
-      schedule_header
-    }
-    const parsedSchedule = JSON.parse(rawSchedule);
+    const parsedSchedule: IScheduleData = JSON.parse(rawSchedule);
     let days = new Array(7).fill([]);
     for (let day in days) {
       days[day] = Array(7).fill([])
@@ -1226,43 +1345,43 @@ export class App extends React.Component<IAppProps, IAppState> {
       countLessons = 0;
 
       if (parsedSchedule.schedule !== null) {
-        this.state.day[day_num - 1].date[i] = parsedSchedule.schedule_header[`day_${day_num}`]["date"];
+        this.state.day[day_num - 1].date[i] = parsedSchedule.schedule_header[`day_${day_num}`].date;
         for (let bell in parsedSchedule.schedule) { //проверка
           let bell_num = Number(bell.slice(-1)) - 1
-          let lesson_info = parsedSchedule.schedule[bell][`day_${day_num}`]["lessons"][0]
-          let lesson_info_state = days[day_num - 1][bell_num][i]
+          let lesson_info: IScheduleLessonInfo = parsedSchedule.schedule[bell][`day_${day_num}`].lessons[0]
+          let lesson_info_state: Bell = days[day_num - 1][bell_num][i]
           if ((parsedSchedule.schedule[bell_num] !== undefined) && (lesson_info !== undefined) &&
-            (lesson_info["groups"][0]["subgroup_name"] !== undefined) &&
-            (lesson_info["groups"][0]["subgroup_name"] === this.state.subGroup) && (this.state.subGroup !== "")) {
+            (lesson_info.groups[0].subgroup_name !== undefined) &&
+            (lesson_info.groups[0].subgroup_name === this.state.subGroup) && (this.state.subGroup !== "")) {
 
-            lesson_info_state.lessonName = lesson_info["subject_name"];
-            lesson_info_state.teacher = lesson_info["teachers"][0]["name"];
-            lesson_info_state.room = lesson_info["room_name"];
-            lesson_info_state.startAndfinishTime = `${parsedSchedule.schedule[bell][`header`]["start_lesson"]} 
-            - ${parsedSchedule.schedule[bell][`header`]["end_lesson"]}`;
-            lesson_info_state.lessonType = lesson_info["type"];
+            lesson_info_state.lessonName = lesson_info.subject_name;
+            lesson_info_state.teacher = lesson_info.teachers[0].name;
+            lesson_info_state.room = lesson_info.room_name;
+            lesson_info_state.startAndfinishTime = `${parsedSchedule.schedule[bell].header.start_lesson } 
+            - ${parsedSchedule.schedule[bell].header.end_lesson}`;
+            lesson_info_state.lessonType = lesson_info.type;
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
-            lesson_info_state.url = lesson_info["other"];
+            lesson_info_state.url = lesson_info.other;
 
             countLessons++;
           } else if ((parsedSchedule.schedule[bell] !== undefined) && (lesson_info !== undefined)
-            && (lesson_info["subgroup_name"] !== undefined) && (lesson_info["groups"][0]["subgroup_name"] !==
+            && (lesson_info.groups[0].subgroup_name !== undefined) && (lesson_info.groups[0].subgroup_name !==
               this.state.subGroup)
-            && (lesson_info["groups"][0]["subgroup_name"] !== undefined) && (this.state.subGroup !== "")) {
+            && (lesson_info.groups[0].subgroup_name !== undefined) && (this.state.subGroup !== "")) {
             lesson_info_state.reset()
           } else if ((parsedSchedule.schedule[bell] !== undefined) && (lesson_info !== undefined)) {
 
-            lesson_info_state.lessonName = lesson_info["subject_name"];
-            lesson_info_state.teacher = lesson_info["teachers"][0]["name"];
-            lesson_info_state.room = lesson_info["room_name"];
-            lesson_info_state.startAndfinishTime = `${parsedSchedule.schedule[bell][`header`]["start_lesson"]} 
-            - ${parsedSchedule.schedule[bell][`header`]["end_lesson"]}`;
-            lesson_info_state.lessonType = lesson_info["type"];
+            lesson_info_state.lessonName = lesson_info.subject_name;
+            lesson_info_state.teacher = lesson_info.teachers[0].name;
+            lesson_info_state.room = lesson_info.room_name;
+            lesson_info_state.startAndfinishTime = `${parsedSchedule.schedule[bell].header.start_lesson} 
+            - ${parsedSchedule.schedule[bell].header.end_lesson}`;
+            lesson_info_state.lessonType = lesson_info.type;
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
-            lesson_info_state.url = lesson_info["other"];
+            lesson_info_state.url = lesson_info.other;
 
-            for (let name in lesson_info["groups"]) {
-              lesson_info_state.groupNumber += `${lesson_info["groups"][name]["name"]} `;
+            for (let name in lesson_info.groups) {
+              lesson_info_state.groupNumber += `${lesson_info.groups[name].name} `;
             }
             countLessons++;
           } else {
@@ -1286,7 +1405,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({i: 0});
     let index = 0;
     let groupname;
-    if (this.state.checked === true) {
+    if (this.state.checked) {
       this.setState({star: true});
     } else {
       if (this.state.groupId == this.state.bd) {
@@ -1295,7 +1414,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({star: false});
       }
     }
-    if (this.state.teacher_checked === true) {
+    if (this.state.teacher_checked) {
       this.setState({teacher_star: true});
     } else {
       if (this.state.teacherId == this.state.teacher_bd) {
@@ -1309,18 +1428,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     return (
       <DeviceThemeProvider>
         <DocStyle/>
-        {(() => {
-          switch (this.state.character) {
-            case "sber":
-              return <ThemeBackgroundSber/>;
-            case "eva":
-              return <ThemeBackgroundEva/>;
-            case "joy":
-              return <ThemeBackgroundJoy/>;
-            default:
-              return;
-          }
-        })()}
+        {
+          getThemeBackgroundByChar(this.state.character)
+        }
         <div>
           <Container style={{padding: 0}}>
             <Row style={{margin: "1em"}}>
@@ -1330,29 +1440,47 @@ export class App extends React.Component<IAppProps, IAppState> {
                   console.log("sunday")
                 }}/>
               </Col>
-              <this.HeaderSchedule groupname={groupname} student={this.state.student} 
-             teacher={this.state.teacher}
-             teacher_correct={this.state.teacher_correct}/>
+              <this.HeaderSchedule
+                groupname={groupname}
+                student={this.state.student}
+                teacher={this.state.teacher}
+                teacher_correct={this.state.teacher_correct}/>
 
-             
+
               <Col style={{margin: "0 0 0 auto"}}>
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => { this.ChangePage();this.setState({page: NAV_PAGE_NO})}}
+                <Button size="s" view="clear" pin="circle-circle" onClick={() => {
+                  this.ChangePage();
+                  this.setState({page: NAV_PAGE_NO})
+                }}
                         contentRight={<IconNavigationArrow size="s" color="inherit"/>}/>
-                {this.state.student === false && this.state.teacher_correct === true ? (
-                  <Button size="s" view="clear" pin="circle-circle" onClick={() => {
-                    this.setState({teacher_star: !this.state.teacher_star});
-                    this.Star()
-                  }} contentRight={this.state.teacher_star === true ? <IconStarFill size="s" color="inherit"/> :
-                    <IconStar size="s" color="inherit"/>}/>
-                ) : (
-                  <Button size="s" view="clear" pin="circle-circle" onClick={() => {
-                    this.setState({star: !this.state.star});
-                    this.Star()
-                  }} contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> :
-                    <IconStar size="s" color="inherit"/>}/>
-                )}
-                <Button size="s" view="clear" pin="circle-circle" onClick={() =>{ this.ChangePage(); this.setState({page: 0})}}
-                        contentRight={<IconSettings size="s" color="inherit"/>}/>
+                {
+                  !this.state.student && this.state.teacher_correct
+                    ? (
+                      <Button size="s" view="clear" pin="circle-circle" onClick={() => {
+                        this.setState({teacher_star: !this.state.teacher_star});
+                        this.Star()
+                      }} contentRight={
+                        this.state.teacher_star
+                          ? <IconStarFill size="s" color="inherit"/>
+                          : <IconStar size="s" color="inherit"/>}/>
+                    )
+                    : (
+                      <Button size="s" view="clear" pin="circle-circle" onClick={() => {
+                        this.setState({star: !this.state.star});
+                        this.Star()
+                      }} contentRight={
+                        this.state.star
+                          ? <IconStarFill size="s" color="inherit"/>
+                          : <IconStar size="s" color="inherit"/>}/>
+                    )
+                }
+                <Button size="s" view="clear" pin="circle-circle" onClick={() => {
+                  this.ChangePage();
+                  this.setState({page: 0})
+                }}
+                        contentRight={
+                          <IconSettings size="s" color="inherit"/>
+                        }/>
 
                 {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
               </Col>
@@ -1378,20 +1506,25 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.ChangePage();
                   this.setState({date: Date.now(), flag: true, page: 7})
                 }} style={{position: "relative", bottom: "0.5em"}}/>
-                <Button view="clear" size="s" pin="circle-circle" onClick={() => {
-                  this.setState({spinner: false});
-                  this.NextWeek();
-                  this.ChangePage();
-                  this.setState({page: 9})
-                }} style={{margin: "1em"}}
-                        contentRight={
-                          <IconChevronRight
-                            size="s"
-                            color="inherit"
-                            // @ts-ignore
-                            style={{paddingBottom: "1.5em"}}
-                          />
-                        }/>
+                <Button
+                  view="clear"
+                  size="s"
+                  pin="circle-circle"
+                  onClick={() => {
+                    this.setState({spinner: false});
+                    this.NextWeek();
+                    this.ChangePage();
+                    this.setState({page: 9})
+                  }}
+                  style={{margin: "1em"}}
+                  contentRight={
+                    <IconChevronRight
+                      size="s"
+                      color="inherit"
+                      // @ts-ignore
+                      style={{paddingBottom: "1.5em"}}
+                    />
+                  }/>
               </div>
             </Row>
             <Row style={{margin: "0.5em"}}>
@@ -1476,29 +1609,69 @@ export class App extends React.Component<IAppProps, IAppState> {
     if (this.state.student/* === true*/) {
       if (!this.state.star/* === false*/) {
         /*await*/
-        createUser(this.state.userId, "880", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup), String(this.state.teacherId));
-        this.setState({checked: true, bd: this.state.groupId});
+        createUser(
+          this.state.userId,
+          "880",
+          String(this.state.groupId),
+          String(this.state.subGroup),
+          String(this.state.engGroup),
+          String(this.state.teacherId));
+        this.setState({
+          checked: true,
+          bd: this.state.groupId,
+        });
       } else {
         /*await*/
-        createUser(this.state.userId, "", "", "", "", "");
-        this.setState({checked: false, bd: ""});
+        createUser(
+          this.state.userId,
+          "",
+          "",
+          "",
+          "",
+          "",
+        );
+        this.setState({
+          checked: false,
+          bd: "",
+        });
       }
     } else {
       if (!this.state.teacher_star/* === false*/) {
         /*await*/
-        createUser(this.state.userId, "880", String(this.state.groupId), String(this.state.subGroup), String(this.state.engGroup), String(this.state.teacherId));
-        this.setState({teacher_checked: true, teacher_bd: this.state.groupId});
+        createUser(
+          this.state.userId,
+          "880",
+          String(this.state.groupId),
+          String(this.state.subGroup),
+          String(this.state.engGroup),
+          String(this.state.teacherId),
+        );
+        this.setState({
+          teacher_checked: true,
+          teacher_bd: this.state.groupId,
+        });
       } else {
         /*await*/
-        createUser(this.state.userId, "", String(this.state.groupId), String(this.state.subGroup), "", "");
-        this.setState({teacher_checked: false, teacher_bd: ""});
+        createUser(
+          this.state.userId,
+          "",
+          String(this.state.groupId),
+          String(this.state.subGroup),
+          "",
+          "",
+        );
+        this.setState({
+          teacher_checked: false,
+          teacher_bd: "",
+        });
       }
     }
   }
-  ChangePage(){
 
-    let timeParam=0;
-    let weekParam =0;
+  ChangePage() {
+
+    let timeParam = 0;
+    let weekParam = 0;
     switch (this.state.page) {
       case 1:
       case 2:
@@ -1506,32 +1679,32 @@ export class App extends React.Component<IAppProps, IAppState> {
       case 4:
       case 5:
       case 6:
-       timeParam = this.state.page
-       weekParam= 0;
-       break;
+        timeParam = this.state.page
+        weekParam = 0;
+        break;
       case 9:
         timeParam = 1
-        weekParam= 1
+        weekParam = 1
         break;
       case 10:
         timeParam = 2
-        weekParam= 1
+        weekParam = 1
         break;
       case 11:
         timeParam = 3
-        weekParam= 1
+        weekParam = 1
         break;
       case 12:
         timeParam = 4
-        weekParam= 1
+        weekParam = 1
         break;
       case 13:
         timeParam = 5
-        weekParam= 1
+        weekParam = 1
         break;
       case 14:
         timeParam = 6
-        weekParam= 1
+        weekParam = 1
         break;
       default:
         break;
@@ -1575,27 +1748,18 @@ export class App extends React.Component<IAppProps, IAppState> {
     } else {
       page = 0;
     }
-  
+
     if (this.state.subGroup !== "") groupname = `${this.state.group} (${this.state.subGroup})`
     else groupname = `${this.state.group} `
 
-   
+
     //const { showToast, hideToast } = useToast()
     return (
       <DeviceThemeProvider>
         <DocStyle/>
-        {(() => {
-          switch (this.state.character) {
-            case "sber":
-              return <ThemeBackgroundSber/>;
-            case "eva":
-              return <ThemeBackgroundEva/>;
-            case "joy":
-              return <ThemeBackgroundJoy/>;
-            default:
-              return;
-          }
-        })()}
+        {
+          getThemeBackgroundByChar(this.state.character)
+        }
         <div>
           <Container style={{padding: 0, overflow: "hidden"}}>
 
@@ -1605,72 +1769,106 @@ export class App extends React.Component<IAppProps, IAppState> {
                 <Image src={logo} ratio="1 / 1"/>
               </Col>
 
-             <this.HeaderSchedule groupname={groupname} student={this.state.student} 
-             teacher={this.state.teacher}
-             teacher_correct={this.state.teacher_correct}/>
+              <this.HeaderSchedule groupname={groupname} student={this.state.student}
+                                   teacher={this.state.teacher}
+                                   teacher_correct={this.state.teacher_correct}/>
 
               <Col style={{margin: "0 0 0 auto"}}>
                 <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({page: NAV_PAGE_NO})}
                         contentRight={<IconNavigationArrow size="s" color="inherit"/>}
                 />
-                {this.state.student === false && this.state.teacher_correct === true ? (
-                  <Button
-                    size="s"
-                    view="clear"
-                    pin="circle-circle"
-                    onClick={() => {
-                      this.setState({teacher_star: !this.state.teacher_star});
-                      this.Star()
-                    }}
-                    contentRight={this.state.teacher_star === true
-                      ? <IconStarFill size="s" color="inherit"/>
-                      :
-                      <IconStar size="s" color="inherit"/>}/>
-                ) : (
-                  <Button size="s" view="clear" pin="circle-circle" onClick={() => {
-                    this.setState({star: !this.state.star});
-                    this.Star();
-                  }} contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> :
-                    <IconStar size="s" color="inherit"/>}/>
-                )}
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({page: 0})}
-                        contentRight={<IconSettings size="s" color="inherit"/>}/>
+                {
+                  !this.state.student && this.state.teacher_correct
+                    ? (
+                      <Button
+                        size="s"
+                        view="clear"
+                        pin="circle-circle"
+                        onClick={() => {
+                          this.setState({teacher_star: !this.state.teacher_star});
+                          this.Star()
+                        }}
+                        contentRight={
+                          this.state.teacher_star === true
+                            ? <IconStarFill size="s" color="inherit"/>
+                            : <IconStar size="s" color="inherit"/>
+                        }
+                      />
+                    ) : (
+                      <Button
+                        size="s"
+                        view="clear"
+                        pin="circle-circle"
+                        onClick={() => {
+                          this.setState({star: !this.state.star});
+                          this.Star();
+                        }}
+                        contentRight={
+                          this.state.star
+                            ? <IconStarFill size="s" color="inherit"/>
+                            : <IconStar size="s" color="inherit"/>}/>
+                    )}
+                <Button
+                  size="s"
+                  view="clear"
+                  pin="circle-circle"
+                  onClick={() => this.setState({page: 0})}
+                  contentRight={
+                    <IconSettings size="s" color="inherit"/>
+                  }
+                />
 
                 {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
               </Col>
             </Row>
             <Row style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
               <div>
-                <Button view="clear" size="s" pin="circle-circle" onClick={() => {
-                  this.setState({spinner: false});
-                  this.PreviousWeek();
-                  this.setState({page: 9})
-                }} style={{margin: "1em"}}
-                        contentRight={
-                          <IconChevronLeft
-                            size="s"
-                            color="inherit"
-                            // @ts-ignore
-                            style={{paddingBottom: "1.5em"}}
-                          />
-                        }
+                <Button
+                  view="clear"
+                  size="s"
+                  pin="circle-circle"
+                  onClick={() => {
+                    this.setState({spinner: false});
+                    this.PreviousWeek();
+                    this.setState({page: 9})
+                  }} style={{margin: "1em"}}
+                  contentRight={
+                    <IconChevronLeft
+                      size="s"
+                      color="inherit"
+                      // @ts-ignore
+                      style={{paddingBottom: "1.5em"}}
+                    />
+                  }
                 />
-                <Button view="primary" size="m" text="Текущая неделя" onClick={() => {
-                  this.setState({date: Date.now()});
-                  this.setState({date: Date.now(), flag: true, page: 7})
-                }} style={{position: "relative", bottom: "0.5em"}}/>
-                <Button view="clear" size="s" pin="circle-circle" onClick={() => {
-                  this.setState({spinner: false});
-                  this.NextWeek();
-                  this.setState({page: 9})
-                }} style={{margin: "1em"}}
-                        contentRight={
-                          <IconChevronRight
-                            size="s"
-                            color="inherit"
-                            // @ts-ignore
-                            style={{paddingBottom: "1.5em"}}
-                          />}/>
+                <Button
+                  view="primary"
+                  size="m"
+                  text="Текущая неделя"
+                  onClick={() => {
+                    this.setState({date: Date.now()});
+                    this.setState({date: Date.now(), flag: true, page: 7})
+                  }}
+                  style={{position: "relative", bottom: "0.5em"}}/>
+                <Button
+                  view="clear"
+                  size="s"
+                  pin="circle-circle"
+                  onClick={() => {
+                    this.setState({spinner: false});
+                    this.NextWeek();
+                    this.setState({page: 9})
+                  }}
+                  style={{margin: "1em"}}
+                  contentRight={
+                    <IconChevronRight
+                      size="s"
+                      color="inherit"
+                      // @ts-ignore
+                      style={{paddingBottom: "1.5em"}}
+                    />
+                  }
+                />
               </div>
             </Row>
             <Row style={{margin: "0.5em", marginRight: "0", overflow: "hidden"}}>
@@ -1690,107 +1888,135 @@ export class App extends React.Component<IAppProps, IAppState> {
 
                 >
                   {this.state.day.map(({title, date}, i) =>
-                    this.state.today === i + 1 && weekParam === 0 ?
-                      (
-                        <CarouselCol key={`item:${i}`}><Button view={i + 1 === index ? "secondary" : "clear"} style={{
-                          margin: "0.5em",
-                          color: "var(--plasma-colors-accent)"
-                        }} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`}
-                                                               onClick={() => {
-                                                                 this.setState({page: i + 1 + page})
-                                                               }}/></CarouselCol>
-                      ) : (<CarouselCol key={`item:${i}`}><Button view={i + 1 === index ? "secondary" : "clear"}
-                                                                  style={{margin: "0.5em"}} size="s" pin="circle-circle"
-                                                                  text={`${title} ${date[weekParam].slice(0, 5)}`}
-                                                                  onClick={() => {
-                                                                    this.setState({page: i + 1 + page})
-                                                                  }}/></CarouselCol>)
+                    this.state.today === i + 1 && weekParam === 0
+                      ? (
+                        <CarouselCol key={`item:${i}`}>
+                          <Button
+                            view={i + 1 === index ? "secondary" : "clear"}
+                            style={{
+                              margin: "0.5em",
+                              color: "var(--plasma-colors-accent)"
+                            }}
+                            size="s"
+                            pin="circle-circle"
+                            text={`${title} ${date[weekParam].slice(0, 5)}`}
+                            onClick={() => {
+                              this.setState({page: i + 1 + page})
+                            }}/></CarouselCol>
+                      )
+                      : (
+                        <CarouselCol key={`item:${i}`}>
+                          <Button
+                            view={i + 1 === index ? "secondary" : "clear"}
+                            style={{margin: "0.5em"}}
+                            size="s"
+                            pin="circle-circle"
+                            text={`${title} ${date[weekParam].slice(0, 5)}`}
+                            onClick={() => {
+                              this.setState({page: i + 1 + page})
+                            }}/></CarouselCol>)
                   )}
                 </Carousel>
               </CarouselGridWrapper>
             </Row>
-            {this.state.spinner === false ? (<RectSkeleton width="90%" height="25rem" roundness={16}
-                                                           style={{marginLeft: "5%", marginTop: "0.5em"}}/>) : (
-              <div style={{flexDirection: "column"}}>
-                <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
-                  <CardBody style={{padding: "0 0 0 0"}}>
-                    <CardContent compact style={{padding: "0.3em 0.3em"}}>
-                      {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
-                      {
-                        this.state.days.map((_, bellNumber) => {
-                          const curr_day_obj = this.state.days[day_num]
-                          const bell_id = bellNumber;
-                          const curr_pair_obj = curr_day_obj[bell_id];
-                          const curr_pair_week_obj = curr_pair_obj[weekParam];
+            {
+              !this.state.spinner
+                ? (
+                  <RectSkeleton
+                    width="90%"
+                    height="25rem"
+                    roundness={16}
+                    style={{marginLeft: "5%", marginTop: "0.5em"}}/>
+                )
+                : (
+                  <div style={{flexDirection: "column"}}>
+                    <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+                      <CardBody style={{padding: "0 0 0 0"}}>
+                        <CardContent compact style={{padding: "0.3em 0.3em"}}>
+                          {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
+                          {
+                            this.state.days.map((_, bellNumber) => {
+                              const curr_day_obj = this.state.days[day_num]
+                              const bell_id = bellNumber;
+                              const curr_pair_obj = curr_day_obj[bell_id];
+                              const curr_pair_week_obj = curr_pair_obj[weekParam];
 
-                          return this.state.days[day_num][bellNumber][weekParam].lessonName !== "" ? (
-                            <CellListItem
-                              key={`item:${bellNumber}`}
-                              content={
-                                <TextBox>
-                                  <TextBoxSubTitle lines={8}>
-                                    {this.state.days[day_num][bellNumber][weekParam].startAndfinishTime}
-                                  </TextBoxSubTitle>
-                                  {
-                                    this.state.days[day_num][bellNumber][weekParam].lessonNumber[0] === current
-                                    && this.state.days[day_num][bellNumber][weekParam].teacher !== ""
-                                    && this.state.today === timeParam && weekParam === 0
-                                      ? (
-                                        < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
-                                          {this.state.days[day_num][bellNumber][weekParam].lessonName}
-                                        </ CardHeadline3>
-                                      )
-                                      : (
-                                        < CardHeadline3>
-                                          {this.state.days[day_num][bellNumber][weekParam].lessonName}
-                                        </ CardHeadline3>)
-                                  }
-                                  {this.state.student === false && this.state.teacher_correct === true
-                                    ? (
-                                      <TextBoxTitle> {this.state.days[day_num][bellNumber][weekParam].groupNumber} </TextBoxTitle>)
-                                    : (
-                                      <a onClick={() => {
-                                        this.setState({
-                                          teacher: this.state.days[day_num][bellNumber][weekParam].teacher
-                                        });
-                                        this.isCorrectTeacher()
-                                      }}> {this.state.days[day_num][bellNumber][weekParam].teacher} </a>)}
+                              return this.state.days[day_num][bellNumber][weekParam].lessonName !== ""
+                                ? (
+                                  <CellListItem
+                                    key={`item:${bellNumber}`}
+                                    content={
+                                      <TextBox>
+                                        <TextBoxSubTitle lines={8}>
+                                          {
+                                            this.state.days[day_num][bellNumber][weekParam].startAndfinishTime
+                                          }
+                                        </TextBoxSubTitle>
+                                        {
+                                          this.state.days[day_num][bellNumber][weekParam].lessonNumber[0] === current
+                                          && this.state.days[day_num][bellNumber][weekParam].teacher !== ""
+                                          && this.state.today === timeParam && weekParam === 0
+                                            ? (
+                                              < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
+                                                {this.state.days[day_num][bellNumber][weekParam].lessonName}
+                                              </ CardHeadline3>
+                                            )
+                                            : (
+                                              < CardHeadline3>
+                                                {this.state.days[day_num][bellNumber][weekParam].lessonName}
+                                              </ CardHeadline3>
+                                            )
+                                        }
+                                        {
+                                          !this.state.student && this.state.teacher_correct
+                                            ? (
+                                              <TextBoxTitle> {this.state.days[day_num][bellNumber][weekParam].groupNumber} </TextBoxTitle>)
+                                            : (
+                                              <a onClick={() => {
+                                                this.setState({
+                                                  teacher: this.state.days[day_num][bellNumber][weekParam].teacher
+                                                });
+                                                this.isCorrectTeacher()
+                                              }}> {this.state.days[day_num][bellNumber][weekParam].teacher} </a>
+                                            )
+                                        }
 
-                                  {/* {this.state.days[day_num][`bell_${i+1}`][weekParam][7]!=="" ? (
-                   <TextBoxLabel> {this.state.days[day_num][`bell_${i+1}`][weekParam][7]} подгруппа</TextBoxLabel>) : (<div></div>)
-                  } */}
-                                  {this.state.days[day_num][bellNumber][weekParam].url !== "" && this.state.days[day_num][bellNumber][weekParam].url !== null ? (
-                                    <a href={this.state.days[day_num][bellNumber][weekParam].url}
-                                       style={{color: "var(--plasma-colors-white-secondary)"}}>Ссылка на
-                                      онлайн-конференцию</a>) : (<div></div>)
-                                  }
-                                </TextBox>
-                              }
+                                        {
+                                          this.state.days[day_num][bellNumber][weekParam].url !== "" && this.state.days[day_num][bellNumber][weekParam].url !== null ? (
+                                            <a href={this.state.days[day_num][bellNumber][weekParam].url}
+                                               style={{color: "var(--plasma-colors-white-secondary)"}}>Ссылка на
+                                              онлайн-конференцию</a>) : (<div></div>)
+                                        }
+                                      </TextBox>
+                                    }
 
-                              contentRight={
-                                <TextBox>
-                                  <Badge
-                                    text={this.state.days[day_num][bellNumber][weekParam].room}
-                                    contentLeft={<IconLocation size="xs"/>}
-                                    style={{backgroundColor: "rgba(0,0,0, 0)"}}/>
-                                  <TextBoxTitle> {this.Type(this.state.days[day_num][bellNumber][weekParam].lessonType)}</TextBoxTitle>
+                                    contentRight={
+                                      <TextBox>
+                                        <Badge
+                                          text={this.state.days[day_num][bellNumber][weekParam].room}
+                                          contentLeft={<IconLocation size="xs"/>}
+                                          style={{backgroundColor: "rgba(0,0,0, 0)"}}/>
+                                        <TextBoxTitle> {this.Type(this.state.days[day_num][bellNumber][weekParam].lessonType)}</TextBoxTitle>
 
-                                </TextBox>}
-                              contentLeft={this.state.days[day_num][bellNumber][weekParam].teacher !== "" ? (
-                                <Badge
-                                  text={this.state.days[day_num][bellNumber][weekParam].lessonNumber[0]}
-                                  view="primary" style={{marginRight: "0.5em"}} size="l"/>) : (<div></div>)
-                              }
-                            />
+                                      </TextBox>}
+                                    contentLeft={this.state.days[day_num][bellNumber][weekParam].teacher !== "" ? (
+                                      <Badge
+                                        text={this.state.days[day_num][bellNumber][weekParam].lessonNumber[0]}
+                                        view="primary" style={{marginRight: "0.5em"}} size="l"/>) : (<div></div>)
+                                    }
+                                  />
 
-                          ) : (<div></div>)
-                        })
+                                )
+                                : (
+                                  <div></div>
+                                )
+                            })
 
-                      }
-                    </CardContent>
-                  </CardBody>
-                </Card>
-              </div>)
+                          }
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+                  </div>)
             }
             <MyDiv200/>
             {/*
@@ -1820,18 +2046,23 @@ export class App extends React.Component<IAppProps, IAppState> {
     return (
       <DeviceThemeProvider>
         <DocStyle/>
-        {(() => {
+        {/*
+        { (() => {
           switch (this.state.character) {
-            case "sber":
+            case CHAR_SBER:
               return <ThemeBackgroundSber/>;
-            case "eva":
+            case CHAR_EVA:
               return <ThemeBackgroundEva/>;
-            case "joy":
+            case CHAR_JOY:
               return <ThemeBackgroundJoy/>;
             default:
               return;
           }
         })()}
+*/}
+        {
+          getThemeBackgroundByChar(this.state.character)
+        }
         <Container style={{padding: 0}}>
           <Row style={{margin: "1em"}}>
             <Col style={{maxWidth: '3rem'}}>
@@ -1848,58 +2079,62 @@ export class App extends React.Component<IAppProps, IAppState> {
                       contentRight={<IconSettings size="s" color="inherit"/>}/>
             </Col>
           </Row>
-          {current !== undefined ? (
-            <Row style={{marginLeft: "1em"}}>
-              <Col style={{marginLeft: "1em"}}>
-                <TextBox>
-                  <CardBody2>Сейчас</CardBody2>
-                </TextBox>
-              </Col>
-              <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
-                <CardBody style={{padding: "0 0 0 0"}}>
-                  <CardContent compact style={{padding: "0.3em 0.3em"}}>
-                    <CellListItem
-                      content={
-                        <TextBox>
+          {
+            current !== undefined
+              ? (
+                <Row style={{marginLeft: "1em"}}>
+                  <Col style={{marginLeft: "1em"}}>
+                    <TextBox>
+                      <CardBody2>Сейчас</CardBody2>
+                    </TextBox>
+                  </Col>
+                  <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+                    <CardBody style={{padding: "0 0 0 0"}}>
+                      <CardContent compact style={{padding: "0.3em 0.3em"}}>
+                        <CellListItem
+                          content={
+                            <TextBox>
 
-                          <TextBoxSubTitle lines={8}>
-                            {this.state.days[this.state.today - 1][current - 1][0].startAndfinishTime}
-                          </TextBoxSubTitle>
-                          < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
-                            {this.state.days[this.state.today - 1][current - 1][0].lessonName}
-                          </ CardHeadline3>
+                              <TextBoxSubTitle lines={8}>
+                                {this.state.days[this.state.today - 1][current - 1][0].startAndfinishTime}
+                              </TextBoxSubTitle>
+                              < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
+                                {this.state.days[this.state.today - 1][current - 1][0].lessonName}
+                              </ CardHeadline3>
 
-                          {this.state.student === false && this.state.teacher_correct === true ? (
-                              <TextBoxTitle> {this.state.days[this.state.today - 1][current - 1][0].groupNumber} </TextBoxTitle>)
-                            : (<a onClick={() => {
-                              this.isCorrectTeacher()
-                            }}> {this.state.days[this.state.today - 1][current - 1][0][1]} </a>)}
+                              {this.state.student === false && this.state.teacher_correct === true ? (
+                                  <TextBoxTitle> {this.state.days[this.state.today - 1][current - 1][0].groupNumber} </TextBoxTitle>)
+                                : (<a onClick={() => {
+                                  this.isCorrectTeacher()
+                                }}> {this.state.days[this.state.today - 1][current - 1][0][1]} </a>)}
 
-                          {this.state.days[this.state.today - 1][current - 1][0].url !== "" && this.state.days[this.state.today - 1][current - 1][0].url !== null ? (
-                            <a href={this.state.days[this.state.today - 1][current - 1][0].url}
-                               style={{color: "var(--plasma-colors-white-secondary)"}}>Ссылка на
-                              онлайн-конференцию</a>) : (<div></div>)
+                              {this.state.days[this.state.today - 1][current - 1][0].url !== "" && this.state.days[this.state.today - 1][current - 1][0].url !== null ? (
+                                <a href={this.state.days[this.state.today - 1][current - 1][0].url}
+                                   style={{color: "var(--plasma-colors-white-secondary)"}}>Ссылка на
+                                  онлайн-конференцию</a>) : (<div></div>)
+                              }
+                            </TextBox>
                           }
-                        </TextBox>
-                      }
 
-                      contentRight={
-                        <TextBox>
-                          <Badge text={this.state.days[this.state.today - 1][current - 1][0].room}
-                                 contentLeft={<IconLocation size="xs"/>}
-                                 style={{backgroundColor: "rgba(0,0,0, 0)"}}/>
-                          <TextBoxTitle> {this.Type(this.state.days[this.state.today - 1][current - 1][0].lessonType)}</TextBoxTitle>
+                          contentRight={
+                            <TextBox>
+                              <Badge text={this.state.days[this.state.today - 1][current - 1][0].room}
+                                     contentLeft={<IconLocation size="xs"/>}
+                                     style={{backgroundColor: "rgba(0,0,0, 0)"}}/>
+                              <TextBoxTitle> {this.Type(this.state.days[this.state.today - 1][current - 1][0].lessonType)}</TextBoxTitle>
 
-                        </TextBox>}
-                      contentLeft={this.state.days[this.state.today - 1][current - 1][0].teacher !== "" ? (
-                        <Badge text={this.state.days[this.state.today - 1][current - 1][0].lessonNumber[0]}
-                               view="primary" style={{marginRight: "0.5em"}} size="l"/>) : (<div></div>)
-                      }
-                    ></CellListItem>
-                  </CardContent>
-                </CardBody>
-              </Card>
-            </Row>) : (<div></div>)
+                            </TextBox>}
+                          contentLeft={this.state.days[this.state.today - 1][current - 1][0].teacher !== "" ? (
+                            <Badge text={this.state.days[this.state.today - 1][current - 1][0].lessonNumber[0]}
+                                   view="primary" style={{marginRight: "0.5em"}} size="l"/>) : (<div></div>)
+                          }
+                        ></CellListItem>
+                      </CardContent>
+                    </CardBody>
+                  </Card>
+                </Row>
+              )
+              : (<div></div>)
           }
           {/* {
     this.whatLesson(new Date(Date.now()   ), "next")!== undefined ? ( <Row style={{marginLeft: "1em"}}>
@@ -2102,18 +2337,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     return (
       <DeviceThemeProvider>
         <DocStyle/>
-        {(() => {
-          switch (this.state.character) {
-            case "sber":
-              return <ThemeBackgroundSber/>;
-            case "eva":
-              return <ThemeBackgroundEva/>;
-            case "joy":
-              return <ThemeBackgroundJoy/>;
-            default:
-              return;
-          }
-        })()}
+        {
+          getThemeBackgroundByChar(this.state.character)
+        }
         <div>
           <Container style={{padding: 0}}>
             <Spinner color="var(--plasma-colors-button-accent)"
@@ -2128,8 +2354,13 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log('render');
     switch (this.state.page) {
       case 0:
-        return <Home state={this.state} isCorrect={this.isCorrect} convertIdInGroupName={this.convertIdInGroupName}
-                     isCorrectTeacher={this.isCorrectTeacher} setValue={this.setValue}></Home>;//this.Home();
+        return <Home
+          state={this.state}
+          isCorrect={this.isCorrect}
+          convertIdInGroupName={this.convertIdInGroupName}
+          isCorrectTeacher={this.isCorrectTeacher}
+          setValue={this.setValue}
+        ></Home>;//this.Home();
       case 1:
         return this.Raspisanie(1, 0);
       case 2:

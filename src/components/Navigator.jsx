@@ -20,14 +20,15 @@ import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 import { createGlobalStyle } from "styled-components";
 
 import { text, background, gradient } from "@sberdevices/plasma-tokens";
+import {getThemeBackgroundByChar} from '../App';
 
 import logo from "../images/logo.png";
 import karta from "../images/Karta.png";
 import "../App.css";
 
-const ThemeBackgroundEva = createGlobalStyle(darkEva);
-const ThemeBackgroundSber = createGlobalStyle(darkSber);
-const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
+//const ThemeBackgroundEva = createGlobalStyle(darkEva);
+//const ThemeBackgroundSber = createGlobalStyle(darkSber);
+//const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
 
 const DocStyle = createGlobalStyle`
     html:root {
@@ -53,18 +54,9 @@ class Navigator extends React.Component{
     render(){
         return  <DeviceThemeProvider>
         <DocStyle />
-        {(() => {
-          switch (this.props.state.character) {
-            case "sber":
-              return <ThemeBackgroundSber />;
-            case "eva":
-              return <ThemeBackgroundEva />;
-            case "joy":
-              return <ThemeBackgroundJoy />;
-            default:
-              return;
+          {
+            getThemeBackgroundByChar(this.props.state.character)
           }
-        })()}
       {detectDevice()==="mobile" ? (
         <Container style = {{padding: 0}}>
         <Row style={{margin: "1em"}}>

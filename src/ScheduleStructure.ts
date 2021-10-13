@@ -4,7 +4,7 @@ export class Bell {
   room: string
   startAndfinishTime: string
   lessonType: string
-  lessonNumber
+  lessonNumber: any
   url: string
   groupNumber: string
 
