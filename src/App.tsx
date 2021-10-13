@@ -1274,14 +1274,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       schedule_header
     }
     const parsedSchedule = JSON.parse(rawSchedule);
-    this.setState({days: new Array(7).fill([])});
-    console.log(this.state.days)
-    for (let day in this.state.days) {
-      this.state.days[day] = Array(7).fill([])
-      for (let bell in this.state.days[day]) {
-        this.state.days[day][bell] = [new Bell(), new Bell()];
+    let days = new Array(7).fill([]);
+    for (let day in days) {
+      days[day] = Array(7).fill([])
+      for (let bell in days[day]) {
+        days[day][bell] = [new Bell(), new Bell()];
       }
-      console.log(this.state.days)
     }
 
     for (let day_num = 1; day_num < 7; day_num++) {
@@ -1295,7 +1293,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         for (let bell in parsedSchedule.schedule) { //проверка
           let bell_num = Number(bell.slice(-1)) - 1
           let lesson_info = parsedSchedule.schedule[bell][`day_${day_num}`]["lessons"][0]
-          let lesson_info_state = this.state.days[day_num - 1][bell_num][i]
+          let lesson_info_state = days[day_num - 1][bell_num][i]
           if ((parsedSchedule.schedule[bell_num] !== undefined) && (lesson_info !== undefined) &&
             (lesson_info["groups"][0]["subgroup_name"] !== undefined) &&
             (lesson_info["groups"][0]["subgroup_name"] === this.state.subGroup) && (this.state.subGroup !== "")) {
@@ -1335,14 +1333,15 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
         if (countLessons === 0)
-          this.state.days[day_num - 1][0][i].lessonName = "Пар нет 🎉";
+          days[day_num - 1][0][i].lessonName = "Пар нет 🎉";
 
       } else {
-        this.state.days[day_num - 1][0][i].lessonName = "Пар нет 🎉";
+        days[day_num - 1][0][i].lessonName = "Пар нет 🎉";
       }
 
     }
     this.setState({spinner: true});
+    this.setState({days: days});
   }
 
 
