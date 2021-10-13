@@ -348,6 +348,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     .then((response) => {
                       this.showWeekSchedule(response, 0)
                     });
+                  this.ChangePage()
                   this.setState({
                     student: false,
                     page: 7,
@@ -360,9 +361,15 @@ export class App extends React.Component<IAppProps, IAppState> {
                   getScheduleFromDb(this.state.groupId, this.state.engGroup, this.getFirstDayWeek(new Date(this.state.date))).then((response) => {
                     this.showWeekSchedule(response, 0)
                   });
+                  this.ChangePage()
                   this.setState({page: 7, checked: true, star: true, bd: this.state.groupId, student: true});
-                } else this.setState({page: 0});
+                } else 
+                {
+                  this.ChangePage()
+                  this.setState({page: 0});
+                }
               } else {
+                this.ChangePage()
                 this.setState({page: 0});
               }
             })
@@ -415,6 +422,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({teacher: value});
         break;
       case "page":
+        this.ChangePage()
         this.setState({page: value});
         break;
       case "student":
@@ -745,6 +753,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       switch (action.type) {
 
         case 'profile':
+          this.ChangePage()
           return this.setState({page: 0});
           break;
 
@@ -757,6 +766,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   parameters: {day: "sunday"},
                 },
               })
+              this.ChangePage()
               return this.setState({page: 8});
             } else {
               this.assistant.sendData({
@@ -765,6 +775,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   parameters: {day: "notSunday"},
                 },
               })
+              this.ChangePage()
               return this.setState({page: this.state.today});
             }
           break;
@@ -778,6 +789,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   parameters: {day: "sunday"},
                 },
               })
+              this.ChangePage()
               return this.setState({page: 8});
             } else {
               this.assistant.sendData({
@@ -786,6 +798,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   parameters: {day: "notSunday"},
                 },
               })
+              this.ChangePage()
               return this.setState({page: this.state.today + 1});
             }
           break;
@@ -793,12 +806,14 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'for_next_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
+            this.ChangePage()
             return this.setState({page: 9});
           }
           break;
 
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
+            this.ChangePage()
             return this.setState({date: Date.now(), flag: true, page: 7});
           }
           break;
@@ -837,10 +852,21 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
 
             if (params.day === "sunday") {
+              this.ChangePage()
               return this.setState({page: 8})
-            } else if ((params.day === 'today') && (this.state.today !== 0)) return this.setState({page: this.state.today});
-            else if (this.state.today + 1 === 7) return this.setState({page: 8});
-            else this.setState({page: this.state.today + 1});
+            } else if ((params.day === 'today') && (this.state.today !== 0)) {
+              this.ChangePage()
+              return this.setState({page: this.state.today});
+            }
+            else if (this.state.today + 1 === 7)  {
+              this.ChangePage();
+              return this.setState({page: 8});
+            }
+            else
+            { 
+              this.ChangePage();
+              this.setState({page: this.state.today + 1});
+          }
           }
           break
 
@@ -877,6 +903,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               if (response === undefined) {
                 howManyParams = {day: "sunday"}
+                this.ChangePage();
                 this.setState({page: 8})
               } else {
                 if (response[1] === 1) {
@@ -893,6 +920,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   amount: numPron[response[1]]
                 }
                 if (dayNameDict[response[0]][1] < this.state.today) page = 8;
+                this.ChangePage();
                 this.setState({page: dayNameDict[response[0]][1] + page})
               }
             this.assistant.sendData({
@@ -923,6 +951,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               },
             })
             if (this.state.group !== "")
+            this.ChangePage();
               if (this.state.today === 0) {
                 this.setState({page: 8})
               } else {
@@ -947,7 +976,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 parameters: whereLessonParams,
               },
             })
-
+            this.ChangePage();
             if (whereLessonParams.exist === "sunday") {
               this.setState({page: 8})
             } else {
@@ -971,6 +1000,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 parameters: whatlesson,
               },
             })
+            this.ChangePage();
             if (this.state.today === 0) {
               this.setState({page: 8})
             } else {
@@ -1022,6 +1052,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               if (number === undefined) {
                 whichFirst = {day1: "sunday"}
+                this.ChangePage();
                 this.setState({page: 8})
               } else {
                 whichFirst = {
@@ -1030,6 +1061,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   dayName: dayNameDict1[parseInt(action.note.dayOfWeek) - 1][0]
                 }
                 if (dayNameDict1[parseInt(action.note.dayOfWeek) - 1][1] < this.state.today) page1 = 8;
+                this.ChangePage();
                 this.setState({page: dayNameDict1[parseInt(action.note.dayOfWeek) - 1][1] + page1})
               }
             this.assistant.sendData({
@@ -1074,7 +1106,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               daySchedule = {
                 dayName: dayNameDict2[parseInt(action.note[0].dayOfWeek) - 1][0]
               }
-
+              this.ChangePage();
               this.setState({page: dayNameDict2[parseInt(action.note[0].dayOfWeek) - 1][1] + page2})
             }
             this.assistant.sendData({
@@ -1104,6 +1136,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'subgroup':
           console.log('subgroup', action)
+          this.ChangePage();
           this.setState({subGroup: action.note, page: 0});
           break
 
@@ -1371,7 +1404,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 </TextBox>
               </Col>
               <Col style={{margin: "0 0 0 auto"}}>
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({page: NAV_PAGE_NO})}
+                <Button size="s" view="clear" pin="circle-circle" onClick={() => { this.ChangePage();this.setState({page: NAV_PAGE_NO})}}
                         contentRight={<IconNavigationArrow size="s" color="inherit"/>}/>
                 {this.state.student === false && this.state.teacher_correct === true ? (
                   <Button size="s" view="clear" pin="circle-circle" onClick={() => {
@@ -1386,7 +1419,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   }} contentRight={this.state.star === true ? <IconStarFill size="s" color="inherit"/> :
                     <IconStar size="s" color="inherit"/>}/>
                 )}
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({page: 0})}
+                <Button size="s" view="clear" pin="circle-circle" onClick={() =>{ this.ChangePage(); this.setState({page: 0})}}
                         contentRight={<IconSettings size="s" color="inherit"/>}/>
 
                 {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
@@ -1397,6 +1430,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 <Button view="clear" size="s" pin="circle-circle" onClick={() => {
                   this.setState({spinner: false});
                   this.PreviousWeek();
+                  this.ChangePage();
                   this.setState({page: 9})
                 }} style={{margin: "1em"}}
                         contentRight={
@@ -1409,11 +1443,13 @@ export class App extends React.Component<IAppProps, IAppState> {
                         }/>
                 <Button view="primary" size="m" text="Текущая неделя" onClick={() => {
                   this.setState({date: Date.now()});
+                  this.ChangePage();
                   this.setState({date: Date.now(), flag: true, page: 7})
                 }} style={{position: "relative", bottom: "0.5em"}}/>
                 <Button view="clear" size="s" pin="circle-circle" onClick={() => {
                   this.setState({spinner: false});
                   this.NextWeek();
+                  this.ChangePage();
                   this.setState({page: 9})
                 }} style={{margin: "1em"}}
                         contentRight={
@@ -1453,6 +1489,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                             text={`${title} ${date[0].slice(0, 5)}`}
                             focused={i + 1 === index}
                             onClick={() => {
+                              this.ChangePage();
                               this.setState({page: i + 1})
                             }}
                           />
@@ -1467,6 +1504,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                             text={`${title} ${date[0].slice(0, 5)}`}
                             focused={i + 1 === index}
                             onClick={() => {
+                              this.ChangePage();
                               this.setState({page: i + 1})
                             }}
                           />
@@ -1525,21 +1563,52 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     }
   }
+  ChangePage(){
 
-
-  Raspisanie(timeParam, weekParam) {
+    let timeParam=0;
+    let weekParam =0;
+    switch (this.state.page) {
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+       timeParam = this.state.page
+       weekParam= 0;
+       break;
+      case 9:
+        timeParam = 1
+        weekParam= 1
+        break;
+      case 10:
+        timeParam = 2
+        weekParam= 1
+        break;
+      case 11:
+        timeParam = 3
+        weekParam= 1
+        break;
+      case 12:
+        timeParam = 4
+        weekParam= 1
+        break;
+      case 13:
+        timeParam = 5
+        weekParam= 1
+        break;
+      case 14:
+        timeParam = 6
+        weekParam= 1
+        break;
+      default:
+        break;
+    }
     this.setState({i: 0});
     this.setState({star: false});
-    let current = this.getCurrentLesson(new Date(Date.now()));
-    let day_num = timeParam - 1;
-    let index = timeParam;
-    let groupname;
-    let page = 0;
     if (weekParam === 1) {
-      page = 8;
       this.setState({flag: false});
     } else {
-      page = 0;
       this.setState({flag: true});
     }
     if (this.state.checked === true) {
@@ -1560,8 +1629,25 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({teacher_star: false});
       }
     }
+  }
+
+
+  Raspisanie(timeParam, weekParam) {
+    let current = this.getCurrentLesson(new Date(Date.now()));
+    let day_num = timeParam - 1;
+    let index = timeParam;
+    let groupname;
+    let page = 0;
+    if (weekParam === 1) {
+      page = 8;
+    } else {
+      page = 0;
+    }
+  
     if (this.state.subGroup !== "") groupname = `${this.state.group} (${this.state.subGroup})`
     else groupname = `${this.state.group} `
+
+   
     //const { showToast, hideToast } = useToast()
     return (
       <DeviceThemeProvider>
