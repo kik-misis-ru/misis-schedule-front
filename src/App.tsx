@@ -1611,6 +1611,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         /*await*/
         createUser(
           this.state.userId,
+          // todo hardcoded 880
           "880",
           String(this.state.groupId),
           String(this.state.subGroup),
@@ -1640,6 +1641,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         /*await*/
         createUser(
           this.state.userId,
+          // todo hardcoded 880
           "880",
           String(this.state.groupId),
           String(this.state.subGroup),
@@ -2234,6 +2236,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (this.state.teacher_checked === true) {
         createUser(
           this.state.userId,
+          // todo hardcoded 880
           "880",
           String(this.state.groupId),
           String(this.state.subGroup),
