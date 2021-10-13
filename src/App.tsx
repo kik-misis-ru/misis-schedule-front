@@ -514,12 +514,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const year = String(date.getFullYear()).slice(2, 4)
-    return `${(day < 10 ? '0' : '').concat(day)}.${(month < 10 ? '0' : '').concat(month)}.${year}`;
+    return `${(day < 10 ? '0' : '').concat(''+day)}.${(month < 10 ? '0' : '').concat(''+month)}.${year}`;
   }
 
   // подсчет количества пар в указанную дату
   // возвращает массив с днем недели и количеством пар в этот день
-  getAmountOfLessons(date) {
+  getAmountOfLessons(date: Date) {
     for (let day of this.state.day) {
       for (let week = 0; week < 2; week++) {
         console.log("this.getDateWithDots(date)", this.getDateWithDots(date))
