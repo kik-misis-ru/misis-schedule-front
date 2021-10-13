@@ -454,6 +454,58 @@ export class App extends React.Component<IAppProps, IAppState> {
   </Col>
   }
 
+  CarouselDays(props){
+    return <CarouselGridWrapper>
+                <Carousel
+                  as={Row}
+                  axis="x"
+                  scrollAlign="center"
+                  index={this.state.i}
+                  scrollSnapType="mandatory"
+                  animatedScrollByIndex={true}
+                  detectActive={true}
+                  detectThreshold={0.5}
+                  onIndexChange={() => this.Index()}
+                  paddingStart="0%"
+                  paddingEnd="50%"
+                >
+                  {props.day.map(({title, date}, i) =>
+                    props.today === i + 1
+                      ? (
+                        <CarouselCol key={`item:${i}`}>
+                          <Button
+                            view="secondary"
+                            style={{marginTop: "0.5em", marginBottom: "0.5em"}}
+                            size="s" pin="circle-circle"
+                            text={`${title} ${date[0].slice(0, 5)}`}
+                            focused={i + 1 === props.index}
+                            onClick={() => {
+                              this.ChangePage();
+                              this.setState({page: i + 1})
+                            }}
+                          />
+                        </CarouselCol>
+                      )
+                      : (
+                        <CarouselCol key={`item:${i}`}>
+                          <Button
+                            view="clear"
+                            style={{marginTop: "0.5em", marginBottom: "0.5em"}}
+                            size="s" pin="circle-circle"
+                            text={`${title} ${date[0].slice(0, 5)}`}
+                            focused={i + 1 === props.index}
+                            onClick={() => {
+                              this.ChangePage();
+                              this.setState({page: i + 1})
+                            }}
+                          />
+                        </CarouselCol>
+                      )
+                  )}
+                </Carousel>
+              </CarouselGridWrapper>
+  }
+
   // определяет когда начинаются пары сегодня или завтра
   getStartFirstLesson(todayOrTomorrow: string) {
     let dict = {"today": 1, "tomorrow": 0}
@@ -604,34 +656,28 @@ export class App extends React.Component<IAppProps, IAppState> {
     // ключ - номер пары, значение - перерыв до этой пары
     if (this.state.day[this.state.today - 1]["count"][0] == 0) return {lesson: undefined, type: when}
     else {
-      console.log(this.state.day[this.state.today - 1]["count"][0], "count");
-      if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0, 5)) console.log(true)
-      console.log(" что за пара", this.getTime(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
       if (this.state.today !== 0) {
 
         if ((this.getCurrentLesson(date) !== undefined) && (when === "now"))
           for (let bell in this.state.days[this.state.today - 1]) {
-            if ((this.state.days[this.state.today - 1][bell][0][5][0] === this.getCurrentLesson(date)) && (this.state.days[this.state.today - 1][bell][0][5][0] !== "")) {
-              return {lesson: this.state.days[this.state.today - 1][bell][0][0], type: "now"};
+            if ((this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === this.getCurrentLesson(date)) && (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] !== "")) {
+              return {lesson: this.state.days[this.state.today - 1][bell][0].lessonName, type: "now"};
             }
           }
         else if ((when === "will") && (this.getCurrentLesson(date) !== undefined) && (parseInt(this.getCurrentLesson(date)) + 1 < 8)) {
-          console.log("будет")
           for (let bell in this.state.days[this.state.today - 1]) {
-            console.log(parseInt(this.getCurrentLesson(date)) + 1);
-            if ((this.state.days[this.state.today - 1][bell][0][5][0] == parseInt(this.getCurrentLesson(date)) + 1) && (this.state.days[this.state.today - 1][bell][0][5][0] !== "")) {
-              return {lesson: this.state.days[this.state.today - 1][bell][0][0], type: "next"};
+            if ((this.state.days[this.state.today - 1][bell][0].lessonNumber[0] == parseInt(this.getCurrentLesson(date)) + 1) && (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] !== "")) {
+              return {lesson: this.state.days[this.state.today - 1][bell][0].lessonName, type: "next"};
             }
           }
         } else if ((this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) && (this.getTime(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))) {
-          console.log(this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]);
           return {
-            lesson: this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0],
+            lesson: this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])-1][0].lessonName,
             type: "will"
           }
         } else for (let i in breaks) {
-          if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) && (this.state.days[this.state.today - 1][`bell_${i}`][0][5][0] !== "")) return {
-            lesson: this.state.days[this.state.today - 1][`bell_${i}`][0][0],
+          if ((this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) && (this.state.days[this.state.today - 1][Number(i)-1][0].lessonNumber[0] !== "")) return {
+            lesson: this.state.days[this.state.today - 1][Number(i)-1][0].lessonName,
             type: "will"
           };
           else return {lesson: undefined, type: when};
@@ -1330,11 +1376,12 @@ export class App extends React.Component<IAppProps, IAppState> {
                   console.log("sunday")
                 }}/>
               </Col>
+
               <this.HeaderSchedule groupname={groupname} student={this.state.student} 
              teacher={this.state.teacher}
              teacher_correct={this.state.teacher_correct}/>
 
-             
+
               <Col style={{margin: "0 0 0 auto"}}>
                 <Button size="s" view="clear" pin="circle-circle" onClick={() => { this.ChangePage();this.setState({page: NAV_PAGE_NO})}}
                         contentRight={<IconNavigationArrow size="s" color="inherit"/>}/>
@@ -1395,56 +1442,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               </div>
             </Row>
             <Row style={{margin: "0.5em"}}>
-              <CarouselGridWrapper>
-                <Carousel
-                  as={Row}
-                  axis="x"
-                  scrollAlign="center"
-                  index={this.state.i}
-                  scrollSnapType="mandatory"
-                  animatedScrollByIndex={true}
-                  detectActive={true}
-                  detectThreshold={0.5}
-                  onIndexChange={() => this.Index()}
-                  paddingStart="0%"
-                  paddingEnd="50%"
-
-                >
-                  {this.state.day.map(({title, date}, i) =>
-                    this.state.today === i + 1
-                      ? (
-                        <CarouselCol key={`item:${i}`}>
-                          <Button
-                            view="secondary"
-                            style={{marginTop: "0.5em", marginBottom: "0.5em"}}
-                            size="s" pin="circle-circle"
-                            text={`${title} ${date[0].slice(0, 5)}`}
-                            focused={i + 1 === index}
-                            onClick={() => {
-                              this.ChangePage();
-                              this.setState({page: i + 1})
-                            }}
-                          />
-                        </CarouselCol>
-                      )
-                      : (
-                        <CarouselCol key={`item:${i}`}>
-                          <Button
-                            view="clear"
-                            style={{marginTop: "0.5em", marginBottom: "0.5em"}}
-                            size="s" pin="circle-circle"
-                            text={`${title} ${date[0].slice(0, 5)}`}
-                            focused={i + 1 === index}
-                            onClick={() => {
-                              this.ChangePage();
-                              this.setState({page: i + 1})
-                            }}
-                          />
-                        </CarouselCol>
-                      )
-                  )}
-                </Carousel>
-              </CarouselGridWrapper>
+              <this.CarouselDays days={this.state.days} today={this.state.today} index={index}/>
             </Row>
             <MyDiv100/>
             {/*
@@ -1674,40 +1672,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               </div>
             </Row>
             <Row style={{margin: "0.5em", marginRight: "0", overflow: "hidden"}}>
-              <CarouselGridWrapper>
-                <Carousel
-                  as={Row}
-                  axis="x"
-                  scrollAlign="center"
-                  index={this.state.i}
-                  scrollSnapType="mandatory"
-                  animatedScrollByIndex={true}
-                  detectActive={true}
-                  detectThreshold={0.5}
-                  onIndexChange={() => this.Index()}
-                  paddingStart="0%"
-                  paddingEnd="40%"
-
-                >
-                  {this.state.day.map(({title, date}, i) =>
-                    this.state.today === i + 1 && weekParam === 0 ?
-                      (
-                        <CarouselCol key={`item:${i}`}><Button view={i + 1 === index ? "secondary" : "clear"} style={{
-                          margin: "0.5em",
-                          color: "var(--plasma-colors-accent)"
-                        }} size="s" pin="circle-circle" text={`${title} ${date[weekParam].slice(0, 5)}`}
-                                                               onClick={() => {
-                                                                 this.setState({page: i + 1 + page})
-                                                               }}/></CarouselCol>
-                      ) : (<CarouselCol key={`item:${i}`}><Button view={i + 1 === index ? "secondary" : "clear"}
-                                                                  style={{margin: "0.5em"}} size="s" pin="circle-circle"
-                                                                  text={`${title} ${date[weekParam].slice(0, 5)}`}
-                                                                  onClick={() => {
-                                                                    this.setState({page: i + 1 + page})
-                                                                  }}/></CarouselCol>)
-                  )}
-                </Carousel>
-              </CarouselGridWrapper>
+            <this.CarouselDays days={this.state.days} today={this.state.today} index={index}/>
             </Row>
             {this.state.spinner === false ? (<RectSkeleton width="90%" height="25rem" roundness={16}
                                                            style={{marginLeft: "5%", marginTop: "0.5em"}}/>) : (
