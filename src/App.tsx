@@ -1375,7 +1375,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                         }/>
                 <Button view="primary" size="m" text="Текущая неделя" onClick={() => {
                   this.setState({date: Date.now()});
-                  this.ChangePage();
                   this.setState({date: Date.now(), flag: true, page: 7})
                 }} style={{position: "relative", bottom: "0.5em"}}/>
                 <Button view="clear" size="s" pin="circle-circle" onClick={() => {
@@ -1662,6 +1661,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 <Button view="clear" size="s" pin="circle-circle" onClick={() => {
                   this.setState({spinner: false});
                   this.NextWeek();
+                  this.ChangePage();
                   this.setState({page: 9})
                 }} style={{margin: "1em"}}
                         contentRight={
