@@ -14,11 +14,14 @@ import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
 import {text, background, gradient} from "@sberdevices/plasma-tokens";
 
 import "../App.css";
-import {NAV_PAGE_NO} from '../App';
+import {
+  NAV_PAGE_NO,
+  getThemeBackgroundByChar,
+} from '../App';
 
-const ThemeBackgroundEva  = createGlobalStyle(darkEva);
-const ThemeBackgroundSber = createGlobalStyle(darkSber);
-const ThemeBackgroundJoy  = createGlobalStyle(darkJoy);
+//const ThemeBackgroundEva  = createGlobalStyle(darkEva);
+//const ThemeBackgroundSber = createGlobalStyle(darkSber);
+//const ThemeBackgroundJoy  = createGlobalStyle(darkJoy);
 
 const DocStyle = createGlobalStyle`
   html:root {
@@ -76,37 +79,11 @@ class Home extends React.Component {
     this.props.convertIdInGroupName();
   }
 
-  getThemeBackgroundByChar() {
-    switch (this.props.state.character) {
-      case "sber":
-        return <ThemeBackgroundSber/>;
-      case "eva":
-        return <ThemeBackgroundEva/>;
-      case "joy":
-        return <ThemeBackgroundJoy/>;
-      default:
-        return;
-    }
-  }
-
-
   render() {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        this.getThemeBackgroundByChar()
-        //(() => {
-        //switch (this.props.state.character) {
-        //  case "sber":
-        //    return <ThemeBackgroundSber/>;
-        //  case "eva":
-        //    return <ThemeBackgroundEva/>;
-        //  case "joy":
-        //    return <ThemeBackgroundJoy/>;
-        //  default:
-        //    return;
-        //}
-        //})()
+        getThemeBackgroundByChar(this.props.state.character)
       }
       <div>
         {this.props.state.student === true ? (
@@ -119,7 +96,7 @@ class Home extends React.Component {
                     this.handleChange("page", NAV_PAGE_NO)
                   }}
                 />
-{/*
+                {/*
                 <Button
                   size="s"
                   view="clear"
@@ -166,7 +143,7 @@ class Home extends React.Component {
                     this.handleChange("student", true)
                   }}>Студент
                   </TabItem>
-                  <TabItem isActive={ ! this.props.state.student} onClick={() => {
+                  <TabItem isActive={!this.props.state.student} onClick={() => {
                     this.handleChange("student", false)
                   }}>Преподаватель
                   </TabItem>
