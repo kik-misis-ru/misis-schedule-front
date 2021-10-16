@@ -38,14 +38,51 @@ const DESC_OTHERS = "Чтобы посмотреть расписание, ук�
 const GoToNavButton = (props) => <Button
   size="s"
   view="clear"
+  onClick = {props.onClick}
   pin="circle-circle"
-  onClick={() => {
-    this.props.onClick("page", NAV_PAGE_NO)
-  }}
   contentRight={
     <IconNavigationArrow size="s" color="inherit"/>
   }
 />
+
+const GoToScheduleButton = (props) =>  <Button
+view="clear"
+disabled={props.disabled}
+onClick={props.onClick}
+contentRight={
+  <IconChevronRight size="s" color="inherit"/>
+}
+size="s"
+pin="circle-circle"
+style={{ marginTop: "1em", marginRight: "1em" }}
+/>
+
+class TextFieldForUserInfo extends React.Component{
+
+  constructor(props){
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange(key, e) {
+    this.props.handleChange(key, e);
+  }
+
+  render(){
+     return <TextField
+        id="tf"
+        label={this.props.label}
+        status={this.props.status}
+        className="editText"
+        // placeholder="Напиши номер своей академической группы"
+        value={this.props.value}
+        style={{ margin: "1em" }}
+        onChange={(v) => {
+        this.handleChange(this.props.fieldType, v.target.value)
+        }}
+      />
+  }
+}
 
 
 class Home extends React.Component {
@@ -56,11 +93,11 @@ class Home extends React.Component {
     this.isCorrectTeacher     = this.isCorrectTeacher.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     let disabled              = true;
-    if (props.state.groupId !== "") disabled = false;
-    props.state.description = props.state.character === "joy"
-                              ? DESC_JOY
-                              : DESC_OTHERS
+    if (props.groupId !== "") disabled = false;
     this.state              = { disabled: disabled }
+    this.handleChange("description", props.character === "joy"
+                              ? DESC_JOY
+                              : DESC_OTHERS)
   }
 
   handleChange(key, e) {
@@ -83,10 +120,10 @@ class Home extends React.Component {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(this.props.state.character)
+        getThemeBackgroundByChar(this.props.character)
       }
       <div>
-        {this.props.state.student === true ? (
+        {this.props.student ? (
           <Container style={{ padding: 0 }}>
 
             <Row>
@@ -96,34 +133,15 @@ class Home extends React.Component {
                     this.handleChange("page", NAV_PAGE_NO)
                   }}
                 />
-                {/*
-                <Button
-                  size="s"
-                  view="clear"
-                  pin="circle-circle"
-                  onClick={() => {
-                    this.handleChange("page", NAV_PAGE_NO)
-                  }}
-                  contentRight={
-                    <IconNavigationArrow size="s" color="inherit"/>
-                  }
-                />
-*/}
                 {
-                  this.state.disabled === false
-                  ? <Button
-                    view="clear"
-                    disabled={this.state.disabled}
-                    contentRight={
-                      <IconChevronRight size="s" color="inherit"/>
-                    }
-                    size="s"
-                    pin="circle-circle"
-                    onClick={() => {
-                      this.props.convertIdInGroupName();
-                      this.handleChange("page", 7)
-                    }}
-                    style={{ marginTop: "1em", marginRight: "1em" }}
+                  this.state.disabled 
+                  ? 
+                  <GoToScheduleButton
+                  disabled={this.state.disabled}
+                  onClick={() => {
+                    this.props.convertIdInGroupName();
+                    this.handleChange("page", 7)
+                  }}
                   />
                   : <Button view="clear" disabled={this.state.disabled}/>
                 }
@@ -139,11 +157,11 @@ class Home extends React.Component {
 
               <Row style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                 <Tabs view="secondary" size="m">
-                  <TabItem isActive={this.props.state.student} onClick={() => {
+                  <TabItem isActive={this.props.student} onClick={() => {
                     this.handleChange("student", true)
                   }}>Студент
                   </TabItem>
-                  <TabItem isActive={!this.props.state.student} onClick={() => {
+                  <TabItem isActive={!this.props.student} onClick={() => {
                     this.handleChange("student", false)
                   }}>Преподаватель
                   </TabItem>
@@ -155,71 +173,45 @@ class Home extends React.Component {
                   margin:    '1.5em',
                   textAlign: "center",
                   color:     "white"
-                }}>{this.props.state.description}</TextBoxSubTitle>
+                }}>{this.state.description}</TextBoxSubTitle>
               </TextBox>
 
-              <TextField
-                id="tf"
-                label={this.props.state.labelGroup}
-                status={this.props.state.color_group}
-                className="editText"
-                // placeholder="Напиши номер своей академической группы"
-                value={this.props.state.group}
-                style={{ margin: "1em" }}
-                onChange={(v) => {
-                  this.handleChange("group", v.target.value)
-                }
-                }
-              />
+              <TextFieldForUserInfo 
+              label={this.props.labelGroup}
+              status={this.props.color_group}
+              value={this.props.group}
+              fieldType="group"
+              handleChange={this.handleChange}/>
 
-              <TextField
-                id="tf"
-                className="editText"
-                label={this.props.state.labelSubgroup}
-                value={this.props.state.subGroup}
-                status={this.props.state.color_sub}
-                style={{ margin: "1em" }}
-                onChange={(s) => {
-                  this.handleChange("subGroup", s.target.value)
-                }}
-              />
+              <TextFieldForUserInfo 
+              label={this.props.labelSubgroup}
+              status={this.props.color_sub}
+              value={this.props.subGroup}
+              fieldType="subGroup"
+              handleChange={this.handleChange}/>
 
-              <TextField
-                id="tf"
-                label={this.props.state.labelEnggroup}
+              <TextFieldForUserInfo 
+              label={this.props.labelEnggroup}
+              status={this.props.color_enggroup}
+              value={this.props.engGroup}
+              fieldType="engGroup"
+              handleChange={this.handleChange}/>
 
-                className="editText"
-                // placeholder="Напиши номер своей академической группы"
-                value={this.props.state.engGroup}
-                status={this.props.state.color_enggroup}
-                style={{ margin: "1em" }}
-                onChange={(e) => {
-                  this.handleChange("engGroup", e.target.value)
-                }}
-              />
               <Row style={{
                 display:        "flex",
                 alignItems:     "flex-start",
                 justifyContent: "center",
                 margin:         "1.1em"
-              }}><Checkbox label="Запомнить эту группу " checked={this.props.state.checked} onChange={(event) => {
+              }}><Checkbox label="Запомнить эту группу " checked={this.props.checked} onChange={(event) => {
                 this.handleChange("checked", event.target.checked);
-                console.log(this.props.state.checked);
+                console.log(this.props.checked);
               }
               }/>
               </Row>
-              {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center"}}>
-            <TextBox>
-            <TextBoxSubTitle color="var(--plasma-colors-secondary)" style={{ textAlign: "center"}}>Тогда не придётся вводить данные каждый раз</TextBoxSubTitle>
-            </TextBox>
-          </Row> */}
               <Row style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", margin: "0.5em" }}>
                 <Button text="Посмотреть расписание" view="primary" onClick={() => this.props.isCorrect()}
                         style={{ margin: "1.5%" }}/>
               </Row>
-              {/* <Row style={{display: "flex", alignItems: "flex-start", justifyContent:"center", marginTop: "1em"}}>
-          <Image src={image} style={{width: "250px"}}/>
-        </Row> */}
             </div>
             <div style={{
               width:  '100px',
@@ -230,15 +222,19 @@ class Home extends React.Component {
 
              <Row>
                <Col style={{ marginLeft: "auto" }}>
-                 <Button size="s" view="clear" pin="circle-circle" onClick={() => {
-                   this.handleChange("page", NAV_PAGE_NO)
-                 }} contentRight={<IconNavigationArrow size="s" color="inherit"/>}/>
-                 {this.state.disabled === false ? (
-                                                  <Button view="clear" disabled={this.state.disabled}
-                                                          contentRight={<IconChevronRight size="s" color="inherit"/>} size="s" pin="circle-circle"
-                                                          onClick={() => this.handleChange("page", 7)}
-                                                          style={{ marginTop: "1em", marginRight: "1em" }}/>)
-                                                : (<Button view="clear" disabled={this.state.disabled}/>)
+               <GoToNavButton
+                  onClick={() => {
+                    this.handleChange("page", NAV_PAGE_NO)
+                  }}
+                />
+                 {! this.state.disabled ?
+                    <GoToScheduleButton
+                    disabled={this.state.disabled}
+                    onClick={() => {
+                      this.handleChange("page", 7)
+                    }}
+                    />
+                     : (<Button view="clear" disabled={this.state.disabled}/>)
                  }
                </Col>
              </Row>
@@ -249,11 +245,11 @@ class Home extends React.Component {
                </TextBox>
                <Row style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                  <Tabs view="secondary" size="m">
-                   <TabItem isActive={this.props.state.student} onClick={() => {
+                   <TabItem isActive={this.props.student} onClick={() => {
                      this.handleChange("student", true)
                    }}>Студент
                    </TabItem>
-                   <TabItem isActive={!this.props.state.student} onClick={() => {
+                   <TabItem isActive={!this.props.student} onClick={() => {
                      this.handleChange("student", false)
                    }}>Преподаватель
                    </TabItem>
@@ -264,26 +260,20 @@ class Home extends React.Component {
                  <TextBoxSubTitle style={{ margin: '1.5em', textAlign: "center", color: "white" }}>Чтобы посмотреть
                    расписание, укажите фамилию и инициалы через пробел и точку</TextBoxSubTitle>
                </TextBox>
-               <TextField
-                 id="tf"
-                 label={this.props.state.label_teacher}
 
-                 className="editText"
-                 // placeholder="Напиши номер своей академической группы"
-                 value={this.props.state.teacher}
-                 status={this.props.state.color_teacher}
-                 style={{ margin: "1em" }}
-                 onChange={(v) => {
-                   this.handleChange("teacher", v.target.value)
-                 }}
-               />
+              <TextFieldForUserInfo 
+              label={this.props.label_teacher}
+              status={this.props.color_teacher}
+              value={this.props.teacher}
+              fieldType="teacher"
+              handleChange={this.handleChange}/>
 
                <Row style={{
                  display:        "flex",
                  alignItems:     "flex-start",
                  justifyContent: "center",
                  margin:         "1.1em"
-               }}><Checkbox label="Запомнить ФИО, если Вы преподаватель " checked={this.props.state.teacher_checked}
+               }}><Checkbox label="Запомнить ФИО, если Вы преподаватель " checked={this.props.teacher_checked}
                             onChange={(event) => {
                               this.handleChange("teacher_checked", event.target.checked);
                             }

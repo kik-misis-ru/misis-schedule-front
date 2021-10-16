@@ -526,6 +526,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       case "checked":
         this.setState({checked: value});
         break;
+      case "description":
+        this.setState({description: value});
+        break;
       default:
         break;
 
@@ -1870,26 +1873,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     />
                   }
                 />
-<<<<<<< HEAD
-                <Button view="primary" size="m" text="Текущая неделя" onClick={() => {
-                  this.setState({date: Date.now()});
-                  this.setState({date: Date.now(), flag: true, page: 7})
-                }} style={{position: "relative", bottom: "0.5em"}}/>
-                <Button view="clear" size="s" pin="circle-circle" onClick={() => {
-                  this.setState({spinner: false});
-                  this.NextWeek();
-                  this.ChangePage();
-                  this.setState({page: 9})
-                }} style={{margin: "1em"}}
-                        contentRight={
-                          <IconChevronRight
-                            size="s"
-                            color="inherit"
-                            // @ts-ignore
-                            style={{paddingBottom: "1.5em"}}
-                          />}/>
-=======
->>>>>>> f810f3a98852411cdce8cc6e5853a8d0fd3a8647
+               
               </div>
             </Row>
             <Row style={{margin: "0.5em", marginRight: "0", overflow: "hidden"}}>
@@ -2157,44 +2141,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               )
               : (<div></div>)
           }
-          {/* {
-    this.whatLesson(new Date(Date.now()   ), "next")!== undefined ? ( <Row style={{marginLeft: "1em"}}>
-    </TextBox>
-    </Col>
-    <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
-    <CardBody  style={{ padding: "0 0 0 0"}}>
-      <CardContent compact style={{ padding: "0.3em 0.3em"}}>
-      <CellListItem
-      content={
-      <TextBox>
-          <TextBoxSubTitle  lines={8}>
-            {this.state.days[this.state.today-1][`bell_${current+1}`][0][3]}
-          </TextBoxSubTitle>
-           < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
-            {this.state.days[this.state.today-1][`bell_${current+1}`][0][0]}
-            </ CardHeadline3>
-          {this.state.student===false&&this.state.teacher_correct===true ? (<TextBoxTitle> {this.state.days[this.state.today-1][`bell_${current}`][0][7]} </TextBoxTitle>)
-          :( <a onClick={()=>{this.isCorrectTeacher()}}> {this.state.days[this.state.today-1][`bell_${current}`][0][1]} </a>) }
-          { this.state.days[this.state.today-1][`bell_${current}`][0][6] !== ""&&this.state.days[this.state.today-1][`bell_${current}`][0][6] !== null ? (
-          <a href={this.state.days[this.state.today-1][`bell_${current}`][0][6]} style={{color:"var(--plasma-colors-white-secondary)"}}>Ссылка на онлайн-конференцию</a>):(<div></div>)
-      }
-          </TextBox>
-        }
-        contentRight={
-          <TextBox>
-        <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][2]} contentLeft={<IconLocation size="xs"/>}
-        style={{backgroundColor: "rgba(0,0,0, 0)" }}/>
-         <TextBoxTitle> {this.Type(this.state.days[this.state.today-1][`bell_${current}`][0][4])}</TextBoxTitle>
-      </TextBox>}
-      contentLeft={this.state.days[this.state.today-1][`bell_${current}`][0][1]!=="" ? (
-      <Badge text={this.state.days[this.state.today-1][`bell_${current}`][0][5][0]}  view="primary" style={{ marginRight:"0.5em" }} size="l"/>) : (<div></div>)
-       }
-       ></CellListItem>
-      </CardContent>
-    </CardBody>
-  </Card>
-  </Row>) : (<div></div>)
-  } */}
+         
 
           <div style={{
             width: '200px',
@@ -2208,9 +2155,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   async isCorrectTeacher() {
-    console.log(this.state.teacher);
 
-    getInTeacherFromDb(this.state.teacher).then((rawTeacher) => {
+    getIdTeacherFromDb(this.state.teacher).then((rawTeacher) => {
       const parsedTeacher: ITeacherData = JSON.parse(rawTeacher);
 
       //this.state.teacherId=this.id['id'];
@@ -2382,6 +2328,22 @@ export class App extends React.Component<IAppProps, IAppState> {
           convertIdInGroupName={this.convertIdInGroupName}
           isCorrectTeacher={this.isCorrectTeacher}
           setValue={this.setValue}
+          groupId={this.state.groupId}
+          description={this.state.description}
+          character={this.state.character}
+          student={this.state.student}
+          teacher={this.state.teacher}
+          labelGroup={this.state.labelGroup}
+          color_group={this.state.color_group}
+          group={this.state.group}
+          labelSubgroup={this.state.labelSubgroup}
+          subGroup={this.state.subGroup}
+          color_sub={this.state.color_sub}
+          labelEnggroup={this.state.labelEnggroup}
+          color_enggroup={this.state.color_enggroup}
+          checked={this.state.checked}
+          label_teacher={this.state.label_teacher}
+          teacher_checked={this.state.teacher_checked}
         ></Home>;//this.Home();
       case 1:
         return this.Raspisanie(1, 0);
