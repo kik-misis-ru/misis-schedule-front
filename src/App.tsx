@@ -274,6 +274,10 @@ interface ScheduleHeader {
   day7: IScheduleHeaderDay,
 }
 
+interface Schedule{
+  bell: ScheduleHeader[]
+}
+
 interface IScheduleData {
   schedule: Schedule_[]
   schedule_header: ScheduleHeader
@@ -1366,6 +1370,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info.other;
 
+  
+
             countLessons++;
           } else if ((parsedSchedule.schedule[bell] !== undefined) && (lesson_info !== undefined)
             && (lesson_info.groups[0].subgroup_name !== undefined) && (lesson_info.groups[0].subgroup_name !==
@@ -1944,9 +1950,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                               const curr_day_obj = this.state.days[day_num]
                               const bell_id = bellNumber;
                               const curr_pair_obj = curr_day_obj[bell_id];
-                              const curr_pair_week_obj = curr_pair_obj[weekParam];
+                              const bell = this.state.days[day_num][bellNumber][weekParam];
 
-                              return this.state.days[day_num][bellNumber][weekParam].lessonName !== ""
+                              return bell.lessonName !== ""
                                 ? (
                                   <CellListItem
                                     key={`item:${bellNumber}`}
@@ -1954,41 +1960,41 @@ export class App extends React.Component<IAppProps, IAppState> {
                                       <TextBox>
                                         <TextBoxSubTitle lines={8}>
                                           {
-                                            this.state.days[day_num][bellNumber][weekParam].startAndfinishTime
+                                            bell.startAndfinishTime
                                           }
                                         </TextBoxSubTitle>
                                         {
-                                          this.state.days[day_num][bellNumber][weekParam].lessonNumber[0] === current
-                                          && this.state.days[day_num][bellNumber][weekParam].teacher !== ""
+                                          bell.lessonNumber[0] === current
+                                          && bell.teacher !== ""
                                           && this.state.today === timeParam && weekParam === 0
                                             ? (
                                               < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
-                                                {this.state.days[day_num][bellNumber][weekParam].lessonName}
+                                                {bell.lessonName}
                                               </ CardHeadline3>
                                             )
                                             : (
                                               < CardHeadline3>
-                                                {this.state.days[day_num][bellNumber][weekParam].lessonName}
+                                                {bell.lessonName}
                                               </ CardHeadline3>
                                             )
                                         }
                                         {
                                           !this.state.student && this.state.teacher_correct
                                             ? (
-                                              <TextBoxTitle> {this.state.days[day_num][bellNumber][weekParam].groupNumber} </TextBoxTitle>)
+                                              <TextBoxTitle> {bell.groupNumber} </TextBoxTitle>)
                                             : (
                                               <a onClick={() => {
                                                 this.setState({
-                                                  teacher: this.state.days[day_num][bellNumber][weekParam].teacher
+                                                  teacher: bell.teacher
                                                 });
                                                 this.isCorrectTeacher()
-                                              }}> {this.state.days[day_num][bellNumber][weekParam].teacher} </a>
+                                              }}> {bell.teacher} </a>
                                             )
                                         }
 
                                         {
-                                          this.state.days[day_num][bellNumber][weekParam].url !== "" && this.state.days[day_num][bellNumber][weekParam].url !== null ? (
-                                            <a href={this.state.days[day_num][bellNumber][weekParam].url}
+                                          bell.url !== "" && bell.url !== null ? (
+                                            <a href={bell.url}
                                                style={{color: "var(--plasma-colors-white-secondary)"}}>Ссылка на
                                               онлайн-конференцию</a>) : (<div></div>)
                                         }
