@@ -1,0 +1,10 @@
+# http://editorconfig.org
+root = true
+
+# [*.{json}]
+# indent_style = space
+# indent_size = 2
+
+[*.{js,py,cmd,ejs,css,json,ts,tsx,jsx}]
+indent_style = space
+indent_size = 2

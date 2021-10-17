@@ -1,6 +1,4 @@
 import React from "react";
-import logo from "../logo.png";
-import karta from "../Karta.png";
 import { Container, Row, Col, Button, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,16 +15,20 @@ import {
   CellListItem,
   Image
 } from "@sberdevices/plasma-ui";
-import "../App.css";
 import {  IconSettings,  IconLocation,IconMoreVertical} from "@sberdevices/plasma-icons";
 import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 import { createGlobalStyle } from "styled-components";
 
 import { text, background, gradient } from "@sberdevices/plasma-tokens";
+import {getThemeBackgroundByChar} from '../App';
 
-const ThemeBackgroundEva = createGlobalStyle(darkEva);
-const ThemeBackgroundSber = createGlobalStyle(darkSber);
-const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
+import logo from "../images/logo.png";
+import karta from "../images/Karta.png";
+import "../App.css";
+
+//const ThemeBackgroundEva = createGlobalStyle(darkEva);
+//const ThemeBackgroundSber = createGlobalStyle(darkSber);
+//const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
 
 const DocStyle = createGlobalStyle`
     html:root {
@@ -52,18 +54,9 @@ class Navigator extends React.Component{
     render(){
         return  <DeviceThemeProvider>
         <DocStyle />
-        {(() => {
-          switch (this.props.state.character) {
-            case "sber":
-              return <ThemeBackgroundSber />;
-            case "eva":
-              return <ThemeBackgroundEva />;
-            case "joy":
-              return <ThemeBackgroundJoy />;
-            default:
-              return;
+          {
+            getThemeBackgroundByChar(this.props.state.character)
           }
-        })()}
       {detectDevice()==="mobile" ? (
         <Container style = {{padding: 0}}>
         <Row style={{margin: "1em"}}>
