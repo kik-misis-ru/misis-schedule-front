@@ -954,10 +954,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               },
             })
 
-            if (params.day === "sunday") {
-              this.ChangePage()
-              return this.setState({ page: 8 })
-            } else if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
+            if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
               this.ChangePage()
               return this.setState({ page: this.state.today });
             } else if (this.state.today + 1 === 7) {
@@ -993,8 +990,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               if (response === undefined) {
                 howManyParams = { day: "sunday" }
-                this.ChangePage();
-                this.setState({ page: 8 })
+                // this.ChangePage();
+                // this.setState({ page: 8 })
               } else {
                 if (response[1] === 1) {
                   lesson = "пара"
@@ -1066,7 +1063,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
             this.ChangePage();
             if (whereLessonParams.exist === "sunday") {
-              this.setState({ page: 8 })
+              //this.setState({ page: 8 })
             } else {
               this.setState({ page: this.state.today });
             }
@@ -1131,8 +1128,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               if (number === undefined) {
                 whichFirst = { day1: "sunday" }
-                this.ChangePage();
-                this.setState({ page: 8 })
+                // this.ChangePage();
+                // this.setState({ page: 8 })
               } else {
                 whichFirst = {
                   num: num[number[0]],
@@ -1415,221 +1412,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({ days: days });
   }
 
-
-  Sunday() {
-    this.setState({ i: 0 });
-    let index = 0;
-    let groupname;
-    if (this.state.checked) {
-      this.setState({ star: true });
-    } else {
-      if (this.state.groupId == this.state.bd) {
-        this.setState({ star: true });
-      } else {
-        this.setState({ star: false });
-      }
-    }
-    if (this.state.teacher_checked) {
-      this.setState({ teacher_star: true });
-    } else {
-      if (this.state.teacherId == this.state.teacher_bd) {
-        this.setState({ teacher_star: true });
-      } else {
-        this.setState({ teacher_star: false });
-      }
-    }
-    if (this.state.subGroup !== "") groupname = `${this.state.group} (${this.state.subGroup})`
-    else groupname = `${this.state.group} `
-    return (
-      <DeviceThemeProvider>
-        <DocStyle />
-        {
-          getThemeBackgroundByChar(this.state.character)
-        }
-        <div>
-          <Container style={{ padding: 0 }}>
-            <Row style={{ margin: "1em" }}>
-              <Col style={{ maxWidth: '3rem' }}>
-
-                <Image src={logo} ratio="1 / 1" onClick={() => {
-                  console.log("sunday")
-                }} />
-              </Col>
-              <this.HeaderSchedule
-                groupname={groupname}
-                student={this.state.student}
-                teacher={this.state.teacher}
-                teacher_correct={this.state.teacher_correct} />
-
-
-              <Col style={{ margin: "0 0 0 auto" }}>
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => {
-                  this.ChangePage();
-                  this.setState({ page: NAV_PAGE_NO })
-                }}
-                  contentRight={<IconNavigationArrow size="s" color="inherit" />} />
-                {
-                  this.IsTeacher()
-                    ? (
-                      <StarButtonView
-                        star={this.state.star}
-                        student={this.state.student}
-                        userId={this.state.userId}
-                        groupId={this.state.groupId}
-                        subGroup={this.state.subGroup}
-                        engGroup={this.state.engGroup}
-                        teacherId={this.state.teacherId}
-                        teacher_star={this.state.teacher_star}
-                        setValue={this.setValue}
-                      />
-                    )
-                    : (
-                      <StarButtonView
-                        star={this.state.star}
-                        student={this.state.student}
-                        userId={this.state.userId}
-                        groupId={this.state.groupId}
-                        subGroup={this.state.subGroup}
-                        engGroup={this.state.engGroup}
-                        teacherId={this.state.teacherId}
-                        teacher_star={this.state.teacher_star}
-                        setValue={this.setValue}
-                      />
-                    )
-                }
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => {
-                  this.ChangePage();
-                  this.setState({ page: 0 })
-                }}
-                  contentRight={
-                    <IconSettings size="s" color="inherit" />
-                  } />
-
-                {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
-              </Col>
-            </Row>
-            <Row style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <div>
-                <Button view="clear" size="s" pin="circle-circle" onClick={() => {
-                  this.setState({ spinner: false });
-                  this.PreviousWeek();
-                  this.ChangePage();
-                  this.setState({ page: 9 })
-                }} style={{ margin: "1em" }}
-                  contentRight={
-                    <IconChevronLeft
-                      size="s"
-                      color="inherit"
-                      // @ts-ignore
-                      style={{ paddingBottom: "1.5em" }}
-                    />
-                  } />
-                <Button view="primary" size="m" text="Текущая неделя" onClick={() => {
-                  this.setState({ date: Date.now() });
-                  this.setState({ date: Date.now(), flag: true, page: 7 })
-                }} style={{ position: "relative", bottom: "0.5em" }} />
-                <Button
-                  view="clear"
-                  size="s"
-                  pin="circle-circle"
-                  onClick={() => {
-                    this.setState({ spinner: false });
-                    this.NextWeek();
-                    this.ChangePage();
-                    this.setState({ page: 9 })
-                  }}
-                  style={{ margin: "1em" }}
-                  contentRight={
-                    <IconChevronRight
-                      size="s"
-                      color="inherit"
-                      // @ts-ignore
-                      style={{ paddingBottom: "1.5em" }}
-                    />
-                  } />
-              </div>
-            </Row>
-            <Row style={{ margin: "0.5em" }}>
-              <CarouselGridWrapper>
-                <Carousel
-                  as={Row}
-                  axis="x"
-                  scrollAlign="center"
-                  index={this.state.i}
-                  scrollSnapType="mandatory"
-                  animatedScrollByIndex={true}
-                  detectActive={true}
-                  detectThreshold={0.5}
-                  onIndexChange={() => this.Index()}
-                  paddingStart="0%"
-                  paddingEnd="50%"
-
-                >
-                  {this.state.day.map(({ title, date }, i) =>
-                    this.state.today === i + 1
-                      ? (
-                        <CarouselCol key={`item:${i}`}>
-                          <Button
-                            view="secondary"
-                            style={{ marginTop: "0.5em", marginBottom: "0.5em" }}
-                            size="s" pin="circle-circle"
-                            text={`${title} ${date[0].slice(0, 5)}`}
-                            focused={i + 1 === index}
-                            onClick={() => {
-                              this.ChangePage();
-                              this.setState({ page: i + 1 })
-                            }}
-                          />
-                        </CarouselCol>
-
-
-                      )
-                      : (
-                        <CarouselCol key={`item:${i}`}>
-                          <Button
-                            view="clear"
-                            style={{ marginTop: "0.5em", marginBottom: "0.5em" }}
-                            size="s" pin="circle-circle"
-                            text={`${title} ${date[0].slice(0, 5)}`}
-                            focused={i + 1 === index}
-                            onClick={() => {
-                              this.ChangePage();
-                              this.setState({ page: i + 1 })
-                            }}
-                          />
-                        </CarouselCol>
-                      )
-                  )}
-                </Carousel>
-              </CarouselGridWrapper>
-            </Row>
-            <MyDiv100 />
-            {/*
-            <div style={{
-              width:  '100px',
-              height: '100px',
-            }}></div>
-*/}
-            <Row style={{ display: "flex", flexDirection: "row", alignSelf: "center", justifyContent: "center" }}>
-              <TextBox>
-                <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
-              </TextBox>
-            </Row>
-            <MyDiv200 />
-            {/*
-            <div style={{
-              width:  '200px',
-              height: '200px',
-            }}></div>
-*/}
-          </Container>
-        </div>
-      </DeviceThemeProvider>
-    );
-
-  }
-
-
   ChangePage() {
 
     let timeParam = 0;
@@ -1889,31 +1671,40 @@ export class App extends React.Component<IAppProps, IAppState> {
                         <CardContent compact style={{ padding: "0.3em 0.3em" }}>
                           {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
                           {
-                            this.state.days.map((_, bellNumber) => {
-                              const curr_day_obj = this.state.days[day_num]
-                              const bell_id = bellNumber;
-                              const bell = this.state.days[day_num][bellNumber][weekParam];
-
-                              return bell.lessonName !== ""
-                                ? (
-                                  <BellView
-                                    bell={bell}
-                                    current={current}
-                                    weekParam={weekParam}
-                                    timeParam={timeParam}
-                                    student={this.state.student}
-                                    teacher_correct={this.state.teacher_correct}
-                                    today={this.state.today}
-                                    Type={this.Type}
-                                    isCorrectTeacher={this.isCorrectTeacher}
-                                    setValue={this.setValue} />
-
-                                )
-                                : (
-                                  <div></div>
-                                )
-                            })
-
+                            timeParam==7 ?
+                            (<Row style={{ display: "flex", flexDirection: "row", alignSelf: "center", justifyContent: "center" }}>
+                            <TextBox>
+                              <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
+                            </TextBox>
+                          </Row>)
+                            :
+                            (
+                              this.state.days.map((_, bellNumber) => {
+                               const curr_day_obj = this.state.days[day_num]
+                               const bell_id = bellNumber;
+                               const bell = this.state.days[day_num][bellNumber][weekParam];
+ 
+                               return bell.lessonName !== ""
+                                 ? (
+                                   <BellView
+                                     bell={bell}
+                                     current={current}
+                                     weekParam={weekParam}
+                                     timeParam={timeParam}
+                                     student={this.state.student}
+                                     teacher_correct={this.state.teacher_correct}
+                                     today={this.state.today}
+                                     Type={this.Type}
+                                     isCorrectTeacher={this.isCorrectTeacher}
+                                     setValue={this.setValue} />
+ 
+                                 )
+                                 : (
+                                   <div></div>
+                                 )
+                             })
+ 
+                           )
                           }
                         </CardContent>
                       </CardBody>
@@ -2257,7 +2048,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       case 7:
         return this.Spinner();
       case 8:
-        return this.Sunday();
+        return this.Raspisanie(7,0);
       case 9:
         return this.Raspisanie(1, 1);
       case 10:

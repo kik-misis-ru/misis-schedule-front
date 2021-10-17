@@ -15,15 +15,6 @@ class StarButtonView extends React.Component {
     constructor(props) {
         super(props)
         this.handleChange = this.handleChange.bind(this)
-        this.setState({
-            student: props.student,
-            groupId: props.groupId,
-            subGroup: props.subGroup,
-            engGroup: props.engGroup,
-            teacherId: props.teacherId,
-            start: props.star,
-            teacher_star: props.teacher_star
-        })
     }
 
     handleChange(key, e) {
@@ -32,7 +23,7 @@ class StarButtonView extends React.Component {
 
     Star() {
         if (this.props.student) {
-            this.setValue("star", !this.props.star)
+            this.handleChange("star", !this.props.star)
             if (!this.props.star) {
                 /*await*/
                 createUser(
@@ -59,7 +50,7 @@ class StarButtonView extends React.Component {
                 this.handleChange("bd", "");
             }
         } else {
-            this.setValue("teacher_star", !this.props.teacher_star)
+            this.handleChange("teacher_star", !this.props.teacher_star)
             if (!this.props.teacher_star) {
                 /*await*/
                 createUser(
