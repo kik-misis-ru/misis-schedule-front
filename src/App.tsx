@@ -1590,6 +1590,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   size="m"
                   text="Текущая неделя"
                   onClick={() => {
+                    console.log(199)
                     this.setState({ date: Date.now() });
                     this.setState({ date: Date.now(), flag: true, page: 7 })
                   }}
@@ -1729,7 +1730,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   Index() {
     const currI = this.state.i;
-    console.log(this.state.i);
     if (currI < 7) {
       this.setState({ i: currI + 1 });
     } else if (currI > 0) {

@@ -39,7 +39,7 @@ const labelSubgroup= "Номер подгруппы: 1 или 2";
 const labelEnggroup= "Число номера группы по английскому";
 const labelTeacher= "Фамилия И. О.";
 
-const GoToMenuButton = (props) => <Button
+export const GoToMenuButton = (props) => <Button
   size="s"
   view="clear"
   onClick = {props.onClick}
@@ -49,7 +49,7 @@ const GoToMenuButton = (props) => <Button
   }
 />
 
-const GoToScheduleButton = (props) =>  <Button
+ export const GoToScheduleButton = (props) =>  <Button
 view="clear"
 onClick={props.onClick}
 contentRight={

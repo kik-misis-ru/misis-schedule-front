@@ -14,23 +14,11 @@ import {
     TextBox,
     TextBoxSubTitle,
     TextBoxTitle,
-    HeaderLogo,
-    HeaderRoot,
-    HeaderTitle,
-    CarouselGridWrapper,
-    Carousel, CarouselCol,
     Badge,
-    TextBoxLabel,
-    Checkbox,
     CellListItem,
     CardHeadline3,
     CardHeadline2,
-    CardHeadline1,
-    ButtonSkeleton,
-    RectSkeleton,
-    HeaderTitleWrapper,
     Image,
-    Link
 } from "@sberdevices/plasma-ui";
 import {createGlobalStyle} from "styled-components";
 import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/plasma-icons";
@@ -42,6 +30,8 @@ import {
   NAV_PAGE_NO,
   getThemeBackgroundByChar,
 } from '../App';
+
+import {GoToMenuButton, GoToScheduleButton} from './HomeView.jsx'
 
 //const ThemeBackgroundEva  = createGlobalStyle(darkEva);
 //const ThemeBackgroundSber = createGlobalStyle(darkSber);
