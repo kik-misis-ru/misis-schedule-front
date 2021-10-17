@@ -15,6 +15,7 @@ class StarButtonView extends React.Component {
     constructor(props) {
         super(props)
         this.handleChange = this.handleChange.bind(this)
+        this.Star = this.Star.bind(this);
     }
 
     handleChange(key, e) {

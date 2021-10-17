@@ -1570,9 +1570,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   size="s"
                   pin="circle-circle"
                   onClick={() => {
-                    this.setState({ spinner: false });
-                    this.PreviousWeek();
-                    this.setState({ page: 9 })
+                    
                   }} style={{ margin: "1em" }}
                   contentRight={
                     <IconChevronLeft
@@ -1588,6 +1586,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   size="m"
                   text="Текущая неделя"
                   onClick={() => {
+                    console.log(199)
                     this.setState({ date: Date.now() });
                     this.setState({ date: Date.now(), flag: true, page: 7 })
                   }}
