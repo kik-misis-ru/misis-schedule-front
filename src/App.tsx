@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {
   Container,
   Row,
@@ -7,9 +7,9 @@ import {
   DeviceThemeProvider,
   Spinner,
 } from '@sberdevices/plasma-ui';
-import { ToastContainer, toast } from 'react-toastify';
-import { useToast, ToastProvider, Toast } from '@sberdevices/plasma-ui'
-import { detectDevice } from '@sberdevices/plasma-ui/utils';
+import {ToastContainer, toast} from 'react-toastify';
+import {useToast, ToastProvider, Toast} from '@sberdevices/plasma-ui'
+import {detectDevice} from '@sberdevices/plasma-ui/utils';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
@@ -45,10 +45,10 @@ import {
   createAssistant,
 } from "@sberdevices/assistant-client";
 import "./App.css";
-import styled, { createGlobalStyle, div } from "styled-components";
-import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
-import { text, background, gradient } from "@sberdevices/plasma-tokens";
-import { TextField, ActionButton } from "@sberdevices/plasma-ui";
+import styled, {createGlobalStyle, div} from "styled-components";
+import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
+import {text, background, gradient} from "@sberdevices/plasma-tokens";
+import {TextField, ActionButton} from "@sberdevices/plasma-ui";
 import {
   IconSettings,
   IconChevronRight,
@@ -73,12 +73,13 @@ import logo from "./images/logo.png";
 import image from "./images/frame.png"
 import karta from "./images/Karta.png";
 import groups from './groups_list.json';
-import Home from '../src/components/HomeView.jsx';
-import Navigator from '../src/components/Navigator.jsx';
-import BellView from '../src/components/BellView.jsx';
-import DaysCarousel from '../src/components/DaysCarousel.jsx';
-import StarButtonView from '../src/components/StarButtonView.jsx'
-import { Bell } from './ScheduleStructure'
+import Home from './components/HomeView.jsx';
+import Navigator from './components/Navigator.jsx';
+import BellView from './components/BellView.jsx';
+import DaysCarousel from './components/DaysCarousel.jsx';
+import StarButtonView from './components/StarButtonView.jsx'
+import DashboardView from './components/DashboardView.jsx'
+import {Bell} from './ScheduleStructure'
 
 import engGroups from './data/engGroups.json'
 import building from './data/buldings.json'
@@ -87,7 +88,11 @@ console.log('engGroups:', engGroups)
 
 export const NAV_PAGE_NO = 15;
 
+const INITIAL_PAGE = 7;
+
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+export const DEFAULT_TEXT_COLOR = 'var(--plasma-colors-white-secondary)';
+export const COLOR_BLACK = '';
 
 
 const initializeAssistant = (getState) => {
@@ -98,14 +103,14 @@ const initializeAssistant = (getState) => {
       getState,
     });
   }
-  return createAssistant({ getState });
+  return createAssistant({getState});
 };
 
 const ThemeBackgroundEva = createGlobalStyle(darkEva);
 const ThemeBackgroundSber = createGlobalStyle(darkSber);
 const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
 
-const DocStyle = createGlobalStyle`
+export const DocStyle = createGlobalStyle`
   html:root {
     min-height: 100vh;
     color: ${text};
@@ -124,9 +129,9 @@ const MyDiv200 = styled.div`
   height: 200px;
 `;
 
-const PAIR_NAME_IDX = 0;
-const TEACHER_NAME_IDX = 1;
-const PAIR_NO_IDX = 5;
+// const PAIR_NAME_IDX = 0;
+// const TEACHER_NAME_IDX = 1;
+// const PAIR_NO_IDX = 5;
 
 const breaks = {
   '1': '09:00',
@@ -147,8 +152,37 @@ const dayNameDict = {
   "Сб": ["В субботу", 6]
 }
 
+/**
+ * Порядковые числительные именительный падеж
+ */
+const ordinalNominativeCaseSingularFemDict = {
+  "1": "первая",
+  "2": "вторая",
+  "3": "третья",
+  "4": "четвертая",
+  "5": "пятая",
+  "6": "шестая",
+  "7": "седьмая"
+}
+
+const ordinalGenitiveCaseSingularFemDict = {
+  1: "первой",
+  2: "второй",
+  3: "третьей",
+  4: "четвертой",
+  5: "пятой",
+  6: "шестой",
+  7: "седьмой"
+}
+
+
+// const DAY_TODAY = 'today';
 const DAY_TODAY = 'today';
 const DAY_TOMORROW = 'tomorrow';
+type TodayOrTomorrow = 'today' | 'tomorrow'
+
+type StartOrEnd = 'start' | 'end'
+
 const TODAY_TOMORROW_DICT = {
   [DAY_TODAY]: 1,
   [DAY_TOMORROW]: 0,
@@ -159,61 +193,80 @@ const CHAR_EVA = 'eva';
 const CHAR_JOY = 'joy';
 type Character = 'sber' | 'eva' | 'joy'
 
-
 export const getThemeBackgroundByChar = (character: Character) => {
-  switch (character) {
-    case CHAR_SBER:
-      return <ThemeBackgroundSber />;
-    case CHAR_EVA:
-      return <ThemeBackgroundEva />;
-    case CHAR_JOY:
-      return <ThemeBackgroundJoy />;
-    default:
-      return;
+  const themeBackgroundByChar = {
+    [CHAR_SBER]: <ThemeBackgroundSber/>,
+    [CHAR_EVA]: <ThemeBackgroundEva/>,
+    [CHAR_JOY]: <ThemeBackgroundJoy/>,
   }
+  const themeBackground = themeBackgroundByChar[character];
+  return themeBackground || null;
 }
 
-const X = ({ today, current, day_num, days, i, timeParam, weekParam }) => {
-  //const day_num = props.day_num;
-  //const days= props.days;
-  const curr_day_obj = days[day_num]
-  const bell_id = `bell_${i + 1}`;
-  const curr_pair_obj = curr_day_obj[bell_id];
-  const curr_pair_week_obj = curr_pair_obj[weekParam];
+const COLOR_NAME_ERROR = 'error'
+const COLOR_NAME_WARN_RU = 'Предупреждение'
 
-  //const curr_day_obj = Array.isArray(days) ? days[ day_num ] : undefined;
-  //const bell_id  = `bell_${i + 1}`;
-  //const curr_pair_obj = Array.isArray(curr_day_obj) ? curr_day_obj[ bell_id ] : undefined;
-  //const curr_pair_week_obj = curr_pair_obj[ weekParam ];
+const DEFAULT_STATE_DAY = [
+  {
+    title: 'Пн',
+    date: ["", ""],
+    count: [0, 0]
+  }, {
+    title: 'Вт',
+    date: ["", ""],
+    count: [0, 0]
+  }, {
+    title: 'Ср',
+    date: ["", ""],
+    count: [0, 0]
+  }, {
+    title: 'Чт',
+    date: ["", ""],
+    count: [0, 0]
+  }, {
+    title: 'Пт',
+    date: ["", ""],
+    count: [0, 0]
+  }, {
+    title: 'Сб',
+    date: ["", ""],
+    count: [0, 0]
+  }
+]
 
-  const pairName = curr_pair_week_obj[PAIR_NAME_IDX];
-  const curr_pair_no_full = curr_pair_week_obj[PAIR_NO_IDX];
-  const curr_pair_no = curr_pair_no_full[0]; // берем первый символ строки (второй - точка)
-  const teacherName = curr_pair_week_obj[TEACHER_NAME_IDX];
-
-  return curr_pair_no === current
-    && teacherName !== ""
-    && today === timeParam
-    && weekParam === 0
-    ? (
-      < CardHeadline3 style={{ color: "var(--plasma-colors-button-accent)" }}>
-        {pairName}
-      </ CardHeadline3>
-    )
-    : (
-      < CardHeadline3>
-        {pairName}
-      </ CardHeadline3>
-    )
-}
-
-interface ITeacherData {
-  first_name: string
-  mid_name: string
-  last_name: string
-  status: string
-  id: string
-}
+// const X = ({today, current, day_num, days, i, timeParam, weekParam}) => {
+//   //const day_num = props.day_num;
+//   //const days= props.days;
+//   const curr_day_obj = days[day_num]
+//   const bell_id = `bell_${i + 1}`;
+//   const curr_pair_obj = curr_day_obj[bell_id];
+//   const curr_pair_week_obj = curr_pair_obj[weekParam];
+//
+//   //const curr_day_obj = Array.isArray(days) ? days[ day_num ] : undefined;
+//   //const bell_id  = `bell_${i + 1}`;
+//   //const curr_pair_obj = Array.isArray(curr_day_obj) ? curr_day_obj[ bell_id ] : undefined;
+//   //const curr_pair_week_obj = curr_pair_obj[ weekParam ];
+//
+//   const pairName = curr_pair_week_obj[PAIR_NAME_IDX];
+//   const curr_pair_no_full = curr_pair_week_obj[PAIR_NO_IDX];
+//   const curr_pair_no = curr_pair_no_full[0]; // берем первый символ строки (второй - точка)
+//   const teacherName = curr_pair_week_obj[TEACHER_NAME_IDX];
+//
+//   return curr_pair_no === current
+//   && teacherName !== ""
+//   && today === timeParam
+//   && weekParam === 0
+//     ? (
+//       < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
+//         {pairName}
+//       </ CardHeadline3>
+//     )
+//     : (
+//       < CardHeadline3>
+//         {pairName}
+//       </ CardHeadline3>
+//     )
+// }
 
 interface IBuilding {
   name: string
@@ -246,7 +299,7 @@ interface IScheduleBellHeader {
   end_lesson: string
 }
 
-interface Schedule_ {
+interface ISchedule {
   header: IScheduleBellHeader
   day1: IScheduleLessonInfo
   day2: IScheduleLessonInfo
@@ -261,7 +314,7 @@ interface IScheduleHeaderDay {
   date: string
 }
 
-interface ScheduleHeader {
+interface IScheduleHeader {
   day1: IScheduleHeaderDay,
   day2: IScheduleHeaderDay,
   day3: IScheduleHeaderDay,
@@ -271,13 +324,13 @@ interface ScheduleHeader {
   day7: IScheduleHeaderDay,
 }
 
-interface Schedule {
-  bell: ScheduleHeader[]
-}
+// interface Schedule {
+//   bell: ScheduleHeader[]
+// }
 
 interface IScheduleData {
-  schedule: Schedule_[]
-  schedule_header: ScheduleHeader
+  schedule: ISchedule[]
+  schedule_header: IScheduleHeader
 }
 
 type IScheduleDays = Bell[][][]
@@ -351,13 +404,13 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
-    const bell = Array.from({ length: 2 }, (v, i) => Array.from({ length: 8 }, (v, i) => ""))
+    // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
     this.state = {
       notes: [],
       //
       userId: "",
       //
-      page: 7,
+      page: INITIAL_PAGE,
       logo: null,
       flag: true,
       checked: true,
@@ -372,22 +425,14 @@ export class App extends React.Component<IAppProps, IAppState> {
       labelEnggroup: "Число номера группы по английскому",
       label_teacher: "Фамилия И. О.",
       i: 0,
-      day: [{ title: 'Пн', date: ["", ""], count: [0, 0] }, {
-        title: 'Вт',
-        date: ["", ""],
-        count: [0, 0]
-      }, { title: 'Ср', date: ["", ""], count: [0, 0] }, {
-        title: 'Чт',
-        date: ["", ""],
-        count: [0, 0]
-      }, { title: 'Пт', date: ["", ""], count: [0, 0] }, { title: 'Сб', date: ["", ""], count: [0, 0] }],
+      day: DEFAULT_STATE_DAY,
       days: [],
       spinner: false,
       date: Date.now(),
       today: 0,
-      color_group: "var(--plasma-colors-white-secondary)",
-      color_teacher: "var(--plasma-colors-white-secondary)",
-      color_sub: "var(--plasma-colors-white-secondary)",
+      color_group: DEFAULT_TEXT_COLOR,
+      color_teacher: DEFAULT_TEXT_COLOR,
+      color_sub: DEFAULT_TEXT_COLOR,
       character: CHAR_SBER,
       star: false,
       bd: "",
@@ -414,12 +459,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       switch (event.type) {
         case "character":
           console.log(event.character.id);
-          this.setState({ character: event.character.id });
+          this.setState({character: event.character.id});
           if (event.character.id === "timeParamoy") {
 
-            this.setState({ description: "Заполни данные, чтобы открывать расписание одной фразой" });
+            this.setState({description: "Заполни данные, чтобы открывать расписание одной фразой"});
           } else {
-            this.setState({ description: "Чтобы посмотреть расписание, укажите данные учебной группы" });
+            this.setState({description: "Чтобы посмотреть расписание, укажите данные учебной группы"});
           }
           break;
 
@@ -428,32 +473,31 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log(event);
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
-            this.setState({ userId: event.sub });
+            this.setState({userId: event.sub});
             getUser(this.state.userId).then((user) => {
 
               if (user !== "0") {
                 console.log('user', user)
                 this.setState({
-                  groupId: user["group_id"],
-                  subGroup: user["subgroup_name"],
-                  engGroup: user["eng_group"],
-                  teacherId: user["teacher_id"]
+                  groupId: user.group_id,
+                  subGroup: user.subgroup_name,
+                  engGroup: user.eng_group,
+                  teacherId: user.teacher_id,
                 })
                 this.convertIdInGroupName()
                 if (this.state.teacherId !== "") {
                   getInTeacherFromDb(this.state.teacherId)
-                    .then((id) => {
-                      const parsedId = JSON.parse(id);
-                      console.log(id);
-                      const teacher = `${parsedId['last_name']} ${parsedId['first_name']}. ${parsedId['mid_name']}.`;
-                      this.setState({
-                        teacher
-                      })
-                    }
+                    .then((teacherData) => {
+                        const teacher = `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`;
+                        this.setState({
+                          teacher
+                        })
+                      }
                     );
                   getScheduleTeacherFromDb(
                     this.state.teacherId,
-                    this.getFirstDayWeek(new Date(this.state.date)))
+                    this.getFirstDayWeek(new Date(this.state.date))
+                  )
                     .then((response) => {
                       this.showWeekSchedule(response, 0)
                     });
@@ -471,19 +515,19 @@ export class App extends React.Component<IAppProps, IAppState> {
                     this.showWeekSchedule(response, 0)
                   });
                   this.ChangePage()
-                  this.setState({ page: 7, checked: true, star: true, bd: this.state.groupId, student: true });
+                  this.setState({page: 7, checked: true, star: true, bd: this.state.groupId, student: true});
                 } else {
                   this.ChangePage()
-                  this.setState({ page: 0 });
+                  this.setState({page: 0});
                 }
               } else {
                 this.ChangePage()
-                this.setState({ page: 0 });
+                this.setState({page: 0});
               }
             })
           }
           console.log(`assistant.on(data)`, event);
-          const { action } = event;
+          const {action} = event;
           this.dispatchAssistantAction(action);
           break
 
@@ -503,38 +547,38 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log(key, value)
     switch (key) {
       case "group":
-        this.setState({ group: value });
+        this.setState({group: value});
         break;
       case "subGroup":
-        this.setState({ subGroup: value });
+        this.setState({subGroup: value});
         break;
       case "teacher":
-        this.setState({ teacher: value });
+        this.setState({teacher: value});
         break;
       case "page":
         this.ChangePage()
-        this.setState({ page: value });
+        this.setState({page: value});
         break;
       case "student":
-        this.setState({ student: value });
+        this.setState({student: value});
         break;
       case "teacher_checked":
-        this.setState({ teacher_checked: value });
+        this.setState({teacher_checked: value});
         break;
       case "engGroup":
-        this.setState({ engGroup: value });
+        this.setState({engGroup: value});
         break;
       case "checked":
-        this.setState({ checked: value });
+        this.setState({checked: value});
         break;
       case "description":
-        this.setState({ description: value });
+        this.setState({description: value});
         break;
       case "bd":
-        this.setState({ bd: value });
+        this.setState({bd: value});
         break;
       case "teacher_bd":
-        this.setState({ teacher_bd: value })
+        this.setState({teacher_bd: value})
         break;
       default:
         break;
@@ -544,7 +588,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   HeaderSchedule(props: IHeaderScheduleProps) {
     return (
-      <Col style={{ marginLeft: "0.5em" }}>
+      <Col style={{marginLeft: "0.5em"}}>
         <TextBox>
           <TextBoxTitle>Расписание занятий</TextBoxTitle>
           {
@@ -558,71 +602,76 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет когда начинаются пары сегодня или завтра
-  getStartFirstLesson(todayOrTomorrow: string): string | undefined {
-    const day: number = TODAY_TOMORROW_DICT[todayOrTomorrow]
-    console.log("getStartFirstLesson")
-    for (let bell in this.state.days[this.state.today - day]) {
-      if (this.state.days[this.state.today - day][bell][0].startAndfinishTime !== "") {
-        return this.state.days[this.state.today - day][bell][0].startAndfinishTime.slice(0, 5)
+  getStartFirstLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
+    const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
+    const dayNumber = this.state.today - dayShift;
+    for (let bell in this.state.days[dayNumber]) {
+      const startAndfinishTime = this.state.days[dayNumber][bell][0].startAndfinishTime
+      if (startAndfinishTime !== "") {
+        return startAndfinishTime.slice(0, 5)
       }
     }
   }
 
   // определяет когда кончаются пары сегодня или завтра
-  getEndLastLesson(day): string | undefined {
-    day = TODAY_TOMORROW_DICT[day]
+  getEndLastLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
+    const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
+    const dayNumber = this.state.today - dayShift;
     for (let bell = 7; bell > 0; bell--) {
-      if (this.state.days[this.state.today - day][bell - 1][0].startAndfinishTime !== "") {
-        return this.state.days[this.state.today - day][bell - 1][0].startAndfinishTime.slice(8)
+      const startAndfinishTime = this.state.days[dayNumber][bell - 1][0].startAndfinishTime
+      if (startAndfinishTime !== "") {
+        return startAndfinishTime.slice(8)
       }
     }
   }
 
   // определяет начало или конец энной пары сегодня или завтра
-  getBordersRequestLesson(type, day, lessonNum) {
-    day = TODAY_TOMORROW_DICT[day]
-    if (this.state.days[this.state.today - day][lessonNum - 1][0].startAndfinishTime !== "") {
+  getBordersRequestLesson(type: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum: number): string | undefined {
+    const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
+    const dayNumber = this.state.today - dayShift;
+    const startAndfinishTime = this.state.days[dayNumber][lessonNum - 1][0].startAndfinishTime;
+    if (startAndfinishTime !== "") {
       if (type === "start") {
-        return this.state.days[this.state.today - day][lessonNum - 1][0].startAndfinishTime.slice(0, 5)
+        return startAndfinishTime.slice(0, 5)
       } else {
-        return this.state.days[this.state.today - day][lessonNum - 1][0].startAndfinishTime.slice(8)
+        return startAndfinishTime.slice(8)
       }
     }
   }
 
-  getStartEndLesson(type, day, lessonNum) {
-    if (day === DAY_TODAY && this.state.today === 0) {
-      return [day, "sunday"]
+  getStartEndLesson(type: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum) {
+    if (todayOrTomorrow === DAY_TODAY && this.state.today === 0) {
+      return [todayOrTomorrow, "sunday"]
     }
-    if (day === DAY_TOMORROW && this.state.today === 6) {
-      return [day, "sunday"]
+    if (todayOrTomorrow === DAY_TOMORROW && this.state.today === 6) {
+      return [todayOrTomorrow, "sunday"]
     }
     if (type === "start") {
-      if (day === DAY_TODAY) {
+      if (todayOrTomorrow === DAY_TODAY) {
         if (lessonNum === "0") {
-          return this.getStartFirstLesson(day)
+          return this.getStartFirstLesson(todayOrTomorrow)
         } else {
-          return this.getBordersRequestLesson(type, day, lessonNum)
+          return this.getBordersRequestLesson(type, todayOrTomorrow, lessonNum)
         }
       } else {
         if (lessonNum === "0") {
-          return this.getStartFirstLesson(day)
+          return this.getStartFirstLesson(todayOrTomorrow)
         } else {
-          return this.getBordersRequestLesson(type, day, lessonNum)
+          return this.getBordersRequestLesson(type, todayOrTomorrow, lessonNum)
         }
       }
     } else if (type === "end") {
-      if (day === DAY_TODAY) {
+      if (todayOrTomorrow === DAY_TODAY) {
         if (lessonNum === "0") {
-          return this.getEndLastLesson(day)
+          return this.getEndLastLesson(todayOrTomorrow)
         } else {
-          return this.getBordersRequestLesson(type, day, lessonNum)
+          return this.getBordersRequestLesson(type, todayOrTomorrow, lessonNum)
         }
       } else {
         if (lessonNum === "0") {
-          return this.getEndLastLesson(day)
+          return this.getEndLastLesson(todayOrTomorrow)
         } else {
-          return this.getBordersRequestLesson(type, day, lessonNum)
+          return this.getBordersRequestLesson(type, todayOrTomorrow, lessonNum)
         }
       }
     }
@@ -709,7 +758,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     } else {
       console.log(this.state.day[this.state.today - 1].count[0], "count");
-      if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0, 5)) console.log(true)
+      if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0, 5)) {
+        console.log(true)
+      }
       console.log(" что за пара", this.getTime(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
       if (this.state.today !== 0) {
 
@@ -854,12 +905,12 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   dispatchAssistantAction(action) {
-    const numPron = { 0: "ноль", 1: "одна", 2: "две", 3: "три", 4: "четыре", 5: "пять", 6: "шесть", 7: "семь" }
+    const numPron = {0: "ноль", 1: "одна", 2: "две", 3: "три", 4: "четыре", 5: "пять", 6: "шесть", 7: "семь"}
     if (action) {
       switch (action.type) {
         case 'profile':
           this.ChangePage()
-          return this.setState({ page: 0 });
+          return this.setState({page: 0});
           break;
 
         case 'for_today':
@@ -868,20 +919,20 @@ export class App extends React.Component<IAppProps, IAppState> {
               this.assistant.sendData({
                 action: {
                   action_id: "todaySchedule",
-                  parameters: { day: "sunday" },
+                  parameters: {day: "sunday"},
                 },
               })
               this.ChangePage()
-              return this.setState({ page: 8 });
+              return this.setState({page: 8});
             } else {
               this.assistant.sendData({
                 action: {
                   action_id: "todaySchedule",
-                  parameters: { day: "notSunday" },
+                  parameters: {day: "notSunday"},
                 },
               })
               this.ChangePage()
-              return this.setState({ page: this.state.today });
+              return this.setState({page: this.state.today});
             }
           break;
 
@@ -891,20 +942,20 @@ export class App extends React.Component<IAppProps, IAppState> {
               this.assistant.sendData({
                 action: {
                   action_id: "tomorrowSchedule",
-                  parameters: { day: "sunday" },
+                  parameters: {day: "sunday"},
                 },
               })
               this.ChangePage()
-              return this.setState({ page: 8 });
+              return this.setState({page: 8});
             } else {
               this.assistant.sendData({
                 action: {
                   action_id: "tomorrowSchedule",
-                  parameters: { day: "notSunday" },
+                  parameters: {day: "notSunday"},
                 },
               })
               this.ChangePage()
-              return this.setState({ page: this.state.today + 1 });
+              return this.setState({page: this.state.today + 1});
             }
           break;
 
@@ -912,38 +963,37 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
             this.ChangePage()
-            return this.setState({ page: 9 });
+            return this.setState({page: 9});
           }
           break;
 
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.ChangePage()
-            return this.setState({ date: Date.now(), flag: true, page: 7 });
+            return this.setState({date: Date.now(), flag: true, page: 7});
           }
           break;
 
         case 'when_lesson':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             let params
-            let answer = this.getStartEndLesson(action.note[0], action.note[1], action.note[2])
+
+            type ActionNoteWhenLesson = [StartOrEnd, TodayOrTomorrow, string];
+
+            const [type, day, lessonNum] = action.note as ActionNoteWhenLesson || [];
+
+            let answer = this.getStartEndLesson(type, day, lessonNum)
+            // const [ type, day ] = this.getStartEndLesson(type, day, lessonNum)
+
+
             console.log("answer", answer)
-            let toOrdinal = {
-              "1": "первая",
-              "2": "вторая",
-              "3": "третья",
-              "4": "четвертая",
-              "5": "пятая",
-              "6": "шестая",
-              "7": "седьмая"
-            }
             if (answer !== undefined && answer[1] === "sunday") {
-              params = { type: answer[0], day: answer[1] }
+              params = {type: answer[0], day: answer[1]}
             } else {
               params = {
-                type: action.note[0],
-                day: action.note[1],
-                ordinal: toOrdinal[action.note[2]],
+                type: type,
+                day: day,
+                ordinal: ordinalNominativeCaseSingularFemDict[lessonNum],
                 time: answer
               }
             }
@@ -956,13 +1006,13 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
               this.ChangePage()
-              return this.setState({ page: this.state.today });
+              return this.setState({page: this.state.today});
             } else if (this.state.today + 1 === 7) {
               this.ChangePage();
-              return this.setState({ page: 8 });
+              return this.setState({page: 8});
             } else {
               this.ChangePage();
-              this.setState({ page: this.state.today + 1 });
+              this.setState({page: this.state.today + 1});
             }
           }
           break
@@ -989,7 +1039,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             let howManyParams
             if (this.state.group !== "")
               if (response === undefined) {
-                howManyParams = { day: "sunday" }
+                howManyParams = {day: "sunday"}
                 // this.ChangePage();
                 // this.setState({ page: 8 })
               } else {
@@ -1008,7 +1058,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 }
                 if (dayNameDict[response[0]][1] < this.state.today) page = 8;
                 this.ChangePage();
-                this.setState({ page: dayNameDict[response[0]][1] + page })
+                this.setState({page: dayNameDict[response[0]][1] + page})
               }
             this.assistant.sendData({
               action: {
@@ -1024,7 +1074,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             let howManyLeftParams
             let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date(Date.now()))
             if (this.state.today === 0) {
-              howManyLeftParams = { day: "sunday" }
+              howManyLeftParams = {day: "sunday"}
             } else {
               howManyLeftParams = {
                 amount: amountOfRemainingLessons,
@@ -1040,9 +1090,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({ page: 8 })
+              this.setState({page: 8})
             } else {
-              this.setState({ page: this.state.today })
+              this.setState({page: this.state.today})
             }
           }
           break
@@ -1051,7 +1101,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log('ok')
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             if (action.note === undefined) {
-              action.note = { "when": "now" }
+              action.note = {"when": "now"}
             }
             let whereLessonParams
             whereLessonParams = this.whereWillLesson(new Date(this.state.date), action.note.when)
@@ -1065,7 +1115,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (whereLessonParams.exist === "sunday") {
               //this.setState({ page: 8 })
             } else {
-              this.setState({ page: this.state.today });
+              this.setState({page: this.state.today});
             }
           }
           break
@@ -1074,7 +1124,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log("какая пара")
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             if (action.note === undefined) {
-              action.note = { "when": "now" }
+              action.note = {"when": "now"}
             }
             let whatlesson
             whatlesson = this.whatLesson(new Date(Date.now()), action.note.when);
@@ -1087,24 +1137,15 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
             this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({ page: 8 })
+              this.setState({page: 8})
             } else {
-              this.setState({ page: this.state.today });
+              this.setState({page: this.state.today});
             }
           }
           break
 
         case 'first_lesson':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            const num = {
-              1: "первой",
-              2: "второй",
-              3: "третьей",
-              4: "четвертой",
-              5: "пятой",
-              6: "шестой",
-              7: "седьмой"
-            }
             let number
             let day1
             let page1 = 0;
@@ -1127,18 +1168,18 @@ export class App extends React.Component<IAppProps, IAppState> {
             let whichFirst
             if (this.state.group !== "")
               if (number === undefined) {
-                whichFirst = { day1: "sunday" }
+                whichFirst = {day1: "sunday"}
                 // this.ChangePage();
                 // this.setState({ page: 8 })
               } else {
                 whichFirst = {
-                  num: num[number[0]],
+                  num: ordinalGenitiveCaseSingularFemDict[number[0]],
                   day: day1,
                   dayName: dayNameDict[parseInt(action.note.dayOfWeek) - 1][0]
                 }
                 if (dayNameDict[parseInt(action.note.dayOfWeek) - 1][1] < this.state.today) page1 = 8;
                 this.ChangePage();
-                this.setState({ page: dayNameDict[parseInt(action.note.dayOfWeek) - 1][1] + page1 })
+                this.setState({page: dayNameDict[parseInt(action.note.dayOfWeek) - 1][1] + page1})
               }
             this.assistant.sendData({
               action: {
@@ -1174,7 +1215,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 dayName: dayNameDict[parseInt(action.note[0].dayOfWeek) - 1][0]
               }
               this.ChangePage();
-              this.setState({ page: dayNameDict[parseInt(action.note[0].dayOfWeek) - 1][1] + page2 })
+              this.setState({page: dayNameDict[parseInt(action.note[0].dayOfWeek) - 1][1] + page2})
             }
             this.assistant.sendData({
               action: {
@@ -1188,10 +1229,10 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'group':
           if (action.note[0] === 0) {
             console.log(action.note[1].data.groupName[0]);
-            this.setState({ group: action.note[1].data.groupName[0].toUpperCase(), page: 0 });
+            this.setState({group: action.note[1].data.groupName[0].toUpperCase(), page: 0});
           } else {
             console.log(action.note[1].data.groupName[1])
-            this.setState({ group: action.note[1].data.groupName[1].toUpperCase(), page: 0 })
+            this.setState({group: action.note[1].data.groupName[1].toUpperCase(), page: 0})
           }
           break
 
@@ -1204,7 +1245,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'subgroup':
           console.log('subgroup', action)
           this.ChangePage();
-          this.setState({ subGroup: action.note, page: 0 });
+          this.setState({subGroup: action.note, page: 0});
           break
 
         default:
@@ -1218,7 +1259,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     const state = {
       item_selector: {
         items: this.state.notes.map(
-          ({ id, title }, index) => ({
+          ({id, title}, index) => ({
             number: index + 1,
             id,
             title,
@@ -1244,7 +1285,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     for (let group of groups) {
       console.log(this.state.groupId, "id")
       if (String(this.state.groupId) === String(group.id)) {
-        this.setState({ group: group.name })
+        this.setState({group: group.name})
         console.log(group.name, "группа")
       }
     }
@@ -1254,7 +1295,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     for (let group of groups) {
       if (this.state.group.toLowerCase() === group.name.toLowerCase()) {
         const groupId = '' + group.id; // convert to string
-        this.setState({ groupId }, () => {
+        this.setState({groupId}, () => {
           console.log(`groupId ${this.state.groupId}`)
         })
       }
@@ -1283,7 +1324,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   getFirstDayWeek(date: Date): string {
     // номер дня недели
     const now = new Date();
-    this.setState({ today: now.getDay() });
+    this.setState({today: now.getDay()});
     const weekDay = date.getDay()
     let firstDay: number;
     if (weekDay === 0) {
@@ -1317,7 +1358,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.showWeekSchedule(response, 1);
       })
     }
-    this.setState({ date: date, flag: false });
+    this.setState({date: date, flag: false});
   }
 
   /**
@@ -1337,7 +1378,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   showWeekSchedule(rawSchedule: string, i) { //заполнение данными расписания из бд
-    this.setState({ spinner: false });
+    this.setState({spinner: false});
 
     const parsedSchedule: IScheduleData = JSON.parse(rawSchedule);
     let days = new Array(7).fill([]);
@@ -1374,7 +1415,6 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.url = lesson_info.other;
 
 
-
             countLessons++;
           } else if ((parsedSchedule.schedule[bell] !== undefined) && (lesson_info !== undefined)
             && (lesson_info.groups[0].subgroup_name !== undefined) && (lesson_info.groups[0].subgroup_name !==
@@ -1408,8 +1448,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
 
     }
-    this.setState({ spinner: true });
-    this.setState({ days: days });
+    this.setState({spinner: true});
+    this.setState({days: days});
   }
 
   ChangePage() {
@@ -1453,29 +1493,29 @@ export class App extends React.Component<IAppProps, IAppState> {
       default:
         break;
     }
-    this.setState({ i: 0 });
-    this.setState({ star: false });
+    this.setState({i: 0});
+    this.setState({star: false});
     if (weekParam === 1) {
-      this.setState({ flag: false });
+      this.setState({flag: false});
     } else {
-      this.setState({ flag: true });
+      this.setState({flag: true});
     }
     if (this.state.checked === true) {
-      this.setState({ star: true });
+      this.setState({star: true});
     } else {
       if (this.state.groupId == this.state.bd) {
-        this.setState({ star: true });
+        this.setState({star: true});
       } else {
-        this.setState({ star: false });
+        this.setState({star: false});
       }
     }
     if (this.state.teacher_checked === true) {
-      this.setState({ teacher_star: true });
+      this.setState({teacher_star: true});
     } else {
       if (this.state.teacherId == this.state.teacher_bd) {
-        this.setState({ teacher_star: true });
+        this.setState({teacher_star: true});
       } else {
-        this.setState({ teacher_star: false });
+        this.setState({teacher_star: false});
       }
     }
   }
@@ -1500,26 +1540,29 @@ export class App extends React.Component<IAppProps, IAppState> {
     //const { showToast, hideToast } = useToast()
     return (
       <DeviceThemeProvider>
-        <DocStyle />
+        <DocStyle/>
         {
           getThemeBackgroundByChar(this.state.character)
         }
         <div>
-          <Container style={{ padding: 0, overflow: "hidden" }}>
+          <Container style={{padding: 0, overflow: "hidden"}}>
 
-            <Row style={{ margin: "1em" }}>
+            <Row style={{margin: "1em"}}>
 
-              <Col style={{ maxWidth: '3rem' }}>
-                <Image src={logo} ratio="1 / 1" />
+              <Col style={{maxWidth: '3rem'}}>
+                <Image src={logo} ratio="1 / 1"/>
               </Col>
 
-              <this.HeaderSchedule groupname={groupname} student={this.state.student}
+              <this.HeaderSchedule
+                groupname={groupname}
+                student={this.state.student}
                 teacher={this.state.teacher}
-                teacher_correct={this.state.teacher_correct} />
+                teacher_correct={this.state.teacher_correct}
+              />
 
-              <Col style={{ margin: "0 0 0 auto" }}>
-                <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({ page: NAV_PAGE_NO })}
-                  contentRight={<IconNavigationArrow size="s" color="inherit" />}
+              <Col style={{margin: "0 0 0 auto"}}>
+                <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({page: NAV_PAGE_NO})}
+                        contentRight={<IconNavigationArrow size="s" color="inherit"/>}
                 />
                 {
                   this.IsTeacher()
@@ -1554,30 +1597,30 @@ export class App extends React.Component<IAppProps, IAppState> {
                   size="s"
                   view="clear"
                   pin="circle-circle"
-                  onClick={() => this.setState({ page: 0 })}
+                  onClick={() => this.setState({page: 0})}
                   contentRight={
-                    <IconSettings size="s" color="inherit" />
+                    <IconSettings size="s" color="inherit"/>
                   }
                 />
 
                 {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
               </Col>
             </Row>
-            <Row style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            <Row style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
               <div>
                 <Button
                   view="clear"
                   size="s"
                   pin="circle-circle"
                   onClick={() => {
-                    
-                  }} style={{ margin: "1em" }}
+
+                  }} style={{margin: "1em"}}
                   contentRight={
                     <IconChevronLeft
                       size="s"
                       color="inherit"
                       // @ts-ignore
-                      style={{ paddingBottom: "1.5em" }}
+                      style={{paddingBottom: "1.5em"}}
                     />
                   }
                 />
@@ -1587,33 +1630,33 @@ export class App extends React.Component<IAppProps, IAppState> {
                   text="Текущая неделя"
                   onClick={() => {
                     console.log(199)
-                    this.setState({ date: Date.now() });
-                    this.setState({ date: Date.now(), flag: true, page: 7 })
+                    this.setState({date: Date.now()});
+                    this.setState({date: Date.now(), flag: true, page: 7})
                   }}
-                  style={{ position: "relative", bottom: "0.5em" }} />
+                  style={{position: "relative", bottom: "0.5em"}}/>
                 <Button
                   view="clear"
                   size="s"
                   pin="circle-circle"
                   onClick={() => {
-                    this.setState({ spinner: false });
+                    this.setState({spinner: false});
                     this.NextWeek();
-                    this.setState({ page: 9 })
+                    this.setState({page: 9})
                   }}
-                  style={{ margin: "1em" }}
+                  style={{margin: "1em"}}
                   contentRight={
                     <IconChevronRight
                       size="s"
                       color="inherit"
                       // @ts-ignore
-                      style={{ paddingBottom: "1.5em" }}
+                      style={{paddingBottom: "1.5em"}}
                     />
                   }
                 />
 
               </div>
             </Row>
-            <Row style={{ margin: "0.5em", marginRight: "0", overflow: "hidden" }}>
+            <Row style={{margin: "0.5em", marginRight: "0", overflow: "hidden"}}>
               <CarouselGridWrapper>
                 <Carousel
                   as={Row}
@@ -1629,28 +1672,19 @@ export class App extends React.Component<IAppProps, IAppState> {
                   paddingEnd="40%"
 
                 >
-                  {this.state.day.map(({ title, date }, i) =>
-                    this.state.today === i + 1 && weekParam === 0
-                      ? (
+                  {
+                    this.state.day.map(
+                      ({title, date}, i) =>
                         <DaysCarousel
                           ViewType={i + 1 === index}
                           text={`${title} ${date[weekParam].slice(0, 5)}`}
-                          IsCurrent={true}
+                          IsCurrent={this.state.today === i + 1 && weekParam === 0}
                           setValue={this.setValue}
                           page={i + 1 + page}
                           i={i}
                         />
-                      )
-                      : (
-                        <DaysCarousel
-                          ViewType={i + 1 === index}
-                          text={`${title} ${date[weekParam].slice(0, 5)}`}
-                          IsCurrent={false}
-                          setValue={this.setValue}
-                          page={i + 1 + page}
-                          i={i}
-                        />)
-                  )}
+                    )
+                  }
                 </Carousel>
               </CarouselGridWrapper>
             </Row>
@@ -1661,56 +1695,62 @@ export class App extends React.Component<IAppProps, IAppState> {
                     width="90%"
                     height="25rem"
                     roundness={16}
-                    style={{ marginLeft: "5%", marginTop: "0.5em" }} />
+                    style={{marginLeft: "5%", marginTop: "0.5em"}}/>
                 )
                 : (
-                  <div style={{ flexDirection: "column" }}>
-                    <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" }}>
-                      <CardBody style={{ padding: "0 0 0 0" }}>
-                        <CardContent compact style={{ padding: "0.3em 0.3em" }}>
+                  <div style={{flexDirection: "column"}}>
+                    <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+                      <CardBody style={{padding: "0 0 0 0"}}>
+                        <CardContent compact style={{padding: "0.3em 0.3em"}}>
                           {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
                           {
-                            timeParam==7 ?
-                            (<Row style={{ display: "flex", flexDirection: "row", alignSelf: "center", justifyContent: "center" }}>
-                            <TextBox>
-                              <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
-                            </TextBox>
-                          </Row>)
-                            :
-                            (
-                              this.state.days.map((_, bellNumber) => {
-                               const curr_day_obj = this.state.days[day_num]
-                               const bell_id = bellNumber;
-                               const bell = this.state.days[day_num][bellNumber][weekParam];
- 
-                               return bell.lessonName !== ""
-                                 ? (
-                                   <BellView
-                                     bell={bell}
-                                     current={current}
-                                     weekParam={weekParam}
-                                     timeParam={timeParam}
-                                     student={this.state.student}
-                                     teacher_correct={this.state.teacher_correct}
-                                     today={this.state.today}
-                                     Type={this.Type}
-                                     isCorrectTeacher={this.isCorrectTeacher}
-                                     setValue={this.setValue} />
- 
-                                 )
-                                 : (
-                                   <div></div>
-                                 )
-                             })
- 
-                           )
+                            timeParam == 7
+                              ? (
+                                <Row style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignSelf: "center",
+                                  justifyContent: "center"
+                                }}>
+                                  <TextBox>
+                                    <TextBoxBigTitle>Выходной 😋</TextBoxBigTitle>
+                                  </TextBox>
+                                </Row>
+                              )
+                              : (
+                                this.state.days.map((_, bellNumber) => {
+                                  const curr_day_obj = this.state.days[day_num]
+                                  const bell_id = bellNumber;
+                                  const bell = this.state.days[day_num][bellNumber][weekParam];
+
+                                  return bell.lessonName !== ""
+                                    ? (
+                                      <BellView
+                                        bell={bell}
+                                        current={current}
+                                        weekParam={weekParam}
+                                        timeParam={timeParam}
+                                        student={this.state.student}
+                                        teacher_correct={this.state.teacher_correct}
+                                        today={this.state.today}
+                                        Type={this.Type}
+                                        isCorrectTeacher={this.isCorrectTeacher}
+                                        setValue={this.setValue}/>
+
+                                    )
+                                    : (
+                                      <div></div>
+                                    )
+                                })
+
+                              )
                           }
                         </CardContent>
                       </CardBody>
                     </Card>
                   </div>)
             }
-            <MyDiv200 />
+            <MyDiv200/>
             {/*
             <div style={{
               width: '200px',
@@ -1726,163 +1766,60 @@ export class App extends React.Component<IAppProps, IAppState> {
   Index() {
     const currI = this.state.i;
     if (currI < 7) {
-      this.setState({ i: currI + 1 });
+      this.setState({i: currI + 1});
     } else if (currI > 0) {
-      this.setState({ i: currI - 1 });
+      this.setState({i: currI - 1});
     }
   }
 
   Dashboard() {
-    let current = this.getCurrentLesson(new Date(Date.now()));
-    console.log(current + 1);
-    return (
-      <DeviceThemeProvider>
-        <DocStyle />
-        {/*
-        { (() => {
-          switch (this.state.character) {
-            case CHAR_SBER:
-              return <ThemeBackgroundSber/>;
-            case CHAR_EVA:
-              return <ThemeBackgroundEva/>;
-            case CHAR_JOY:
-              return <ThemeBackgroundJoy/>;
-            default:
-              return;
-          }
-        })()}
-*/}
-        {
-          getThemeBackgroundByChar(this.state.character)
-        }
-        <Container style={{ padding: 0 }}>
-          <Row style={{ margin: "1em" }}>
-            <Col style={{ maxWidth: '3rem' }}>
-              <Image src={logo} ratio="1 / 1" />
-            </Col>
-            <Col style={{ marginLeft: "0.5em", paddingTop: "0.5em" }}>
-              <TextBox
-              >
-                <CardHeadline3>Мир МИСиС</CardHeadline3>
-              </TextBox>
-            </Col>
-            <Col style={{ margin: "0 0 0 auto" }}>
-              <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({ page: 0 })}
-                contentRight={<IconSettings size="s" color="inherit" />} />
-            </Col>
-          </Row>
-          {
-            current !== undefined
-              ? (
-                <Row style={{ marginLeft: "1em" }}>
-                  <Col style={{ marginLeft: "1em" }}>
-                    <TextBox>
-                      <CardBody2>Сейчас</CardBody2>
-                    </TextBox>
-                  </Col>
-                  <Card style={{ width: "90%", marginLeft: "5%", marginTop: "0.5em" }}>
-                    <CardBody style={{ padding: "0 0 0 0" }}>
-                      <CardContent compact style={{ padding: "0.3em 0.3em" }}>
-                        <CellListItem
-                          content={
-                            <TextBox>
-
-                              <TextBoxSubTitle lines={8}>
-                                {this.state.days[this.state.today - 1][current - 1][0].startAndfinishTime}
-                              </TextBoxSubTitle>
-                              < CardHeadline3 style={{ color: "var(--plasma-colors-button-accent)" }}>
-                                {this.state.days[this.state.today - 1][current - 1][0].lessonName}
-                              </ CardHeadline3>
-
-                              {this.state.student === false && this.state.teacher_correct === true ? (
-                                <TextBoxTitle> {this.state.days[this.state.today - 1][current - 1][0].groupNumber} </TextBoxTitle>)
-                                : (<a onClick={() => {
-                                  this.isCorrectTeacher()
-                                }}> {this.state.days[this.state.today - 1][current - 1][0][1]} </a>)}
-
-                              {this.state.days[this.state.today - 1][current - 1][0].url !== "" && this.state.days[this.state.today - 1][current - 1][0].url !== null ? (
-                                <a href={this.state.days[this.state.today - 1][current - 1][0].url}
-                                  style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
-                                  онлайн-конференцию</a>) : (<div></div>)
-                              }
-                            </TextBox>
-                          }
-
-                          contentRight={
-                            <TextBox>
-                              <Badge text={this.state.days[this.state.today - 1][current - 1][0].room}
-                                contentLeft={<IconLocation size="xs" />}
-                                style={{ backgroundColor: "rgba(0,0,0, 0)" }} />
-                              <TextBoxTitle> {this.Type(this.state.days[this.state.today - 1][current - 1][0].lessonType)}</TextBoxTitle>
-
-                            </TextBox>}
-                          contentLeft={this.state.days[this.state.today - 1][current - 1][0].teacher !== "" ? (
-                            <Badge text={this.state.days[this.state.today - 1][current - 1][0].lessonNumber[0]}
-                              view="primary" style={{ marginRight: "0.5em" }} size="l" />) : (<div></div>)
-                          }
-                        ></CellListItem>
-                      </CardContent>
-                    </CardBody>
-                  </Card>
-                </Row>
-              )
-              : (<div></div>)
-          }
-
-
-          <div style={{
-            width: '200px',
-            height: '300px',
-          }}></div>
-        </Container>
-      </DeviceThemeProvider>
-
-    )
+    return <DashboardView
+      state={this.state}
+      setState={this.setState}
+      getCurrentLesson={this.getCurrentLesson}
+      Type={this.Type}
+    />
   }
 
 
   async isCorrectTeacher() {
 
-    getIdTeacherFromDb(this.state.teacher).then((rawTeacher) => {
-      const parsedTeacher: ITeacherData = JSON.parse(rawTeacher);
-
-      //this.state.teacherId=this.id['id'];
-      console.log(rawTeacher)
-      console.log(parsedTeacher.status, "status")
-      if (parsedTeacher.status == "-1") {
+    getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
+      console.log(teacherData)
+      console.log(teacherData.status, "status")
+      if (teacherData.status == "-1") {
         console.log("status");
         this.setState({
           label_teacher: "Такого преподавателя нет в НИТУ МИСиС",
-          color_teacher: "error",
+          color_teacher: COLOR_NAME_ERROR,
         })
-      } else if (parsedTeacher.status == "-2") {
+      } else if (teacherData.status == "-2") {
         this.setState({
           label_teacher: "Некорректно введены данные",
-          color_teacher: "Предупреждение",
+          color_teacher: COLOR_NAME_WARN_RU,
         })
       } else {
         getScheduleTeacherFromDb(
-          parsedTeacher.id,
+          teacherData.id,
           this.getFirstDayWeek(new Date(Date.now()))
         ).then((response) => {
           this.showWeekSchedule(response, 0);
 
         });
-        getInTeacherFromDb(parsedTeacher['id']).then((rawTeacher) => {
-          const parsedTeacher2 = JSON.parse(rawTeacher);
+        getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
           this.setState({
-            teacher: `${parsedTeacher['last_name']} ${parsedTeacher['first_name']}. ${parsedTeacher['mid_name']}.`
+            teacher: `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
           })
         })
         this.setState({
-          teacherId: parsedTeacher['id'],
+          teacherId: teacherData.id,
           student: false,
           teacher_correct: true,
           date: Date.now(),
           flag: true,
           page: 7,
           label_teacher: "Фамилия И. О.",
-          color_teacher: "var(--plasma-colors-white-secondary)"
+          color_teacher: DEFAULT_TEXT_COLOR,
         });
       }
       if (this.state.teacher_checked === true) {
@@ -1900,12 +1837,12 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   isCorrect() {
-    this.setState({ correct: false, date: Date.now() })
+    this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
     let correct_eng = false;
     for (let i of groups) {
       if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
-        this.setState({ correct: true })
+        this.setState({correct: true})
         console.log(`Correct ${this.state.correct}`)
         this.convertGroupNameInId()
       }
@@ -1925,23 +1862,23 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.showWeekSchedule(response, 0);
       });
       console.log(String(this.state.engGroup));
-      this.setState({ flag: true });
+      this.setState({flag: true});
       this.convertIdInGroupName();
-      this.setState({ page: 7, labelGroup: "Номер академической группы", color_group: "Предупреждение" });
+      this.setState({page: 7, labelGroup: "Номер академической группы", color_group: COLOR_NAME_WARN_RU});
     } else if (this.state.correct === true) {
-      this.setState({ labelGroup: "Номер академической группы", color_group: "Предупреждение" });
+      this.setState({labelGroup: "Номер академической группы", color_group: COLOR_NAME_WARN_RU});
     } else if (this.state.group === "") {
-      this.setState({ labelGroup: "Поле с номером группы является обязательным для ввода", color_group: "error" })
+      this.setState({labelGroup: "Поле с номером группы является обязательным для ввода", color_group: COLOR_NAME_ERROR})
     } else {
-      this.setState({ labelGroup: "Некорректно введен номер группы", color_group: "error" })
+      this.setState({labelGroup: "Некорректно введен номер группы", color_group: COLOR_NAME_ERROR})
     }
     if (correct_sub === false) {
-      this.setState({ color_sub: "error" })
-    } else this.setState({ color_sub: "Предупреждение", star: false });
+      this.setState({color_sub: COLOR_NAME_ERROR})
+    } else this.setState({color_sub: COLOR_NAME_WARN_RU, star: false});
     if (correct_eng === false) {
-      this.setState({ color_enggroup: "error" })
+      this.setState({color_enggroup: COLOR_NAME_ERROR})
     } else {
-      this.setState({ color_enggroup: "Предупреждение", star: false });
+      this.setState({color_enggroup: COLOR_NAME_WARN_RU, star: false});
     }
   }
 
@@ -1979,10 +1916,10 @@ export class App extends React.Component<IAppProps, IAppState> {
         setTimeout(() => {
           if (this.state.today === 0) {
             if (this.state.flag === true)
-              this.setState({ page: 8 })
-            else this.setState({ page: 9 })
-          } else if (this.state.flag === true) this.setState({ page: this.state.today });
-          else this.setState({ page: 9 });
+              this.setState({page: 8})
+            else this.setState({page: 9})
+          } else if (this.state.flag === true) this.setState({page: this.state.today});
+          else this.setState({page: 9});
 
         }, 100);
         clearInterval(myinterval)
@@ -1991,14 +1928,14 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     return (
       <DeviceThemeProvider>
-        <DocStyle />
+        <DocStyle/>
         {
           getThemeBackgroundByChar(this.state.character)
         }
         <div>
-          <Container style={{ padding: 0 }}>
+          <Container style={{padding: 0}}>
             <Spinner color="var(--plasma-colors-button-accent)"
-              style={{ position: " absolute", top: "40%", left: " 43%", marginRight: "-50%" }} />
+                     style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
           </Container>
         </div>
       </DeviceThemeProvider>
@@ -2047,7 +1984,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       case 7:
         return this.Spinner();
       case 8:
-        return this.Raspisanie(7,0);
+        return this.Raspisanie(7, 0);
       case 9:
         return this.Raspisanie(1, 1);
       case 10:

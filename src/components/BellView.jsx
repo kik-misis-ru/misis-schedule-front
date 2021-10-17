@@ -15,6 +15,8 @@ import { createGlobalStyle } from "styled-components";
 import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import "../App.css";
 
+import {DEFAULT_TEXT_COLOR} from '../App';
+
 //const ThemeBackgroundEva = createGlobalStyle(darkEva);
 //const ThemeBackgroundSber = createGlobalStyle(darkSber);
 //const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
@@ -100,7 +102,7 @@ class BellView extends React.Component{
               {
                 this.IsUrlExist() ? (
                   <a href={this.props.bell.url}
-                    style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
+                    style={{ color: DEFAULT_TEXT_COLOR }}>Ссылка на
                     онлайн-конференцию</a>) : (<div></div>)
               }
             </TextBox>
