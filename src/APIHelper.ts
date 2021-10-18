@@ -4,34 +4,96 @@ export interface ITeacherApiData {
   first_name: string
   mid_name: string
   last_name: string
-  status: string
+  status: '-1' | '-2'
   id: string
 }
 
+//
+
+interface IScheduleTeacherData {
+  name: string
+}
+
+interface IScheduleGroup {
+  name: string
+  subgroup_name: string | undefined
+}
+
+export interface IScheduleLessonInfo {
+  groups: IScheduleGroup[]
+  subject_name: string
+  teachers: IScheduleTeacherData[]
+  room_name: string
+  type: string
+  other: string
+}
+
+interface IScheduleBellHeader {
+  start_lesson: string
+  end_lesson: string
+}
+
+interface ISchedule {
+  header: IScheduleBellHeader
+  day1: IScheduleLessonInfo
+  day2: IScheduleLessonInfo
+  day3: IScheduleLessonInfo
+  day4: IScheduleLessonInfo
+  day5: IScheduleLessonInfo
+  day6: IScheduleLessonInfo
+  day7: IScheduleLessonInfo
+}
+
+interface IScheduleHeaderDay {
+  date: string
+}
+
+interface IScheduleHeader {
+  day1: IScheduleHeaderDay,
+  day2: IScheduleHeaderDay,
+  day3: IScheduleHeaderDay,
+  day4: IScheduleHeaderDay,
+  day5: IScheduleHeaderDay,
+  day6: IScheduleHeaderDay,
+  day7: IScheduleHeaderDay,
+}
+
+// interface Schedule {
+//   bell: ScheduleHeader[]
+// }
+
+export interface IScheduleApiData {
+  schedule: ISchedule[]
+  schedule_header: IScheduleHeader
+}
+
+//
 
 //const API_URL = "http://127.0.0.1:8000/";
 const API_URL = "https://misis-hub.herokuapp.com/";
 
 
-export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string) {
-  const {data: answer} = await axios.get(`${API_URL}schedule`, {
+export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleApiData> {
+  const {data: rawSchedule} = await axios.get(`${API_URL}schedule`, {
     params: {
       group_id: groupId,
       english_group_id: english_group_id,
       date: date
     },
   })
-  return answer;
+  const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
+  return parsedSchedule;
 }
 
-export async function getScheduleTeacherFromDb(teacherId: string, date: string) {
-  const {data: answer} = await axios.get(`${API_URL}schedule_teacher`, {
+export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleApiData> {
+  const {data: rawSchedule} = await axios.get(`${API_URL}schedule_teacher`, {
     params: {
       teacher_id: teacherId,
       date: date
     },
   })
-  return answer;
+  const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
+  return parsedSchedule;
 }
 
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {

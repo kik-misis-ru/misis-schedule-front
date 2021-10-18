@@ -7,11 +7,8 @@ import {
   TextBoxSubTitle,
   Checkbox
 } from "@sberdevices/plasma-ui";
-import {createGlobalStyle} from "styled-components";
 import {TextField} from "@sberdevices/plasma-ui";
-import {IconChevronRight, IconNavigationArrow} from "@sberdevices/plasma-icons";
-import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
-import {text, background, gradient} from "@sberdevices/plasma-tokens";
+import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
 
 import "../App.css";
 import {
@@ -19,35 +16,27 @@ import {
   getThemeBackgroundByChar,
 } from '../App';
 
-//const ThemeBackgroundEva  = createGlobalStyle(darkEva);
-//const ThemeBackgroundSber = createGlobalStyle(darkSber);
-//const ThemeBackgroundJoy  = createGlobalStyle(darkJoy);
-
-const DocStyle = createGlobalStyle`
-  html:root {
-    min-height: 100vh;
-    color: ${text};
-    background-color: ${background};
-    background-image: ${gradient};
-  }
-`;
+import {DocStyle} from '../App';
 
 const DESC_JOY    = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
+const labelGroup = "Номер академической группы через дефисы";
+const labelSubgroup= "Номер подгруппы: 1 или 2";
+const labelEnggroup= "Число номера группы по английскому";
+const labelTeacher= "Фамилия И. О.";
 
-const GoToNavButton = (props) => <Button
+export const GoToMenuButton = (props) => <Button
   size="s"
   view="clear"
   onClick = {props.onClick}
   pin="circle-circle"
   contentRight={
-    <IconNavigationArrow size="s" color="inherit"/>
+    <IconHouse size="s" color="inherit"/>
   }
 />
 
-const GoToScheduleButton = (props) =>  <Button
+ export const GoToScheduleButton = (props) =>  <Button
 view="clear"
-disabled={props.disabled}
 onClick={props.onClick}
 contentRight={
   <IconChevronRight size="s" color="inherit"/>
@@ -128,16 +117,15 @@ class Home extends React.Component {
 
             <Row>
               <Col style={{ marginLeft: "auto" }}>
-                <GoToNavButton
+                <GoToMenuButton
                   onClick={() => {
-                    this.handleChange("page", NAV_PAGE_NO)
+                    this.handleChange("page", 16)
                   }}
                 />
                 {
-                  this.state.disabled 
+                  !this.state.disabled 
                   ? 
                   <GoToScheduleButton
-                  disabled={this.state.disabled}
                   onClick={() => {
                     this.props.convertIdInGroupName();
                     this.handleChange("page", 7)
@@ -177,21 +165,21 @@ class Home extends React.Component {
               </TextBox>
 
               <TextFieldForUserInfo 
-              label={this.props.labelGroup}
+              label={labelGroup}
               status={this.props.color_group}
               value={this.props.group}
               fieldType="group"
               handleChange={this.handleChange}/>
 
               <TextFieldForUserInfo 
-              label={this.props.labelSubgroup}
+              label={labelSubgroup}
               status={this.props.color_sub}
               value={this.props.subGroup}
               fieldType="subGroup"
               handleChange={this.handleChange}/>
 
               <TextFieldForUserInfo 
-              label={this.props.labelEnggroup}
+              label={labelEnggroup}
               status={this.props.color_enggroup}
               value={this.props.engGroup}
               fieldType="engGroup"
@@ -222,7 +210,7 @@ class Home extends React.Component {
 
              <Row>
                <Col style={{ marginLeft: "auto" }}>
-               <GoToNavButton
+               <GoToMenuButton
                   onClick={() => {
                     this.handleChange("page", NAV_PAGE_NO)
                   }}
@@ -262,7 +250,7 @@ class Home extends React.Component {
                </TextBox>
 
               <TextFieldForUserInfo 
-              label={this.props.label_teacher}
+              label={labelTeacher}
               status={this.props.color_teacher}
               value={this.props.teacher}
               fieldType="teacher"

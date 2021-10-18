@@ -8,30 +8,19 @@ import {
   Badge,
   CellListItem,
 } from "@sberdevices/plasma-ui";
-import {  IconSettings,  IconLocation,IconMoreVertical} from "@sberdevices/plasma-icons";
-import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
-import { createGlobalStyle } from "styled-components";
+import {
+  //IconSettings,
+  IconLocation,
+  //IconMoreVertical
+} from "@sberdevices/plasma-icons";
+//import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
+//import { createGlobalStyle } from "styled-components";
 
-import { text, background, gradient } from "@sberdevices/plasma-tokens";
+//import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import "../App.css";
 
 import {DEFAULT_TEXT_COLOR} from '../App';
-
-//const ThemeBackgroundEva = createGlobalStyle(darkEva);
-//const ThemeBackgroundSber = createGlobalStyle(darkSber);
-//const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
-
-const DocStyle = createGlobalStyle`
-    html:root {
-        min-height: 100vh;
-        color: ${text};
-        background-color: ${background};
-        background-image: ${gradient};
-    }
-`;
-
-
-
+import {lessonTypeAdjToNoun} from '../utils';
 
 class BellView extends React.Component{
 
@@ -61,9 +50,6 @@ class BellView extends React.Component{
       && this.props.today === this.props.timeParam && this.props.weekParam === 0)
   }
 
-
-
-
     render(){
         return <CellListItem
           key={`item:${this.props.timeParam-1}`}
@@ -71,7 +57,7 @@ class BellView extends React.Component{
             <TextBox>
               <TextBoxSubTitle lines={8}>
                 {
-                  this.props.bell.startAndfinishTime
+                  this.props.bell.startAndFinishTime
                 }
               </TextBoxSubTitle>
               {
@@ -114,7 +100,7 @@ class BellView extends React.Component{
                 text={this.props.bell.room}
                 contentLeft={<IconLocation size="xs" />}
                 style={{ backgroundColor: "rgba(0,0,0, 0)" }} />
-              <TextBoxTitle> {this.props.Type(this.props.bell.lessonType)}</TextBoxTitle>
+              <TextBoxTitle>{ lessonTypeAdjToNoun(this.props.bell.lessonType) }</TextBoxTitle>
 
             </TextBox>}
           contentLeft={this.props.bell.teacher !== "" ? (

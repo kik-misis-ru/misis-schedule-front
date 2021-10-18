@@ -16,28 +16,17 @@ import {
   Image
 } from "@sberdevices/plasma-ui";
 import {  IconSettings,  IconLocation,IconMoreVertical} from "@sberdevices/plasma-icons";
-import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
-import { createGlobalStyle } from "styled-components";
+//import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
+//import { createGlobalStyle } from "styled-components";
 
-import { text, background, gradient } from "@sberdevices/plasma-tokens";
+//import { text, background, gradient } from "@sberdevices/plasma-tokens";
 import {getThemeBackgroundByChar} from '../App';
 
 import logo from "../images/logo.png";
 import karta from "../images/Karta.png";
 import "../App.css";
 
-//const ThemeBackgroundEva = createGlobalStyle(darkEva);
-//const ThemeBackgroundSber = createGlobalStyle(darkSber);
-//const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
-
-const DocStyle = createGlobalStyle`
-    html:root {
-        min-height: 100vh;
-        color: ${text};
-        background-color: ${background};
-        background-image: ${gradient};
-    }
-`;
+import {DocStyle} from '../App';
 
 
 class Navigator extends React.Component{
