@@ -21,6 +21,7 @@ import "../App.css";
 
 import {DEFAULT_TEXT_COLOR} from '../App';
 import {lessonTypeAdjToNoun} from '../utils';
+import LinkToOnline from './LinkToOnline';
 
 class BellView extends React.Component{
 
@@ -37,9 +38,9 @@ class BellView extends React.Component{
     this.props.isCorrectTeacher();
   }
 
-  IsUrlExist(){
-    return  this.props.bell.url !== "" && this.props.bell.url !== null
-  }
+  //IsUrlExist(){
+  //  return  this.props.bell.url !== "" && this.props.bell.url !== null
+  //}
 
   IsCorrectTeacher(){
     return !this.props.student && this.props.teacher_correct
@@ -85,12 +86,8 @@ class BellView extends React.Component{
                   )
               }
 
-              {
-                this.IsUrlExist() ? (
-                  <a href={this.props.bell.url}
-                    style={{ color: DEFAULT_TEXT_COLOR }}>Ссылка на
-                    онлайн-конференцию</a>) : (<div></div>)
-              }
+              <LinkToOnline url={this.props.bell.url} />
+
             </TextBox>
           }
 

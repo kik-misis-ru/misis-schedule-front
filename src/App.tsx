@@ -87,7 +87,7 @@ export const DEFAULT_TEXT_COLOR = 'var(--plasma-colors-white-secondary)';
 export const COLOR_BLACK = '';
 
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
-const TO_VIEW_SET_GROUP_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
+const TO_VIEW_SET_GROUP_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
 const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development") {

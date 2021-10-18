@@ -26,12 +26,13 @@ import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/p
 import logo from "../images/logo.png";
 import "../App.css";
 import {
+  DEFAULT_TEXT_COLOR,
+  DocStyle,
   getThemeBackgroundByChar,
 } from '../App';
+import LinkToOnline from './LinkToOnline';
 
 import {pairNumberToPairNumText} from '../utils'
-
-import {DocStyle} from '../App';
 
 
 class Dashboard extends React.Component {
@@ -102,18 +103,19 @@ class Dashboard extends React.Component {
             {
               this.props.state.today !== 0 && this.props.state.day[ this.props.state.today - 1 ].count[ 0 ] !== 0
               ? (
-                <CardParagraph1 style={{ color: "var(--plasma-colors-white-secondary)" }}>
+                <CardParagraph1 style={{ color: DEFAULT_TEXT_COLOR }}>
                   Сегодня {pairNumberToPairNumText(this.props.state.day[ this.props.state.today - 1 ].count[ 0 ])} с {this.getTimeFirstLesson(this.props.state.today - 1 + 1)[ 0 ].slice(0, 5)} до {this.getEndLastLesson("this.props.state.today-1")}
                 </CardParagraph1>
               )
               : (
-                <CardParagraph1 style={{ color: "var(--plasma-colors-white-secondary)" }}>
+                <CardParagraph1 style={{ color: DEFAULT_TEXT_COLOR }}>
                   Сегодня пар нет
                 </CardParagraph1>
               )
             }
           </TextBox>
         </Row>
+
         <Row>
           <Col style={{ marginLeft: "2em", paddingTop: "1em" }}>
             <IconStarFill/>
@@ -126,73 +128,80 @@ class Dashboard extends React.Component {
             </TextBox>
           </Col>
         </Row>
+
         <Card style={{ width: "90%", marginLeft: "1em", marginTop: "0.5em" }}>
 
+          {
+            this.props.getCurrentLesson(new Date(Date.now())) !== undefined
+            ? (
+              <CardBody style={{ padding: "0 0 0 0" }}>
+                <CardContent compact style={{ padding: "0.3em 0.3em" }}>
+                  <TextBox style={{ color: DEFAULT_TEXT_COLOR }}>
+                    <CardParagraph1>Сейчас</CardParagraph1>
+                  </TextBox>
 
-          {this.props.getCurrentLesson(new Date(Date.now())) !== undefined ? (
-            <CardBody style={{ padding: "0 0 0 0" }}>
-              <CardContent compact style={{ padding: "0.3em 0.3em" }}>
-                <TextBox style={{ color: "var(--plasma-colors-white-secondary)" }}>
-                  <CardParagraph1>Сейчас</CardParagraph1>
-                </TextBox>
+                  <CellListItem
+                    content={
+                      <TextBox>
 
-                <CellListItem
-                  content={
-                    <TextBox>
+                        <TextBoxSubTitle lines={8}>
+                          {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 3 ]}
+                        </TextBoxSubTitle>
+                        < CardBody2 style={{ color: "var(--plasma-colors-button-accent)", fontSize: "18px" }}>
+                          {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 0 ]}
+                        </ CardBody2>
 
-                      <TextBoxSubTitle lines={8}>
-                        {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 3 ]}
-                      </TextBoxSubTitle>
-                      < CardBody2 style={{ color: "var(--plasma-colors-button-accent)", fontSize: "18px" }}>
-                        {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 0 ]}
-                      </ CardBody2>
+                        {
+                          this.props.state.student === false && this.props.state.teacher_correct === true
+                          ? (
+                            <TextBoxTitle> {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 7 ]} </TextBoxTitle>)
+                          : (
+                            <a onClick={() => {
+                              this.isCorrectTeacher()
+                            }}
+                            > {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 1 ]}
+                            </a>
+                          )
+                        }
 
-                      {this.props.state.student === false && this.props.state.teacher_correct === true ? (
-                                                                                                         <TextBoxTitle> {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 7 ]} </TextBoxTitle>)
-                                                                                                       : (
-                         <a onClick={() => {
-                           this.isCorrectTeacher()
-                         }}> {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 1 ]} </a>)}
+                        <LinkToOnline
+                          url={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 6 ]}
+                        />
 
-                      {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 6 ] !== "" && this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 6 ] !== null ? (
-                        <a
-                          href={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 6 ]}
-                          style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
-                          онлайн-конференцию</a>) : (<div></div>)
-                      }
-                    </TextBox>
-                  }
+                      </TextBox>
+                    }
 
-                  contentRight={
-                    <TextBox>
+                    contentRight={
+                      <TextBox>
+                        <Badge
+                          text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 2 ]}
+                          contentLeft={<IconLocation size="xs"/>}
+                          style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
+                        <TextBoxTitle> {this.Type(this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 4 ])}</TextBoxTitle>
+
+                      </TextBox>}
+                    contentLeft={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 1 ] !== "" ? (
                       <Badge
-                        text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 2 ]}
-                        contentLeft={<IconLocation size="xs"/>}
-                        style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
-                      <TextBoxTitle> {this.Type(this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 4 ])}</TextBoxTitle>
+                        text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 5 ][ 0 ]}
+                        view="primary" style={{ marginRight: "0.5em" }} size="l"/>) : (<div></div>)
+                    }
+                  ></CellListItem>
+                </CardContent>
+              </CardBody>)
+            : (
+              <CardBody>
+                <CardContent>
 
-                    </TextBox>}
-                  contentLeft={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 1 ] !== "" ? (
-                    <Badge
-                      text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 5 ][ 0 ]}
-                      view="primary" style={{ marginRight: "0.5em" }} size="l"/>) : (<div></div>)
-                  }
-                ></CellListItem>
-              </CardContent>
-            </CardBody>) : (
-             <CardBody>
-               <CardContent>
+                  <TextBox>
+                    <CardParagraph1 style={{ color: DEFAULT_TEXT_COLOR }}>Сейчас</CardParagraph1>
+                  </TextBox>
 
-                 <TextBox>
-                   <CardParagraph1 style={{ color: "var(--plasma-colors-white-secondary)" }}>Сейчас</CardParagraph1>
-                 </TextBox>
-
-                 < CardBody2 style={{ fontSize: "18px" }}>
-                   Пары нет🎊
-                 </CardBody2>
-               </CardContent>
-             </CardBody>
-           )
+                  < CardBody2 style={{ fontSize: "18px" }}>
+                    Пары нет🎊
+                  </CardBody2>
+                </CardContent>
+              </CardBody>
+            )
 
           }
           {
@@ -200,7 +209,7 @@ class Dashboard extends React.Component {
               <CardBody>
                 <CardContent>
                   <TextBox>
-                    <CardParagraph1 style={{ color: "var(--plasma-colors-white-secondary)" }}>Дальше</CardParagraph1>
+                    <CardParagraph1 style={{ color: DEFAULT_TEXT_COLOR }}>Дальше</CardParagraph1>
                   </TextBox>
 
                   <CellListItem
@@ -221,12 +230,10 @@ class Dashboard extends React.Component {
                              this.isCorrectTeacher()
                            }}> {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 1 ]} </a>)}
 
-                        {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 6 ] !== "" && this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 6 ] !== null ? (
-                          <a
-                            href={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 6 ]}
-                            style={{ color: "var(--plasma-colors-white-secondary)" }}>Ссылка на
-                            онлайн-конференцию</a>) : (<div></div>)
-                        }
+                        <LinkToOnline
+                          url={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 6 ]}
+                        />
+
                       </TextBox>
                     }
 
@@ -250,6 +257,7 @@ class Dashboard extends React.Component {
           }
 
         </Card>
+
         <Row>
           <Col style={{ marginLeft: "2em", paddingTop: "1em" }}>
             <IconApps/>
@@ -262,7 +270,9 @@ class Dashboard extends React.Component {
             </TextBox>
           </Col>
         </Row>
+
         <Row style={{ marginLeft: "1em", marginRight: "1em" }}>
+
           <Col size={2}>
             <Card style={{ height: "20vh", marginTop: "0.5em" }}>
               <CardBody>
@@ -276,10 +286,14 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
+
           <Col size={2}>
-            <Card style={{ height: "20vh", marginTop: "0.5em" }} onClick={() => {
-              this.setState({ page: 15 })
-            }}>
+            <Card
+              style={{ height: "20vh", marginTop: "0.5em" }}
+              onClick={() => {
+                this.setState({ page: 15 })
+              }}
+            >
               <CardBody>
                 <CardContent>
                   <TextBox>
@@ -291,6 +305,7 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
+
           <Col size={2}>
             <Card style={{ height: "20vh", marginTop: "0.5em" }}>
               <CardBody>
@@ -304,6 +319,7 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
+
           <Col size={2}>
             <Card style={{ height: "20vh", marginTop: "0.5em" }}>
               <CardBody>
@@ -317,11 +333,14 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </Col>
+
         </Row>
+
         <div style={{
           width:  '200px',
           height: '300px',
         }}></div>
+
       </Container>
     </DeviceThemeProvider>
   }
