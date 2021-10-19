@@ -28,6 +28,7 @@ import "../App.css";
 import {
   DEFAULT_TEXT_COLOR,
   DocStyle,
+  HOME_PAGE_NO,
   getThemeBackgroundByChar,
 } from '../App';
 import LinkToOnline from './LinkToOnline';
@@ -81,7 +82,7 @@ class Dashboard extends React.Component {
             </TextBox>
           </Col>
           <Col style={{ margin: "0 0 0 auto" }}>
-            <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({ page: 0 })}
+            <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({ page: HOME_PAGE_NO })}
                     contentRight={<IconSettings size="s" color="inherit"/>}/>
           </Col>
         </Row>

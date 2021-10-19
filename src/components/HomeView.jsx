@@ -12,7 +12,8 @@ import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
 
 import "../App.css";
 import {
-  NAV_PAGE_NO,
+  NAVIGATOR_PAGE_NO,
+  DASHBOARD_PAGE_NO,
   getThemeBackgroundByChar,
 } from '../App';
 
@@ -119,7 +120,7 @@ class Home extends React.Component {
               <Col style={{ marginLeft: "auto" }}>
                 <GoToMenuButton
                   onClick={() => {
-                    this.handleChange("page", 16)
+                    this.handleChange("page", DASHBOARD_PAGE_NO)
                   }}
                 />
                 {
@@ -212,7 +213,7 @@ class Home extends React.Component {
                <Col style={{ marginLeft: "auto" }}>
                <GoToMenuButton
                   onClick={() => {
-                    this.handleChange("page", NAV_PAGE_NO)
+                    this.handleChange("page", NAVIGATOR_PAGE_NO)
                   }}
                 />
                  {! this.state.disabled ?

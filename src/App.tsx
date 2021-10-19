@@ -24,7 +24,7 @@ import {
   IconNavigationArrow,
 } from "@sberdevices/plasma-icons";
 import HomeWeekChange from "./components/HomeWeekChange";
-import ScheduleCarousel from "./components/ScheduleCarousel";
+import WeekCarousel from "./components/WeekCarousel";
 import ScheduleDayFull from "./components/ScheduleDayFull";
 
 import {
@@ -37,6 +37,7 @@ import {
   IScheduleLessonInfo,
   IScheduleApiData,
 } from "./APIHelper";
+import WeekCarouselDay from "./components/WeekCarousel/WeekCarouselDay";
 import {MS_IN_DAY, formatDateWithDashes, formatDateWithDots, pairNumberToPairText, getFullGroupName} from './utils';
 
 import {
@@ -78,7 +79,9 @@ import Dashboard from './components/Dashboard';
 import HeaderLogo from './components/HeaderLogo';
 import HeaderSchedule from './components/HeaderSchedule';
 
-export const NAV_PAGE_NO = 15;
+export const HOME_PAGE_NO = 0;
+export const NAVIGATOR_PAGE_NO = 15;
+export const DASHBOARD_PAGE_NO = 16;
 
 const INITIAL_PAGE = 7;
 
@@ -452,11 +455,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.setState({page: 7, checked: true, star: true, bd: this.state.groupId, student: true});
                 } else {
                   this.ChangePage()
-                  this.setState({page: 0});
+                  this.setState({page: HOME_PAGE_NO});
                 }
               } else {
                 this.ChangePage()
-                this.setState({page: 0});
+                this.setState({page: HOME_PAGE_NO});
               }
             })
           }
@@ -916,7 +919,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       switch (action.type) {
         case 'profile':
           this.ChangePage()
-          return this.setState({page: 0});
+          return this.setState({page: HOME_PAGE_NO});
           break;
 
         case 'for_today':
@@ -1270,17 +1273,17 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'group':
           if (action.note[0] === 0) {
             console.log(action.note[1].data.groupName[0]);
-            this.setState({group: action.note[1].data.groupName[0].toUpperCase(), page: 0});
+            this.setState({group: action.note[1].data.groupName[0].toUpperCase(), page: HOME_PAGE_NO});
           } else {
             console.log(action.note[1].data.groupName[1])
-            this.setState({group: action.note[1].data.groupName[1].toUpperCase(), page: 0})
+            this.setState({group: action.note[1].data.groupName[1].toUpperCase(), page: HOME_PAGE_NO})
           }
           break
 
         case 'subgroup':
           console.log('subgroup', action)
           this.ChangePage();
-          this.setState({subGroup: action.note, page: 0});
+          this.setState({subGroup: action.note, page: HOME_PAGE_NO});
           break
 
         default:
@@ -1572,7 +1575,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             <Row style={{margin: "1em"}}>
 
-              <HeaderLogo />
+              <HeaderLogo/>
 
               <HeaderSchedule
                 label={
@@ -1587,7 +1590,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   size="s"
                   view="clear"
                   pin="circle-circle"
-                  onClick={() => this.setState({page: NAV_PAGE_NO})}
+                  onClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
                   contentRight={
                     <IconNavigationArrow size="s" color="inherit"/>
                   }
@@ -1625,7 +1628,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   size="s"
                   view="clear"
                   pin="circle-circle"
-                  onClick={() => this.setState({page: 0})}
+                  onClick={() => this.setState({page: HOME_PAGE_NO})}
                   contentRight={
                     <IconSettings size="s" color="inherit"/>
                   }
@@ -1653,7 +1656,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }}
             />
 
-            <ScheduleCarousel
+            <WeekCarousel
               i={this.state.i}
               index={index}
               onIndexChange={() => this.Index()}
@@ -1852,7 +1855,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   render() {
     console.log('render');
     switch (this.state.page) {
-      case 0:
+      case HOME_PAGE_NO:
         return <Home
           state={this.state}
           isCorrect={this.isCorrect}
@@ -1900,11 +1903,17 @@ export class App extends React.Component<IAppProps, IAppState> {
         return this.Raspisanie(5, 1);
       case 14:
         return this.Raspisanie(6, 1);
-      case NAV_PAGE_NO:
-        return <Navigator state={this.state} setValue={this.setValue}/>
-      case 16:
-        return <Dashboard state={this.state} setValue={this.setValue} getCurrentLesson={this.getCurrentLesson}
-                          whatLesson={this.whatLesson}
+      case NAVIGATOR_PAGE_NO:
+        return <Navigator
+          state={this.state}
+          setValue={this.setValue}
+        />
+      case DASHBOARD_PAGE_NO:
+        return <Dashboard
+          state={this.state}
+          setValue={this.setValue}
+          getCurrentLesson={this.getCurrentLesson}
+          whatLesson={this.whatLesson}
         />
       default:
         break;
