@@ -1378,6 +1378,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         firstDayWeek
       ).then((response) => {
         this.showWeekSchedule(response, 1);
+        console.log(response)
       })
     }
     this.setState({date: date, flag: false});
@@ -1391,6 +1392,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     return this.getScheduleFromDb(datePlusWeek);
   }
 
+  async CurrentWeek(){
+    return this.getScheduleFromDb(Date.now());
+  }
+
   /**
    * Заполнение расписанием на предыдущую неделю
    */
@@ -1402,12 +1407,23 @@ export class App extends React.Component<IAppProps, IAppState> {
   showWeekSchedule(parsedSchedule: IScheduleApiData, i) { //заполнение данными расписания из бд
     this.setState({spinner: false});
 
-    let days = new Array(7).fill([]);
+    let days;
+    /*
+    При первой загрузке this.state.days равен [] 
+    и его надо инициализировать
+    */
+    if(this.state.days.length==0)
+    {
+      days = new Array(7).fill([]);
     for (let day in days) {
       days[day] = Array(7).fill([])
       for (let bell in days[day]) {
         days[day][bell] = [new Bell(), new Bell()];
       }
+    }
+    }
+    else{
+      days=this.state.days
     }
 
     for (let day_num = 1; day_num < 7; day_num++) {
@@ -1645,9 +1661,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                 this.setState({page: 9})
               }}
               onThisWeekClick={() => {
-                console.log(199)
-                this.setState({date: Date.now()});
-                this.setState({date: Date.now(), flag: true, page: 7})
+                this.CurrentWeek();
+                this.setState({flag: true, page: 7})
               }}
               onNextWeekClick={() => {
                 this.setState({spinner: false});
