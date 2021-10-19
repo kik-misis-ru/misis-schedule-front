@@ -20,6 +20,8 @@ import {
 import {DocStyle} from '../App';
 
 import {SwitchStudentTeacher} from './Home/SwitchTeacherStudent.jsx'
+import {ShowSchedule} from './Home/ShowSchedule.jsx'
+import {RememberDataCheckbox} from './Home/RememberDataCheckbox.jsx'
 
 const DESC_JOY    = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -184,16 +186,14 @@ class Home extends React.Component {
                 alignItems:     "flex-start",
                 justifyContent: "center",
                 margin:         "1.1em"
-              }}><Checkbox label="Запомнить эту группу " checked={this.props.checked} onChange={(event) => {
-                this.handleChange("checked", event.target.checked);
-                console.log(this.props.checked);
-              }
-              }/>
+              }}>   
+                <RememberDataCheckbox
+                  label="Запомнить эту группу "
+                  checked={this.props.checked}
+                  onChange={(event) => { this.handleChange("checked", event.target.checked); } } />
               </Row>
-              <Row style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", margin: "0.5em" }}>
-                <Button text="Посмотреть расписание" view="primary" onClick={() => this.props.isCorrect()}
-                        style={{ margin: "1.5%" }}/>
-              </Row>
+              <ShowSchedule
+                onClick={() => this.props.isCorrect()} />
             </div>
             <div style={{
               width:  '100px',
@@ -247,16 +247,16 @@ class Home extends React.Component {
                  alignItems:     "flex-start",
                  justifyContent: "center",
                  margin:         "1.1em"
-               }}><Checkbox label="Запомнить ФИО, если Вы преподаватель " checked={this.props.teacher_checked}
-                            onChange={(event) => {
-                              this.handleChange("teacher_checked", event.target.checked);
-                            }
-                            }/>
+                }}>
+
+              <RememberDataCheckbox
+                  label="Запомнить ФИО, если Вы преподаватель "
+                  checked={this.props.teacher_checked}
+                  onChange={(event) => { this.handleChange("teacher_checked", event.target.teacher_checked); } } />
                </Row>
-               <Row style={{ display: "flex", alignItems: "flex-start", justifyContent: "center", margin: "1em" }}>
-                 <Button text="Посмотреть расписание" view="primary" onClick={() => this.props.isCorrectTeacher()}
-                         style={{ margin: "3%" }}/>
-               </Row>
+
+               <ShowSchedule
+                onClick={() => this.props.isCorrect()} />
              </div>
              <div style={{
                width:  '100px',
