@@ -1420,7 +1420,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           let lesson_info: IScheduleLessonInfo = parsedSchedule.schedule[bell][`day_${day_num}`].lessons[0]
           let lesson_info_state: Bell = days[day_num - 1][bell_num][i]
 
-          const subgroup_name = lesson_info.groups[0].subgroup_name;
+          const subgroup_name = lesson_info?.groups?.[0]?.subgroup_name;
 
           if (
             (parsedSchedule.schedule[bell_num] !== undefined) &&
