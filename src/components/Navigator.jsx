@@ -60,7 +60,7 @@ class Navigator extends React.Component{
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
           <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 0 )}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 7 )}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
+          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 17 )}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
           </Col>
         </Row>
         
@@ -106,7 +106,7 @@ class Navigator extends React.Component{
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
           <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 0 )}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 7 )}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
+          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 17 )}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
           </Col>
         </Row>
         <Row >

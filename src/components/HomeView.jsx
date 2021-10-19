@@ -1,5 +1,5 @@
 import React from "react";
-import {Container, Row, Col, Button, Tabs, TabItem, DeviceThemeProvider} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, Button, Cell, Tabs, TabItem, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   TextBoxBigTitle,
@@ -19,28 +19,30 @@ import {
 
 import {DocStyle} from '../App';
 
-import {SwitchStudentTeacher} from './Home/SwitchTeacherStudent.jsx'
-import {ShowSchedule} from './Home/ShowSchedule.jsx'
-import {RememberDataCheckbox} from './Home/RememberDataCheckbox.jsx'
+import {SwitchStudentTeacher} from './Home/SwitchTeacherStudent'
+import {ShowSchedule} from './Home/ShowSchedule'
+import {RememberDataCheckbox} from './Home/RememberDataCheckbox'
+//import {Main} from './Home/Main.jsx'
 
-const DESC_JOY    = "Заполни данные, чтобы открывать расписание одной фразой";
-const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
-const labelGroup = "Номер академической группы через дефисы";
-const labelSubgroup= "Номер подгруппы: 1 или 2";
-const labelEnggroup= "Число номера группы по английскому";
-const labelTeacher= "Фамилия И. О.";
+
+const DESC_JOY      = "Заполни данные, чтобы открывать расписание одной фразой";
+const DESC_OTHERS   = "Чтобы посмотреть расписание, укажите данные учебной группы";
+const labelGroup    = "Номер академической группы через дефисы";
+const labelSubgroup = "Номер подгруппы: 1 или 2";
+const labelEnggroup = "Число номера группы по английскому";
+const labelTeacher  = "Фамилия И. О.";
 
 export const GoToMenuButton = (props) => <Button
   size="s"
   view="clear"
-  onClick = {props.onClick}
+  onClick={props.onClick}
   pin="circle-circle"
   contentRight={
     <IconHouse size="s" color="inherit"/>
   }
 />
 
-export const GoToScheduleButton = (props) =>  <Button
+export const GoToScheduleButton = (props) => <Button
   view="clear"
   onClick={props.onClick}
   contentRight={
@@ -51,9 +53,59 @@ export const GoToScheduleButton = (props) =>  <Button
   style={{ marginTop: "1em", marginRight: "1em" }}
 />
 
-class TextFieldForUserInfo extends React.Component{
+class Main extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange         = this.handleChange.bind(this)
+    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+  }
 
-  constructor(props){
+  handleChange(key, e) {
+    this.props.setValue(key, e);
+  }
+
+  convertIdInGroupName() {
+    this.props.convertIdInGroupName();
+  }
+
+
+  render() {
+    return (
+      <Container style={{ padding: 0 }}>
+
+        <Row>
+          <Col style={{ marginLeft: "auto" }}>
+            <GoToMenuButton
+              onClick={() => {
+                this.handleChange("page", DASHBOARD_PAGE_NO)
+              }}
+            />
+            {
+              !this.props.disabled
+              ?
+              <GoToScheduleButton
+                onClick={() => {
+                  this.props.convertIdInGroupName();
+                  this.handleChange("page", 17)
+                }}
+              />
+              : <Button view="clear" disabled={this.props.disabled}/>
+            }
+
+          </Col>
+        </Row>
+        <Cell style={{ padding: 0 }}
+              content={this.props.contentRight}>
+        </Cell>
+      </Container>
+    )
+  }
+}
+
+
+class TextFieldForUserInfo extends React.Component {
+
+  constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
   }
@@ -62,7 +114,7 @@ class TextFieldForUserInfo extends React.Component{
     this.props.handleChange(key, e);
   }
 
-  render(){
+  render() {
     return <TextField
       id="tf"
       label={this.props.label}
@@ -79,7 +131,7 @@ class TextFieldForUserInfo extends React.Component{
 }
 
 
-class Home extends React.Component {
+class HomeView extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange         = this.handleChange.bind(this)
@@ -88,7 +140,7 @@ class Home extends React.Component {
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     let disabled              = true;
     if (props.groupId !== "") disabled = false;
-    this.state              = { disabled: disabled }
+    this.state = { disabled: disabled }
     this.handleChange("description", props.character === "joy"
                                      ? DESC_JOY
                                      : DESC_OTHERS)
@@ -118,88 +170,101 @@ class Home extends React.Component {
       }
       <div>
         {this.props.student ? (
-          <Container style={{ padding: 0 }}>
+          // <Container style={{ padding: 0 }}>
 
-            <Row>
-              <Col style={{ marginLeft: "auto" }}>
-                <GoToMenuButton
-                  onClick={() => {
-                    this.handleChange("page", DASHBOARD_PAGE_NO)
-                  }}
+          //   <Row>
+          //     <Col style={{ marginLeft: "auto" }}>
+          //       <GoToMenuButton
+          //         onClick={() => {
+          //           this.handleChange("page", DASHBOARD_PAGE_NO)
+          //         }}
+          //       />
+          //       {
+          //         !this.state.disabled 
+          //         ? 
+          //         <GoToScheduleButton
+          //         onClick={() => {
+          //           this.props.convertIdInGroupName();
+          //           this.handleChange("page", 7)
+          //         }}
+          //         />
+          //         : <Button view="clear" disabled={this.state.disabled}/>
+          //       }
+
+          //     </Col>
+          //   </Row>
+
+          //   <div>
+          <Main
+            setValue={this.handleChange}
+            convertIdInGroupName={this.convertIdInGroupName}
+            disabled={this.props.disabled}
+            contentRight={
+              <Container style={{ padding: 0 }}>
+                <TextBox>
+                  <TextBoxBigTitle style={{ margin: '1.5%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
+                </TextBox>
+                <SwitchStudentTeacher
+                  isStudent={this.props.student}
+                  onSwitch={(tabIndex) => this.handleChange("student", tabIndex === 0)}
                 />
-                {
-                  !this.state.disabled
-                  ?
-                  <GoToScheduleButton
-                    onClick={() => {
-                      this.props.convertIdInGroupName();
-                      this.handleChange("page", 7)
-                    }}
-                  />
-                  : <Button view="clear" disabled={this.state.disabled}/>
-                }
+                <TextBox>
+                  <TextBoxSubTitle style={{
+                    margin:    '1.5em',
+                    textAlign: "center",
+                    color:     "white"
+                  }}>
+                    {this.state.description}
+                  </TextBoxSubTitle>
+                </TextBox>
 
-              </Col>
-            </Row>
+                <TextFieldForUserInfo
+                  label={labelGroup}
+                  status={this.props.color_group}
+                  value={this.props.group}
+                  fieldType="group"
+                  handleChange={this.handleChange}/>
 
-            <div>
+                <TextFieldForUserInfo
+                  label={labelSubgroup}
+                  status={this.props.color_sub}
+                  value={this.props.subGroup}
+                  fieldType="subGroup"
+                  handleChange={this.handleChange}/>
 
-              <TextBox>
-                <TextBoxBigTitle style={{ margin: '1.5%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
-              </TextBox>
-              <SwitchStudentTeacher
-                student={this.props.student}
-                onClickStd={() => { this.handleChange("student", true) }}
-                onClickTeach={() => { this.handleChange("student", false) }} />
+                <TextFieldForUserInfo
+                  label={labelEnggroup}
+                  status={this.props.color_enggroup}
+                  value={this.props.engGroup}
+                  fieldType="engGroup"
+                  handleChange={this.handleChange}/>
 
-              <TextBox>
-                <TextBoxSubTitle style={{
-                  margin:    '1.5em',
-                  textAlign: "center",
-                  color:     "white"
-                }}>{this.state.description}</TextBoxSubTitle>
-              </TextBox>
+                <Row style={{
+                  display:        "flex",
+                  alignItems:     "flex-start",
+                  justifyContent: "center",
+                  margin:         "1.1em"
+                }}>
+                  <RememberDataCheckbox
+                    label="Запомнить эту группу "
+                    checked={this.props.checked}
+                    onChange={(event) => {
+                      this.handleChange("checked", event.target.checked);
+                    }}/>
+                </Row>
+                <ShowSchedule
+                  onClick={() => this.props.isCorrect()}/>
+              </Container>
+            }
+          />
+          //   </div>
+          //   <div style={{
+          //     width:  '100px',
+          //     height: '100px',
+          //   }}></div>
+          // </Container>) 
+        ) : (
 
-              <TextFieldForUserInfo
-                label={labelGroup}
-                status={this.props.color_group}
-                value={this.props.group}
-                fieldType="group"
-                handleChange={this.handleChange}/>
-
-              <TextFieldForUserInfo
-                label={labelSubgroup}
-                status={this.props.color_sub}
-                value={this.props.subGroup}
-                fieldType="subGroup"
-                handleChange={this.handleChange}/>
-
-              <TextFieldForUserInfo
-                label={labelEnggroup}
-                status={this.props.color_enggroup}
-                value={this.props.engGroup}
-                fieldType="engGroup"
-                handleChange={this.handleChange}/>
-
-              <Row style={{
-                display:        "flex",
-                alignItems:     "flex-start",
-                justifyContent: "center",
-                margin:         "1.1em"
-              }}>
-                <RememberDataCheckbox
-                  label="Запомнить эту группу "
-                  checked={this.props.checked}
-                  onChange={(event) => { this.handleChange("checked", event.target.checked); } } />
-              </Row>
-              <ShowSchedule
-                onClick={() => this.props.isCorrect()} />
-            </div>
-            <div style={{
-              width:  '100px',
-              height: '100px',
-            }}></div>
-          </Container>) : (
            <Container style={{ padding: 0 }}>
 
              <Row>
@@ -209,14 +274,14 @@ class Home extends React.Component {
                      this.handleChange("page", NAVIGATOR_PAGE_NO)
                    }}
                  />
-                 {! this.state.disabled ?
+                 {!this.state.disabled ?
                   <GoToScheduleButton
                     disabled={this.state.disabled}
                     onClick={() => {
-                      this.handleChange("page", 7)
+                      this.handleChange("page", 17)
                     }}
                   />
-                                        : (<Button view="clear" disabled={this.state.disabled}/>)
+                                       : (<Button view="clear" disabled={this.state.disabled}/>)
                  }
                </Col>
              </Row>
@@ -225,12 +290,13 @@ class Home extends React.Component {
                <TextBox>
                  <TextBoxBigTitle style={{ margin: '3%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
                </TextBox>
-               <SwitchStudentTeacher
-                 student={this.props.student}
-                 onClickStd={() => { this.handleChange("student", true) }}
-                 onClickTeach={() => { this.handleChange("student", false) }} />
-               <TextBox>
 
+               <SwitchStudentTeacher
+                 isStudent={this.props.student}
+                 onSwitch={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+               />
+
+               <TextBox>
                  <TextBoxSubTitle style={{ margin: '1.5em', textAlign: "center", color: "white" }}>Чтобы посмотреть
                    расписание, укажите фамилию и инициалы через пробел и точку</TextBoxSubTitle>
                </TextBox>
@@ -252,11 +318,13 @@ class Home extends React.Component {
                  <RememberDataCheckbox
                    label="Запомнить ФИО, если Вы преподаватель "
                    checked={this.props.teacher_checked}
-                   onChange={(event) => { this.handleChange("teacher_checked", event.target.teacher_checked); } } />
+                   onChange={(event) => {
+                     this.handleChange("teacher_checked", event.target.teacher_checked);
+                   }}/>
                </Row>
 
                <ShowSchedule
-                 onClick={() => this.props.isCorrect()} />
+                 onClick={() => this.props.isCorrect()}/>
              </div>
              <div style={{
                width:  '100px',
@@ -270,4 +338,4 @@ class Home extends React.Component {
   }
 }
 
-export default Home
+export default HomeView
