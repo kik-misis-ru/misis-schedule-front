@@ -85,7 +85,7 @@ class Main extends React.Component {
                 <GoToScheduleButton
                 onClick={() => {
                   this.props.convertIdInGroupName();
-                  this.handleChange("page", 7)
+                  this.handleChange("page", 17)
                 }}
                 />
                 : <Button view="clear" disabled={this.props.disabled}/>
@@ -274,7 +274,7 @@ class HomeView extends React.Component {
                     <GoToScheduleButton
                     disabled={this.state.disabled}
                     onClick={() => {
-                      this.handleChange("page", 7)
+                      this.handleChange("page", 17)
                     }}
                     />
                      : (<Button view="clear" disabled={this.state.disabled}/>)

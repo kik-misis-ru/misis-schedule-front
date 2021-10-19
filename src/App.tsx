@@ -78,6 +78,7 @@ import {Bell} from './ScheduleStructure'
 import Dashboard from './components/Dashboard';
 import HeaderLogo from './components/HeaderLogo';
 import HeaderSchedule from './components/HeaderSchedule';
+import { time } from "console";
 
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
@@ -441,7 +442,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.ChangePage()
                   this.setState({
                     student: false,
-                    page: 7,
+                    page: 17,
                     teacher_checked: true,
                     teacher_star: true,
                     teacher_bd: this.state.teacherId,
@@ -452,7 +453,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     this.showWeekSchedule(response, 0)
                   });
                   this.ChangePage()
-                  this.setState({page: 7, checked: true, star: true, bd: this.state.groupId, student: true});
+                  this.setState({page: 17, checked: true, star: true, bd: this.state.groupId, student: true});
                 } else {
                   this.ChangePage()
                   this.setState({page: HOME_PAGE_NO});
@@ -934,7 +935,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               })
 
               this.ChangePage()
-              return this.setState({page: 8});
+              return this.setState({page: 7});
 
             } else {
               this.sendData({
@@ -955,7 +956,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 parameters: {day: DAY_SUNDAY},
               })
               this.ChangePage()
-              return this.setState({page: 8});
+              return this.setState({page: 7});
             } else {
               this.sendData({
                 action_id: "tomorrowSchedule",
@@ -970,14 +971,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
             this.ChangePage()
-            return this.setState({page: 9});
+            return this.setState({page: 8});
           }
           break;
 
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.ChangePage()
-            return this.setState({date: Date.now(), flag: true, page: 7});
+            return this.setState({date: Date.now(), flag: true, page: 17});
           }
           break;
 
@@ -1015,7 +1016,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               return this.setState({page: this.state.today});
             } else if (this.state.today + 1 === 7) {
               this.ChangePage();
-              return this.setState({page: 8});
+              return this.setState({page: 7});
             } else {
               this.ChangePage();
               this.setState({page: this.state.today + 1});
@@ -1066,7 +1067,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 amount: numPron[countOfLessons[1]]
               }
               if (dayNameDict[countOfLessons[0]][1] < this.state.today) {
-                page = 8;
+                page = 7;
               }
               this.ChangePage();
               this.setState({page: dayNameDict[countOfLessons[0]][1] + page})
@@ -1100,7 +1101,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({page: 8})
+              this.setState({page: 7})
             } else {
               this.setState({page: this.state.today})
             }
@@ -1145,7 +1146,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
             this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({page: 8})
+              this.setState({page: 7})
             } else {
               this.setState({page: this.state.today});
             }
@@ -1198,7 +1199,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 dayName: dayOfWeekNameLong
               }
               if (dayOfWeekIdx1 < this.state.today) {
-                page1 = 8;
+                page1 = 7;
               }
 
               const newPage = dayOfWeekIdx1 + page1;
@@ -1223,7 +1224,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if ((action.note[1] === null) && (action.note[2] === null)) {
               if (!this.state.flag) {
                 console.log(this.state.flag);
-                page2 = 8;
+                page2 =7;
               } else {
                 page2 = 0;
               }
@@ -1236,7 +1237,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 page2 = 0;
               } else if (action.note[2] !== null) {
                 console.log(action.note[2]);
-                page2 = 8;
+                page2 = 7;
               }
             }
 
@@ -1505,45 +1506,13 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   ChangePage() {
 
-    let timeParam = 0;
+    let timeParam =  this.state.page;
     let weekParam = 0;
-    switch (this.state.page) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-        timeParam = this.state.page
-        weekParam = 0;
-        break;
-      case 9:
-        timeParam = 1
-        weekParam = 1
-        break;
-      case 10:
-        timeParam = 2
-        weekParam = 1
-        break;
-      case 11:
-        timeParam = 3
-        weekParam = 1
-        break;
-      case 12:
-        timeParam = 4
-        weekParam = 1
-        break;
-      case 13:
-        timeParam = 5
-        weekParam = 1
-        break;
-      case 14:
-        timeParam = 6
-        weekParam = 1
-        break;
-      default:
-        break;
+    if(timeParam>7){
+      weekParam=1
+      timeParam-=7
     }
+   
     this.setState({i: 0});
     this.setState({star: false});
     if (weekParam === 1) {
@@ -1572,7 +1541,12 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  Raspisanie(timeParam: number, weekParam: number) {
+  Raspisanie(timeParam: number) {
+    let weekParam = 0;
+    if(timeParam > 7){
+      timeParam-=7;
+      weekParam=1
+    }
     // this.setState({i: 0});
     const current = this.getCurrentLesson(new Date(Date.now()));
     const day_num = timeParam - 1;
@@ -1662,7 +1636,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }}
               onThisWeekClick={() => {
                 this.CurrentWeek();
-                this.setState({flag: true, page: 7})
+                this.setState({flag: true, page: 17})
               }}
               onNextWeekClick={() => {
                 this.setState({spinner: false});
@@ -1869,6 +1843,10 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   render() {
     console.log('render');
+    let page = this.state.page;
+    if(page>=1 && page<=13){
+      return this.Raspisanie(page);
+    }
     switch (this.state.page) {
       case HOME_PAGE_NO:
         return <HomeView
@@ -1890,34 +1868,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           checked={this.state.checked}
           teacher_checked={this.state.teacher_checked}
         />
-      case 1:
-        return this.Raspisanie(1, 0);
-      case 2:
-        return this.Raspisanie(2, 0);
-      case 3:
-        return this.Raspisanie(3, 0);
-      case 4:
-        return this.Raspisanie(4, 0);
-      case 5:
-        return this.Raspisanie(5, 0);
-      case 6:
-        return this.Raspisanie(6, 0);
-      case 7:
-        return this.Spinner();
-      case 8:
-        return this.Raspisanie(7, 0);
-      case 9:
-        return this.Raspisanie(1, 1);
-      case 10:
-        return this.Raspisanie(2, 1);
-      case 11:
-        return this.Raspisanie(3, 1);
-      case 12:
-        return this.Raspisanie(4, 1);
-      case 13:
-        return this.Raspisanie(5, 1);
-      case 14:
-        return this.Raspisanie(6, 1);
       case NAVIGATOR_PAGE_NO:
         return <Navigator
           state={this.state}
@@ -1930,6 +1880,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           getCurrentLesson={this.getCurrentLesson}
           whatLesson={this.whatLesson}
         />
+      case 17:
+        return  this.Spinner();
       default:
         break;
     }

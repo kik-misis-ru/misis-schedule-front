@@ -57,7 +57,7 @@ export const WeekCarousel = ({
                 isSelected={i === selectedWeekDayIndex}
                 // isToday={(today === i + 1) && (weekParam === 0)}
                 isToday={(i === todayWeekDayIndex) && (weekParam === 0)}
-                onClick={() => onSetValue("page", (i + 1 + page) )}
+                onClick={() => {onSetValue("page", (i + page + (weekParam==1 ? 0: 1)))}}
               />
             )
           })
