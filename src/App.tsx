@@ -71,7 +71,7 @@ import groups from './groups_list.json';
 import engGroups from './data/engGroups.json'
 import building from './data/buldings.json'
 
-import Home from './components/HomeView';
+import HomeView from './components/HomeView';
 import Navigator from './components/Navigator';
 import StarButtonView from './components/StarButtonView'
 import {Bell} from './ScheduleStructure'
@@ -1856,7 +1856,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log('render');
     switch (this.state.page) {
       case HOME_PAGE_NO:
-        return <Home
+        return <HomeView
           state={this.state}
           isCorrect={this.isCorrect}
           convertIdInGroupName={this.convertIdInGroupName}
