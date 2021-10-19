@@ -1,6 +1,7 @@
 import {Card, CardBody, CardContent, RectSkeleton} from "@sberdevices/plasma-ui";
 import React from "react";
 import {IScheduleDays} from "../App";
+import {OTHER_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
 import ScheduleDayLessons from "./ScheduleDayLessons";
 import ScheduleDayOff from "./ScheduleDayOff";
 
@@ -21,7 +22,7 @@ export const ScheduleDayFull = ({
   days: IScheduleDays,
   day_num: number,
   current: string | undefined,
-  weekParam: number,
+  weekParam: THIS_OR_OTHER_WEEK,
   timeParam: number,
   student: boolean,
   teacher_correct: boolean,

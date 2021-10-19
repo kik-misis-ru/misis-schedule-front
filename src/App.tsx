@@ -1,64 +1,39 @@
+import {createAssistant, createSmartappDebugger,} from "@sberdevices/assistant-client";
+import {IconNavigationArrow, IconSettings,} from "@sberdevices/plasma-icons";
+import {background, gradient, text} from "@sberdevices/plasma-tokens";
+import {darkEva, darkJoy, darkSber} from "@sberdevices/plasma-tokens/themes";
+import {Button, Col, Container, DeviceThemeProvider, Row, Spinner,} from '@sberdevices/plasma-ui';
 import React from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  DeviceThemeProvider,
-  Spinner,
-} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  Image,
-} from "@sberdevices/plasma-ui";
-import {
-  createSmartappDebugger,
-  createAssistant,
-} from "@sberdevices/assistant-client";
-import "./App.css";
 import styled, {createGlobalStyle, div} from "styled-components";
-import {darkJoy, darkEva, darkSber} from "@sberdevices/plasma-tokens/themes";
-import {text, background, gradient} from "@sberdevices/plasma-tokens";
-import {
-  IconSettings,
-  IconNavigationArrow,
-} from "@sberdevices/plasma-icons";
-import HomeWeekChange from "./components/HomeWeekChange";
-import WeekCarousel from "./components/WeekCarousel";
-import ScheduleDayFull from "./components/ScheduleDayFull";
 
 import {
   createUser,
-  getScheduleFromDb,
   getIdTeacherFromDb,
   getInTeacherFromDb,
+  getScheduleFromDb,
   getScheduleTeacherFromDb,
   getUser,
-  IScheduleLessonInfo,
   IScheduleApiData,
+  IScheduleLessonInfo,
 } from "./APIHelper";
-import WeekCarouselDay from "./components/WeekCarousel/WeekCarouselDay";
-import {MS_IN_DAY, formatDateWithDashes, formatDateWithDots, pairNumberToPairText, getFullGroupName} from './utils';
+import "./App.css";
+import Dashboard from './components/Dashboard';
+import HeaderLogo from './components/HeaderLogo';
+import HeaderSchedule from './components/HeaderSchedule';
 
-import {
-  DAY_SUNDAY,
-  DAY_NOT_SUNDAY,
-  DAY_TODAY,
-  DAY_TOMORROW,
-  TodayOrTomorrow,
-  StartOrEnd,
-  LESSON_EXIST,
-  Character,
-  CHAR_SBER,
-  CHAR_EVA,
-  CHAR_JOY,
-  CHAR_TIMEPARAMOY,
-} from './types/base.d'
-import {
-  NowOrWill,
-  AssistantEvent,
-  AssistantAction,
-} from './types/AssistantReceiveAction.d'
+import HomeView from './components/HomeView';
+import Navigator from './components/Navigator';
+import ScheduleDayFull from "./components/ScheduleDayFull";
+import StarButtonView from './components/StarButtonView'
+import WeekCarousel from "./components/WeekCarousel";
+import WeekSelect from "./components/WeekSelect";
+import building from './data/buldings.json'
+import engGroups from './data/engGroups.json'
+
+import groups from './groups_list.json';
+import {Bell} from './ScheduleStructure'
+import {AssistantAction, AssistantEvent, NowOrWill,} from './types/AssistantReceiveAction.d'
 import {
   AssistantSendAction,
   AssistantSendActionSay,
@@ -67,18 +42,24 @@ import {
   AssistantSendActionSay6,
 } from './types/AssistantSendAction.d'
 
-import groups from './groups_list.json';
-import engGroups from './data/engGroups.json'
-import building from './data/buldings.json'
-
-import HomeView from './components/HomeView';
-import Navigator from './components/Navigator';
-import StarButtonView from './components/StarButtonView'
-import {Bell} from './ScheduleStructure'
-import Dashboard from './components/Dashboard';
-import HeaderLogo from './components/HeaderLogo';
-import HeaderSchedule from './components/HeaderSchedule';
-import { time } from "console";
+import {
+  CHAR_EVA,
+  CHAR_JOY,
+  CHAR_SBER,
+  CHAR_TIMEPARAMOY,
+  Character,
+  DAY_NOT_SUNDAY,
+  DAY_SUNDAY,
+  DAY_TODAY,
+  DAY_TOMORROW,
+  LESSON_EXIST,
+  OTHER_WEEK,
+  StartOrEnd,
+  THIS_OR_OTHER_WEEK,
+  THIS_WEEK,
+  TodayOrTomorrow,
+} from './types/base.d'
+import {formatDateWithDashes, formatDateWithDots, getFullGroupName, MS_IN_DAY, pairNumberToPairText} from './utils';
 
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
@@ -88,6 +69,7 @@ const INITIAL_PAGE = 7;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 export const DEFAULT_TEXT_COLOR = 'var(--plasma-colors-white-secondary)';
+export const ACCENT_TEXT_COLOR = 'var(--plasma-colors-button-accent)';
 export const COLOR_BLACK = '';
 
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
@@ -113,12 +95,12 @@ export const DocStyle = createGlobalStyle`
   }
 `;
 
-const MyDiv100 = styled.div`
+export const MyDiv100 = styled.div`
   width: 100px;
   height: 100px;
 `;
 
-const MyDiv200 = styled.div`
+export const MyDiv200 = styled.div`
   width: 200px;
   height: 200px;
 `;
@@ -245,39 +227,6 @@ const DEFAULT_STATE_DAY: IDayHeader[] = [
   }
 ]
 
-// const X = ({today, current, day_num, days, i, timeParam, weekParam}) => {
-//   //const day_num = props.day_num;
-//   //const days= props.days;
-//   const curr_day_obj = days[day_num]
-//   const bell_id = `bell_${i + 1}`;
-//   const curr_pair_obj = curr_day_obj[bell_id];
-//   const curr_pair_week_obj = curr_pair_obj[weekParam];
-//
-//   //const curr_day_obj = Array.isArray(days) ? days[ day_num ] : undefined;
-//   //const bell_id  = `bell_${i + 1}`;
-//   //const curr_pair_obj = Array.isArray(curr_day_obj) ? curr_day_obj[ bell_id ] : undefined;
-//   //const curr_pair_week_obj = curr_pair_obj[ weekParam ];
-//
-//   const pairName = curr_pair_week_obj[PAIR_NAME_IDX];
-//   const curr_pair_no_full = curr_pair_week_obj[PAIR_NO_IDX];
-//   const curr_pair_no = curr_pair_no_full[0]; // берем первый символ строки (второй - точка)
-//   const teacherName = curr_pair_week_obj[TEACHER_NAME_IDX];
-//
-//   return curr_pair_no === current
-//   && teacherName !== ""
-//   && today === timeParam
-//   && weekParam === 0
-//     ? (
-//       < CardHeadline3 style={{color: "var(--plasma-colors-button-accent)"}}>
-//         {pairName}
-//       </ CardHeadline3>
-//     )
-//     : (
-//       < CardHeadline3>
-//         {pairName}
-//       </ CardHeadline3>
-//     )
-// }
 
 interface IBuilding {
   name: string
@@ -396,6 +345,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this._assistant = initializeAssistant(() => this.getStateForAssistant());
     this._assistant.on("data", (event: AssistantEvent) => {
       switch (event.type) {
+
         case "character":
           console.log('componentDidMount: character:', event.character.id);
           this.setState({character: event.character.id});
@@ -1507,15 +1457,15 @@ export class App extends React.Component<IAppProps, IAppState> {
   ChangePage() {
 
     let timeParam =  this.state.page;
-    let weekParam = 0;
-    if(timeParam>7){
-      weekParam=1
-      timeParam-=7
+    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    if(timeParam > 7){
+      weekParam = OTHER_WEEK
+      timeParam -= 7
     }
    
     this.setState({i: 0});
     this.setState({star: false});
-    if (weekParam === 1) {
+    if (weekParam === OTHER_WEEK) {
       this.setState({flag: false});
     } else {
       this.setState({flag: true});
@@ -1542,16 +1492,16 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   Raspisanie(timeParam: number) {
-    let weekParam = 0;
+    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
     if(timeParam > 7){
-      timeParam-=7;
-      weekParam=1
+      timeParam -= 7;
+      weekParam = OTHER_WEEK
     }
     // this.setState({i: 0});
     const current = this.getCurrentLesson(new Date(Date.now()));
     const day_num = timeParam - 1;
     const index = timeParam;
-    const page = weekParam === 1 ? 8 : 0;
+    const page = weekParam === OTHER_WEEK ? 8 : 0;
     const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
     return (
@@ -1628,7 +1578,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               </Col>
             </Row>
 
-            <HomeWeekChange
+            <WeekSelect
               onPrevWeekClick={() => {
                 this.setState({spinner: false});
                 this.PreviousWeek();
@@ -1692,6 +1642,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('isCorrectTeacher:', teacherData);
       console.log('isCorrectTeacher: status:', teacherData.status);
+
       if (teacherData.status == "-1") {
         console.log("status");
         this.setState({
@@ -1701,6 +1652,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({
           color_teacher: COLOR_NAME_WARN_RU,
         })
+
       } else {
 
         getScheduleTeacherFromDb(
@@ -1833,7 +1785,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
         <div>
           <Container style={{padding: 0}}>
-            <Spinner color="var(--plasma-colors-button-accent)"
+            <Spinner color={ACCENT_TEXT_COLOR}
                      style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
           </Container>
         </div>

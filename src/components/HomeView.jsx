@@ -1,11 +1,10 @@
 import React from "react";
-import {Container, Row, Col, Button, Cell, Tabs, TabItem, DeviceThemeProvider} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, Button, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   TextBoxBigTitle,
   TextBox,
   TextBoxSubTitle,
-  Checkbox
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
@@ -18,8 +17,9 @@ import {
 } from '../App';
 
 import {DocStyle} from '../App';
+import Main from './Home/Main';
 
-import {SwitchStudentTeacher} from './Home/SwitchTeacherStudent'
+import {SwitchStudentTeacher} from './Home/SwitchStudentTeacher'
 import {ShowSchedule} from './Home/ShowSchedule'
 import {RememberDataCheckbox} from './Home/RememberDataCheckbox'
 //import {Main} from './Home/Main.jsx'
@@ -42,65 +42,67 @@ export const GoToMenuButton = (props) => <Button
   }
 />
 
-export const GoToScheduleButton = (props) => <Button
-  view="clear"
-  onClick={props.onClick}
-  contentRight={
-    <IconChevronRight size="s" color="inherit"/>
-  }
-  size="s"
-  pin="circle-circle"
-  style={{ marginTop: "1em", marginRight: "1em" }}
-/>
+export const GoToScheduleButton = (props) => (
+  this.props.disabled
+  ? <Button
+    view="clear"
+    disabled={this.props.disabled}
+  />
+  : <Button
+    view="clear"
+    onClick={props.onClick}
+    contentRight={
+      <IconChevronRight size="s" color="inherit"/>
+    }
+    size="s"
+    pin="circle-circle"
+    style={{ marginTop: "1em", marginRight: "1em" }}
+  />
+)
 
-class Main extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleChange         = this.handleChange.bind(this)
-    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
-  }
-
-  handleChange(key, e) {
-    this.props.setValue(key, e);
-  }
-
-  convertIdInGroupName() {
-    this.props.convertIdInGroupName();
-  }
-
-
-  render() {
-    return (
-      <Container style={{ padding: 0 }}>
-
-        <Row>
-          <Col style={{ marginLeft: "auto" }}>
-            <GoToMenuButton
-              onClick={() => {
-                this.handleChange("page", DASHBOARD_PAGE_NO)
-              }}
-            />
-            {
-              !this.props.disabled
-              ?
-              <GoToScheduleButton
-                onClick={() => {
-                  this.props.convertIdInGroupName();
-                  this.handleChange("page", 17)
-                }}
-              />
-              : <Button view="clear" disabled={this.props.disabled}/>
-            }
-
-          </Col>
-        </Row>
-        <Cell style={{ padding: 0 }}
-              content={this.props.contentRight}>
-        </Cell>
-      </Container>
-    )
-  }
-}
+//class Main extends React.Component {
+//  constructor(props) {
+//    super(props);
+//    this.handleChange         = this.handleChange.bind(this)
+//    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+//  }
+//
+//  handleChange(key, e) {
+//    this.props.setValue(key, e);
+//  }
+//
+//  convertIdInGroupName() {
+//    this.props.convertIdInGroupName();
+//  }
+//
+//
+//  render() {
+//    return (
+//      <Container style={{ padding: 0 }}>
+//
+//        <Row>
+//          <Col style={{ marginLeft: "auto" }}>
+//            <GoToMenuButton
+//              onClick={() => {
+//                this.handleChange("page", DASHBOARD_PAGE_NO)
+//              }}
+//            />
+//            <GoToScheduleButton
+//              onClick={() => {
+//                this.props.convertIdInGroupName();
+//                this.handleChange("page", 17)
+//              }}
+//              disabled={this.props.disabled}
+//            />
+//          </Col>
+//        </Row>
+//        <Cell style={{ padding: 0 }}
+//              content={this.props.contentRight}>
+//        </Cell>
+//      </Container>
+//    )
+//  }
+//}
 
 
 class TextFieldForUserInfo extends React.Component {
@@ -223,21 +225,24 @@ class HomeView extends React.Component {
                   status={this.props.color_group}
                   value={this.props.group}
                   fieldType="group"
-                  handleChange={this.handleChange}/>
+                  handleChange={this.handleChange}
+                />
 
                 <TextFieldForUserInfo
                   label={labelSubgroup}
                   status={this.props.color_sub}
                   value={this.props.subGroup}
                   fieldType="subGroup"
-                  handleChange={this.handleChange}/>
+                  handleChange={this.handleChange}
+                />
 
                 <TextFieldForUserInfo
                   label={labelEnggroup}
                   status={this.props.color_enggroup}
                   value={this.props.engGroup}
                   fieldType="engGroup"
-                  handleChange={this.handleChange}/>
+                  handleChange={this.handleChange}
+                />
 
                 <Row style={{
                   display:        "flex",
@@ -250,10 +255,12 @@ class HomeView extends React.Component {
                     checked={this.props.checked}
                     onChange={(event) => {
                       this.handleChange("checked", event.target.checked);
-                    }}/>
+                    }}
+                  />
                 </Row>
                 <ShowSchedule
-                  onClick={() => this.props.isCorrect()}/>
+                  onClick={() => this.props.isCorrect()}
+                />
               </Container>
             }
           />
@@ -274,14 +281,13 @@ class HomeView extends React.Component {
                      this.handleChange("page", NAVIGATOR_PAGE_NO)
                    }}
                  />
-                 {!this.state.disabled ?
-                  <GoToScheduleButton
-                    disabled={this.state.disabled}
-                    onClick={() => {
-                      this.handleChange("page", 17)
-                    }}
-                  />
-                                       : (<Button view="clear" disabled={this.state.disabled}/>)
+                 <GoToScheduleButton
+                   onClick={() => {
+                     this.props.convertIdInGroupName();
+                     this.handleChange("page", 17)
+                   }}
+                   disabled={this.state.disabled}
+                 />
                  }
                </Col>
              </Row>

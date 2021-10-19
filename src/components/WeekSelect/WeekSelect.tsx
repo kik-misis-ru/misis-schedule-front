@@ -4,7 +4,7 @@ import ButtonNextWeek from "./ButtonNextWeek";
 import ButtonPrevWeek from "./ButtonPrevWeek";
 import ButtonThisWeek from "./ButtonThisWeek";
 
-export const HomeWeekChange = ({
+export const WeekSelect = ({
                                  onPrevWeekClick,
                                  onThisWeekClick,
                                  onNextWeekClick,
@@ -28,5 +28,5 @@ export const HomeWeekChange = ({
   </Row>
 )
 
-export default HomeWeekChange
+export default WeekSelect
 

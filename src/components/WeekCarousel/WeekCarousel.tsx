@@ -1,5 +1,6 @@
 import React from "react";
 import {Carousel, CarouselGridWrapper, Row} from "@sberdevices/plasma-ui";
+import {THIS_OR_OTHER_WEEK, THIS_WEEK, OTHER_WEEK} from "../../types/base.d";
 
 import WeekCarouselDay from "./WeekCarouselDay";
 import {IDayHeader} from "../../App";
@@ -20,7 +21,7 @@ export const WeekCarousel = ({
   onSetValue: (key: string, value: any) => void
   day: IDayHeader[]
   page: number
-  weekParam: number
+  weekParam: THIS_OR_OTHER_WEEK
   today: number
 }) => (
   <Row style={{
@@ -56,8 +57,8 @@ export const WeekCarousel = ({
                 // isSelected={i + 1 === index}
                 isSelected={i === selectedWeekDayIndex}
                 // isToday={(today === i + 1) && (weekParam === 0)}
-                isToday={(i === todayWeekDayIndex) && (weekParam === 0)}
-                onClick={() => {onSetValue("page", (i + page + (weekParam==1 ? 0: 1)))}}
+                isToday={(i === todayWeekDayIndex) && (weekParam === THIS_WEEK)}
+                onClick={() => {onSetValue("page", (i + page + (weekParam==OTHER_WEEK ? 0: 1)))}}
               />
             )
           })

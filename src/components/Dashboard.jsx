@@ -27,6 +27,7 @@ import logo from "../images/logo.png";
 import "../App.css";
 import {
   DEFAULT_TEXT_COLOR,
+  ACCENT_TEXT_COLOR,
   DocStyle,
   HOME_PAGE_NO,
   getThemeBackgroundByChar,
@@ -148,7 +149,7 @@ class Dashboard extends React.Component {
                         <TextBoxSubTitle lines={8}>
                           {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 3 ]}
                         </TextBoxSubTitle>
-                        < CardBody2 style={{ color: "var(--plasma-colors-button-accent)", fontSize: "18px" }}>
+                        < CardBody2 style={{ color: ACCENT_TEXT_COLOR, fontSize: "18px" }}>
                           {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 0 ]}
                         </ CardBody2>
 

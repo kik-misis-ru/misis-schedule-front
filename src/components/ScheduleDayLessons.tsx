@@ -1,6 +1,7 @@
 import React from "react";
 
 import {IScheduleDays} from "../App";
+import {THIS_OR_OTHER_WEEK} from "../types/base";
 import BellView from "./BellView";
 
 
@@ -19,7 +20,7 @@ export const ScheduleDayLessons = ({
   days: IScheduleDays,
   day_num: number,
   current: string | undefined,
-  weekParam: number,
+  weekParam: THIS_OR_OTHER_WEEK,
   timeParam: number,
   student: boolean,
   teacher_correct: boolean,

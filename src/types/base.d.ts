@@ -23,6 +23,11 @@ export type StartOrEnd = 'start' | 'end'
 
 //
 
+export const THIS_WEEK = 0;
+export const OTHER_WEEK = 1;
+export type THIS_OR_OTHER_WEEK = typeof THIS_WEEK | typeof OTHER_WEEK;
+
+//
 export const CHAR_SBER = 'sber';
 export const CHAR_EVA = 'eva';
 export const CHAR_JOY = 'joy';
@@ -32,3 +37,4 @@ export type Character = typeof CHAR_SBER
   | typeof CHAR_JOY
 
 //
+
