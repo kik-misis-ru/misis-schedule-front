@@ -19,6 +19,8 @@ import {
 
 import {DocStyle} from '../App';
 
+import {SwitchStudentTeacher} from './Home/SwitchTeacherStudent.jsx'
+
 const DESC_JOY    = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
 const labelGroup = "Номер академической группы через дефисы";
@@ -143,19 +145,10 @@ class Home extends React.Component {
               <TextBox>
                 <TextBoxBigTitle style={{ margin: '1.5%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
               </TextBox>
-
-              <Row style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                <Tabs view="secondary" size="m">
-                  <TabItem isActive={this.props.student} onClick={() => {
-                    this.handleChange("student", true)
-                  }}>Студент
-                  </TabItem>
-                  <TabItem isActive={!this.props.student} onClick={() => {
-                    this.handleChange("student", false)
-                  }}>Преподаватель
-                  </TabItem>
-                </Tabs>
-              </Row>
+              <SwitchStudentTeacher
+                student={this.props.student}
+                onClickStd={() => { this.handleChange("student", true) }}
+                onClickTeach={() => { this.handleChange("student", false) }} />
 
               <TextBox>
                 <TextBoxSubTitle style={{
@@ -232,18 +225,10 @@ class Home extends React.Component {
                <TextBox>
                  <TextBoxBigTitle style={{ margin: '3%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
                </TextBox>
-               <Row style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                 <Tabs view="secondary" size="m">
-                   <TabItem isActive={this.props.student} onClick={() => {
-                     this.handleChange("student", true)
-                   }}>Студент
-                   </TabItem>
-                   <TabItem isActive={!this.props.student} onClick={() => {
-                     this.handleChange("student", false)
-                   }}>Преподаватель
-                   </TabItem>
-                 </Tabs>
-               </Row>
+               <SwitchStudentTeacher
+                student={this.props.student}
+                onClickStd={() => { this.handleChange("student", true) }}
+                onClickTeach={() => { this.handleChange("student", false) }} />
                <TextBox>
 
                  <TextBoxSubTitle style={{ margin: '1.5em', textAlign: "center", color: "white" }}>Чтобы посмотреть
