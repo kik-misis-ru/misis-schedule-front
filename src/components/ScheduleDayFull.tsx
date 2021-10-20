@@ -15,7 +15,7 @@ export const ScheduleDayFull = ({
                                   student,
                                   teacher_correct,
                                   today,
-                                  isCorrectTeacher,
+                                  validateTeacher,
                                   onSetValue,
                                 }:{
   spinner: boolean
@@ -27,7 +27,7 @@ export const ScheduleDayFull = ({
   student: boolean,
   teacher_correct: boolean,
   today: number,
-  isCorrectTeacher: () => Promise<void>,
+  validateTeacher: () => Promise<void>,
   onSetValue: (key: string, value: any) => void
 }) => (
   !spinner
@@ -56,7 +56,7 @@ export const ScheduleDayFull = ({
                   student={student}
                   teacher_correct={teacher_correct}
                   today={today}
-                  isCorrectTeacher={isCorrectTeacher}
+                  validateTeacher={validateTeacher}
                   onSetValue={onSetValue}
                 />
             }

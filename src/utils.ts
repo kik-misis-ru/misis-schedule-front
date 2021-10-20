@@ -99,3 +99,15 @@ export function getFullGroupName(group: string, subGroup: string): string {
     ? `${group} (${subGroup})`
     : `${group} `
 }
+
+
+export const getIsCorrectTeacher = ({
+                               isStudent,
+                               isTeacherCorrect,
+                             }: {
+  isStudent: boolean
+  isTeacherCorrect: boolean
+}) => {
+  return !isStudent && isTeacherCorrect
+}
+

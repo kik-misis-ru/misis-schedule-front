@@ -14,7 +14,7 @@ export const ScheduleDayLessons = ({
                                      student,
                                      teacher_correct,
                                      today,
-                                     isCorrectTeacher,
+                                     validateTeacher,
                                      onSetValue,
                              }:{
   days: IScheduleDays,
@@ -25,7 +25,7 @@ export const ScheduleDayLessons = ({
   student: boolean,
   teacher_correct: boolean,
   today: number,
-  isCorrectTeacher: () => Promise<void>,
+  validateTeacher: () => Promise<void>,
   onSetValue: (key: string, value: any) => void
 }) => (
   <React.Fragment>
@@ -45,7 +45,7 @@ export const ScheduleDayLessons = ({
               student={student}
               teacher_correct={teacher_correct}
               today={today}
-              isCorrectTeacher={isCorrectTeacher}
+              validateTeacher={validateTeacher}
               setValue={onSetValue}/>
           )
           : (

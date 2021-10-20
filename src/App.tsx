@@ -19,8 +19,7 @@ import {
 } from "./APIHelper";
 import "./App.css";
 import Dashboard from './components/Dashboard';
-import HeaderLogo from './components/HeaderLogo';
-import HeaderSchedule from './components/HeaderSchedule';
+import TopMenu from './components/TopMenu/';
 
 import HomeView from './components/HomeView';
 import Navigator from './components/Navigator';
@@ -59,7 +58,7 @@ import {
   THIS_WEEK,
   TodayOrTomorrow,
 } from './types/base.d'
-import {formatDateWithDashes, formatDateWithDots, getFullGroupName, MS_IN_DAY, pairNumberToPairText} from './utils';
+import {formatDateWithDashes, formatDateWithDots, getFullGroupName, MS_IN_DAY, pairNumberToPairText, getIsCorrectTeacher } from './utils';
 
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
@@ -975,19 +974,24 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'how_many':
-          let countOfLessons
-          let day
+          let countOfLessons: [string, number] | undefined;
+          let day: TodayOrTomorrow;
           let page = 0;
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
             if (action.note !== undefined) {
               const {timestamp, dayOfWeek} = action.note;
               countOfLessons = this.getAmountOfLessons(new Date(timestamp))
+
+              // todo: упростить
               if (String(this.state.today + 1) === dayOfWeek) {
                 day = DAY_TODAY;
                 page = 0
               } else if (String(this.state.today + 2) === dayOfWeek) {
                 day = DAY_TOMORROW;
+                page = 0
+              } else { // fallback
+                day = DAY_TODAY
                 page = 0
               }
             } else {
@@ -998,6 +1002,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             let howManyParams: AssistantSendActionSay1['parameters'] = {
               day: DAY_SUNDAY,
             };
+
             if (this.state.group !== "" && countOfLessons !== undefined) {
               //   howManyParams = {
               //     day: DAY_SUNDAY,
@@ -1174,7 +1179,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if ((action.note[1] === null) && (action.note[2] === null)) {
               if (!this.state.flag) {
                 console.log(this.state.flag);
-                page2 =7;
+                page2 = 7;
               } else {
                 page2 = 0;
               }
@@ -1289,7 +1294,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  isTeacher() {
+  protected isTeacher() {
     return !this.state.student && this.state.teacher_correct
   }
 
@@ -1343,7 +1348,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     return this.getScheduleFromDb(datePlusWeek);
   }
 
-  async CurrentWeek(){
+  async CurrentWeek() {
     return this.getScheduleFromDb(Date.now());
   }
 
@@ -1363,18 +1368,16 @@ export class App extends React.Component<IAppProps, IAppState> {
     При первой загрузке this.state.days равен [] 
     и его надо инициализировать
     */
-    if(this.state.days.length==0)
-    {
+    if (this.state.days.length == 0) {
       days = new Array(7).fill([]);
-    for (let day in days) {
-      days[day] = Array(7).fill([])
-      for (let bell in days[day]) {
-        days[day][bell] = [new Bell(), new Bell()];
+      for (let day in days) {
+        days[day] = Array(7).fill([])
+        for (let bell in days[day]) {
+          days[day][bell] = [new Bell(), new Bell()];
+        }
       }
-    }
-    }
-    else{
-      days=this.state.days
+    } else {
+      days = this.state.days
     }
 
     for (let day_num = 1; day_num < 7; day_num++) {
@@ -1456,13 +1459,13 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   ChangePage() {
 
-    let timeParam =  this.state.page;
+    let timeParam = this.state.page;
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    if(timeParam > 7){
+    if (timeParam > 7) {
       weekParam = OTHER_WEEK
       timeParam -= 7
     }
-   
+
     this.setState({i: 0});
     this.setState({star: false});
     if (weekParam === OTHER_WEEK) {
@@ -1493,7 +1496,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   Raspisanie(timeParam: number) {
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    if(timeParam > 7){
+    if (timeParam > 7) {
       timeParam -= 7;
       weekParam = OTHER_WEEK
     }
@@ -1502,7 +1505,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     const day_num = timeParam - 1;
     const index = timeParam;
     const page = weekParam === OTHER_WEEK ? 8 : 0;
-    const groupName = getFullGroupName(this.state.group, this.state.subGroup);
+
+    // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
     return (
       <DeviceThemeProvider>
@@ -1513,70 +1517,13 @@ export class App extends React.Component<IAppProps, IAppState> {
         <div>
           <Container style={{padding: 0, overflow: "hidden"}}>
 
-            <Row style={{margin: "1em"}}>
-
-              <HeaderLogo/>
-
-              <HeaderSchedule
-                label={
-                  !this.state.student && this.state.teacher_correct
-                    ? this.state.teacher
-                    : groupName
-                }
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-                <Button
-                  size="s"
-                  view="clear"
-                  pin="circle-circle"
-                  onClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
-                  contentRight={
-                    <IconNavigationArrow size="s" color="inherit"/>
-                  }
-                />
-                {
-                  this.isTeacher()
-                    ? (
-                      <StarButtonView
-                        star={this.state.star}
-                        student={this.state.student}
-                        userId={this.state.userId}
-                        groupId={this.state.groupId}
-                        subGroup={this.state.subGroup}
-                        engGroup={this.state.engGroup}
-                        teacherId={this.state.teacherId}
-                        teacher_star={this.state.teacher_star}
-                        setValue={this.setValue}
-                        onClick={this.setValue("teacher_star", !this.state.teacher_star)}
-                      />
-                    ) : (
-                      <StarButtonView
-                        star={this.state.star}
-                        student={this.state.student}
-                        userId={this.state.userId}
-                        groupId={this.state.groupId}
-                        subGroup={this.state.subGroup}
-                        engGroup={this.state.engGroup}
-                        teacherId={this.state.teacherId}
-                        teacher_star={this.state.teacher_star}
-                        setValue={this.setValue}
-                        onClick={this.setValue("star", !this.state.star)}
-                      />
-                    )}
-                <Button
-                  size="s"
-                  view="clear"
-                  pin="circle-circle"
-                  onClick={() => this.setState({page: HOME_PAGE_NO})}
-                  contentRight={
-                    <IconSettings size="s" color="inherit"/>
-                  }
-                />
-
-                {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
-              </Col>
-            </Row>
+            <TopMenu
+              state={this.state}
+              setState={this.setState}
+              setValue={this.setValue}
+              onHomeCLick={() => this.setState({page: HOME_PAGE_NO})}
+              onNavigatorCLick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
+            />
 
             <WeekSelect
               onPrevWeekClick={() => {
@@ -1616,7 +1563,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               student={this.state.student}
               teacher_correct={this.state.teacher_correct}
               today={this.state.today}
-              isCorrectTeacher={this.isCorrectTeacher}
+              validateTeacher={this.isCorrectTeacher}
               onSetValue={this.setValue}
             />
 
@@ -1796,7 +1743,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   render() {
     console.log('render');
     let page = this.state.page;
-    if(page>=1 && page<=13){
+    if (page >= 1 && page <= 13) {
       return this.Raspisanie(page);
     }
     switch (this.state.page) {
@@ -1833,7 +1780,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           whatLesson={this.whatLesson}
         />
       case 17:
-        return  this.Spinner();
+        return this.Spinner();
       default:
         break;
     }

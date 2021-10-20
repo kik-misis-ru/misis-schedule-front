@@ -87,6 +87,25 @@ const TeacherName = ({
   )
 }
 
+const LeftContent = ({
+                       text,
+                       visible,
+                     }: {
+  text: string
+  visible: boolean
+}) => {
+  return (
+    visible
+      ? <Badge
+        text={text}
+        view="primary"
+        style={{marginRight: "0.5em"}}
+        size="l"
+      />
+      : <div></div>
+  )
+}
+
 const MainContent = ({
                        bell,
                        isCurrentLesson,
@@ -142,29 +161,10 @@ const RightContent = ({
   )
 }
 
-const LeftContent = ({
-                       text,
-                       visible,
-                     }: {
-  text: string
-  visible: boolean
-}) => {
-  return (
-    visible
-      ? <Badge
-        text={text}
-        view="primary"
-        style={{marginRight: "0.5em"}}
-        size="l"
-      />
-      : <div></div>
-  )
-}
-
 
 interface BellViewProps {
   setValue: (key: string, value: any) => void
-  isCorrectTeacher: () => Promise<void>
+  validateTeacher: () => Promise<void>
   student: boolean
   teacher_correct: boolean
   bell: Bell
@@ -213,9 +213,9 @@ class BellView extends React.Component<BellViewProps> {
           bell={bell}
           isCurrentLesson={this.getIsCurrentLesson()}
           isCorrectTeacher={this.getIsCorrectTeacher()}
-          onTeacherClick={(teacherName) => {
+          onTeacherClick={ async (teacherName) => {
             this.handleChange("teacher", teacherName);
-            this.props.isCorrectTeacher()
+            await this.props.validateTeacher()
           }}
         />
       }
@@ -225,6 +225,7 @@ class BellView extends React.Component<BellViewProps> {
         />
       }
       contentLeft={
+        // todo: почему видимость номера пары зависит от препода?
         <LeftContent
           visible={!! bell.teacher}
           text={bell.lessonNumber[0]}

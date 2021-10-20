@@ -3,7 +3,7 @@ import {
   DAY_NOT_SUNDAY,
   DAY_TODAY,
   DAY_TOMORROW,
-  LESSON_EXIST,
+  LESSON_EXIST, TodayOrTomorrow,
 } from './base.d'
 
 //
@@ -38,6 +38,8 @@ export interface AssistantSendActionSay1 {
   action_id: 'say1'
   parameters: {
     day: typeof DAY_SUNDAY,
+  } | {
+    day: TodayOrTomorrow,
     lesson?: string,
     dayName?: string,
     amount?: string,
