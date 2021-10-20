@@ -1,11 +1,11 @@
+import React from "react";
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Button} from "@sberdevices/plasma-ui";
-import React from "react";
 
 export const ButtonPrevWeek = ({
                                  onClick
 }: {
-  onClick: (event: React.MouseEventHandler<HTMLElement>) => void
+  onClick: React.MouseEventHandler<HTMLElement>
 }) => (
   <Button
     onClick={ (event) => onClick(event) }

@@ -17,8 +17,8 @@ import {
 //import { createGlobalStyle } from "styled-components";
 
 //import { text, background, gradient } from "@sberdevices/plasma-tokens";
-import "../App.css";
-import {ACCENT_TEXT_COLOR} from "../App";
+// import "../themes/App.css";
+import {ACCENT_TEXT_COLOR} from "./consts";
 import {Bell} from "../ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';

@@ -1,14 +1,23 @@
+import * as moment from 'moment';
+moment.locale('ru');
+
+
 /**
  * сколько миллисекунд в 1 дне
  */
 export const MS_IN_DAY = 24 * 60 * 60 * 1000;
 
+export function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export const padZeros = (s: string, len: number) => s.padStart(len, '0');
 
 /**
  * форматирование даты в "YYYY-MM-DD"
  *
- * @param date Date
- * @returns string
+ * @param {Date} date
+ * @returns {string}
  */
 export function formatDateWithDashes(date: Date): string {
   const monthNum = date.getMonth() + 1;
@@ -16,8 +25,10 @@ export function formatDateWithDashes(date: Date): string {
   const y = date.getFullYear();
 
   //pad with zeroes
-  const m = (monthNum < 10 ? '0' : '') + monthNum;
-  const d = (dayNum < 10 ? '0' : '') + dayNum;
+  // const m = (monthNum < 10 ? '0' : '') + monthNum;
+  const m = padZeros(monthNum.toString(), 2);
+  // const d = (dayNum < 10 ? '0' : '') + dayNum;
+  const d = padZeros(dayNum.toString(), 2);
 
   return `${y}-${m}-${d}`;
 }
@@ -34,8 +45,10 @@ export function formatDateWithDots(date: Date): string {
   const y = String(date.getFullYear()).slice(2, 4)
 
   //pad with zeroes
-  const m = (monthNum < 10 ? '0' : '') + monthNum;
-  const d = (dayNum < 10 ? '0' : '') + dayNum;
+  // const m = (monthNum < 10 ? '0' : '') + monthNum;
+  const m = padZeros(monthNum.toString(), 2);
+  // const d = (dayNum < 10 ? '0' : '') + dayNum;
+  const d = padZeros(dayNum.toString(), 2);
 
   return `${d}.${m}.${y}`;
 }
@@ -102,9 +115,9 @@ export function getFullGroupName(group: string, subGroup: string): string {
 
 
 export const getIsCorrectTeacher = ({
-                               isStudent,
-                               isTeacherCorrect,
-                             }: {
+                                      isStudent,
+                                      isTeacherCorrect,
+                                    }: {
   isStudent: boolean
   isTeacherCorrect: boolean
 }) => {

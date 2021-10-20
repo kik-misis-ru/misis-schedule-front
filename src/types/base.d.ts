@@ -38,3 +38,10 @@ export type Character = typeof CHAR_SBER
 
 //
 
+export interface IDayHeader {
+  title: string
+  date: [string, string]
+  count: [number, number]
+}
+
+

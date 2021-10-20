@@ -1,28 +1,23 @@
 import React from "react";
 import {Carousel, CarouselGridWrapper, Row} from "@sberdevices/plasma-ui";
-import {THIS_OR_OTHER_WEEK, THIS_WEEK, OTHER_WEEK} from "../../types/base.d";
+import {THIS_OR_OTHER_WEEK, THIS_WEEK, OTHER_WEEK,IDayHeader} from "../../types/base.d";
 
 import WeekCarouselDay from "./WeekCarouselDay";
-import {IDayHeader} from "../../App";
 
 export const WeekCarousel = ({
-                               i,
-                               index,
+                               carouselIndex,
+                               selectedWeekDayIndex,
+                               todayWeekDayIndex,
+                               weekDays,
                                onIndexChange,
-                               onSetValue,
-                               day,
-                               page,
-                               weekParam,
-                               today,
+                               onDayClick,
                              }: {
-  i: number
-  index: number
-  onIndexChange: () => void
-  onSetValue: (key: string, value: any) => void
-  day: IDayHeader[]
-  page: number
-  weekParam: THIS_OR_OTHER_WEEK
-  today: number
+  carouselIndex: number
+  selectedWeekDayIndex: number
+  todayWeekDayIndex: number
+  weekDays: { title: string, date: string }[]
+  onIndexChange: (index: number) => void
+  onDayClick: (weekDayIndex: number) => void
 }) => (
   <Row style={{
     margin: "0.5em", marginRight: "0",
@@ -33,32 +28,35 @@ export const WeekCarousel = ({
         as={Row}
         axis="x"
         scrollAlign="center"
-        index={i}
+        index={carouselIndex}
         scrollSnapType="mandatory"
         animatedScrollByIndex={true}
         detectActive={true}
         detectThreshold={0.5}
-        onIndexChange={() => onIndexChange()}
+        onIndexChange={(index: number) => onIndexChange(index)}
         paddingStart="0%"
         paddingEnd="40%"
       >
         {
-          day.map((dayHeader, i) => {
+          weekDays.map((dayHeader, i) => {
             const {title, date} = dayHeader;
             const weekDayShort = title;
-            const dateDdDotMm = date[weekParam].slice(0, 5);
-            const selectedWeekDayIndex = index-1;
-            const todayWeekDayIndex = today-1;
+            const dateDdDotMm = date.slice(0, 5);
+            // const selectedWeekDay = index-1;
+            // const todayWeekDay = today-1;
+
+            const formatDate = (weekDayShort,dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
+
             return (
               <WeekCarouselDay
                 key={i}
-                text={`${weekDayShort} ${dateDdDotMm}`}
+                text={formatDate(weekDayShort, dateDdDotMm)}
                 // date={new Date(date[weekParam])}
                 // isSelected={i + 1 === index}
                 isSelected={i === selectedWeekDayIndex}
                 // isToday={(today === i + 1) && (weekParam === 0)}
-                isToday={(i === todayWeekDayIndex) && (weekParam === THIS_WEEK)}
-                onClick={() => {onSetValue("page", (i + page + (weekParam==OTHER_WEEK ? 0: 1)))}}
+                isToday={(i === todayWeekDayIndex) /*&& (weekParam === THIS_WEEK)*/}
+                onClick={() => onDayClick(i)}
               />
             )
           })

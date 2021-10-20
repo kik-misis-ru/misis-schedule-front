@@ -5,7 +5,7 @@ import {Button} from "@sberdevices/plasma-ui";
 export const ButtonNextWeek = ({
                                  onClick
 }: {
-  onClick: (event: React.MouseEventHandler<HTMLElement>) => void
+  onClick: React.MouseEventHandler<HTMLElement>
 }) => (
   <Button
     onClick={ (event) => onClick(event) }

@@ -9,14 +9,15 @@ import {
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
 
-import "../App.css";
+import {
+  getThemeBackgroundByChar,
+} from '../themes/tools';
 import {
   NAVIGATOR_PAGE_NO,
   DASHBOARD_PAGE_NO,
-  getThemeBackgroundByChar,
 } from '../App';
 
-import {DocStyle} from '../App';
+import {DocStyle} from '../themes/tools';
 import Main from './Home/Main';
 
 import {SwitchStudentTeacher} from './Home/SwitchStudentTeacher'

@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
 
-import "../../App.css";
+// import "../../themes/App.css";
 import {
   DASHBOARD_PAGE_NO,
   MyDiv100,

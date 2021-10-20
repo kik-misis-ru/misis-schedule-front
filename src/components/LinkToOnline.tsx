@@ -1,5 +1,5 @@
 import React from "react";
-import {DEFAULT_TEXT_COLOR} from "../App";
+import {DEFAULT_TEXT_COLOR} from "./consts";
 
 const LINK_TEXT = 'Ссылка на онлайн-конференцию';
 

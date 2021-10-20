@@ -9,11 +9,16 @@ export const WeekSelect = ({
                                  onThisWeekClick,
                                  onNextWeekClick,
                                }: {
-  onPrevWeekClick: (event: React.MouseEventHandler<HTMLElement>) => void,
-  onThisWeekClick: (event: React.MouseEventHandler<HTMLElement>) => void,
-  onNextWeekClick: (event: React.MouseEventHandler<HTMLElement>) => void,
+  onPrevWeekClick: React.MouseEventHandler<HTMLElement>,
+  onThisWeekClick: React.MouseEventHandler<HTMLElement>,
+  onNextWeekClick: React.MouseEventHandler<HTMLElement>,
 }) => (
-  <Row style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+  <Row style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  }}>
     <div>
       <ButtonPrevWeek
         onClick={(event) => onPrevWeekClick(event)}

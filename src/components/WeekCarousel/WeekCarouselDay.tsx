@@ -4,10 +4,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   CarouselCol
 } from "@sberdevices/plasma-ui";
-// import moment from 'moment';
-// import 'moment/locale/ru';
-
-import "../../App.css";
 
 interface WeekCarouselDayProps {
   // date: Date
@@ -28,7 +24,14 @@ export const WeekCarouselDay = ({
                                   // format=DEFAULT_FMT,
                                   onClick,
                                 }: WeekCarouselDayProps) => {
-  // moment.locale('ru');
+  console.log({
+    // date,
+    text,
+    isSelected,
+    isToday,
+    // format=DEFAULT_FMT,
+    onClick,
+  })
   return (
     <CarouselCol>
       <Button

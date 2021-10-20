@@ -24,13 +24,17 @@ import {
 import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/plasma-icons";
 //import {text, background, gradient} from "@sberdevices/plasma-tokens";
 import logo from "../images/logo.png";
-import "../App.css";
+//import "../themes/App.css";
 import {
   DEFAULT_TEXT_COLOR,
   ACCENT_TEXT_COLOR,
+} from './consts';
+import {
   DocStyle,
-  HOME_PAGE_NO,
   getThemeBackgroundByChar,
+} from '../themes/tools';
+import {
+  HOME_PAGE_NO,
 } from '../App';
 import LinkToOnline from './LinkToOnline';
 

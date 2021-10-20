@@ -1,11 +1,8 @@
 import {createAssistant, createSmartappDebugger,} from "@sberdevices/assistant-client";
-import {IconNavigationArrow, IconSettings,} from "@sberdevices/plasma-icons";
-import {background, gradient, text} from "@sberdevices/plasma-tokens";
-import {darkEva, darkJoy, darkSber} from "@sberdevices/plasma-tokens/themes";
-import {Button, Col, Container, DeviceThemeProvider, Row, Spinner,} from '@sberdevices/plasma-ui';
+import {Container, DeviceThemeProvider, Spinner,} from '@sberdevices/plasma-ui';
 import React from "react";
 import 'react-toastify/dist/ReactToastify.css';
-import styled, {createGlobalStyle, div} from "styled-components";
+import styled from "styled-components";
 
 import {
   createUser,
@@ -17,14 +14,14 @@ import {
   IScheduleApiData,
   IScheduleLessonInfo,
 } from "./APIHelper";
-import "./App.css";
+import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
+
 import Dashboard from './components/Dashboard';
-import TopMenu from './components/TopMenu/';
 
 import HomeView from './components/HomeView';
 import Navigator from './components/Navigator';
 import ScheduleDayFull from "./components/ScheduleDayFull";
-import StarButtonView from './components/StarButtonView'
+import TopMenu from './components/TopMenu/';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
 import building from './data/buldings.json'
@@ -32,6 +29,9 @@ import engGroups from './data/engGroups.json'
 
 import groups from './groups_list.json';
 import {Bell} from './ScheduleStructure'
+
+import "./themes/App.css";
+import {DocStyle, getThemeBackgroundByChar} from "./themes/tools";
 import {AssistantAction, AssistantEvent, NowOrWill,} from './types/AssistantReceiveAction.d'
 import {
   AssistantSendAction,
@@ -42,8 +42,6 @@ import {
 } from './types/AssistantSendAction.d'
 
 import {
-  CHAR_EVA,
-  CHAR_JOY,
   CHAR_SBER,
   CHAR_TIMEPARAMOY,
   Character,
@@ -51,6 +49,7 @@ import {
   DAY_SUNDAY,
   DAY_TODAY,
   DAY_TOMORROW,
+  IDayHeader,
   LESSON_EXIST,
   OTHER_WEEK,
   StartOrEnd,
@@ -58,7 +57,7 @@ import {
   THIS_WEEK,
   TodayOrTomorrow,
 } from './types/base.d'
-import {formatDateWithDashes, formatDateWithDots, getFullGroupName, MS_IN_DAY, pairNumberToPairText, getIsCorrectTeacher } from './utils';
+import {formatDateWithDashes, formatDateWithDots, MS_IN_DAY, pairNumberToPairText} from './utils';
 
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
@@ -67,10 +66,6 @@ export const DASHBOARD_PAGE_NO = 16;
 const INITIAL_PAGE = 7;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
-export const DEFAULT_TEXT_COLOR = 'var(--plasma-colors-white-secondary)';
-export const ACCENT_TEXT_COLOR = 'var(--plasma-colors-button-accent)';
-export const COLOR_BLACK = '';
-
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
 const TO_VIEW_SET_GROUP_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
@@ -84,15 +79,6 @@ const initializeAssistant = (getState) => {
   }
   return createAssistant({getState});
 };
-
-export const DocStyle = createGlobalStyle`
-  html:root {
-    min-height: 100vh;
-    color: ${text};
-    background-color: ${background};
-    background-image: ${gradient};
-  }
-`;
 
 export const MyDiv100 = styled.div`
   width: 100px;
@@ -176,27 +162,15 @@ const TODAY_TOMORROW_DICT = {
 }
 
 
-const ThemeBackgroundSber = createGlobalStyle(darkSber);
-const ThemeBackgroundEva = createGlobalStyle(darkEva);
-const ThemeBackgroundJoy = createGlobalStyle(darkJoy);
-
-export const getThemeBackgroundByChar = (character: Character
-  // todo: что такое 'timeParamoy' ???
-  | typeof CHAR_TIMEPARAMOY
-) => {
-  const themeBackgroundByChar = {
-    [CHAR_SBER]: <ThemeBackgroundSber/>,
-    [CHAR_EVA]: <ThemeBackgroundEva/>,
-    [CHAR_JOY]: <ThemeBackgroundJoy/>,
-  }
-  const themeBackground = themeBackgroundByChar[character];
-  return themeBackground || null;
-}
 
 const COLOR_NAME_ERROR = 'error'
 const COLOR_NAME_WARN_RU = 'Предупреждение'
 
 const NO_LESSONS_NAME = "Пар нет 🎉"
+
+const DAYS_OF_WEEK_SHORT_RU = [
+
+]
 
 const DEFAULT_STATE_DAY: IDayHeader[] = [
   {
@@ -235,12 +209,6 @@ interface IBuilding {
 }
 
 export type IScheduleDays = Bell[][][]
-
-export interface IDayHeader {
-  title: string
-  date: [string, string]
-  count: [number, number]
-}
 
 //
 
@@ -1543,14 +1511,16 @@ export class App extends React.Component<IAppProps, IAppState> {
             />
 
             <WeekCarousel
-              i={this.state.i}
-              index={index}
-              onIndexChange={() => this.Index()}
-              onSetValue={this.setValue}
-              day={this.state.day}
-              page={page}
-              weekParam={weekParam}
-              today={this.state.today}
+              carouselIndex={this.state.i}
+              selectedWeekDayIndex={index-1}
+              todayWeekDayIndex={weekParam===THIS_WEEK ? this.state.today-1 : -1 /* current weekday can't be on 'other' week*/}
+              weekDays={this.state.day.map(d => {
+                return { title: d.title, date: d.date[weekParam] }
+              })}
+              onIndexChange={(index) => this.Index()}
+              onDayClick={(weekDayIndex) => this.setValue("page", (
+                weekDayIndex + page + (weekParam==OTHER_WEEK ? 0: 1)
+              ))}
             />
 
             <ScheduleDayFull

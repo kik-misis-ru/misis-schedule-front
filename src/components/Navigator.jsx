@@ -20,13 +20,12 @@ import {  IconSettings,  IconLocation,IconMoreVertical} from "@sberdevices/plasm
 //import { createGlobalStyle } from "styled-components";
 
 //import { text, background, gradient } from "@sberdevices/plasma-tokens";
-import {getThemeBackgroundByChar} from '../App';
 
 import logo from "../images/logo.png";
 import karta from "../images/Karta.png";
-import "../App.css";
+//import "../themes/App.css";
 
-import {DocStyle} from '../App';
+import {DocStyle,getThemeBackgroundByChar} from '../themes/tools';
 
 
 class Navigator extends React.Component{
