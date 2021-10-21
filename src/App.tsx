@@ -157,6 +157,19 @@ const numPron = {
 }
 
 /**
+ * Время начала и конца пар
+ */
+export const LessonStartEnd =[
+  {start: "9:00", end: "10:35"},
+  {start: "10:50", end: "12:25"},
+  {start: "12:40", end: "14:15"},
+  {start: "14:30", end: "16:05"},
+  {start: "16:20", end: "17:55"},
+  {start: "18:10", end: "19:45"},
+  {start: "20:00", end: "21:35"}
+]
+
+/**
  *
  */
 const TODAY_TOMORROW_DICT = {
@@ -406,6 +419,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     });
   }
 
+  TimуByLessonNum(num){
+    return LessonStartEnd[num].start + " - " +LessonStartEnd[num].end
+  }
+
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
     switch (key) {
@@ -453,9 +470,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
     for (let bell in this.state.days[dayNumber]) {
-      const startAndFinishTime = this.state.days[dayNumber][bell][0].startAndFinishTime
-      if (startAndFinishTime !== "") {
-        return startAndFinishTime.slice(0, 5)
+      const lessonName = this.state.days[dayNumber][bell][0].lessonName
+      if (lessonName !== "") {
+        return LessonStartEnd[Number(bell)].start
       }
     }
   }
@@ -464,10 +481,10 @@ export class App extends React.Component<IAppProps, IAppState> {
   getEndLastLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    for (let bell = 7; bell > 0; bell--) {
-      const startAndfinishTime = this.state.days[dayNumber][bell - 1][0].startAndFinishTime
-      if (startAndfinishTime !== "") {
-        return startAndfinishTime.slice(8)
+    for (let bell = 6; bell > 0; bell--) {
+      const lessonName = this.state.days[dayNumber][bell][0].lessonName
+      if (lessonName !== "") {
+        return LessonStartEnd[bell].end
       }
     }
   }
@@ -476,13 +493,13 @@ export class App extends React.Component<IAppProps, IAppState> {
   getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum: number): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    const startAndFinishTime = this.state.days[dayNumber][lessonNum - 1][0].startAndFinishTime;
+    const lessonName = this.state.days[dayNumber][lessonNum - 1][0].lessonName;
 
-    if (startAndFinishTime !== "") {
+    if (lessonName !== "") {
       if (startOrEnd === "start") {
-        return startAndFinishTime.slice(0, 5)
+        return LessonStartEnd[lessonNum-1].start
       } else {
-        return startAndFinishTime.slice(8)
+        return LessonStartEnd[lessonNum-1].end
       }
     }
   }
@@ -576,9 +593,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         const lesson = this.state.days[this.state.today - 1][bellIdx][0];
         if (
           // todo: почему (0, 6) ???
-          (this.getTime(date) > lesson.startAndFinishTime.slice(0, 6)) &&
-          (this.getTime(date) < lesson.startAndFinishTime.slice(8)) &&
-          (lesson.startAndFinishTime.slice(0, 6) !== "")
+          (this.getTime(date) > LessonStartEnd[Number(bellIdx)].start) &&
+          (this.getTime(date) < LessonStartEnd[Number(bellIdx)].end) &&
+          (LessonStartEnd[Number(bellIdx)].start !== "")
         ) {
           return lesson.lessonNumber[0]
         }
@@ -597,8 +614,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     if ((this.state.today !== 0) && (this.state.today + 1 !== 7))
       for (let bell in this.state.days[this.state.today - 1]) {
         if (
-          this.getTime(date) < this.state.days[this.state.today - 1][bell][0].startAndFinishTime.slice(0, 6) &&
-          this.state.days[this.state.today - 1][bell][0].startAndFinishTime.slice(0, 6) !== ""
+          this.getTime(date) < LessonStartEnd[Number(bell)].start &&
+          LessonStartEnd[Number(bell)].start !== ""
         ) {
           countRemainingLessons += 1
         }
@@ -623,8 +640,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     for (let bellIdx in this.state.days[daynum - 1]) {
       const bell = this.state.days[daynum - 1][bellIdx][week]
-      if (bell[5] !== "") {
-        first = bell.startAndFinishTime;
+      if (bell.lessonName !== "") {
+        first = LessonStartEnd[Number(bellIdx)].start
         num = bell.lessonNumber[0];
         break
       }
@@ -1382,8 +1399,6 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.lessonName = lesson_info.subject_name;
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
-            lesson_info_state.startAndFinishTime = `${parsedSchedule.schedule[bell].header.start_lesson} 
-            - ${parsedSchedule.schedule[bell].header.end_lesson}`;
             lesson_info_state.lessonType = lesson_info.type;
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info.other;
@@ -1405,8 +1420,6 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.lessonName = lesson_info.subject_name;
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
-            lesson_info_state.startAndFinishTime = `${parsedSchedule.schedule[bell].header.start_lesson} 
-            - ${parsedSchedule.schedule[bell].header.end_lesson}`;
             lesson_info_state.lessonType = lesson_info.type;
             lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.url = lesson_info.other;

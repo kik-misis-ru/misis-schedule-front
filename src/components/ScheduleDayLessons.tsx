@@ -3,6 +3,7 @@ import React from "react";
 import {IScheduleDays} from "../App";
 import {THIS_OR_OTHER_WEEK} from "../types/base";
 import BellView from "./BellView";
+import {LessonStartEnd} from "../App";
 
 
 export const ScheduleDayLessons = ({
@@ -40,6 +41,7 @@ export const ScheduleDayLessons = ({
             <BellView
               key={bellNumber}
               bell={bell}
+              time={LessonStartEnd[bellNumber].start+ " - "+LessonStartEnd[bellNumber].end}
               current={current}
               weekParam={weekParam}
               timeParam={timeParam}
