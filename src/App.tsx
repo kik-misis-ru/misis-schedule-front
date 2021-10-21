@@ -24,10 +24,12 @@ import ScheduleDayFull from "./components/ScheduleDayFull";
 import TopMenu from './components/TopMenu/';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
+
 import building from './data/buldings.json'
 import engGroups from './data/engGroups.json'
-
 import groups from './groups_list.json';
+import filial from './data/filial.json';
+
 import {Bell} from './ScheduleStructure'
 
 import "./themes/App.css";
@@ -405,7 +407,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   setValue(key: string, value: any) {
-    console.log(key, value)
+    console.log(`setValue: key: ${key}, value:`, value);
     switch (key) {
       case "group":
         this.setState({group: value});
@@ -1628,8 +1630,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (this.state.teacher_checked) {
         createUser(
           this.state.userId,
-          // todo hardcoded 880
-          "880",
+          filial.id,
           String(this.state.groupId),
           String(this.state.subGroup),
           String(this.state.engGroup),

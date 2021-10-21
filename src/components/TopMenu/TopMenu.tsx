@@ -1,9 +1,11 @@
 import {IconNavigationArrow, IconSettings} from "@sberdevices/plasma-icons";
 import {Button, Col, Row} from "@sberdevices/plasma-ui";
 import React from "react";
+import {setGroupStar, setTeacherStar} from "../../APIHelper";
 import {HOME_PAGE_NO, NAVIGATOR_PAGE_NO} from "../../App";
+import filial from "../../data/filial.json";
 import {getFullGroupName,getIsCorrectTeacher} from "../../utils";
-import StarButtonView from "../StarButtonView";
+import StarButtonView from "./StarButtonView";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSchedule from "./HeaderSchedule";
 
@@ -26,6 +28,15 @@ const TopMenu = ({
 }) => {
 
   const groupName = getFullGroupName(state.group, state.subGroup);
+
+  const userToStar = {
+    userId: state.userId,
+    filialId: filial.id,
+    groupId: state.groupId,
+    subGroup: state.subGroup,
+    engGroup: state.engGroup,
+    teacherId: state.teacherId
+  }
 
   return (
     <Row style={{margin: "1em"}}>
@@ -64,7 +75,16 @@ const TopMenu = ({
                 teacherId={state.teacherId}
                 teacher_star={state.teacher_star}
                 setValue={setValue}
-                onClick={() => setValue("teacher_star", !state.teacher_star)}
+                // onClick={() => setValue("teacher_star", !state.teacher_star)}
+               onChange={ async (newValue) => {
+                 setValue("teacher_star", newValue)
+                 setValue("teacher_checked", newValue)
+                 setValue("teacher_bd", newValue
+                   ? state.groupId
+                   : ''
+                 )
+                 await setTeacherStar(userToStar, newValue);
+               }}
               />
             ) : (
               <StarButtonView
@@ -77,7 +97,17 @@ const TopMenu = ({
                 teacherId={state.teacherId}
                 teacher_star={state.teacher_star}
                 setValue={setValue}
-                onClick={() => setValue("star", !state.star)}
+                // onClick={() => setValue("star", !state.star)}
+                onChange={ async (newValue) => {
+                  setValue("star", newValue);
+                  setValue("star", newValue)
+                  setValue("checked", newValue)
+                  setValue("bd", newValue
+                    ? state.groupId
+                    : ''
+                  )
+                  await setGroupStar(userToStar, newValue);
+                }}
               />
             )}
         <Button

@@ -1,5 +1,7 @@
 import axios, {AxiosResponse} from "axios";
 
+import filial from './data/filial.json';
+
 export interface ITeacherApiData {
   first_name: string
   mid_name: string
@@ -74,43 +76,63 @@ const API_URL = "https://misis-hub.herokuapp.com/";
 
 
 export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleApiData> {
-  const {data: rawSchedule} = await axios.get(`${API_URL}schedule`, {
+  const url = `${API_URL}schedule`;
+  const config = {
     params: {
       group_id: groupId,
       english_group_id: english_group_id,
-      date: date
+      date: date,
     },
-  })
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
   return parsedSchedule;
 }
 
 export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleApiData> {
-  const {data: rawSchedule} = await axios.get(`${API_URL}schedule_teacher`, {
+  const url = `${API_URL}schedule_teacher`;
+  const config = {
     params: {
       teacher_id: teacherId,
-      date: date
+      date: date,
     },
-  })
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
   return parsedSchedule;
 }
 
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {
-  const {data: answer} = await axios.get(`${API_URL}teacher`, {
+  const url = `${API_URL}teacher`;
+  const config = {
     params: {
-      teacher_initials: teacher_in
+      teacher_initials: teacher_in,
     },
-  })
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: answer} = response;
   return answer;
 }
 
 export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherApiData> {
-  const {data: rawTeacherData} = await axios.get(`${API_URL}teacher_initials`, {
+  const url = `${API_URL}teacher_initials`;
+  const config = {
     params: {
-      teacher_id: teacher_id
+      teacher_id: teacher_id,
     },
-  })
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: rawTeacherData} = response;
   const parsedTeacherData = JSON.parse(rawTeacherData) as ITeacherApiData;
   return parsedTeacherData;
 }
@@ -124,6 +146,7 @@ export async function createUser(
   engGroup: string,
   teacher_id: string,
 ): Promise<AxiosResponse<any>> {
+  const url = `${API_URL}users`;
   const data = {
     "user_id": userId,
     "filial_id": filialId,
@@ -132,7 +155,10 @@ export async function createUser(
     "eng_group": engGroup,
     "teacher_id": teacher_id
   };
-  return await axios.post(`${API_URL}users`, data);
+
+  const response = await axios.post(url, data);
+
+  return response;
 }
 
 
@@ -152,8 +178,7 @@ export async function setGroupStar(
   return value
     ? createUser(
       props.userId,
-      // todo hardcoded 880
-      "880",
+      filial.id,
       props.groupId,
       props.subGroup,
       props.engGroup,
@@ -176,8 +201,7 @@ export async function setTeacherStar(
   return value ?
     createUser(
       props.userId,
-      // todo hardcoded 880
-      "880",
+      filial.id,
       props.groupId,
       props.subGroup,
       props.engGroup,
@@ -186,8 +210,8 @@ export async function setTeacherStar(
     : createUser(
       props.userId,
       "",
-      "",
-      "",
+      props.groupId,
+      props.subGroup,
       "",
       "",
     );
@@ -203,10 +227,15 @@ interface IUserData {
 }
 
 export async function getUser(userId: string): Promise<IUserData | "0"> {
-  const {data: answer} = await axios.get(`${API_URL}users`, {
+  const url = `${API_URL}users`;
+  const config = {
     params: {
-      user_id: userId
+      user_id: userId,
     },
-  })
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: answer} = response;
   return answer;
 }
