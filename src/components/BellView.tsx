@@ -230,9 +230,8 @@ class BellView extends React.Component<BellViewProps> {
         />
       }
       contentLeft={
-        // todo: почему видимость номера пары зависит от препода?
         <LeftContent
-          visible={!! bell.teacher}
+          visible={true}
           text={bell.lessonNumber[0]}
         />
       }
