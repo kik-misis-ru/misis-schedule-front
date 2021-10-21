@@ -1531,7 +1531,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               onPrevWeekClick={() => {
                 this.setState({spinner: false});
                 this.PreviousWeek();
-                this.setState({page: 9})
+                this.setState({flag: false, page: 8})
               }}
               onThisWeekClick={() => {
                 this.CurrentWeek();
@@ -1540,7 +1540,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               onNextWeekClick={() => {
                 this.setState({spinner: false});
                 this.NextWeek();
-                this.setState({page: 9})
+                this.setState({flag: false, page: 8})
               }}
             />
 
@@ -1602,15 +1602,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log('isCorrectTeacher:', teacherData);
       console.log('isCorrectTeacher: status:', teacherData.status);
 
-      if (teacherData.status == "-1") {
+      if ((teacherData.status == "-1")||(teacherData.status == "-2")){
         console.log("status");
         this.setState({
           isTeacherError: true,
         })
-      } else if (teacherData.status == "-2") {
-        this.setState({
-          isTeacherError: true,
-        })
+      
 
       } else {
 
@@ -1633,7 +1630,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacher_correct: true,
           date: Date.now(),
           flag: true,
-          page: 7,
+          page: 17,
           isTeacherError: false,
         });
 
@@ -1695,7 +1692,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log(String(this.state.engGroup));
       this.setState({flag: true});
       this.convertIdInGroupName();
-      this.setState({page: 7, isGroupError: true});
+      this.setState({page: 17, isGroupError: true});
 
     } else if (this.state.correct === true) {
       this.setState({isGroupError: true});
