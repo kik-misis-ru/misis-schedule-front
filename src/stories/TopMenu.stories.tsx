@@ -7,9 +7,17 @@ export default {
   title: 'misis-schedule/TopMenu',
   component: TopMenu,
   argTypes: {
-    carouselIndex: {
+    label: {
       type: {name: 'string', required: false},
-      defaultValue: 'БПМ-19-2',
+      defaultValue: undefined,
+    },
+    subLabel: {
+      type: {name: 'string', required: false},
+      defaultValue: 'БПМ-19-2 (1)',
+    },
+    starred: {
+      type: {name: 'boolean', required: false},
+      defaultValue: false,
     },
   },
 } as ComponentMeta<typeof TopMenu>;

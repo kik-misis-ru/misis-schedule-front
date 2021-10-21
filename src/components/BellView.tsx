@@ -82,6 +82,7 @@ const TeacherName = ({
   return (
     <a
       href='#'
+      style={{color: "white"}}
       onClick={(event) => onClick(event)}>
       {text}
     </a>

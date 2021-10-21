@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import {Button, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle} from "@sberdevices/plasma-ui";
-import {IconNavigationArrow, IconSettings, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
+import {IconHouse, IconNavigationArrow, IconSettings, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
 
 import logo from "../images/logo.png";
 
@@ -70,6 +70,22 @@ const StarButtonView = ({
 }
 
 
+const GoToDashboardButton = ({
+                          onClick,
+                        }: {
+  onClick: React.MouseEventHandler<HTMLElement>
+}) => (
+  <Button
+    size="s"
+    view="clear"
+    pin="circle-circle"
+    onClick={(event) => onClick(event)}
+    contentRight={
+      <IconHouse size="s" color="inherit"/>
+    }
+  />
+)
+
 const GoToHomeButton = ({
                           onClick,
                         }: {
@@ -91,16 +107,18 @@ const TopMenu = ({
                    label,
                    subLabel,
                    starred,
+                   // onNavigatorClick,
                    onStarClick,
+                   onDashboardClick,
                    onHomeClick,
-                   onNavigatorClick,
                  }: {
   label?: string
   subLabel: string
   starred: boolean
+  // onNavigatorClick: () => void
   onStarClick: () => void
+  onDashboardClick: () => void
   onHomeClick: () => void
-  onNavigatorClick: () => void
 }) => {
   return (
     <Row style={{margin: "1em"}}>
@@ -113,12 +131,17 @@ const TopMenu = ({
       />
 
       <Col style={{margin: "0 0 0 auto"}}>
+{/*
         <GoToNavigatorButton
           onClick={() => onNavigatorClick()}
         />
+*/}
         <StarButtonView
           starred={starred}
           onClick={() => onStarClick()}
+        />
+        <GoToDashboardButton
+          onClick={() => onDashboardClick()}
         />
         <GoToHomeButton
           onClick={() => onHomeClick()}

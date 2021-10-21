@@ -721,9 +721,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
           (this.getTime(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
         ) {
-          console.log('whatLesson:', this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]);
+          console.log('whatLesson:', this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0]);
           return {
-            lesson: this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0],
+            lesson: this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0],
             type: "will",
             num: parseInt(this.getTimeFirstLesson(this.state.today)[1])
           }
@@ -731,10 +731,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           for (let i in breaks) {
             if (
               (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) &&
-              (this.state.days[this.state.today - 1][`bell_${i}`][0][5][0] !== "")
+              (this.state.days[this.state.today - 1][i][0][5][0] !== "")
             ) {
               return {
-                lesson: this.state.days[this.state.today - 1][`bell_${i}`][0][0],
+                lesson: this.state.days[this.state.today - 1][i][0][0],
                 type: "will",
                 num: parseInt(i)
               };
@@ -1567,30 +1567,16 @@ export class App extends React.Component<IAppProps, IAppState> {
                   ?handleTeacherStarChange(!this.state.teacher_star)
                   :handleGroupStarChange(!this.state.star)
               }}
-
-              state={this.state}
-              // userId={this.state.userId}
-              // groupId={this.state.groupId}
-
-              // group={this.state.group}
-              // subGroup={this.state.subGroup}
-
-              // isStudent={this.state.student}
-
-              // teacherName={this.state.teacher}
-              // isTeacherCorrect={this.state.teacher_correct}
-
-              setState={this.setState}
-              setValue={this.setValue}
               onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
-              onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
+              onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
+              // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />
 
             <WeekSelect
               onPrevWeekClick={() => {
                 this.setState({spinner: false});
                 this.PreviousWeek();
-                this.setState({page: 9})
+                this.setState({flag: false, page: 8})
               }}
               onThisWeekClick={() => {
                 this.CurrentWeek();
@@ -1599,7 +1585,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               onNextWeekClick={() => {
                 this.setState({spinner: false});
                 this.NextWeek();
-                this.setState({page: 9})
+                this.setState({flag: false, page: 8})
               }}
             />
 
@@ -1661,15 +1647,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log('isCorrectTeacher:', teacherData);
       console.log('isCorrectTeacher: status:', teacherData.status);
 
-      if (teacherData.status == "-1") {
+      if ((teacherData.status == "-1")||(teacherData.status == "-2")){
         console.log("status");
         this.setState({
           isTeacherError: true,
         })
-      } else if (teacherData.status == "-2") {
-        this.setState({
-          isTeacherError: true,
-        })
+      
 
       } else {
 
@@ -1692,7 +1675,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacher_correct: true,
           date: Date.now(),
           flag: true,
-          page: 7,
+          page: SCHEDULE_PAGE_NO,
           isTeacherError: false,
         });
 
@@ -1701,10 +1684,10 @@ export class App extends React.Component<IAppProps, IAppState> {
         createUser(
           this.state.userId,
           filial.id,
-          String(this.state.groupId),
-          String(this.state.subGroup),
-          String(this.state.engGroup),
-          String(this.state.teacherId),
+          this.state.groupId,
+          this.state.subGroup,
+          this.state.engGroup,
+          this.state.teacherId,
         );
       }
     })
@@ -1734,10 +1717,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (this.state.checked) {
         createUser(
           this.state.userId,
-          "808",
-          String(this.state.groupId),
-          String(this.state.subGroup),
-          String(this.state.engGroup),
+          filial.id,
+          this.state.groupId,
+          this.state.subGroup,
+          this.state.engGroup,
           "",
         );
       }
@@ -1753,7 +1736,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log(String(this.state.engGroup));
       this.setState({flag: true});
       this.convertIdInGroupName();
-      this.setState({page: 7, isGroupError: true});
+      this.setState({page: 17, isGroupError: true});
 
     } else if (this.state.correct === true) {
       this.setState({isGroupError: true});
@@ -1853,7 +1836,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           state={this.state}
           setValue={this.setValue}
           getCurrentLesson={this.getCurrentLesson}
+          getTimeFirstLesson={this.getTimeFirstLesson}
+          getEndLastLesson={this.getEndLastLesson}
           whatLesson={this.whatLesson}
+          getTime={this.getTime}
         />
       case 17:
         return this.Spinner();
