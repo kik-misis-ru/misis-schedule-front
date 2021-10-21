@@ -1,4 +1,4 @@
-import {IconNavigationArrow, IconSettings} from "@sberdevices/plasma-icons";
+import {IconHouse, IconSettings} from "@sberdevices/plasma-icons";
 import {Button, Col, Row} from "@sberdevices/plasma-ui";
 import React from "react";
 import {HOME_PAGE_NO, NAVIGATOR_PAGE_NO} from "../../App";
@@ -14,7 +14,7 @@ const TopMenu = ({
                    // label,
                    // subLabel,
                    onHomeCLick,
-                   onNavigatorCLick,
+                   onDashboardCLick,
                  }: {
   state
   setState
@@ -22,7 +22,7 @@ const TopMenu = ({
   // label?: string
   // subLabel: string
   onHomeCLick: () => void
-  onNavigatorCLick: () => void
+  onDashboardCLick: () => void
 }) => {
 
   const groupName = getFullGroupName(state.group, state.subGroup);
@@ -42,15 +42,6 @@ const TopMenu = ({
       />
 
       <Col style={{margin: "0 0 0 auto"}}>
-        <Button
-          size="s"
-          view="clear"
-          pin="circle-circle"
-          onClick={() => onNavigatorCLick()}
-          contentRight={
-            <IconNavigationArrow size="s" color="inherit"/>
-          }
-        />
         {
           getIsCorrectTeacher({ isStudent: state.student, isTeacherCorrect: state.teacher_correct })
             ? (
@@ -80,6 +71,15 @@ const TopMenu = ({
                 onClick={() => setValue("star", !state.star)}
               />
             )}
+        <Button
+          size="s"
+          view="clear"
+          pin="circle-circle"
+          onClick={() => onDashboardCLick()}
+          contentRight={
+            <IconHouse size="s" color="inherit"/>
+          }
+        />
         <Button
           size="s"
           view="clear"

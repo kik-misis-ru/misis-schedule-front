@@ -27,7 +27,6 @@ export const WeekCarousel = ({
         <Carousel
           as={Row}
           axis="x"
-          scrollAlign="center"
           index={carouselIndex}
           scrollSnapType="mandatory"
           animatedScrollByIndex={true}

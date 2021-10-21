@@ -712,9 +712,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
           (this.getTime(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
         ) {
-          console.log('whatLesson:', this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0]);
+          console.log('whatLesson:', this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0]);
           return {
-            lesson: this.state.days[this.state.today - 1][`bell_${parseInt(this.getTimeFirstLesson(this.state.today)[1])}`][0][0],
+            lesson: this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0],
             type: "will",
             num: parseInt(this.getTimeFirstLesson(this.state.today)[1])
           }
@@ -722,10 +722,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           for (let i in breaks) {
             if (
               (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) &&
-              (this.state.days[this.state.today - 1][`bell_${i}`][0][5][0] !== "")
+              (this.state.days[this.state.today - 1][i][0][5][0] !== "")
             ) {
               return {
-                lesson: this.state.days[this.state.today - 1][`bell_${i}`][0][0],
+                lesson: this.state.days[this.state.today - 1][i][0][0],
                 type: "will",
                 num: parseInt(i)
               };
@@ -1524,7 +1524,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               setState={this.setState}
               setValue={this.setValue}
               onHomeCLick={() => this.setState({page: HOME_PAGE_NO})}
-              onNavigatorCLick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
+              onDashboardCLick={() => this.setState({page: 16})}
             />
 
             <WeekSelect
@@ -1792,7 +1792,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           state={this.state}
           setValue={this.setValue}
           getCurrentLesson={this.getCurrentLesson}
+          getTimeFirstLesson={this.getTimeFirstLesson}
+          getEndLastLesson={this.getEndLastLesson}
           whatLesson={this.whatLesson}
+          getTime={this.getTime}
         />
       case 17:
         return this.Spinner();

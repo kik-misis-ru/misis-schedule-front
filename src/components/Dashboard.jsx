@@ -37,7 +37,8 @@ import {
   HOME_PAGE_NO,
 } from '../App';
 import LinkToOnline from './LinkToOnline';
-
+import ScheduleDayLessons from "./ScheduleDayLessons";
+import ScheduleDayOff from "./ScheduleDayOff";
 import {pairNumberToPairNumText} from '../utils'
 
 
@@ -46,7 +47,9 @@ class Dashboard extends React.Component {
     super(props);
     this.handleChange       = this.handleChange.bind(this)
     this.getTimeFirstLesson = this.getTimeFirstLesson.bind(this);
+    this.getCurrentLesson   = this.getCurrentLesson.bind(this);
     this.getEndLastLesson   = this.getEndLastLesson.bind(this);
+    this.getTime            = this.getTime.bind(this);
     // this.handleChange("description", props.character === "joy"
     //                           ? DESC_JOY
     //                           : DESC_OTHERS)
@@ -60,6 +63,10 @@ class Dashboard extends React.Component {
     this.props.getCurrentLesson();
   }
 
+  getTime() {
+    this.props.getTime();
+  }
+
   getTimeFirstLesson() {
     this.props.getTimeFirstLesson();
   }
@@ -69,7 +76,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    console.log('Dashboard: day:', this.props.state.today);
+    console.log('Dashboard: day:', this.props.state.day[ this.props.state.today - 1 ]);
     return <DeviceThemeProvider>
       <DocStyle/>
       {
@@ -152,17 +159,17 @@ class Dashboard extends React.Component {
                       <TextBox>
 
                         <TextBoxSubTitle lines={8}>
-                          {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 3 ]}
+                          {this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 3 ]}
                         </TextBoxSubTitle>
                         < CardBody2 style={{ color: ACCENT_TEXT_COLOR, fontSize: "18px" }}>
-                          {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 0 ]}
+                          {this.props.state.days[ this.props.state.today -1 ][this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ].lessonName}
                         </ CardBody2>
 
                         {
                           !this.props.state.student && this.props.state.teacher_correct
                           ? (
                             <TextBoxTitle>
-                              {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 7 ]}
+                              {this.props.state.days[ this.props.state.today -1 ][this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 7 ]}
                             </TextBoxTitle>
                           )
                           : (
@@ -171,13 +178,13 @@ class Dashboard extends React.Component {
                               this.isCorrectTeacher()
                             }}
                             >
-                              {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 1 ]}
+                              {this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 1 ]}
                             </a>
                           )
                         }
 
                         <LinkToOnline
-                          url={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 6 ]}
+                          url={this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 6 ]}
                         />
 
                       </TextBox>
@@ -187,21 +194,21 @@ class Dashboard extends React.Component {
                       <TextBox>
                         <Badge
                           text={
-                            this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 2 ]}
+                            this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 2 ]}
                           contentLeft={<IconLocation size="xs"/>}
                           style={{ backgroundColor: "rgba(0,0,0, 0)" }}
                         />
                         <TextBoxTitle>
-                          {this.Type(this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 4 ])}
+                          {this.Type(this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 4 ])}
                         </TextBoxTitle>
 
                       </TextBox>
                     }
                     contentLeft={
-                      this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 1 ] !== ""
+                      this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 1 ] !== ""
                       ? (
                         <Badge
-                          text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))}` ][ 0 ][ 5 ][ 0 ]}
+                          text={this.props.state.days[ this.props.state.today -1 ][ this.props.getCurrentLesson(new Date(Date.now()))(new Date(Date.now())) ][ 0 ][ 5 ][ 0 ]}
                           view="primary" style={{ marginRight: "0.5em" }} size="l"
                         />
                       )
@@ -241,21 +248,21 @@ class Dashboard extends React.Component {
                       Дальше
                     </CardParagraph1>
                   </TextBox>
-
+                  
                   <CellListItem
                     content={
                       <TextBox>
                         <TextBoxSubTitle lines={8}>
-                          {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 3 ]}
+                          {this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ][ 3 ]}
                         </TextBoxSubTitle>
                         < CardBody2 style={{ fontSize: "18px" }}>
-                          {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 0 ]}
+                          {this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ].lessonName}
                         </ CardBody2>
                         {
                           this.props.state.student === false && this.props.state.teacher_correct === true
                           ? (
                             <TextBoxTitle>
-                              {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 7 ]}
+                              {this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ][ 7 ]}
                             </TextBoxTitle>
                           )
                           : (
@@ -265,13 +272,13 @@ class Dashboard extends React.Component {
                                 this.isCorrectTeacher()
                               }}
                             >
-                              {this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 1 ]}
+                              {this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ][ 1 ]}
                             </a>
                           )
                         }
 
                         <LinkToOnline
-                          url={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 6 ]}
+                          url={this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ][ 6 ]}
                         />
 
                       </TextBox>
@@ -280,22 +287,22 @@ class Dashboard extends React.Component {
                     contentRight={
                       <TextBox>
                         <Badge
-                          text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 2 ]}
+                          text={this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ][ 2 ]}
                           contentLeft={
                             <IconLocation size="xs"/>
                           }
                           style={{ backgroundColor: "rgba(0,0,0, 0)" }}/>
                         <TextBoxTitle>
-                          {this.Type(this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "next").num}` ][ 0 ][ 4 ])}
+                          {this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "next").num ][ 0 ][ 4 ]}
                         </TextBoxTitle>
 
                       </TextBox>
                     }
                     contentLeft={
-                      this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "now").num}` ][ 0 ][ 1 ] !== ""
+                      this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "now").num ][ 0 ][ 1 ] !== ""
                       ? (
                         <Badge
-                          text={this.props.state.days[ this.props.state.this.props.state.today - 1 - 1 ][ `bell_${this.props.whatLesson(new Date(Date.now()), "now").num}` ][ 0 ][ 5 ][ 0 ]}
+                          text={this.props.state.days[ this.props.state.today -1 ][ this.props.whatLesson(new Date(Date.now()), "now").num ][ 0 ][ 5 ]}
                           view="primary"
                           style={{ marginRight: "0.5em" }}
                           size="l"
