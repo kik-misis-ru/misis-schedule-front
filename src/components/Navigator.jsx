@@ -15,7 +15,7 @@ import {
   CellListItem,
   Image
 } from "@sberdevices/plasma-ui";
-import {  IconSettings,  IconLocation,IconMoreVertical} from "@sberdevices/plasma-icons";
+import {  IconSettings,  IconLocation,IconMoreVertical, IconHouse} from "@sberdevices/plasma-icons";
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 
@@ -58,8 +58,7 @@ class Navigator extends React.Component{
           </TextBox>
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 0 )}  contentRight={<IconSettings size="s" color="inherit"/>} />
-          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 17 )}  contentRight={<IconMoreVertical size="s" color="inherit"/>} />
+          <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.handleChange("page", 16 )}  contentRight={<IconHouse size="s" color="inherit"/>} />
           </Col>
         </Row>
         

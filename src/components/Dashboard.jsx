@@ -35,6 +35,7 @@ import {
 } from '../themes/tools';
 import {
   HOME_PAGE_NO,
+  NAVIGATOR_PAGE_NO
 } from '../App';
 import LinkToOnline from './LinkToOnline';
 import ScheduleDayLessons from "./ScheduleDayLessons";
@@ -94,7 +95,7 @@ class Dashboard extends React.Component {
             </TextBox>
           </Col>
           <Col style={{ margin: "0 0 0 auto" }}>
-            <Button size="s" view="clear" pin="circle-circle" onClick={() => this.setState({ page: HOME_PAGE_NO })}
+            <Button size="s" view="clear" pin="circle-circle" onClick={() => this.handleChange('page', HOME_PAGE_NO)}
                     contentRight={<IconSettings size="s" color="inherit"/>}/>
           </Col>
         </Row>
@@ -335,7 +336,8 @@ class Dashboard extends React.Component {
         <Row style={{ marginLeft: "1em", marginRight: "1em" }}>
 
           <Col size={2}>
-            <Card style={{ height: "20vh", marginTop: "0.5em" }}>
+            <Card style={{ height: "20vh", marginTop: "0.5em" }}
+             onClick={() => this.handleChange('page', 17)}>
               <CardBody>
                 <CardContent>
                   <TextBox>
@@ -351,9 +353,7 @@ class Dashboard extends React.Component {
           <Col size={2}>
             <Card
               style={{ height: "20vh", marginTop: "0.5em" }}
-              onClick={() => {
-                this.setState({ page: 15 })
-              }}
+              onClick={() => this.handleChange('page', NAVIGATOR_PAGE_NO)}
             >
               <CardBody>
                 <CardContent>
