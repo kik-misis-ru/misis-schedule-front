@@ -27,10 +27,23 @@ export const padZeros = (s: string, len: number) => s.padStart(len, '0');
  * @param {string} s
  * @return {Date}
  */
-export const strToDate = (s: string): Date => {
+export const ddMmYyyyToDate = (s: string): Date => {
   const d = parseInt(s.slice(0, 2));
   const m = parseInt(s.slice(3, 5))-1;
   const y = parseInt(s.slice(-4));
+  return new Date(y, m, d);
+}
+
+/**
+ * Convert string DD?MM?YY to Date
+ *
+ * @param {string} s
+ * @return {Date}
+ */
+export const ddMmYyToDate = (s: string): Date => {
+  const d = parseInt(s.slice(0, 2));
+  const m = parseInt(s.slice(3, 5))-1;
+  const y = 2000 + parseInt(s.slice(-2));
   return new Date(y, m, d);
 }
 

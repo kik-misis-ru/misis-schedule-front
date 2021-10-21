@@ -50,7 +50,9 @@ export const ScheduleDayLessons = ({
               setValue={onSetValue}/>
           )
           : (
-            <div></div>
+            <div
+              key={bellNumber}
+            ></div>
           )
       })
     }

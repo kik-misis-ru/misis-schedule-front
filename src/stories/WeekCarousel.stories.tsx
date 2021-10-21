@@ -4,11 +4,12 @@ import moment from 'moment';
 import 'moment/locale/ru';
 
 import WeekCarousel from '../components/WeekCarousel';
-import {MS_IN_DAY, capitalize, strToDate} from "../utils";
+import {MS_IN_DAY, capitalize, ddMmYyToDate, ddMmYyyyToDate} from "../utils";
 
 moment.locale('ru');
 
-const dateToStr = (date: Date): string => moment(date).format('DD.MM');
+const dateToStr = (date: Date): string =>
+  moment(date).format('DD.MM');
 
 const START_DATE = '18.10.2021';
 
@@ -17,7 +18,7 @@ const strDatePlus = (date: string, days: number): string => dateToStr(
 );
 
 const dateAddDays = (date: string, days: number): Date => new Date(
-  strToDate(date).getTime() + days * MS_IN_DAY
+  ddMmYyyyToDate(date).getTime() + days * MS_IN_DAY
 );
 
 const capitalizedWeekDayStrShortRu = (d: Date): string => {
