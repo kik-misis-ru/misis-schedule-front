@@ -11,7 +11,28 @@ export function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/**
+ * Добавление незначащих нулей слева
+ *
+ * @param {string} s
+ * @param {number} len
+ * return {string}
+ */
 export const padZeros = (s: string, len: number) => s.padStart(len, '0');
+
+
+/**
+ * Convert string DD?MM?YYYY to Date
+ *
+ * @param {string} s
+ * @return {Date}
+ */
+export const strToDate = (s: string): Date => {
+  const d = parseInt(s.slice(0, 2));
+  const m = parseInt(s.slice(3, 5))-1;
+  const y = parseInt(s.slice(-4));
+  return new Date(y, m, d);
+}
 
 /**
  * форматирование даты в "YYYY-MM-DD"

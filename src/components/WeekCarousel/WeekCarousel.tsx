@@ -6,18 +6,18 @@ import WeekCarouselDay from "./WeekCarouselDay";
 
 export const WeekCarousel = ({
                                carouselIndex,
-                               selectedWeekDayIndex,
-                               todayWeekDayIndex,
-                               weekDays,
+                               selectedIndex,
+                               markedIndex,
+                               cols,
                                onIndexChange,
-                               onDayClick,
+                               onSelect,
                              }: {
   carouselIndex: number
-  selectedWeekDayIndex: number
-  todayWeekDayIndex: number
-  weekDays: { title: string, date: string }[]
+  selectedIndex: number
+  markedIndex: number
+  cols: string[]
   onIndexChange: (index: number) => void
-  onDayClick: (weekDayIndex: number) => void
+  onSelect: (weekDayIndex: number) => void
 }) => (
   <Row style={{
     margin: "0.5em", marginRight: "0",
@@ -38,25 +38,23 @@ export const WeekCarousel = ({
         paddingEnd="40%"
       >
         {
-          weekDays.map((dayHeader, i) => {
-            const {title, date} = dayHeader;
-            const weekDayShort = title;
-            const dateDdDotMm = date.slice(0, 5);
-            // const selectedWeekDay = index-1;
-            // const todayWeekDay = today-1;
-
-            const formatDate = (weekDayShort,dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
+          cols.map((text, i) => {
+            // const {title, date} = dayHeader;
+            // const weekDayShort = title;
+            // const dateDdDotMm = date.slice(0, 5);
+            // // const selectedWeekDay = index-1;
+            // // const todayWeekDay = today-1;
 
             return (
               <WeekCarouselDay
                 key={i}
-                text={formatDate(weekDayShort, dateDdDotMm)}
+                text={text}
                 // date={new Date(date[weekParam])}
                 // isSelected={i + 1 === index}
-                isSelected={i === selectedWeekDayIndex}
+                isSelected={i === selectedIndex}
                 // isToday={(today === i + 1) && (weekParam === 0)}
-                isToday={(i === todayWeekDayIndex) /*&& (weekParam === THIS_WEEK)*/}
-                onClick={() => onDayClick(i)}
+                isMarked={(i === markedIndex) /*&& (weekParam === THIS_WEEK)*/}
+                onClick={() => onSelect(i)}
               />
             )
           })

@@ -4,10 +4,9 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import {WeekCarouselDay} from "../components/WeekCarousel";
 
 export default {
-  title: 'Мой МИСиС/WeekCarouselDay',
+  title: 'misis-schedule/WeekCarouselDay',
   component: WeekCarouselDay,
   argTypes: {
-    // backgroundColor: { control: 'color' },
     text: {
       type: { name: 'string', required: false },
       defaultValue: 'Пн 31.12',
@@ -16,7 +15,7 @@ export default {
       type: { name: 'boolean', required: false },
       defaultValue: false,
     },
-    isToday: {
+    isMarked: {
       type: { name: 'boolean', required: false },
       defaultValue: false,
     },
@@ -25,20 +24,41 @@ export default {
 
 const Template: ComponentStory<typeof WeekCarouselDay> = (args) => <WeekCarouselDay {...args} />;
 
+
 export const Default = Template.bind({});
+
 Default.args = {
-  // isSelected: true,
-  // isToday: true,
 };
 
-// export const SelectedNotToday = Template.bind({});
-// SelectedNotToday.args = {
-//   isSelected: true,
-//   isToday: false,
+
+// export const NotSelectedNotMarked = Template.bind({});
+//
+// NotSelectedNotMarked.args = {
+//   isSelected: false,
+//   isMarked: false,
 // };
 //
-// export const SelectedNotToday = Template.bind({});
-// SelectedNotToday.args = {
-//   isSelected: true,
-//   isToday: false,
+//
+// export const NotSelectedMarked = Template.bind({});
+//
+// NotSelectedMarked.args = {
+//   isSelected: false,
+//   isMarked: true,
 // };
+//
+//
+// export const SelecteNotMarked = Template.bind({});
+//
+// SelecteNotMarked.args = {
+//   isSelected: true,
+//   isMarked: false,
+// };
+//
+//
+// export const SelecteMarked = Template.bind({});
+//
+// SelecteMarked.args = {
+//   isSelected: true,
+//   isMarked: true,
+// };
+

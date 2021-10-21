@@ -1476,6 +1476,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
+    const formatDate = (weekDayShort,dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
+
     return (
       <DeviceThemeProvider>
         <DocStyle/>
@@ -1512,13 +1514,16 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             <WeekCarousel
               carouselIndex={this.state.i}
-              selectedWeekDayIndex={index-1}
-              todayWeekDayIndex={weekParam===THIS_WEEK ? this.state.today-1 : -1 /* current weekday can't be on 'other' week*/}
-              weekDays={this.state.day.map(d => {
-                return { title: d.title, date: d.date[weekParam] }
+              selectedIndex={index-1}
+              markedIndex={weekParam===THIS_WEEK ? this.state.today-1 : -1 /* current weekday can't be on 'other' week*/}
+              cols={this.state.day.map(d => {
+                const {title, date} = d;
+                const weekDayShort = title;
+                const dateDdDotMm = date.slice(0, 5);
+                return formatDate(weekDayShort, dateDdDotMm);
               })}
               onIndexChange={(index) => this.Index()}
-              onDayClick={(weekDayIndex) => this.setValue("page", (
+              onSelect={(weekDayIndex) => this.setValue("page", (
                 weekDayIndex + page + (weekParam==OTHER_WEEK ? 0: 1)
               ))}
             />

@@ -16,11 +16,9 @@ import {
   NAVIGATOR_PAGE_NO,
   DASHBOARD_PAGE_NO,
 } from '../App';
-
 import {DocStyle} from '../themes/tools';
 import Main from './Home/Main';
-
-import {SwitchStudentTeacher} from './Home/SwitchStudentTeacher'
+import TabSelector from './Home/TabSelector'
 import {ShowSchedule} from './Home/ShowSchedule'
 import {RememberDataCheckbox} from './Home/RememberDataCheckbox'
 //import {Main} from './Home/Main.jsx'
@@ -28,10 +26,16 @@ import {RememberDataCheckbox} from './Home/RememberDataCheckbox'
 
 const DESC_JOY      = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS   = "Чтобы посмотреть расписание, укажите данные учебной группы";
-const labelGroup    = "Номер академической группы через дефисы";
-const labelSubgroup = "Номер подгруппы: 1 или 2";
-const labelEnggroup = "Число номера группы по английскому";
+
+const LABEL_GROUP    = "Номер академической группы через дефисы";
+const LABEL_SUB_GROUP = "Номер подгруппы: 1 или 2";
+const LABEL_ENG_GROUP = "Число номера группы по английскому";
 const labelTeacher  = "Фамилия И. О.";
+
+export const USER_MODES = [
+  'Студент',
+  'Преподаватель',
+];
 
 export const GoToMenuButton = (props) => <Button
   size="s"
@@ -207,9 +211,13 @@ class HomeView extends React.Component {
                 <TextBox>
                   <TextBoxBigTitle style={{ margin: '1.5%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
                 </TextBox>
-                <SwitchStudentTeacher
-                  isStudent={this.props.student}
-                  onSwitch={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+                <TabSelector
+                  tabs={USER_MODES}
+                  selectedIndex={this.props.student ? 0 : 1}
+                  onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+
+                  //isStudent={this.props.student}
+                  //onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
                 />
                 <TextBox>
                   <TextBoxSubTitle style={{
@@ -222,7 +230,7 @@ class HomeView extends React.Component {
                 </TextBox>
 
                 <TextFieldForUserInfo
-                  label={labelGroup}
+                  label={LABEL_GROUP}
                   status={this.props.color_group}
                   value={this.props.group}
                   fieldType="group"
@@ -230,7 +238,7 @@ class HomeView extends React.Component {
                 />
 
                 <TextFieldForUserInfo
-                  label={labelSubgroup}
+                  label={LABEL_SUB_GROUP}
                   status={this.props.color_sub}
                   value={this.props.subGroup}
                   fieldType="subGroup"
@@ -238,7 +246,7 @@ class HomeView extends React.Component {
                 />
 
                 <TextFieldForUserInfo
-                  label={labelEnggroup}
+                  label={LABEL_ENG_GROUP}
                   status={this.props.color_enggroup}
                   value={this.props.engGroup}
                   fieldType="engGroup"
@@ -298,9 +306,10 @@ class HomeView extends React.Component {
                  <TextBoxBigTitle style={{ margin: '3%', textAlign: "center" }}>Салют! </TextBoxBigTitle>
                </TextBox>
 
-               <SwitchStudentTeacher
-                 isStudent={this.props.student}
-                 onSwitch={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+               <TabSelector
+                 tabs={USER_MODES}
+                 selectedIndex={this.props.student ? 0 : 1}
+                 onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
                />
 
                <TextBox>
