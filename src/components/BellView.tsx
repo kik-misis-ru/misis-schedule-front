@@ -25,6 +25,7 @@ import {Bell} from "../ScheduleStructure";
 import {THIS_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
 import {lessonTypeAdjToNoun} from '../utils';
 import LinkToOnline from './LinkToOnline';
+import { time } from "console";
 
 
 const StartAndFinishTime = ({
@@ -108,11 +109,13 @@ const LeftContent = ({
 
 const MainContent = ({
                        bell,
+                       time,
                        isCurrentLesson,
                        isCorrectTeacher,
                        onTeacherClick,
                      }: {
   bell: Bell
+  time: string
   isCurrentLesson: boolean
   isCorrectTeacher: boolean
   onTeacherClick: (teacherName: string) => void
@@ -120,7 +123,7 @@ const MainContent = ({
   return (
     <TextBox>
       <StartAndFinishTime
-        time={bell.startAndFinishTime}
+        time={time}
       />
       <LessonName
         isCurrentLesson={isCurrentLesson}
@@ -168,6 +171,7 @@ interface BellViewProps {
   student: boolean
   teacher_correct: boolean
   bell: Bell
+  time: string
   current: string | undefined
   today: number
   timeParam: number
@@ -211,6 +215,7 @@ class BellView extends React.Component<BellViewProps> {
       content={
         <MainContent
           bell={bell}
+          time={this.props.time}
           isCurrentLesson={this.getIsCurrentLesson()}
           isCorrectTeacher={this.getIsCorrectTeacher()}
           onTeacherClick={ async (teacherName) => {

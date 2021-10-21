@@ -307,73 +307,60 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
               />
             )
             : (
-              <Container style={{padding: 0}}>
+              <Main
+                setValue={this.handleChange}
+                convertIdInGroupName={this.convertIdInGroupName}
+                disabled={this.state.disabled}
+                contentRight={
+                  <Container style={{padding: 0}}>
+                    <TextBox>
+                  <TextBoxBigTitle style={{margin: '3%', textAlign: "center"}}>Салют! </TextBoxBigTitle>
+                </TextBox>
 
-                <Row>
-                  <Col style={{marginLeft: "auto"}}>
-                    <GoToMenuButton
-                      onClick={() => {
-                        this.handleChange("page", NAVIGATOR_PAGE_NO)
-                      }}
-                    />
-                    <GoToScheduleButton
-                      onClick={() => {
-                        this.props.convertIdInGroupName();
-                        this.handleChange("page", SCHEDULE_PAGE_NO)
-                      }}
-                      disabled={this.state.disabled}
-                    />
-                  </Col>
+                <TabSelector
+                  tabs={USER_MODES}
+                  selectedIndex={this.props.student ? 0 : 1}
+                  onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+                />
+
+                <TextBox>
+                  <TextBoxSubTitle style={{margin: '1.5em', textAlign: "center", color: "white"}}>
+                    {LABEL_TO_VIEW_SCHEDULE}
+                  </TextBoxSubTitle>
+                </TextBox>
+
+                <TextFieldForUserInfo
+                  label={LABEL_TEACHER}
+                  value={this.props.teacher}
+                  isError={this.props.isTeacherError}
+                  onChange={(value) => this.handleChange('teacher', value)}
+                />
+
+                <Row style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "center",
+                  margin: "1.1em"
+                }}
+                >
+                  <RememberDataCheckbox
+                    label={LABEL_REMEMBER_FIO}
+                    checked={this.props.teacher_checked}
+                    onChange={(value: boolean) => {
+                      this.handleChange("teacher_checked", value);
+                    }}
+                  />
                 </Row>
 
-                <div>
+                <ShowSchedule
+                  onClick={() => this.props.isCorrect()}
+                />
+              <MyDiv100/>
 
-                  <TextBox>
-                    <TextBoxBigTitle style={{margin: '3%', textAlign: "center"}}>Салют! </TextBoxBigTitle>
-                  </TextBox>
-
-                  <TabSelector
-                    tabs={USER_MODES}
-                    selectedIndex={this.props.student ? 0 : 1}
-                    onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
-                  />
-
-                  <TextBox>
-                    <TextBoxSubTitle style={{margin: '1.5em', textAlign: "center", color: "white"}}>
-                      {LABEL_TO_VIEW_SCHEDULE}
-                    </TextBoxSubTitle>
-                  </TextBox>
-
-                  <TextFieldForUserInfo
-                    label={LABEL_TEACHER}
-                    value={this.props.teacher}
-                    isError={this.props.isTeacherError}
-                    onChange={(value) => this.handleChange('teacher', value)}
-                  />
-
-                  <Row style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "center",
-                    margin: "1.1em"
-                  }}
-                  >
-                    <RememberDataCheckbox
-                      label={LABEL_REMEMBER_FIO}
-                      checked={this.props.teacher_checked}
-                      onChange={(value: boolean) => {
-                        this.handleChange("teacher_checked", value);
-                      }}
-                    />
-                  </Row>
-
-                  <ShowSchedule
-                    onClick={() => this.props.isCorrect()}
-                  />
-
-                </div>
-                <MyDiv100/>
-              </Container>
+                
+                  </Container>
+                }
+                />
             )
         }
       </div>
