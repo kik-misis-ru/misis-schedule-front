@@ -12,7 +12,7 @@ import {
   getScheduleTeacherFromDb,
   getUser,
   IScheduleApiData,
-  IScheduleLessonInfo,
+  IScheduleLessonInfo, setGroupStar, setTeacherStar,
 } from "./APIHelper";
 import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
@@ -21,7 +21,7 @@ import Dashboard from './components/Dashboard';
 import HomeView from './components/HomeView';
 import Navigator from './components/Navigator';
 import ScheduleDayFull from "./components/ScheduleDayFull";
-import TopMenu from './components/TopMenu/';
+import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
 
@@ -59,7 +59,14 @@ import {
   THIS_WEEK,
   TodayOrTomorrow,
 } from './types/base.d'
-import {formatDateWithDashes, formatDateWithDots, MS_IN_DAY, pairNumberToPairText} from './utils';
+import {
+  formatDateWithDashes,
+  formatDateWithDots,
+  getFullGroupName,
+  getIsCorrectTeacher,
+  MS_IN_DAY,
+  pairNumberToPairText
+} from './utils';
 
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
@@ -1501,6 +1508,40 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     console.log('Raspisanie: this.state.day:', this.state.day)
 
+    const isTeacher = getIsCorrectTeacher({isStudent: this.state.student, isTeacherCorrect: this.state.teacher_correct});
+
+    const groupName = getFullGroupName(this.state.group, this.state.subGroup);
+
+    const userToStar = {
+      userId: this.state.userId,
+      filialId: filial.id,
+      groupId: this.state.groupId,
+      subGroup: this.state.subGroup,
+      engGroup: this.state.engGroup,
+      teacherId: this.state.teacherId
+    }
+
+    const handleGroupStarChange = async (newValue) => {
+      this.setValue("star", newValue);
+      this.setValue("checked", newValue)
+      this.setValue("bd", newValue
+        ? this.state.groupId
+        : ''
+      )
+      return await setGroupStar(userToStar, newValue);
+    };
+
+    const handleTeacherStarChange = async (newValue) => {
+      this.setValue("teacher_star", newValue)
+      this.setValue("teacher_checked", newValue)
+      this.setValue("teacher_bd", newValue
+        ? this.state.groupId
+        : ''
+      )
+      return await setTeacherStar(userToStar, newValue);
+    };
+
+
     return (
       <DeviceThemeProvider>
         <DocStyle/>
@@ -1511,6 +1552,22 @@ export class App extends React.Component<IAppProps, IAppState> {
           <Container style={{padding: 0, overflow: "hidden"}}>
 
             <TopMenu
+              subLabel={
+                isTeacher
+                  ? this.state.teacher
+                  : groupName
+              }
+              starred={
+                isTeacher
+                ? this.state.teacher_star
+                : this.state.star
+              }
+              onStarClick={() => {
+                isTeacher
+                  ?handleTeacherStarChange(!this.state.teacher_star)
+                  :handleGroupStarChange(!this.state.star)
+              }}
+
               state={this.state}
               // userId={this.state.userId}
               // groupId={this.state.groupId}
@@ -1525,8 +1582,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
               setState={this.setState}
               setValue={this.setValue}
-              onHomeCLick={() => this.setState({page: HOME_PAGE_NO})}
-              onNavigatorCLick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
+              onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
+              onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />
 
             <WeekSelect
