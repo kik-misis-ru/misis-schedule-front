@@ -16,7 +16,7 @@ export const RememberDataCheckbox = ({label, checked, onChange}) => {
         }}><Checkbox
                 label={label}
                 checked={checked}
-                onChange={onChange} />
+                onChange={(event) => onChange(event.target.value)} />
         </Row>
     )
 }

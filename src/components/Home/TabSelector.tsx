@@ -1,7 +1,6 @@
 import React from "react";
 import {Row, Tabs, TabItem} from '@sberdevices/plasma-ui';
 
-
 export const TabSelector = ({
                               tabs,
                               selectedIndex,
@@ -22,8 +21,10 @@ export const TabSelector = ({
         {
           tabs.map(
             (tabText, i) =>
-              <TabItem isActive={i === selectedIndex}
-                       onClick={() => onSelect(i)}
+              <TabItem
+                key={tabText}
+                isActive={i === selectedIndex}
+                onClick={() => onSelect(i)}
               >
                 {tabText}
               </TabItem>
@@ -33,25 +34,5 @@ export const TabSelector = ({
     </Row>
   )
 }
-
-
-// export const SwitchStudentTeacher = (
-//   {
-//     isStudent,
-//     onSelect,
-//   }: {
-//     isStudent: boolean,
-//     onSelect: (tabIndex: number) => void
-//   }) => {
-//   const USER_MODES = [
-//     'Студент',
-//     'Преподаватель',
-//   ];
-//   return <TabSelector
-//     tabs={USER_MODES}
-//     selectedIndex={isStudent ? 0 : 1}
-//     onSelect={(tabIndex) => onSelect(tabIndex)}
-//   />
-// }
 
 export default TabSelector

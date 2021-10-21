@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 
 export interface ITeacherApiData {
   first_name: string
@@ -97,7 +97,7 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
 }
 
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {
-  const { data: answer } = await axios.get(`${API_URL}teacher`, {
+  const {data: answer} = await axios.get(`${API_URL}teacher`, {
     params: {
       teacher_initials: teacher_in
     },
@@ -106,7 +106,7 @@ export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherAp
 }
 
 export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherApiData> {
-  const { data: rawTeacherData } = await axios.get(`${API_URL}teacher_initials`, {
+  const {data: rawTeacherData} = await axios.get(`${API_URL}teacher_initials`, {
     params: {
       teacher_id: teacher_id
     },
@@ -123,7 +123,7 @@ export async function createUser(
   subGroup: string,
   engGroup: string,
   teacher_id: string,
-) {
+): Promise<AxiosResponse<any>> {
   const data = {
     "user_id": userId,
     "filial_id": filialId,
@@ -133,6 +133,65 @@ export async function createUser(
     "teacher_id": teacher_id
   };
   return await axios.post(`${API_URL}users`, data);
+}
+
+
+interface StarUser {
+  userId: string
+  filialId: string
+  groupId: string
+  subGroup: string
+  engGroup: string
+  teacherId: string
+}
+
+export async function setGroupStar(
+  props: StarUser,
+  value: boolean
+): Promise<AxiosResponse<any>> {
+  return value
+    ? createUser(
+      props.userId,
+      // todo hardcoded 880
+      "880",
+      props.groupId,
+      props.subGroup,
+      props.engGroup,
+      props.teacherId
+    )
+    : createUser(
+      props.userId,
+      "",
+      "",
+      "",
+      "",
+      "",
+    )
+}
+
+export async function setTeacherStar(
+  props: StarUser,
+  value: boolean
+): Promise<AxiosResponse<any>> {
+  return value ?
+    createUser(
+      props.userId,
+      // todo hardcoded 880
+      "880",
+      props.groupId,
+      props.subGroup,
+      props.engGroup,
+      props.teacherId,
+    )
+    : createUser(
+      props.userId,
+      "",
+      "",
+      "",
+      "",
+      "",
+    );
+
 }
 
 

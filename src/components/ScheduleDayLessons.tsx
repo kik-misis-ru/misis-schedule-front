@@ -38,6 +38,7 @@ export const ScheduleDayLessons = ({
         return bell.lessonName !== ""
           ? (
             <BellView
+              key={bellNumber}
               bell={bell}
               current={current}
               weekParam={weekParam}

@@ -62,6 +62,7 @@ import {formatDateWithDashes, formatDateWithDots, MS_IN_DAY, pairNumberToPairTex
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
+export const SCHEDULE_PAGE_NO  = 17;
 
 const INITIAL_PAGE = 7;
 
@@ -162,10 +163,6 @@ const TODAY_TOMORROW_DICT = {
 }
 
 
-
-const COLOR_NAME_ERROR = 'error'
-const COLOR_NAME_WARN_RU = 'Предупреждение'
-
 const NO_LESSONS_NAME = "Пар нет 🎉"
 
 const DAYS_OF_WEEK_SHORT_RU = [
@@ -225,8 +222,6 @@ interface IAppState {
   description: string
   group: string
   groupId: string
-  subGroup: string
-  engGroup: string
   correct
   i: number
   day: IDayHeader[]
@@ -234,14 +229,22 @@ interface IAppState {
   spinner: boolean
   date: number
   today: number
-  color_group: string
-  color_teacher: string
-  color_sub: string
-  color_enggroup?: string
+
+  isGroupError: boolean
+
+  subGroup: string
+  isSubGroupError: boolean
+
+  engGroup: string
+  isEngGroupError: boolean
+
+
   character: Character
+  // todo paramoy
     | typeof CHAR_TIMEPARAMOY
   star: boolean
   bd: string
+
   student: boolean
   teacher: string
   teacherId: string
@@ -249,6 +252,8 @@ interface IAppState {
   teacher_star: boolean
   teacher_bd: string
   teacher_correct: boolean
+  isTeacherError: boolean
+
   building: IBuilding[]
 }
 
@@ -285,9 +290,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       spinner: false,
       date: Date.now(),
       today: 0,
-      color_group: DEFAULT_TEXT_COLOR,
-      color_teacher: DEFAULT_TEXT_COLOR,
-      color_sub: DEFAULT_TEXT_COLOR,
+      isGroupError: false,
+      isTeacherError: false,
+      isSubGroupError: false,
+      isEngGroupError: false,
       character: CHAR_SBER,
       star: false,
       bd: "",
@@ -1489,6 +1495,17 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             <TopMenu
               state={this.state}
+              // userId={this.state.userId}
+              // groupId={this.state.groupId}
+
+              // group={this.state.group}
+              // subGroup={this.state.subGroup}
+
+              // isStudent={this.state.student}
+
+              // teacherName={this.state.teacher}
+              // isTeacherCorrect={this.state.teacher_correct}
+
               setState={this.setState}
               setValue={this.setValue}
               onHomeCLick={() => this.setState({page: HOME_PAGE_NO})}
@@ -1524,7 +1541,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               })}
               onIndexChange={(index) => this.Index()}
               onSelect={(weekDayIndex) => this.setValue("page", (
-                weekDayIndex + page + (weekParam==OTHER_WEEK ? 0: 1)
+                weekDayIndex + page + (weekParam===OTHER_WEEK ? 0: 1)
               ))}
             />
 
@@ -1568,11 +1585,11 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (teacherData.status == "-1") {
         console.log("status");
         this.setState({
-          color_teacher: COLOR_NAME_ERROR,
+          isTeacherError: true,
         })
       } else if (teacherData.status == "-2") {
         this.setState({
-          color_teacher: COLOR_NAME_WARN_RU,
+          isTeacherError: true,
         })
 
       } else {
@@ -1597,7 +1614,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           date: Date.now(),
           flag: true,
           page: 7,
-          color_teacher: DEFAULT_TEXT_COLOR,
+          isTeacherError: false,
         });
 
       }
@@ -1658,28 +1675,28 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log(String(this.state.engGroup));
       this.setState({flag: true});
       this.convertIdInGroupName();
-      this.setState({page: 7, color_group: COLOR_NAME_WARN_RU});
+      this.setState({page: 7, isGroupError: true});
 
     } else if (this.state.correct === true) {
-      this.setState({color_group: COLOR_NAME_WARN_RU});
+      this.setState({isGroupError: true});
 
     } else if (this.state.group === "") {
-      this.setState({color_group: COLOR_NAME_ERROR})
+      this.setState({isGroupError: true})
 
     } else {
-      this.setState({color_group: COLOR_NAME_ERROR})
+      this.setState({isGroupError: true})
     }
 
     if (!correct_sub) {
-      this.setState({color_sub: COLOR_NAME_ERROR})
+      this.setState({isSubGroupError: true})
     } else {
-      this.setState({color_sub: COLOR_NAME_WARN_RU, star: false});
+      this.setState({isSubGroupError: true, star: false});
     }
 
     if (!correct_eng) {
-      this.setState({color_enggroup: COLOR_NAME_ERROR})
+      this.setState({isEngGroupError: true})
     } else {
-      this.setState({color_enggroup: COLOR_NAME_WARN_RU, star: false});
+      this.setState({isEngGroupError: true, star: false});
     }
   }
 
@@ -1716,7 +1733,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   render() {
-    console.log('render');
+    console.log('App: render');
     let page = this.state.page;
     if (page >= 1 && page <= 13) {
       return this.Raspisanie(page);
@@ -1724,22 +1741,28 @@ export class App extends React.Component<IAppProps, IAppState> {
     switch (this.state.page) {
       case HOME_PAGE_NO:
         return <HomeView
-          state={this.state}
+          // state={this.state}
           isCorrect={this.isCorrect}
           convertIdInGroupName={this.convertIdInGroupName}
-          isCorrectTeacher={this.isCorrectTeacher}
           setValue={this.setValue}
-          groupId={this.state.groupId}
           description={this.state.description}
           character={this.state.character}
+          checked={this.state.checked}
+
+          groupId={this.state.groupId}
+          group={this.state.group}
+          isGroupError={this.state.isGroupError}
+
+          subGroup={this.state.subGroup}
+          isSubGroupError={this.state.isSubGroupError}
+
+          engGroup={this.state.engGroup}
+          isEngGroupError={this.state.isEngGroupError}
+
           student={this.state.student}
           teacher={this.state.teacher}
-          color_group={this.state.color_group}
-          group={this.state.group}
-          subGroup={this.state.subGroup}
-          color_sub={this.state.color_sub}
-          color_enggroup={this.state.color_enggroup}
-          checked={this.state.checked}
+          isTeacherError={this.state.isTeacherError}
+          isCorrectTeacher={this.isCorrectTeacher}
           teacher_checked={this.state.teacher_checked}
         />
       case NAVIGATOR_PAGE_NO:

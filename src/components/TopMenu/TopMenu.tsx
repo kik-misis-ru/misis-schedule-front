@@ -56,7 +56,7 @@ const TopMenu = ({
             ? (
               <StarButtonView
                 star={state.star}
-                student={state.student}
+                isStudent={state.student}
                 userId={state.userId}
                 groupId={state.groupId}
                 subGroup={state.subGroup}
@@ -64,12 +64,12 @@ const TopMenu = ({
                 teacherId={state.teacherId}
                 teacher_star={state.teacher_star}
                 setValue={setValue}
-                onClick={setValue("teacher_star", !state.teacher_star)}
+                onClick={() => setValue("teacher_star", !state.teacher_star)}
               />
             ) : (
               <StarButtonView
                 star={state.star}
-                student={state.student}
+                isStudent={state.student}
                 userId={state.userId}
                 groupId={state.groupId}
                 subGroup={state.subGroup}
@@ -77,7 +77,7 @@ const TopMenu = ({
                 teacherId={state.teacherId}
                 teacher_star={state.teacher_star}
                 setValue={setValue}
-                onClick={setValue("star", !state.star)}
+                onClick={() => setValue("star", !state.star)}
               />
             )}
         <Button
