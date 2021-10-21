@@ -10,29 +10,18 @@ export default {
   title: 'misis-schedule/TabSelector',
   component: TabSelector,
   argTypes: {
-/*
     selectedIndex: {
-      type: {name: 'number', required: false},
-      defaultValue: 1,
+      options: [0, 1],
+      control: {type: 'radio'},
+      defaultValue: 0,
     },
-*/
   },
 } as ComponentMeta<typeof TabSelector>;
 
 
-const Template: ComponentStory<typeof TabSelector> = (args, context) => {
-  const {onSelect, selectedIndex: selectedIndex_, ...rest} = args;
-  const [selectedIndex,setSelectedIndex] = useState(0);
-  return (
-    <TabSelector
-      onSelect={(idx) => {
-        setSelectedIndex(idx);
-      }}
-      selectedIndex={selectedIndex}
-      {...rest}
-    />
-  )
-};
+const Template: ComponentStory<typeof TabSelector> = (args, context) => (
+  <TabSelector {...args} />
+);
 
 export const Default = Template.bind({});
 
