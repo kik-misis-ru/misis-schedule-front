@@ -17,7 +17,7 @@ import {
   DASHBOARD_PAGE_NO, MyDiv100, SCHEDULE_PAGE_NO,
 } from '../App';
 import {DocStyle} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character} from "../types/base";
+import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
 import Main from './Home/Main';
 import TabSelector from './Home/TabSelector'
 import {ShowSchedule} from './Home/ShowSchedule'

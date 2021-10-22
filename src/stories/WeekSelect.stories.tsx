@@ -11,7 +11,7 @@ export default {
 } as ComponentMeta<typeof WeekSelect>;
 
 const Template: ComponentStory<typeof WeekSelect> = (args, context) => (
-    <WeekSelect {...args} />
+  <WeekSelect {...args} />
 );
 
 export const Default = Template.bind({});

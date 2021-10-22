@@ -1,0 +1,48 @@
+import React from 'react';
+import {ComponentStory, ComponentMeta} from '@storybook/react';
+
+import ScheduleLesson from '../components/ScheduleLesson';
+
+export default {
+  title: 'misis-schedule/ScheduleLesson',
+  component: ScheduleLesson,
+  argTypes: {
+    isCurrentLesson: {
+      type: {name: 'boolean', required: false},
+      defaultValue: false,
+    },
+    isCorrectTeacher: {
+      type: {name: 'boolean', required: false},
+      defaultValue: false,
+    },
+    startTime: {
+      type: {name: 'string', required: false},
+      defaultValue: '10:00',
+    },
+    endTime: {
+      type: {name: 'string', required: false},
+      defaultValue: '11:30',
+    },
+    bell: {
+      defaultValue: {
+        lessonName: 'Название предмета',
+        groupNumber: 'БПМ-19-2',
+        teacher: 'Преподаватель И.О.',
+        url: 'http://ya.ru',
+        room: 'Б-900',
+        lessonNumber: '1.',
+        lessonType: 'Лекционные',
+      }
+    }
+  },
+} as ComponentMeta<typeof ScheduleLesson>;
+
+const Template: ComponentStory<typeof ScheduleLesson> = (args, context) => (
+  <ScheduleLesson {...args} />
+);
+
+export const Default = Template.bind({});
+
+Default.args = {
+};
+

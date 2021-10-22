@@ -12,11 +12,11 @@ export const ScheduleDayFull = ({
                                   current,
                                   weekParam,
                                   timeParam,
-                                  student,
-                                  teacher_correct,
+                                  isCorrectTeacher,
                                   today,
-                                  validateTeacher,
-                                  onSetValue,
+                                  // validateTeacher,
+                                  // onSetValue,
+                                  onTeacherClick,
                                 }:{
   spinner: boolean
   days: IScheduleDays,
@@ -24,11 +24,9 @@ export const ScheduleDayFull = ({
   current: string | undefined,
   weekParam: THIS_OR_OTHER_WEEK,
   timeParam: number,
-  student: boolean,
-  teacher_correct: boolean,
+  isCorrectTeacher: boolean,
   today: number,
-  validateTeacher: () => Promise<void>,
-  onSetValue: (key: string, value: any) => void
+  onTeacherClick: (teacherName: string) => void
 }) => (
   !spinner
   ? (
@@ -43,7 +41,6 @@ export const ScheduleDayFull = ({
       <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
         <CardBody style={{padding: "0 0 0 0"}}>
           <CardContent compact style={{padding: "0.3em 0.3em"}}>
-            {/* <TextBoxBigTitle style={{color: "var(--plasma-colors-secondary)"}}> {this.state.day[day_num]["title"]} {this.state.day[day_num]["date"][weekParam].slice(0, 5)},  {this.Para(this.state.day[day_num]["count"][weekParam])} </TextBoxBigTitle> */}
             {
               timeParam == 7
                 ? <ScheduleDayOff/>
@@ -53,11 +50,9 @@ export const ScheduleDayFull = ({
                   current={current}
                   weekParam={weekParam}
                   timeParam={timeParam}
-                  student={student}
-                  teacher_correct={teacher_correct}
+                  isCorrectTeacher={isCorrectTeacher}
                   today={today}
-                  validateTeacher={validateTeacher}
-                  onSetValue={onSetValue}
+                  onTeacherClick={(teacherName) => onTeacherClick(teacherName)}
                 />
             }
           </CardContent>

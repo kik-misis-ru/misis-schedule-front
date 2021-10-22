@@ -71,7 +71,7 @@ import {
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
-export const SCHEDULE_PAGE_NO  = 17;
+export const SCHEDULE_PAGE_NO = 17;
 
 const INITIAL_PAGE = 7;
 
@@ -166,7 +166,7 @@ const numPron = {
 /**
  * Время начала и конца пар
  */
-export const LessonStartEnd =[
+export const LessonStartEnd = [
   {start: "9:00", end: "10:35"},
   {start: "10:50", end: "12:25"},
   {start: "12:40", end: "14:15"},
@@ -187,9 +187,7 @@ const TODAY_TOMORROW_DICT = {
 
 const NO_LESSONS_NAME = "Пар нет 🎉"
 
-const DAYS_OF_WEEK_SHORT_RU = [
-
-]
+const DAYS_OF_WEEK_SHORT_RU = []
 
 const DEFAULT_STATE_DAY: IDayHeader[] = [
   {
@@ -227,7 +225,9 @@ interface IBuilding {
   short: string
 }
 
-export type IScheduleDays = Bell[][][]
+export type ThisOtherWeekBells = Bell[]
+export type DayBells = ThisOtherWeekBells[]
+export type IScheduleDays = DayBells[]
 
 //
 
@@ -262,7 +262,7 @@ interface IAppState {
 
 
   character: Character
-  // todo paramoy
+    // todo paramoy
     | typeof CHAR_TIMEPARAMOY
   star: boolean
   bd: string
@@ -312,20 +312,25 @@ export class App extends React.Component<IAppProps, IAppState> {
       spinner: false,
       date: Date.now(),
       today: 0,
+
       isGroupError: false,
       isTeacherError: false,
       isSubGroupError: false,
       isEngGroupError: false,
+
       character: CHAR_SBER,
+
       star: false,
       bd: "",
       student: true,
+
       teacher: "",
       teacherId: "",
       teacher_checked: false,
       teacher_star: false,
       teacher_bd: "",
       teacher_correct: false,
+
       building: building,
     }
     // this.Home                 = Home.bind(this);
@@ -387,7 +392,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.ChangePage()
                   this.setState({
                     student: false,
-                    page: 17,
+                    page: SCHEDULE_PAGE_NO,
                     teacher_checked: true,
                     teacher_star: true,
                     teacher_bd: this.state.teacherId,
@@ -398,7 +403,13 @@ export class App extends React.Component<IAppProps, IAppState> {
                     this.showWeekSchedule(response, 0)
                   });
                   this.ChangePage()
-                  this.setState({page: 17, checked: true, star: true, bd: this.state.groupId, student: true});
+                  this.setState({
+                    page: SCHEDULE_PAGE_NO,
+                    checked: true,
+                    star: true,
+                    bd: this.state.groupId,
+                    student: true
+                  });
                 } else {
                   this.ChangePage()
                   this.setState({page: HOME_PAGE_NO});
@@ -426,8 +437,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     });
   }
 
-  TimуByLessonNum(num){
-    return LessonStartEnd[num].start + " - " +LessonStartEnd[num].end
+  TimуByLessonNum(num) {
+    return LessonStartEnd[num].start + " - " + LessonStartEnd[num].end
   }
 
   setValue(key: string, value: any) {
@@ -504,9 +515,9 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
-        return LessonStartEnd[lessonNum-1].start
+        return LessonStartEnd[lessonNum - 1].start
       } else {
-        return LessonStartEnd[lessonNum-1].end
+        return LessonStartEnd[lessonNum - 1].end
       }
     }
   }
@@ -927,7 +938,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.ChangePage()
-            return this.setState({date: Date.now(), flag: true, page: 17});
+            return this.setState({date: Date.now(), flag: true, page: SCHEDULE_PAGE_NO});
           }
           break;
 
@@ -1504,11 +1515,14 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
-    const formatDate = (weekDayShort,dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
+    const formatDate = (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
 
     console.log('Raspisanie: this.state.day:', this.state.day)
 
-    const isTeacher = getIsCorrectTeacher({isStudent: this.state.student, isTeacherCorrect: this.state.teacher_correct});
+    const isTeacher = getIsCorrectTeacher({
+      isStudent: this.state.student,
+      isTeacherCorrect: this.state.teacher_correct
+    });
 
     const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
@@ -1559,13 +1573,13 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
               starred={
                 isTeacher
-                ? this.state.teacher_star
-                : this.state.star
+                  ? this.state.teacher_star
+                  : this.state.star
               }
               onStarClick={() => {
                 isTeacher
-                  ?handleTeacherStarChange(!this.state.teacher_star)
-                  :handleGroupStarChange(!this.state.star)
+                  ? handleTeacherStarChange(!this.state.teacher_star)
+                  : handleGroupStarChange(!this.state.star)
               }}
               onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
               onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
@@ -1580,7 +1594,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }}
               onThisWeekClick={() => {
                 this.CurrentWeek();
-                this.setState({flag: true, page: 17})
+                this.setState({flag: true, page: SCHEDULE_PAGE_NO})
               }}
               onNextWeekClick={() => {
                 this.setState({spinner: false});
@@ -1591,8 +1605,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             <WeekCarousel
               carouselIndex={this.state.i}
-              selectedIndex={index-1}
-              markedIndex={weekParam===THIS_WEEK ? this.state.today-1 : -1 /* current weekday can't be on 'other' week*/}
+              selectedIndex={index - 1}
+              markedIndex={weekParam === THIS_WEEK ? this.state.today - 1 : -1 /* current weekday can't be on 'other' week*/}
               cols={
                 this.state.day.map(d => {
                   const {title, date} = d;
@@ -1606,7 +1620,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
               onIndexChange={(index) => this.Index()}
               onSelect={(weekDayIndex) => this.setValue("page", (
-                weekDayIndex + page + (weekParam===OTHER_WEEK ? 0: 1)
+                weekDayIndex + page + (weekParam === OTHER_WEEK ? 0 : 1)
               ))}
             />
 
@@ -1617,11 +1631,14 @@ export class App extends React.Component<IAppProps, IAppState> {
               current={current}
               weekParam={weekParam}
               timeParam={timeParam}
-              student={this.state.student}
-              teacher_correct={this.state.teacher_correct}
+              isCorrectTeacher={isTeacher}
               today={this.state.today}
-              validateTeacher={this.isCorrectTeacher}
-              onSetValue={this.setValue}
+              // validateTeacher={this.isCorrectTeacher}
+              // onSetValue={this.setValue}
+              onTeacherClick={async (teacherName) => {
+                this.setValue("teacher", teacherName);
+                await this.isCorrectTeacher();
+              }}
             />
 
             <MyDiv200/>
@@ -1647,12 +1664,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log('isCorrectTeacher:', teacherData);
       console.log('isCorrectTeacher: status:', teacherData.status);
 
-      if ((teacherData.status == "-1")||(teacherData.status == "-2")){
+      if ((teacherData.status == "-1") || (teacherData.status == "-2")) {
         console.log("status");
         this.setState({
           isTeacherError: true,
         })
-      
+
 
       } else {
 
@@ -1736,10 +1753,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log(String(this.state.engGroup));
       this.setState({flag: true});
       this.convertIdInGroupName();
-      this.setState({page: 17, isGroupError: true});
+      this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
 
     } else if (this.state.correct === true) {
-      this.setState({isGroupError: true});
+      this.setState({isGroupError: false});
 
     } else if (this.state.group === "") {
       this.setState({isGroupError: true})
@@ -1751,13 +1768,13 @@ export class App extends React.Component<IAppProps, IAppState> {
     if (!correct_sub) {
       this.setState({isSubGroupError: true})
     } else {
-      this.setState({isSubGroupError: true, star: false});
+      this.setState({isSubGroupError: false, star: false});
     }
 
     if (!correct_eng) {
       this.setState({isEngGroupError: true})
     } else {
-      this.setState({isEngGroupError: true, star: false});
+      this.setState({isEngGroupError: false, star: false});
     }
   }
 
@@ -1841,7 +1858,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           whatLesson={this.whatLesson}
           getTime={this.getTime}
         />
-      case 17:
+      case SCHEDULE_PAGE_NO:
         return this.Spinner();
       default:
         break;

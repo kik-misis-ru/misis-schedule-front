@@ -1,59 +1,59 @@
 import React from "react";
 
 import {IScheduleDays} from "../App";
-import {THIS_OR_OTHER_WEEK} from "../types/base";
-import BellView from "./BellView";
+import {THIS_OR_OTHER_WEEK, THIS_WEEK} from "../types/base.d";
+import ScheduleLesson from "./ScheduleLesson";
 import {LessonStartEnd} from "../App";
 
 
 export const ScheduleDayLessons = ({
                                      days,
                                      day_num,
+                                     today,
                                      current,
                                      weekParam,
                                      timeParam,
-                                     student,
-                                     teacher_correct,
-                                     today,
-                                     validateTeacher,
-                                     onSetValue,
-                             }:{
+                                     isCorrectTeacher,
+                                     onTeacherClick,
+                                   }: {
   days: IScheduleDays,
   day_num: number,
+  today: number,
   current: string | undefined,
   weekParam: THIS_OR_OTHER_WEEK,
   timeParam: number,
-  student: boolean,
-  teacher_correct: boolean,
-  today: number,
-  validateTeacher: () => Promise<void>,
-  onSetValue: (key: string, value: any) => void
+  isCorrectTeacher: boolean,
+  onTeacherClick: (teacherName: string) => void
 }) => (
   <React.Fragment>
     {
-      days.map((_, bellNumber) => {
-        const curr_day_obj = days[day_num]
-        // const bell_id = bellNumber;
-        const bell = curr_day_obj[bellNumber][weekParam];
+      days.map((dayBells_, lessonIndex) => {
+        const dayBells = days[day_num]
+        const bell = dayBells[lessonIndex][weekParam];
+
+        const getIsCurrentLesson = () => (
+          bell.lessonNumber[0] === current &&
+          bell.teacher !== "" &&
+          today === timeParam &&
+          weekParam === THIS_WEEK
+        );
+        const isCurrentLesson = getIsCurrentLesson();
 
         return bell.lessonName !== ""
           ? (
-            <BellView
-              key={bellNumber}
+            <ScheduleLesson
+              key={lessonIndex}
               bell={bell}
-              time={LessonStartEnd[bellNumber].start+ " - "+LessonStartEnd[bellNumber].end}
-              current={current}
-              weekParam={weekParam}
-              timeParam={timeParam}
-              student={student}
-              teacher_correct={teacher_correct}
-              today={today}
-              validateTeacher={validateTeacher}
-              setValue={onSetValue}/>
+              startTime={LessonStartEnd[lessonIndex].start}
+              endTime={LessonStartEnd[lessonIndex].end}
+              isCorrectTeacher={isCorrectTeacher}
+              isCurrentLesson={isCurrentLesson}
+              onTeacherClick={(teacherName) => onTeacherClick(teacherName)}
+            />
           )
           : (
             <div
-              key={bellNumber}
+              key={lessonIndex}
             ></div>
           )
       })
