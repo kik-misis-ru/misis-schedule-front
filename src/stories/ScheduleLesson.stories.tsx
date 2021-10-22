@@ -2,6 +2,7 @@ import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
 import ScheduleLesson from '../components/ScheduleLesson';
+import {lesson} from "./consts";
 
 export default {
   title: 'misis-schedule/ScheduleLesson',
@@ -24,15 +25,7 @@ export default {
       defaultValue: '11:30',
     },
     bell: {
-      defaultValue: {
-        lessonName: 'Название предмета',
-        groupNumber: 'БПМ-19-2',
-        teacher: 'Преподаватель И.О.',
-        url: 'http://ya.ru',
-        room: 'Б-900',
-        lessonNumber: '1.',
-        lessonType: 'Лекционные',
-      }
+      defaultValue: lesson
     }
   },
 } as ComponentMeta<typeof ScheduleLesson>;

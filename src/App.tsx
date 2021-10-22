@@ -486,9 +486,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   // определяет когда начинаются пары сегодня или завтра
   getStartFirstLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
-    const dayNumber = this.state.today - dayShift;
-    for (let bell in this.state.days[dayNumber]) {
-      const lessonName = this.state.days[dayNumber][bell][0].lessonName
+    const weekDayIndex = this.state.today - dayShift;
+    for (let bell in this.state.days[weekDayIndex]) {
+      const lessonName = this.state.days[weekDayIndex][bell][THIS_WEEK].lessonName
       if (lessonName !== "") {
         return LessonStartEnd[Number(bell)].start
       }
@@ -500,7 +500,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
     for (let bell = 6; bell > 0; bell--) {
-      const lessonName = this.state.days[dayNumber][bell][0].lessonName
+      const lessonName = this.state.days[dayNumber][bell][THIS_WEEK].lessonName
       if (lessonName !== "") {
         return LessonStartEnd[bell].end
       }
@@ -1029,14 +1029,14 @@ export class App extends React.Component<IAppProps, IAppState> {
               howManyParams = {
                 lesson: pairText,
                 day: day,
-                dayName: dayNameDict[countOfLessons[0]][0],
-                amount: numPron[countOfLessons[1]]
+                dayName: dayNameDict[dayOfWeek][0],
+                amount: numPron[pairCount]
               }
-              if (dayNameDict[countOfLessons[0]][1] < this.state.today) {
+              if (dayNameDict[dayOfWeek][1] < this.state.today) {
                 page = 7;
               }
               this.ChangePage();
-              this.setState({page: dayNameDict[countOfLessons[0]][1] + page})
+              this.setState({page: dayNameDict[dayOfWeek][1] + page})
             }
 
             this.sendData({
@@ -1625,14 +1625,19 @@ export class App extends React.Component<IAppProps, IAppState> {
             />
 
             <ScheduleDayFull
-              spinner={this.state.spinner}
-              days={this.state.days}
-              day_num={day_num}
-              current={current}
-              weekParam={weekParam}
-              timeParam={timeParam}
+              isReady={!this.state.spinner}
+              // days={this.state.days}
+              // day_num={day_num}
+              dayLessons={
+                this.state.days[day_num]?.map(bellsThisOrOtherWeek => bellsThisOrOtherWeek[weekParam])
+              }
+              currentLessonNumber={current}
+              // weekParam={weekParam}
+              // timeParam={timeParam}
               isCorrectTeacher={isTeacher}
-              today={this.state.today}
+              isToday={this.state.today === timeParam && weekParam === THIS_WEEK}
+              isSunday={timeParam == 7}
+              // today={this.state.today}
               // validateTeacher={this.isCorrectTeacher}
               // onSetValue={this.setValue}
               onTeacherClick={async (teacherName) => {

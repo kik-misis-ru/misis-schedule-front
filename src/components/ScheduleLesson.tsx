@@ -191,17 +191,17 @@ const RightContent = (
 const ScheduleLesson = (
   {
     bell,
-    isCurrentLesson,
-    isCorrectTeacher,
     startTime,
     endTime,
+    isCurrentLesson,
+    isCorrectTeacher,
     onTeacherClick,
   }: {
     bell: Bell
-    isCurrentLesson: boolean
-    isCorrectTeacher: boolean
     startTime: string
     endTime: string
+    isCurrentLesson: boolean
+    isCorrectTeacher: boolean
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
