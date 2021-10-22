@@ -50,6 +50,12 @@ TeacherView.args = {
   isCorrectTeacher: true,
 };
 
+export const Sunday = Template.bind({});
+Sunday.args = {
+  isReady: true,
+  isSunday: true,
+};
+
 export const NotReady = Template.bind({});
 NotReady.args = {
   isReady: false,
