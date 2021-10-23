@@ -1845,7 +1845,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           student={this.state.student}
           teacher={this.state.teacher}
           isTeacherError={this.state.isTeacherError}
-          handleTeacherChange={this.handleTeacherChange}
+          // handleTeacherChange={this.handleTeacherChange}
           teacher_checked={this.state.teacher_checked}
         />
       case NAVIGATOR_PAGE_NO:
