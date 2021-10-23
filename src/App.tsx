@@ -1625,7 +1625,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             />
 
             <ScheduleDayFull
-              isReady={!this.state.spinner}
+              isReady={this.state.spinner}
               // days={this.state.days}
               // day_num={day_num}
               dayLessons={

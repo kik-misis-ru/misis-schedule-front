@@ -66,7 +66,8 @@ export const ScheduleDayFull = ({
         width="90%"
         height="25rem"
         roundness={16}
-        style={{marginLeft: "5%", marginTop: "0.5em"}}/>
+        style={{marginLeft: "5%", marginTop: "0.5em"}}
+      />
     )
 )
 
