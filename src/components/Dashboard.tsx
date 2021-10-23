@@ -76,14 +76,20 @@ const Dashboard = ({
             <Image src={logo} ratio="1 / 1"/>
           </Col>
           <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
-            <TextBox
-            >
+            <TextBox>
               <CardHeadline2>Мир МИСиС</CardHeadline2>
             </TextBox>
           </Col>
           <Col style={{margin: "0 0 0 auto"}}>
-            <Button size="s" view="clear" pin="circle-circle" onClick={() => setValue('page', HOME_PAGE_NO)}
-                    contentRight={<IconSettings size="s" color="inherit"/>}/>
+            <Button
+              size="s"
+              view="clear"
+              pin="circle-circle"
+              onClick={() => setValue('page', HOME_PAGE_NO)}
+                    contentRight={
+                      <IconSettings size="s" color="inherit"/>
+                    }
+            />
           </Col>
         </Row>
 
