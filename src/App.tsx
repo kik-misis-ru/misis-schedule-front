@@ -1825,7 +1825,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       case HOME_PAGE_NO:
         return <HomeView
           // state={this.state}
-          isCorrect={this.isCorrect}
+          validateInput={this.isCorrect}
           convertIdInGroupName={this.convertIdInGroupName}
           setValue={this.setValue}
           description={this.state.description}
@@ -1857,6 +1857,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         return <Dashboard
           state={this.state}
           setValue={this.setValue}
+          handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={this.getCurrentLesson}
           getTimeFirstLesson={this.getTimeFirstLesson}
           getEndLastLesson={this.getEndLastLesson}
