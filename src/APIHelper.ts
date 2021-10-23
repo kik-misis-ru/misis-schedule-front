@@ -119,7 +119,8 @@ export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherAp
   const response = await axios.get(url, config);
 
   const {data: answer} = response;
-  return answer;
+  const parsedTeacherData = JSON.parse(answer) as ITeacherApiData;
+  return parsedTeacherData;
 }
 
 export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherApiData> {
@@ -238,4 +239,33 @@ export async function getUser(userId: string): Promise<IUserData | "0"> {
 
   const {data: answer} = response;
   return answer;
+}
+
+export async function getGroupById(groupId: number) {
+  const url = `${API_URL}group_by_id`;
+  const config = {
+    params: {
+      group_id: groupId,
+    },
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: groupInfo} = response;
+  return groupInfo;
+}
+
+export async function getGroupByName(groupName: string) {
+  const url = `${API_URL}group_by_name`;
+  const config = {
+    params: {
+      name: groupName,
+    },
+  };
+
+  const response = await axios.get(url, config);
+
+  const {data: groupInfo} = response;
+  console.log("GroupIndo", groupInfo)
+  return groupInfo;
 }

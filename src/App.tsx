@@ -6,6 +6,8 @@ import styled from "styled-components";
 
 import {
   createUser,
+  getGroupById,
+  getGroupByName,
   getIdTeacherFromDb,
   getInTeacherFromDb,
   getScheduleFromDb,
@@ -27,7 +29,6 @@ import WeekSelect from "./components/WeekSelect";
 
 import building from './data/buldings.json'
 import engGroups from './data/engGroups.json'
-import groups from './groups_list.json';
 import filial from './data/filial.json';
 
 import {Bell} from './ScheduleStructure'
@@ -443,6 +444,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
+    console.log(this.state.group)
     switch (key) {
       case "group":
         this.setState({group: value});
@@ -1284,25 +1286,19 @@ export class App extends React.Component<IAppProps, IAppState> {
   //   })
   // }
 
-  convertIdInGroupName() {
-    for (let group of groups) {
-      console.log(this.state.groupId, "id")
-      if (String(this.state.groupId) === String(group.id)) {
-        this.setState({group: group.name})
-        console.log(group.name, "группа")
-      }
-    }
+  async convertIdInGroupName() {
+      let group = await getGroupById(Number(this.state.groupId))
+        this.setState({group: group["name"]})
   }
 
   convertGroupNameInId() {
-    for (let group of groups) {
-      if (this.state.group.toLowerCase() === group.name.toLowerCase()) {
-        const groupId = '' + group.id; // convert to string
-        this.setState({groupId}, () => {
-          console.log(`groupId ${this.state.groupId}`)
-        })
-      }
-    }
+    getGroupByName(this.state.group)
+    .then((response) =>{
+      console.log("convertNameInId", response)
+      const groupId = String(response['id']); // convert to string
+      this.setState({groupId: groupId})
+    })
+       
   }
 
   protected isTeacher() {
@@ -1517,8 +1513,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     const formatDate = (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
 
-    console.log('Raspisanie: this.state.day:', this.state.day)
-
     const isTeacher = getIsCorrectTeacher({
       isStudent: this.state.student,
       isTeacherCorrect: this.state.teacher_correct
@@ -1665,6 +1659,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async handleTeacherChange() {
 
+    console.log(this.state.teacher)
     getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
@@ -1715,26 +1710,29 @@ export class App extends React.Component<IAppProps, IAppState> {
     })
   }
 
-  isCorrect() {
+   isCorrect() {
+    let correct = false;
     this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
     let correct_eng = false;
-    for (let i of groups) {
-      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
+    getGroupByName(this.state.group)
+    .then((response) => {
+     if(response['status']!="-1"){
         this.setState({correct: true})
-        console.log(`isCorrect: Correct ${this.state.correct}`)
-        this.convertGroupNameInId()
+        correct = true;
+        const groupId = String(response['id']);
+        this.setState({groupId: groupId})
       }
-    }
-    for (let i of engGroups) {
-      if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
-        correct_eng = true;
-        console.log(`isCorrect: Correct ${correct_eng}`);
-      }
-    }
-    if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) correct_sub = true;
 
-    if (this.state.correct && correct_sub && correct_eng) {
+      for (let i of engGroups) {
+        if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
+          correct_eng = true;
+          console.log(`isCorrect: Correct ${correct_eng}`);
+        }
+      }
+      if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) correct_sub = true;
+
+    if (correct && correct_sub && correct_eng) {
 
       if (this.state.checked) {
         createUser(
@@ -1744,21 +1742,22 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.subGroup,
           this.state.engGroup,
           "",
-        );
+        ).then(()=>{
+          console.log("GROUPID", this.state.groupId)
+          getScheduleFromDb(
+            this.state.groupId,
+            String(this.state.engGroup),
+            this.getFirstDayWeek(new Date(Date.now()))
+          ).then((response) => {
+            this.showWeekSchedule(response, 0);
+            console.log(String(this.state.engGroup));
+            this.setState({flag: true});
+            this.convertIdInGroupName();
+            this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
+          });
+
+        });
       }
-
-      getScheduleFromDb(
-        this.state.groupId,
-        String(this.state.engGroup),
-        this.getFirstDayWeek(new Date(Date.now()))
-      ).then((response) => {
-        this.showWeekSchedule(response, 0);
-      });
-
-      console.log(String(this.state.engGroup));
-      this.setState({flag: true});
-      this.convertIdInGroupName();
-      this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
 
     } else if (this.state.correct === true) {
       this.setState({isGroupError: false});
@@ -1781,8 +1780,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     } else {
       this.setState({isEngGroupError: false, star: false});
     }
+    })
   }
-
   Spinner() {
     var myinterval = setInterval(() => {
       if (this.state.spinner === true) {
@@ -1825,6 +1824,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       case HOME_PAGE_NO:
         return <HomeView
           // state={this.state}
+          handleTeacherChange={this.handleTeacherChange}
           isCorrect={this.isCorrect}
           convertIdInGroupName={this.convertIdInGroupName}
           setValue={this.setValue}

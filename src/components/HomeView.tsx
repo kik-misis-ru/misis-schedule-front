@@ -173,6 +173,7 @@ interface HomeViewProps {
 
   setValue: (key: string, value: any) => void
   isCorrect: () => void
+  handleTeacherChange : () => void
   // handleTeacherChange
   convertIdInGroupName: () => void
 
@@ -215,8 +216,8 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
     this.props.setValue(key, value);
   }
 
-  isCorrect() {
-    this.props.isCorrect();
+  async isCorrect() {
+     await this.props.isCorrect();
   }
 
   // handleTeacherChange() {
@@ -368,7 +369,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
                   </Row>
 
                   <ShowSchedule
-                    onClick={() => this.props.isCorrect()}
+                    onClick={() => this.props.handleTeacherChange()}
                   />
 
                 </div>
