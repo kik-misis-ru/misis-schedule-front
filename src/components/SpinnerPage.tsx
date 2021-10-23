@@ -24,7 +24,12 @@ export const SpinnerPage = (
         >
           <Spinner
             color={ACCENT_TEXT_COLOR}
-            style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
+            style={{
+              position: " absolute",
+              top: "40%",
+              left: " 43%",
+              marginRight: "-50%",
+            }}/>
         </Container>
       </div>
     </DeviceThemeProvider>

@@ -1866,7 +1866,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       case DASHBOARD_PAGE_NO:
         return <Dashboard
           state={this.state}
+          // character={this.state.character}
           setValue={this.setValue}
+          handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={this.getCurrentLesson}
           getTimeFirstLesson={this.getTimeFirstLesson}
           getEndLastLesson={this.getEndLastLesson}
