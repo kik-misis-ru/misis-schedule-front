@@ -26,6 +26,7 @@ import ScheduleDayFull from "./components/ScheduleDayFull";
 import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
+import SpinnerPage from "./components/SpinnerPage";
 
 import building from './data/buldings.json'
 import engGroups from './data/engGroups.json'
@@ -286,7 +287,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.setValue = this.setValue.bind(this)
-    this.isCorrect = this.isCorrect.bind(this)
+    // this.isCorrect = this.isCorrect.bind(this)
     this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     // this.tfRef                = React.createRef();
@@ -1236,7 +1237,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'show_schedule':
           console.log("показать расписание");
           if (this.state.page === 0)
-            return this.isCorrect();
+            return this.validateInput();
           break;
 
         case 'group':
@@ -1710,11 +1711,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     })
   }
 
-   isCorrect() {
-    let correct = false;
+  validateInput() {
     this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
     let correct_eng = false;
+    let correct =false
     getGroupByName(this.state.group)
     .then((response) => {
      if(response['status']!="-1"){
@@ -1782,36 +1783,46 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     })
   }
-  Spinner() {
-    var myinterval = setInterval(() => {
-      if (this.state.spinner === true) {
-        setTimeout(() => {
-          if (this.state.today === 0) {
-            if (this.state.flag === true)
-              this.setState({page: 8})
-            else this.setState({page: 9})
-          } else if (this.state.flag === true) this.setState({page: this.state.today});
-          else this.setState({page: 9});
 
-        }, 100);
-        clearInterval(myinterval)
-      }
-    }, 100);
+  SpinnerPageWithRedirect() {
 
-    return (
-      <DeviceThemeProvider>
-        <DocStyle/>
-        {
-          getThemeBackgroundByChar(this.state.character)
+    const delayedSetPage = () => {
+      const CHECK_INTERVAL = 100;
+      const REDIRECT_DELAY = 100;
+
+      // периодически проверяем готовность данных
+      const myinterval = setInterval(() => {
+
+        if (this.state.spinner) {
+
+          // переходим на новую страницу с задержкой
+          setTimeout(() => {
+
+            if (this.state.today === 0) {
+
+              if (this.state.flag) {
+                this.setState({page: 8})
+              } else {
+                this.setState({page: 9})
+              }
+
+            } else if (this.state.flag) {
+              this.setState({page: this.state.today});
+            } else {
+              this.setState({page: 9});
+            }
+
+          }, REDIRECT_DELAY);
+          clearInterval(myinterval)
+
         }
-        <div>
-          <Container style={{padding: 0}}>
-            <Spinner color={ACCENT_TEXT_COLOR}
-                     style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
-          </Container>
-        </div>
-      </DeviceThemeProvider>
-    )
+      }, CHECK_INTERVAL);
+    }
+    delayedSetPage();
+
+    return <SpinnerPage
+      character={this.state.character}
+      />
   }
 
   render() {
@@ -1824,8 +1835,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       case HOME_PAGE_NO:
         return <HomeView
           // state={this.state}
-          handleTeacherChange={this.handleTeacherChange}
-          isCorrect={this.isCorrect}
+          handleTeacherChange ={this.handleTeacherChange}
+          validateInput={() => this.validateInput()}
           convertIdInGroupName={this.convertIdInGroupName}
           setValue={this.setValue}
           description={this.state.description}
@@ -1864,7 +1875,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           getTime={this.getTime}
         />
       case SCHEDULE_PAGE_NO:
-        return this.Spinner();
+        return this.SpinnerPageWithRedirect();
       default:
         break;
     }
