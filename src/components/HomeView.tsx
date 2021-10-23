@@ -173,7 +173,7 @@ interface HomeViewProps {
 
   setValue: (key: string, value: any) => void
   isCorrect
-  isCorrectTeacher
+  handleTeacherChange
   convertIdInGroupName
 
   group: string
@@ -201,7 +201,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
     super(props);
     this.handleChange = this.handleChange.bind(this)
     this.isCorrect = this.isCorrect.bind(this);
-    this.isCorrectTeacher = this.isCorrectTeacher.bind(this);
+    this.handleTeacherChange = this.handleTeacherChange.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     let disabled = true;
     if (props.groupId !== "") disabled = false;
@@ -219,8 +219,8 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
     this.props.isCorrect();
   }
 
-  isCorrectTeacher() {
-    this.props.isCorrectTeacher();
+  handleTeacherChange() {
+    this.props.handleTeacherChange();
   }
 
   convertIdInGroupName() {

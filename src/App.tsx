@@ -286,7 +286,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     super(props);
     this.setValue = this.setValue.bind(this)
     this.isCorrect = this.isCorrect.bind(this)
-    this.isCorrectTeacher = this.isCorrectTeacher.bind(this)
+    this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
@@ -1642,7 +1642,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               // onSetValue={this.setValue}
               onTeacherClick={async (teacherName) => {
                 this.setValue("teacher", teacherName);
-                await this.isCorrectTeacher();
+                await this.handleTeacherChange();
               }}
             />
 
@@ -1663,11 +1663,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  async isCorrectTeacher() {
+  async handleTeacherChange() {
 
     getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
-      console.log('isCorrectTeacher:', teacherData);
-      console.log('isCorrectTeacher: status:', teacherData.status);
+      console.log('handleTeacherChange:', teacherData);
+      console.log('handleTeacherChange: status:', teacherData.status);
 
       if ((teacherData.status == "-1") || (teacherData.status == "-2")) {
         console.log("status");
@@ -1845,7 +1845,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           student={this.state.student}
           teacher={this.state.teacher}
           isTeacherError={this.state.isTeacherError}
-          isCorrectTeacher={this.isCorrectTeacher}
+          handleTeacherChange={this.handleTeacherChange}
           teacher_checked={this.state.teacher_checked}
         />
       case NAVIGATOR_PAGE_NO:
