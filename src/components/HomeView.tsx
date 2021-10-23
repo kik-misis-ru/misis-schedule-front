@@ -172,7 +172,7 @@ interface HomeViewProps {
   description: string
 
   setValue: (key: string, value: any) => void
-  isCorrect: () => void
+  validateInput: () => void
   // handleTeacherChange
   convertIdInGroupName: () => void
 
@@ -200,7 +200,6 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
   constructor(props: HomeViewProps) {
     super(props);
     this.handleChange = this.handleChange.bind(this)
-    this.isCorrect = this.isCorrect.bind(this);
     // this.handleTeacherChange = this.handleTeacherChange.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     let disabled = true;
@@ -213,10 +212,6 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
 
   handleChange(key: string, value: any): void {
     this.props.setValue(key, value);
-  }
-
-  isCorrect() {
-    this.props.isCorrect();
   }
 
   // handleTeacherChange() {
@@ -299,7 +294,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
                     </Row>
 
                     <ShowSchedule
-                      onClick={() => this.props.isCorrect()}
+                      onClick={() => this.props.validateInput()}
                     />
 
                   </Container>
@@ -368,7 +363,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
                   </Row>
 
                   <ShowSchedule
-                    onClick={() => this.props.isCorrect()}
+                    onClick={() => this.props.validateInput()}
                   />
 
                 </div>
