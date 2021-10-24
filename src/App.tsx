@@ -75,7 +75,7 @@ export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
 
-const INITIAL_PAGE = 7;
+const INITIAL_PAGE = 17;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
@@ -403,15 +403,18 @@ export class App extends React.Component<IAppProps, IAppState> {
                 } else if (this.state.groupId !== "") {
                   getScheduleFromDb(this.state.groupId, this.state.engGroup, this.getFirstDayWeek(new Date(this.state.date))).then((response) => {
                     this.showWeekSchedule(response, 0)
+                  }).then(() =>{
+                    console.log("Get shcedule")
+                    this.ChangePage()
+                    this.setState({
+                      page: SCHEDULE_PAGE_NO,
+                      checked: true,
+                      star: true,
+                      bd: this.state.groupId,
+                      student: true
+                    });
                   });
-                  this.ChangePage()
-                  this.setState({
-                    page: SCHEDULE_PAGE_NO,
-                    checked: true,
-                    star: true,
-                    bd: this.state.groupId,
-                    student: true
-                  });
+                 
                 } else {
                   this.ChangePage()
                   this.setState({page: HOME_PAGE_NO});
@@ -1372,8 +1375,9 @@ export class App extends React.Component<IAppProps, IAppState> {
    * заполнение данными расписания из бд
    */
   showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+    console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
-    this.setState({spinner: false});
+    this.setState({spinner: true});
 
     let days;
     /*
@@ -1462,13 +1466,19 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     this.setState({spinner: true});
     this.setState({days: days});
+    console.log("Days",days)
   }
 
 
   ChangePage() {
-
+   
     let timeParam = this.state.page;
+    if(timeParam==17){
+      return
+    }
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    console.log("timeParam", timeParam)
+    console.log("WeekParam", weekParam)
     if (timeParam > 7) {
       weekParam = OTHER_WEEK
       timeParam -= 7
@@ -1477,6 +1487,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({i: 0});
     this.setState({star: false});
     if (weekParam === OTHER_WEEK) {
+      console.log("OTHER WEEK")
       this.setState({flag: false});
     } else {
       this.setState({flag: true});
@@ -1817,22 +1828,24 @@ export class App extends React.Component<IAppProps, IAppState> {
   Spinner() {
     console.log('Spinner: this.state.spinner:', this.state.spinner)
     const myinterval = setInterval(() => {
+      console.log("today",this.state.today)
       if (this.state.spinner) {
         setTimeout(() => {
           if (this.state.today === 0) {
+            console.log("this.state.flag", this.state.flag)
             if (this.state.flag) {
+              console.log('Spinner: page:', 7)
+              this.setState({page: 7})
+            } else {
               console.log('Spinner: page:', 8)
               this.setState({page: 8})
-            } else {
-              console.log('Spinner: page:', 9)
-              this.setState({page: 9})
             }
           } else if (this.state.flag) {
             console.log('Spinner: page: today:', this.state.today)
             this.setState({page: this.state.today});
           } else {
-            console.log('Spinner: page:', 9)
-            this.setState({page: 9});
+            console.log('Spinner: page:', 8)
+            this.setState({page: 8});
           }
         }, 100);
         clearInterval(myinterval)
