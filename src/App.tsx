@@ -1473,7 +1473,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   ChangePage() {
    
     let timeParam = this.state.page;
-    if(timeParam==17){
+    if(timeParam==SCHEDULE_PAGE_NO){
       return
     }
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
