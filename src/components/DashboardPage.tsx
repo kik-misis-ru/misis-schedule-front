@@ -1,4 +1,4 @@
-import React from "react";
+import React, {MouseEventHandler} from "react";
 import {Container, Row, Col, Button, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -35,13 +35,124 @@ import {
 } from '../themes/tools';
 import {
   HOME_PAGE_NO,
-  NAVIGATOR_PAGE_NO
+  NAVIGATOR_PAGE_NO,
+  SCHEDULE_PAGE_NO,
 } from '../App';
 import LinkToOnline from './LinkToOnline';
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
+import {GoToHomeButton, HeaderLogo, HeaderTitle} from "./TopMenu";
 
 
-const Dashboard = ({
+const DashboardCard = ({
+                         text,
+                         onClick,
+                       }: {
+  text: string
+  onClick?: MouseEventHandler<HTMLElement>
+}) => {
+  return (
+    <Col size={2}>
+      <Card
+        style={{
+          height: "20vh",
+          marginTop: "0.5em",
+          cursor: !!onClick ? 'pointer' : 'default',
+        }}
+        onClick={(event) => !!onClick ? onClick(event) : undefined}>
+        <CardBody>
+          <CardContent>
+            <TextBox>
+              <CardHeadline3>
+                {text}
+              </CardHeadline3>
+            </TextBox>
+          </CardContent>
+        </CardBody>
+      </Card>
+    </Col>
+  )
+}
+
+const CatalogueHeader = () => {
+  return (
+    <Row>
+      <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
+        <IconApps/>
+      </Col>
+      <Col style={{paddingTop: "1.1em"}}>
+        <TextBox>
+          <CardHeadline3>
+            Каталог
+          </CardHeadline3>
+        </TextBox>
+      </Col>
+    </Row>
+  )
+}
+
+const CatalogueItems = ({
+                          onSelect,
+                        }: {
+  onSelect: (pageNo) => void
+}) => {
+  return (
+    <Row style={{marginLeft: "1em", marginRight: "1em"}}>
+
+      <DashboardCard
+        text="Расписание"
+        onClick={() => onSelect(SCHEDULE_PAGE_NO)}
+      />
+
+      <DashboardCard
+        text="Карта"
+        onClick={() => onSelect(NAVIGATOR_PAGE_NO)}
+      />
+
+      <DashboardCard
+        text="FAQ"
+      />
+
+      <DashboardCard
+        text="Контакты"
+      />
+
+    </Row>
+
+  )
+}
+
+
+const NowTitle = () => (
+  <TextBox
+    // @ts-ignore
+    style={{color: DEFAULT_TEXT_COLOR}}
+  >
+    <CardParagraph1>Сейчас</CardParagraph1>
+  </TextBox>
+)
+
+
+const NoLessons = () => (
+  < CardBody2 style={{fontSize: "18px"}}>
+    Пары нет🎊
+  </CardBody2>
+)
+
+
+const NoLessonsNow = () => (
+  <CardBody>
+    <CardContent>
+
+      <NowTitle/>
+
+      <NoLessons/>
+
+    </CardContent>
+  </CardBody>
+)
+
+
+const DashboardPage = ({
                      state,
                      setValue,
                      handleTeacherChange,
@@ -72,23 +183,16 @@ const Dashboard = ({
       }
       <Container style={{padding: 0}}>
         <Row style={{margin: "1em"}}>
-          <Col style={{maxWidth: '3rem'}}>
-            <Image src={logo} ratio="1 / 1"/>
-          </Col>
-          <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
-            <TextBox>
-              <CardHeadline2>Мир МИСиС</CardHeadline2>
-            </TextBox>
-          </Col>
+
+          <HeaderLogo/>
+
+          <HeaderTitle
+            title='Мир МИСиС'
+          />
+
           <Col style={{margin: "0 0 0 auto"}}>
-            <Button
-              size="s"
-              view="clear"
-              pin="circle-circle"
+            <GoToHomeButton
               onClick={() => setValue('page', HOME_PAGE_NO)}
-                    contentRight={
-                      <IconSettings size="s" color="inherit"/>
-                    }
             />
           </Col>
         </Row>
@@ -147,12 +251,8 @@ const Dashboard = ({
               ? (
                 <CardBody style={{padding: "0 0 0 0"}}>
                   <CardContent compact style={{padding: "0.3em 0.3em"}}>
-                    <TextBox
-                      // @ts-ignore
-                      style={{color: DEFAULT_TEXT_COLOR}}
-                    >
-                      <CardParagraph1>Сейчас</CardParagraph1>
-                    </TextBox>
+
+                    <NowTitle/>
 
                     <CellListItem
                       content={
@@ -160,11 +260,13 @@ const Dashboard = ({
 
                           <TextBoxSubTitle lines={8}>
                             {
+                              // todo: (new Date(Date.now()))(new Date(Date.now())
                               state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][3]
                             }
                           </TextBoxSubTitle>
                           < CardBody2 style={{color: ACCENT_TEXT_COLOR, fontSize: "18px"}}>
                             {
+                              // todo: (new Date(Date.now()))(new Date(Date.now())
                               state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0].lessonName
                             }
                           </ CardBody2>
@@ -174,17 +276,18 @@ const Dashboard = ({
                               ? (
                                 <TextBoxTitle>
                                   {
+                                    // todo: (new Date(Date.now()))(new Date(Date.now())
                                     state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][7]
                                   }
                                 </TextBoxTitle>
                               )
                               : (
                                 <a onClick={() => {
-                                  // todo: нет метода
                                   handleTeacherChange()
                                 }}
                                 >
                                   {
+                                    // todo: (new Date(Date.now()))(new Date(Date.now())
                                     state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1]
                                   }
                                 </a>
@@ -192,6 +295,7 @@ const Dashboard = ({
                           }
 
                           <LinkToOnline
+                            // todo: (new Date(Date.now()))(new Date(Date.now())
                             url={state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][6]}
                           />
 
@@ -202,20 +306,24 @@ const Dashboard = ({
                         <TextBox>
                           <Badge
                             text={
+                              // todo: (new Date(Date.now()))(new Date(Date.now())
                               state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][2]}
                             contentLeft={<IconLocation size="xs"/>}
                             style={{backgroundColor: "rgba(0,0,0, 0)"}}
                           />
                           <TextBoxTitle>
+                            // todo: (new Date(Date.now()))(new Date(Date.now())
                             {lessonTypeAdjToNoun(state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][4])}
                           </TextBoxTitle>
 
                         </TextBox>
                       }
                       contentLeft={
+                        // todo: (new Date(Date.now()))(new Date(Date.now())
                         state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1] !== ""
                           ? (
                             <Badge
+                              // todo: (new Date(Date.now()))(new Date(Date.now())
                               text={state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][5][0]}
                               view="primary" style={{marginRight: "0.5em"}} size="l"
                             />
@@ -226,24 +334,7 @@ const Dashboard = ({
                   </CardContent>
                 </CardBody>
               )
-              : (
-                <CardBody>
-                  <CardContent>
-
-                    <TextBox>
-                      <CardParagraph1
-                        style={{color: DEFAULT_TEXT_COLOR}}
-                      >
-                        Сейчас
-                      </CardParagraph1>
-                    </TextBox>
-
-                    < CardBody2 style={{fontSize: "18px"}}>
-                      Пары нет🎊
-                    </CardBody2>
-                  </CardContent>
-                </CardBody>
-              )
+              : <NoLessonsNow/>
 
           }
           {
@@ -331,82 +422,13 @@ const Dashboard = ({
 
         </Card>
 
-        <Row>
-          <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
-            <IconApps/>
-          </Col>
-          <Col style={{paddingTop: "1.1em"}}>
-            <TextBox>
-              <CardHeadline3>
-                Каталог
-              </CardHeadline3>
-            </TextBox>
-          </Col>
-        </Row>
 
-        <Row style={{marginLeft: "1em", marginRight: "1em"}}>
+        <CatalogueHeader/>
 
-          <Col size={2}>
-            <Card style={{height: "20vh", marginTop: "0.5em"}}
-                  onClick={() => setValue('page', 17)}>
-              <CardBody>
-                <CardContent>
-                  <TextBox>
-                    <CardHeadline3>
-                      Расписание
-                    </CardHeadline3>
-                  </TextBox>
-                </CardContent>
-              </CardBody>
-            </Card>
-          </Col>
+        <CatalogueItems
+          onSelect={(pageNo) => setValue('page', pageNo)}
+        />
 
-          <Col size={2}>
-            <Card
-              style={{height: "20vh", marginTop: "0.5em"}}
-              onClick={() => setValue('page', NAVIGATOR_PAGE_NO)}
-            >
-              <CardBody>
-                <CardContent>
-                  <TextBox>
-                    <CardHeadline3>
-                      Карта
-                    </CardHeadline3>
-                  </TextBox>
-                </CardContent>
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col size={2}>
-            <Card style={{height: "20vh", marginTop: "0.5em"}}>
-              <CardBody>
-                <CardContent>
-                  <TextBox>
-                    <CardHeadline3>
-                      FAQ
-                    </CardHeadline3>
-                  </TextBox>
-                </CardContent>
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col size={2}>
-            <Card style={{height: "20vh", marginTop: "0.5em"}}>
-              <CardBody>
-                <CardContent>
-                  <TextBox>
-                    <CardHeadline3>
-                      Контакты
-                    </CardHeadline3>
-                  </TextBox>
-                </CardContent>
-              </CardBody>
-            </Card>
-          </Col>
-
-        </Row>
 
         <div style={{
           width: '200px',
@@ -418,4 +440,4 @@ const Dashboard = ({
   )
 }
 
-export default Dashboard
+export default DashboardPage

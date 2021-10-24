@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import {Button, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle} from "@sberdevices/plasma-ui";
+import {Button, CardHeadline2, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle,  CardParagraph1,
+} from "@sberdevices/plasma-ui";
 import {IconHouse, IconNavigationArrow, IconSettings, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
 
 import logo from "../images/logo.png";
@@ -13,6 +14,31 @@ export const HeaderLogo = () => {
     </Col>
   )
 }
+
+export const HeaderTitle = ({
+                       title
+                     }: {
+  title: string
+}) => (
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
+    <TextBox>
+      <CardHeadline2>{title}</CardHeadline2>
+    </TextBox>
+  </Col>
+)
+
+
+export const HeaderTitle2 = ({
+                       title
+                     }: {
+  title: string
+}) => (
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
+    <TextBox>
+      <CardParagraph1>{title}</CardParagraph1>
+    </TextBox>
+  </Col>
+)
 
 
 const DEFAULT_SCHEDULE_TEXT = 'Расписание занятий';
@@ -35,7 +61,7 @@ export function HeaderSchedule({
 }
 
 
-const GoToNavigatorButton = ({
+export const GoToNavigatorButton = ({
                                onClick,
                              }: {
   onClick: React.MouseEventHandler<HTMLElement>
@@ -49,7 +75,7 @@ const GoToNavigatorButton = ({
 )
 
 
-const StarButtonView = ({
+export const StarButtonView = ({
                           starred,
                           onClick,
                         }: {
@@ -70,9 +96,9 @@ const StarButtonView = ({
 }
 
 
-const GoToDashboardButton = ({
-                          onClick,
-                        }: {
+export const GoToDashboardButton = ({
+                               onClick,
+                             }: {
   onClick: React.MouseEventHandler<HTMLElement>
 }) => (
   <Button
@@ -86,7 +112,7 @@ const GoToDashboardButton = ({
   />
 )
 
-const GoToHomeButton = ({
+export const GoToHomeButton = ({
                           onClick,
                         }: {
   onClick: React.MouseEventHandler<HTMLElement>
@@ -103,7 +129,7 @@ const GoToHomeButton = ({
 )
 
 
-const TopMenu = ({
+export const TopMenu = ({
                    label,
                    subLabel,
                    starred,
@@ -131,7 +157,7 @@ const TopMenu = ({
       />
 
       <Col style={{margin: "0 0 0 auto"}}>
-{/*
+        {/*
         <GoToNavigatorButton
           onClick={() => onNavigatorClick()}
         />

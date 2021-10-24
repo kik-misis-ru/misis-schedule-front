@@ -22,9 +22,10 @@ import karta from "../images/Karta.png";
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {DASHBOARD_PAGE_NO,SCHEDULE_PAGE_NO} from '../App';
+import {HeaderLogo, HeaderTitle2, GoToDashboardButton} from './TopMenu';
 
 
-class Navigator extends React.Component {
+class NavigatorPage extends React.Component {
 
   constructor(props) {
     super(props)
@@ -48,9 +49,7 @@ class Navigator extends React.Component {
 
             <Row style={{ margin: "1em" }}>
 
-              <Col style={{ maxWidth: '3rem' }}>
-                <Image src={logo} ratio="1 / 1"/>
-              </Col>
+              <HeaderLogo/>
 
               <Col style={{ marginLeft: "0.5em", paddingTop: "0.5em" }}>
                 <TextBox>
@@ -59,14 +58,8 @@ class Navigator extends React.Component {
               </Col>
 
               <Col style={{ margin: "0 0 0 auto" }}>
-                <Button
-                  size="s"
-                  view="clear"
-                  pin="circle-circle"
+                <GoToDashboardButton
                   onClick={() => this.handleChange("page", DASHBOARD_PAGE_NO)}
-                  contentRight={
-                    <IconHouse size="s" color="inherit"/>
-                  }
                 />
               </Col>
 
@@ -119,15 +112,11 @@ class Navigator extends React.Component {
 
             <Row style={{ margin: "1em" }}>
 
-              <Col style={{ maxWidth: '3rem' }}>
-                <Image src={logo} ratio="1 / 1"/>
-              </Col>
+              <HeaderLogo/>
 
-              <Col style={{ marginLeft: "0.5em", paddingTop: "0.5em" }}>
-                <TextBox                >
-                  <CardParagraph1>Карта университета</CardParagraph1>
-                </TextBox>
-              </Col>
+              <HeaderTitle2
+                text='Карта университета'
+              />
 
               <Col style={{ margin: "0 0 0 auto" }}>
                 <Button
@@ -210,4 +199,4 @@ class Navigator extends React.Component {
   }
 }
 
-export default Navigator
+export default NavigatorPage

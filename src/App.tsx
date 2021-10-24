@@ -6,28 +6,30 @@ import styled from "styled-components";
 
 import {
   createUser,
+  getGroupById,
+  getGroupByName,
   getIdTeacherFromDb,
   getInTeacherFromDb,
   getScheduleFromDb,
   getScheduleTeacherFromDb,
   getUser,
   IScheduleApiData,
-  IScheduleLessonInfo, setGroupStar, setTeacherStar,
+  IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar,
 } from "./APIHelper";
 import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
-import Dashboard from './components/Dashboard';
+import DashboardPage from './components/Dashboard';
 
 import HomeView from './components/HomeView';
-import Navigator from './components/Navigator';
+import NavigatorPage from './components/Navigator';
 import ScheduleDayFull from "./components/ScheduleDayFull";
+import SpinnerPage from "./components/SpinnerPage";
 import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
 
 import building from './data/buldings.json'
 import engGroups from './data/engGroups.json'
-import groups from './groups_list.json';
 import filial from './data/filial.json';
 
 import {Bell} from './ScheduleStructure'
@@ -244,7 +246,7 @@ interface IAppState {
   description: string
   group: string
   groupId: string
-  correct
+  correct: boolean
   i: number
   day: IDayHeader[]
   days: IScheduleDays
@@ -305,7 +307,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       groupId: "",
       subGroup: "",
       engGroup: "",
-      correct: null,
+      correct: false,
       i: 0,
       day: DEFAULT_STATE_DAY,
       days: [],
@@ -443,6 +445,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
+    console.log(this.state.group)
     switch (key) {
       case "group":
         this.setState({group: value});
@@ -1284,25 +1287,19 @@ export class App extends React.Component<IAppProps, IAppState> {
   //   })
   // }
 
-  convertIdInGroupName() {
-    for (let group of groups) {
-      console.log(this.state.groupId, "id")
-      if (String(this.state.groupId) === String(group.id)) {
-        this.setState({group: group.name})
-        console.log(group.name, "группа")
-      }
-    }
+  async convertIdInGroupName() {
+    let group = await getGroupById(Number(this.state.groupId))
+    this.setState({group: group["name"]})
   }
 
   convertGroupNameInId() {
-    for (let group of groups) {
-      if (this.state.group.toLowerCase() === group.name.toLowerCase()) {
-        const groupId = '' + group.id; // convert to string
-        this.setState({groupId}, () => {
-          console.log(`groupId ${this.state.groupId}`)
-        })
-      }
-    }
+    getGroupByName(this.state.group)
+      .then((response) => {
+        console.log("convertNameInId", response)
+        const groupId = String(response['id']); // convert to string
+        this.setState({groupId: groupId})
+      })
+
   }
 
   protected isTeacher() {
@@ -1371,7 +1368,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     return this.getScheduleFromDb(dateMinusWeek);
   }
 
-  showWeekSchedule(parsedSchedule: IScheduleApiData, i) { //заполнение данными расписания из бд
+  /**
+   * заполнение данными расписания из бд
+   */
+  showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+    console.log('showWeekSchedule')
     this.setState({spinner: false});
 
     let days;
@@ -1502,6 +1503,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   Raspisanie(timeParam: number) {
+    console.log('Raspisanie: timeParam:', timeParam)
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
     if (timeParam > 7) {
       timeParam -= 7;
@@ -1516,8 +1518,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
     const formatDate = (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
-
-    console.log('Raspisanie: this.state.day:', this.state.day)
 
     const isTeacher = getIsCorrectTeacher({
       isStudent: this.state.student,
@@ -1665,11 +1665,15 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async handleTeacherChange() {
 
+    console.log(this.state.teacher)
     getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
-      if ((teacherData.status == "-1") || (teacherData.status == "-2")) {
+      if (
+        (teacherData.status == "-1") ||
+        (teacherData.status == "-2")
+      ) {
         console.log("status");
         this.setState({
           isTeacherError: true,
@@ -1685,9 +1689,13 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.showWeekSchedule(response, 0);
         });
 
+        const formatTeacherName = (teacherData: ITeacherApiData) => (
+          `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
+        )
+
         getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
           this.setState({
-            teacher: `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
+            teacher: formatTeacherName(teacherData)
           })
         })
 
@@ -1716,116 +1724,152 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   isCorrect() {
+    console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
     let correct_eng = false;
-    for (let i of groups) {
-      if (this.state.group.toLowerCase() === i.name.toLowerCase()) {
-        this.setState({correct: true})
-        console.log(`isCorrect: Correct ${this.state.correct}`)
-        this.convertGroupNameInId()
-      }
-    }
-    for (let i of engGroups) {
-      if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
-        correct_eng = true;
-        console.log(`isCorrect: Correct ${correct_eng}`);
-      }
-    }
-    if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) correct_sub = true;
+    let correct = false
+    getGroupByName(this.state.group)
+      .then((response) => {
+        if (response['status'] != "-1") {
+          this.setState({correct: true})
+// <<<<<<< HEAD
+//         console.log(`isCorrect: correct: ${correct}`)
+          this.convertGroupNameInId();
+//       }
+//     }
+//     for (let i of engGroups) {
+//       if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
+//         correct_eng = true;
+//         console.log(`isCorrect: correct_eng: ${correct_eng}`);
+// =======
+          correct = true;
+          const groupId = String(response['id']);
+          this.setState({groupId: groupId})
+        }
 
-    if (this.state.correct && correct_sub && correct_eng) {
+        for (let i of engGroups) {
+          if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
+            correct_eng = true;
+            console.log(`isCorrect: correct_eng: ${correct_eng}`);
+          }
+// >>>>>>> 68a47f98e5e79e3a539ba406a28a3c564a486459
+        }
+        if (
+          (this.state.subGroup === "") ||
+          (this.state.subGroup === "1") ||
+          (this.state.subGroup === "2")
+        ) {
+          correct_sub = true;
+        }
 
-      if (this.state.checked) {
-        createUser(
-          this.state.userId,
-          filial.id,
-          this.state.groupId,
-          this.state.subGroup,
-          this.state.engGroup,
-          "",
-        );
-      }
+        if (correct && correct_sub && correct_eng) {
 
-      getScheduleFromDb(
-        this.state.groupId,
-        String(this.state.engGroup),
-        this.getFirstDayWeek(new Date(Date.now()))
-      ).then((response) => {
-        this.showWeekSchedule(response, 0);
-      });
+          if (this.state.checked) {
+            createUser(
+              this.state.userId,
+              filial.id,
+              this.state.groupId,
+              this.state.subGroup,
+              this.state.engGroup,
+              "",
+            ).then(() => {
+              console.log("App: isCorrect: groupId", this.state.groupId)
+              getScheduleFromDb(
+                this.state.groupId,
+                String(this.state.engGroup),
+                this.getFirstDayWeek(new Date(Date.now()))
+              ).then((response) => {
+                this.showWeekSchedule(response, 0);
+                console.log(String(this.state.engGroup));
+                this.setState({flag: true});
+                this.convertIdInGroupName();
+                this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
+              });
 
-      console.log(String(this.state.engGroup));
-      this.setState({flag: true});
-      this.convertIdInGroupName();
-      this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
+            });
+          }
 
-    } else if (this.state.correct === true) {
-      this.setState({isGroupError: false});
+        } else if (this.state.correct) {
+          this.setState({isGroupError: false});
 
-    } else if (this.state.group === "") {
-      this.setState({isGroupError: true})
+        } else if (this.state.group === "") {
+          this.setState({isGroupError: true})
 
-    } else {
-      this.setState({isGroupError: true})
-    }
+        } else {
+          this.setState({isGroupError: true})
+        }
 
-    if (!correct_sub) {
-      this.setState({isSubGroupError: true})
-    } else {
-      this.setState({isSubGroupError: false, star: false});
-    }
+        if (!correct_sub) {
+          this.setState({isSubGroupError: true})
+        } else {
+          this.setState({isSubGroupError: false, star: false});
+        }
 
-    if (!correct_eng) {
-      this.setState({isEngGroupError: true})
-    } else {
-      this.setState({isEngGroupError: false, star: false});
-    }
+        if (!correct_eng) {
+          this.setState({isEngGroupError: true})
+        } else {
+          this.setState({isEngGroupError: false, star: false});
+        }
+      })
   }
 
   Spinner() {
-    var myinterval = setInterval(() => {
-      if (this.state.spinner === true) {
+    console.log('Spinner: this.state.spinner:', this.state.spinner)
+    const myinterval = setInterval(() => {
+      if (this.state.spinner) {
         setTimeout(() => {
           if (this.state.today === 0) {
-            if (this.state.flag === true)
+            if (this.state.flag) {
+              console.log('Spinner: page:', 8)
               this.setState({page: 8})
-            else this.setState({page: 9})
-          } else if (this.state.flag === true) this.setState({page: this.state.today});
-          else this.setState({page: 9});
-
+            } else {
+              console.log('Spinner: page:', 9)
+              this.setState({page: 9})
+            }
+          } else if (this.state.flag) {
+            console.log('Spinner: page: today:', this.state.today)
+            this.setState({page: this.state.today});
+          } else {
+            console.log('Spinner: page:', 9)
+            this.setState({page: 9});
+          }
         }, 100);
         clearInterval(myinterval)
       }
     }, 100);
 
     return (
-      <DeviceThemeProvider>
-        <DocStyle/>
-        {
-          getThemeBackgroundByChar(this.state.character)
-        }
-        <div>
-          <Container style={{padding: 0}}>
-            <Spinner color={ACCENT_TEXT_COLOR}
-                     style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
-          </Container>
-        </div>
-      </DeviceThemeProvider>
+      <SpinnerPage character={this.state.character}/>
+      /*
+            <DeviceThemeProvider>
+              <DocStyle/>
+              {
+                getThemeBackgroundByChar(this.state.character)
+              }
+              <div>
+                <Container style={{padding: 0}}>
+                  <Spinner color={ACCENT_TEXT_COLOR}
+                           style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
+                </Container>
+              </div>
+            </DeviceThemeProvider>
+      */
     )
   }
 
   render() {
-    console.log('App: render');
-    let page = this.state.page;
+    let {page} = this.state;
+    console.log('App: render: page:', page);
     if (page >= 1 && page <= 13) {
       return this.Raspisanie(page);
     }
-    switch (this.state.page) {
+    switch (page) {
       case HOME_PAGE_NO:
         return <HomeView
           // state={this.state}
           validateInput={this.isCorrect}
+          handleTeacherChange={this.handleTeacherChange}
           convertIdInGroupName={this.convertIdInGroupName}
           setValue={this.setValue}
           description={this.state.description}
@@ -1849,19 +1893,19 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacher_checked={this.state.teacher_checked}
         />
       case NAVIGATOR_PAGE_NO:
-        return <Navigator
+        return <NavigatorPage
           state={this.state}
           setValue={this.setValue}
         />
       case DASHBOARD_PAGE_NO:
-        return <Dashboard
+        return <DashboardPage
           state={this.state}
           setValue={this.setValue}
           handleTeacherChange={this.handleTeacherChange}
-          getCurrentLesson={this.getCurrentLesson}
+          getCurrentLesson={(date) => this.getCurrentLesson(date)}
           getTimeFirstLesson={this.getTimeFirstLesson}
           getEndLastLesson={this.getEndLastLesson}
-          whatLesson={this.whatLesson}
+          whatLesson={(date, when) => this.whatLesson(date, when)}
           getTime={this.getTime}
         />
       case SCHEDULE_PAGE_NO:
