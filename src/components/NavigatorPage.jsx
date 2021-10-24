@@ -115,7 +115,7 @@ class NavigatorPage extends React.Component {
               <HeaderLogo/>
 
               <HeaderTitle2
-                text='Карта университета'
+                title='Карта университета'
               />
 
               <Col style={{ margin: "0 0 0 auto" }}>
