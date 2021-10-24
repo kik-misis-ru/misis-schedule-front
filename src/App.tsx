@@ -13,6 +13,7 @@ import {
   getScheduleFromDb,
   getScheduleTeacherFromDb,
   getUser,
+  IsEnslishGroupExist,
   IScheduleApiData,
   IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar,
 } from "./APIHelper";
@@ -29,7 +30,6 @@ import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
 
 import building from './data/buldings.json'
-import engGroups from './data/engGroups.json'
 import filial from './data/filial.json';
 
 import {Bell} from './ScheduleStructure'
@@ -1744,28 +1744,17 @@ export class App extends React.Component<IAppProps, IAppState> {
       .then((response) => {
         if (response['status'] != "-1") {
           this.setState({correct: true})
-// <<<<<<< HEAD
-//         console.log(`isCorrect: correct: ${correct}`)
           this.convertGroupNameInId();
-//       }
-//     }
-//     for (let i of engGroups) {
-//       if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
-//         correct_eng = true;
-//         console.log(`isCorrect: correct_eng: ${correct_eng}`);
-// =======
           correct = true;
           const groupId = String(response['id']);
           this.setState({groupId: groupId})
         }
+        IsEnslishGroupExist(Number(this.state.engGroup))
+        .then((response) =>{
+          if(response==1)
+          correct_eng = true;
+          console.log(`isCorrect: correct_eng: ${correct_eng}`);
 
-        for (let i of engGroups) {
-          if ((this.state.engGroup == i) || (this.state.engGroup === "")) {
-            correct_eng = true;
-            console.log(`isCorrect: correct_eng: ${correct_eng}`);
-          }
-// >>>>>>> 68a47f98e5e79e3a539ba406a28a3c564a486459
-        }
         if (
           (this.state.subGroup === "") ||
           (this.state.subGroup === "1") ||
@@ -1822,6 +1811,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         } else {
           this.setState({isEngGroupError: false, star: false});
         }
+      })
       })
   }
 

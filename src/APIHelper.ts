@@ -284,3 +284,14 @@ export async function getGroupByName(groupName: string) {
   console.log(`APIHelper: getGroupByName: groupInfo:`, groupInfo);
   return groupInfo;
 }
+export async function  IsEnslishGroupExist(group_num: number) : Promise<number>{
+  const url = `${API_URL}is_ensglish_group_exist`;
+  const config = {
+    params: {
+      group_num: group_num,
+    },
+  };
+  const response = await axios.get(url, config);
+  const {data: IsExist} = response;
+  return Number(IsExist["status"])
+}
