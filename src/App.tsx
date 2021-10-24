@@ -18,10 +18,10 @@ import {
 } from "./APIHelper";
 import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
-import DashboardPage from './components/Dashboard';
+import DashboardPage from './components/DashboardPage';
 
 import HomeView from './components/HomeView';
-import NavigatorPage from './components/Navigator';
+import NavigatorPage from './components/NavigatorPage';
 import ScheduleDayFull from "./components/ScheduleDayFull";
 import SpinnerPage from "./components/SpinnerPage";
 import TopMenu from './components/TopMenu';
