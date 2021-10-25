@@ -19,7 +19,7 @@ import {LessonStartEnd} from "../App";
 
 //import { text, background, gradient } from "@sberdevices/plasma-tokens";
 // import "../themes/App.css";
-import {ACCENT_TEXT_COLOR} from "./consts";
+import {ACCENT_TEXT_COLOR, COLOR_BLACK} from "./consts";
 import {Bell} from "../ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
@@ -178,7 +178,7 @@ const RightContent = (
       <Badge
         text={room}
         contentLeft={<IconLocation size="xs"/>}
-        style={{backgroundColor: "rgba(0,0,0, 0)"}}
+        style={{backgroundColor: COLOR_BLACK}}
       />
       <TextBoxTitle>
         {lessonType}

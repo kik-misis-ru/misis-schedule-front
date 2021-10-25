@@ -1,7 +1,7 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import SpinnerPage from '../components/SpinnerPage';
+import SpinnerPage from '../pages/SpinnerPage';
 
 export default {
   title: 'misis-schedule/SpinnerPage',

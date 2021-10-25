@@ -27,20 +27,69 @@ import logo from "../images/logo.png";
 //import "../themes/App.css";
 import {
   DEFAULT_TEXT_COLOR,
-  ACCENT_TEXT_COLOR,
-} from './consts';
+  ACCENT_TEXT_COLOR, COLOR_BLACK,
+} from '../components/consts';
 import {
   DocStyle,
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
+  formatTimeHhMm,
+} from '../utils';
+import {
   HOME_PAGE_NO,
   NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
 } from '../App';
-import LinkToOnline from './LinkToOnline';
+import LinkToOnline from '../components/LinkToOnline';
+import {NowOrWill} from "../types/AssistantReceiveAction";
+import {TodayOrTomorrow} from "../types/base";
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
-import {GoToHomeButton, HeaderLogo, HeaderTitle} from "./TopMenu";
+import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
+import {IAppState} from "../App";
+
+
+import {DAY_OFF_TEXT} from '../components/ScheduleDayOff'
+// const DAY_OFF_TEXT = 'Выходной😋';
+const NO_LESSONS_TODAY_TEXT = 'Сегодня пар нет';
+
+
+const HeaderRow = ({
+                     onHomeClick
+                   }: {
+  onHomeClick: () => void
+}) => (
+  <Row style={{margin: "1em"}}>
+
+    <HeaderLogoCol/>
+
+    <HeaderTitleCol
+      title='Мир МИСиС'
+    />
+
+    <Col style={{margin: "0 0 0 auto"}}>
+      <GoToHomeButton
+        onClick={() => onHomeClick()}
+      />
+    </Col>
+  </Row>
+)
+
+
+const ScheduleSectionTitleRow = () => (
+  <Row>
+    <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
+      <IconStarFill/>
+    </Col>
+    <Col style={{paddingTop: "1.1em"}}>
+      <TextBox>
+        <CardHeadline3>
+          Мое расписание
+        </CardHeadline3>
+      </TextBox>
+    </Col>
+  </Row>
+)
 
 
 const DashboardCard = ({
@@ -153,28 +202,43 @@ const NoLessonsNow = () => (
 
 
 const DashboardPage = ({
-                     state,
-                     setValue,
-                     handleTeacherChange,
-                     getCurrentLesson,
-                     getTimeFirstLesson,
-                     getEndLastLesson,
-                     whatLesson,
-                     getTime,
+                         state,
+                         setValue,
+                         handleTeacherChange,
+                         getCurrentLesson,
+                         getTimeFirstLesson,
+                         getEndLastLesson,
+                         whatLesson,
 
-                   }: {
-  state
-  setValue
-  handleTeacherChange
-  getCurrentLesson
-  getTimeFirstLesson
-  getEndLastLesson
+
+                       }: {
+  state: IAppState
+  setValue: (key: string, value: any) => void
+  handleTeacherChange: () => Promise<void>
+  getCurrentLesson // : (date: Date) => string | undefined
+  getTimeFirstLesson: (daynum: number) => [string, string]
+  getEndLastLesson//: (todayOrTomorrow: TodayOrTomorrow) => string | undefined
   whatLesson
-  getTime
+  // whatLesson: (
+  //   date: Date,
+  //   when: NowOrWill,
+  // ) => {
+  //   lesson: string | undefined,
+  //   type: NowOrWill | 'next',
+  //   num: number | undefined,
+  // }
 
 }) => {
+  const todayIndex = state.today - 1;
 
-  console.log('Dashboard: day:', state.day[state.today - 1]);
+  console.log('Dashboard: day:', state.day[todayIndex]);
+
+  const lessonCountToday = state.day[todayIndex].count[0];
+
+  const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
+    `Сегодня ${count} с ${from} до ${to}`
+  )
+
   return (
     <DeviceThemeProvider>
       <DocStyle/>
@@ -182,67 +246,38 @@ const DashboardPage = ({
         getThemeBackgroundByChar(state.character)
       }
       <Container style={{padding: 0}}>
-        <Row style={{margin: "1em"}}>
-
-          <HeaderLogo/>
-
-          <HeaderTitle
-            title='Мир МИСиС'
-          />
-
-          <Col style={{margin: "0 0 0 auto"}}>
-            <GoToHomeButton
-              onClick={() => setValue('page', HOME_PAGE_NO)}
-            />
-          </Col>
-        </Row>
+        <HeaderRow
+          onHomeClick={() => setValue('page', HOME_PAGE_NO)}
+        />
 
         <Row>
           <TextBox
             // @ts-ignore
             style={{marginLeft: "3em", paddingTop: "0.5em"}}
           >
-            {
-              state.today === 0
-                ? (
-                  <CardParagraph2 style={{fontSize: "20px"}}>
-                    Выходной😋
-                  </CardParagraph2>
-                ) : (
-                  <CardParagraph2 style={{fontSize: "20px"}}>
-                    {state.day[state.today - 1].title}, {state.day[state.today - 1].date[0]}
-                  </CardParagraph2>
-                )
-            }
-            {
-              state.today !== 0 &&
-              state.day[state.today - 1].count[0] !== 0
-                ? (
-                  <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
-                    Сегодня {pairNumberToPairNumText(state.day[state.today - 1].count[0])} с {getTimeFirstLesson(state.today - 1 + 1)[0].slice(0, 5)} до {getEndLastLesson("this.props.state.today-1")}
-                  </CardParagraph1>
-                )
-                : (
-                  <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
-                    Сегодня пар нет
-                  </CardParagraph1>
-                )
-            }
+            <CardParagraph2 style={{fontSize: "20px"}}>
+              {
+                state.today === 0
+                  ? DAY_OFF_TEXT
+                  : state.day[todayIndex].title + ", " + state.day[todayIndex].date[0]
+              }
+            </CardParagraph2>
+            <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
+              {
+                state.today !== 0 &&
+                lessonCountToday !== 0
+                  ? formatLessonsCountFromTo(
+                    pairNumberToPairNumText(lessonCountToday),
+                    getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5),
+                    getEndLastLesson(todayIndex)
+                  )
+                  : NO_LESSONS_TODAY_TEXT
+              }
+            </CardParagraph1>
           </TextBox>
         </Row>
 
-        <Row>
-          <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
-            <IconStarFill/>
-          </Col>
-          <Col style={{paddingTop: "1.1em"}}>
-            <TextBox>
-              <CardHeadline3>
-                Мое расписание
-              </CardHeadline3>
-            </TextBox>
-          </Col>
-        </Row>
+        <ScheduleSectionTitleRow />
 
         <Card style={{width: "90%", marginLeft: "1em", marginTop: "0.5em"}}>
 
@@ -261,13 +296,13 @@ const DashboardPage = ({
                           <TextBoxSubTitle lines={8}>
                             {
                               // todo: (new Date(Date.now()))(new Date(Date.now())
-                              state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][3]
+                              state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][3]
                             }
                           </TextBoxSubTitle>
                           < CardBody2 style={{color: ACCENT_TEXT_COLOR, fontSize: "18px"}}>
                             {
                               // todo: (new Date(Date.now()))(new Date(Date.now())
-                              state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0].lessonName
+                              state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0].lessonName
                             }
                           </ CardBody2>
 
@@ -277,18 +312,17 @@ const DashboardPage = ({
                                 <TextBoxTitle>
                                   {
                                     // todo: (new Date(Date.now()))(new Date(Date.now())
-                                    state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][7]
+                                    state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][7]
                                   }
                                 </TextBoxTitle>
                               )
                               : (
-                                <a onClick={() => {
-                                  handleTeacherChange()
-                                }}
+                                <a
+                                  onClick={() => handleTeacherChange()}
                                 >
                                   {
                                     // todo: (new Date(Date.now()))(new Date(Date.now())
-                                    state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1]
+                                    state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1]
                                   }
                                 </a>
                               )
@@ -296,7 +330,7 @@ const DashboardPage = ({
 
                           <LinkToOnline
                             // todo: (new Date(Date.now()))(new Date(Date.now())
-                            url={state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][6]}
+                            url={state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][6]}
                           />
 
                         </TextBox>
@@ -307,30 +341,34 @@ const DashboardPage = ({
                           <Badge
                             text={
                               // todo: (new Date(Date.now()))(new Date(Date.now())
-                              state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][2]}
+                              state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][2]}
                             contentLeft={<IconLocation size="xs"/>}
-                            style={{backgroundColor: "rgba(0,0,0, 0)"}}
+                            style={{backgroundColor: COLOR_BLACK}}
                           />
                           <TextBoxTitle>
-                            // todo: (new Date(Date.now()))(new Date(Date.now())
-                            {lessonTypeAdjToNoun(state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][4])}
+                            {
+                              // todo: (new Date(Date.now()))(new Date(Date.now())
+                              lessonTypeAdjToNoun(state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][4])
+                            }
                           </TextBoxTitle>
 
                         </TextBox>
                       }
                       contentLeft={
                         // todo: (new Date(Date.now()))(new Date(Date.now())
-                        state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1] !== ""
+                        state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1] !== ""
                           ? (
                             <Badge
-                              // todo: (new Date(Date.now()))(new Date(Date.now())
-                              text={state.days[state.today - 1][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][5][0]}
+                              text={
+                                // todo: (new Date(Date.now()))(new Date(Date.now())
+                                state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][5][0]
+                              }
                               view="primary" style={{marginRight: "0.5em"}} size="l"
                             />
                           )
                           : (<div></div>)
                       }
-                    ></CellListItem>
+                    />
                   </CardContent>
                 </CardBody>
               )
@@ -353,35 +391,34 @@ const DashboardPage = ({
                         <TextBox>
                           <TextBoxSubTitle lines={8}>
                             {
-                              state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0][3]
+                              state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][3]
                             }
                           </TextBoxSubTitle>
                           < CardBody2 style={{fontSize: "18px"}}>
                             {
-                              state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0].lessonName
+                              state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0].lessonName
                             }
                           </ CardBody2>
                           {
                             state.student === false && state.teacher_correct === true
                               ? (
                                 <TextBoxTitle>
-                                  {state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0][7]}
+                                  {state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][7]}
                                 </TextBoxTitle>
                               )
                               : (
                                 <a
                                   onClick={() => {
-                                    // todo: нет метода
                                     handleTeacherChange()
                                   }}
                                 >
-                                  {state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0][1]}
+                                  {state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][1]}
                                 </a>
                               )
                           }
 
                           <LinkToOnline
-                            url={state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0][6]}
+                            url={state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][6]}
                           />
 
                         </TextBox>
@@ -390,22 +427,22 @@ const DashboardPage = ({
                       contentRight={
                         <TextBox>
                           <Badge
-                            text={state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0][2]}
+                            text={state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][2]}
                             contentLeft={
                               <IconLocation size="xs"/>
                             }
-                            style={{backgroundColor: "rgba(0,0,0, 0)"}}/>
+                            style={{backgroundColor: COLOR_BLACK}}/>
                           <TextBoxTitle>
-                            {state.days[state.today - 1][whatLesson(new Date(Date.now()), "next").num][0][4]}
+                            {state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][4]}
                           </TextBoxTitle>
 
                         </TextBox>
                       }
                       contentLeft={
-                        state.days[state.today - 1][whatLesson(new Date(Date.now()), "now").num][0][1] !== ""
+                        state.days[todayIndex][whatLesson(new Date(Date.now()), "now").num][0][1] !== ""
                           ? (
                             <Badge
-                              text={state.days[state.today - 1][whatLesson(new Date(Date.now()), "now").num][0][5]}
+                              text={state.days[todayIndex][whatLesson(new Date(Date.now()), "now").num][0][5]}
                               view="primary"
                               style={{marginRight: "0.5em"}}
                               size="l"
@@ -413,7 +450,7 @@ const DashboardPage = ({
                           )
                           : (<div></div>)
                       }
-                    ></CellListItem>
+                    />
                   </CardContent>
                 </CardBody>
               )

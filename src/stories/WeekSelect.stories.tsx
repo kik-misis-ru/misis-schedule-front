@@ -7,6 +7,10 @@ export default {
   title: 'misis-schedule/WeekSelect',
   component: WeekSelect,
   argTypes: {
+    isMobileDevice: {
+      type: {name: 'boolean', required: false},
+      defaultValue: true,
+    },
   },
 } as ComponentMeta<typeof WeekSelect>;
 

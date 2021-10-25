@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
 import TabSelector from '../components/Home/TabSelector';
-import {USER_MODES} from '../components/HomeView';
+import {USER_MODES} from '../pages/HomePage';
 
 let selectedIndex = 0;
 

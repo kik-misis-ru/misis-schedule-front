@@ -45,3 +45,10 @@ export interface IDayHeader {
 }
 
 
+export interface IBuilding {
+  name: string
+  address: string
+  color: string
+  short: string
+}
+
