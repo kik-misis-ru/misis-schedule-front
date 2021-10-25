@@ -1875,6 +1875,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       case DASHBOARD_PAGE_NO:
         return <DashboardPage
           state={this.state}
+          character={this.state.character}
           onGoToPage={(pageNo) => this.setState({page: pageNo})}
           handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={(date) => this.getCurrentLesson(date)}
