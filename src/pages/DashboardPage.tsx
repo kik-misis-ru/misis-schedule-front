@@ -43,7 +43,7 @@ import {
 } from '../App';
 import LinkToOnline from '../components/LinkToOnline';
 import {NowOrWill} from "../types/AssistantReceiveAction";
-import {TodayOrTomorrow} from "../types/base";
+import {CHAR_TIMEPARAMOY, Character, THIS_WEEK, TodayOrTomorrow} from "../types/base";
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import {IAppState} from "../App";
@@ -140,21 +140,21 @@ const CatalogueHeader = () => {
 }
 
 const CatalogueItems = ({
-                          onSelect,
+                          onGoToPage,
                         }: {
-  onSelect: (pageNo) => void
+  onGoToPage: (pageNo) => void
 }) => {
   return (
     <Row style={{marginLeft: "1em", marginRight: "1em"}}>
 
       <DashboardCard
         text="Расписание"
-        onClick={() => onSelect(SCHEDULE_PAGE_NO)}
+        onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
       />
 
       <DashboardCard
         text="Карта"
-        onClick={() => onSelect(NAVIGATOR_PAGE_NO)}
+        onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
       />
 
       <DashboardCard
@@ -203,7 +203,8 @@ const NoLessonsNow = () => (
 
 const DashboardPage = ({
                          state,
-                         setValue,
+                         character,
+                         onGoToPage,
                          handleTeacherChange,
                          getCurrentLesson,
                          getTimeFirstLesson,
@@ -213,7 +214,10 @@ const DashboardPage = ({
 
                        }: {
   state: IAppState
-  setValue: (key: string, value: any) => void
+  character: Character
+    // todo: что такое 'timeParamoy' ???
+    | typeof CHAR_TIMEPARAMOY
+  onGoToPage: (pageNo: number) => void
   handleTeacherChange: () => Promise<void>
   getCurrentLesson // : (date: Date) => string | undefined
   getTimeFirstLesson: (daynum: number) => [string, string]
@@ -233,7 +237,14 @@ const DashboardPage = ({
 
   console.log('Dashboard: day:', state.day[todayIndex]);
 
-  const lessonCountToday = state.day[todayIndex].count[0];
+  const now = new Date();
+  const lessonCountToday = state.day[todayIndex].count[THIS_WEEK];
+  const weekDayShortToday = state.day[todayIndex].title;
+  const dateToday = state.day[todayIndex].date[THIS_WEEK];
+
+  const lessonNow = state.days[todayIndex][whatLesson(now, "now").num][0];
+  const lessonNext = state.days[todayIndex][whatLesson(now, "next").num][0];
+  const lessonCurrent = state.days[todayIndex][getCurrentLesson(new Date())][0];
 
   const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
     `Сегодня ${count} с ${from} до ${to}`
@@ -243,11 +254,11 @@ const DashboardPage = ({
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(state.character)
+        getThemeBackgroundByChar(character)
       }
       <Container style={{padding: 0}}>
         <HeaderRow
-          onHomeClick={() => setValue('page', HOME_PAGE_NO)}
+          onHomeClick={() => onGoToPage(HOME_PAGE_NO)}
         />
 
         <Row>
@@ -259,7 +270,7 @@ const DashboardPage = ({
               {
                 state.today === 0
                   ? DAY_OFF_TEXT
-                  : state.day[todayIndex].title + ", " + state.day[todayIndex].date[0]
+                  : `${weekDayShortToday}, ${dateToday}`
               }
             </CardParagraph2>
             <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
@@ -295,14 +306,12 @@ const DashboardPage = ({
 
                           <TextBoxSubTitle lines={8}>
                             {
-                              // todo: (new Date(Date.now()))(new Date(Date.now())
-                              state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][3]
+                              lessonCurrent[3]
                             }
                           </TextBoxSubTitle>
                           < CardBody2 style={{color: ACCENT_TEXT_COLOR, fontSize: "18px"}}>
                             {
-                              // todo: (new Date(Date.now()))(new Date(Date.now())
-                              state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0].lessonName
+                              lessonCurrent.lessonName
                             }
                           </ CardBody2>
 
@@ -310,27 +319,20 @@ const DashboardPage = ({
                             !state.student && state.teacher_correct
                               ? (
                                 <TextBoxTitle>
-                                  {
-                                    // todo: (new Date(Date.now()))(new Date(Date.now())
-                                    state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][7]
-                                  }
+                                  {lessonCurrent[7]}
                                 </TextBoxTitle>
                               )
                               : (
                                 <a
                                   onClick={() => handleTeacherChange()}
                                 >
-                                  {
-                                    // todo: (new Date(Date.now()))(new Date(Date.now())
-                                    state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1]
-                                  }
+                                  {lessonCurrent[1]}
                                 </a>
                               )
                           }
 
                           <LinkToOnline
-                            // todo: (new Date(Date.now()))(new Date(Date.now())
-                            url={state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][6]}
+                            url={lessonCurrent[6]}
                           />
 
                         </TextBox>
@@ -340,28 +342,24 @@ const DashboardPage = ({
                         <TextBox>
                           <Badge
                             text={
-                              // todo: (new Date(Date.now()))(new Date(Date.now())
-                              state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][2]}
+                              lessonCurrent[2]}
                             contentLeft={<IconLocation size="xs"/>}
                             style={{backgroundColor: COLOR_BLACK}}
                           />
                           <TextBoxTitle>
                             {
-                              // todo: (new Date(Date.now()))(new Date(Date.now())
-                              lessonTypeAdjToNoun(state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][4])
+                              lessonTypeAdjToNoun(lessonCurrent[4])
                             }
                           </TextBoxTitle>
 
                         </TextBox>
                       }
                       contentLeft={
-                        // todo: (new Date(Date.now()))(new Date(Date.now())
-                        state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][1] !== ""
+                        lessonCurrent[1] !== ""
                           ? (
                             <Badge
                               text={
-                                // todo: (new Date(Date.now()))(new Date(Date.now())
-                                state.days[todayIndex][getCurrentLesson(new Date(Date.now()))(new Date(Date.now()))][0][5][0]
+                                lessonCurrent[5][0]
                               }
                               view="primary" style={{marginRight: "0.5em"}} size="l"
                             />
@@ -391,19 +389,19 @@ const DashboardPage = ({
                         <TextBox>
                           <TextBoxSubTitle lines={8}>
                             {
-                              state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][3]
+                              lessonNext[3]
                             }
                           </TextBoxSubTitle>
                           < CardBody2 style={{fontSize: "18px"}}>
                             {
-                              state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0].lessonName
+                              lessonNext.lessonName
                             }
                           </ CardBody2>
                           {
-                            state.student === false && state.teacher_correct === true
+                            !state.student && state.teacher_correct
                               ? (
                                 <TextBoxTitle>
-                                  {state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][7]}
+                                  {lessonNext[7]}
                                 </TextBoxTitle>
                               )
                               : (
@@ -412,13 +410,13 @@ const DashboardPage = ({
                                     handleTeacherChange()
                                   }}
                                 >
-                                  {state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][1]}
+                                  {lessonNext[1]}
                                 </a>
                               )
                           }
 
                           <LinkToOnline
-                            url={state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][6]}
+                            url={lessonNext[6]}
                           />
 
                         </TextBox>
@@ -427,22 +425,22 @@ const DashboardPage = ({
                       contentRight={
                         <TextBox>
                           <Badge
-                            text={state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][2]}
+                            text={lessonNext[2]}
                             contentLeft={
                               <IconLocation size="xs"/>
                             }
                             style={{backgroundColor: COLOR_BLACK}}/>
                           <TextBoxTitle>
-                            {state.days[todayIndex][whatLesson(new Date(Date.now()), "next").num][0][4]}
+                            {lessonNext[4]}
                           </TextBoxTitle>
 
                         </TextBox>
                       }
                       contentLeft={
-                        state.days[todayIndex][whatLesson(new Date(Date.now()), "now").num][0][1] !== ""
+                        lessonNow[1] !== ""
                           ? (
                             <Badge
-                              text={state.days[todayIndex][whatLesson(new Date(Date.now()), "now").num][0][5]}
+                              text={lessonNow[5]}
                               view="primary"
                               style={{marginRight: "0.5em"}}
                               size="l"
@@ -463,7 +461,7 @@ const DashboardPage = ({
         <CatalogueHeader/>
 
         <CatalogueItems
-          onSelect={(pageNo) => setValue('page', pageNo)}
+          onGoToPage={(pageNo) => onGoToPage(pageNo)}
         />
 
 

@@ -1277,14 +1277,14 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async convertIdInGroupName(): Promise<void> {
     let group = await getGroupById(Number(this.state.groupId))
-    this.setState({group: group["name"]})
+    this.setState({group: group.name})
   }
 
   convertGroupNameInId() {
     getGroupByName(this.state.group)
       .then((response) => {
         console.log("convertNameInId", response)
-        const groupId = String(response['id']); // convert to string
+        const groupId = String(response.id); // convert to string
         this.setState({groupId: groupId})
       })
 
@@ -1875,7 +1875,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       case DASHBOARD_PAGE_NO:
         return <DashboardPage
           state={this.state}
-          setValue={this.setValue}
+          onGoToPage={(pageNo) => this.setState({page: pageNo})}
           handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={(date) => this.getCurrentLesson(date)}
           getTimeFirstLesson={this.getTimeFirstLesson}
