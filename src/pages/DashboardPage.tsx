@@ -46,6 +46,7 @@ import {NowOrWill} from "../types/AssistantReceiveAction";
 import {CHAR_TIMEPARAMOY, Character, THIS_WEEK, TodayOrTomorrow} from "../types/base";
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
+import {GroupNumber,TeacherName,LessonLeftContent,LessonRightContent} from "../components/ScheduleLesson";
 import {IAppState} from "../App";
 
 
@@ -233,6 +234,7 @@ const DashboardPage = ({
   // }
 
 }) => {
+  const isSunday = (state.today === 0);
   const todayIndex = state.today - 1;
 
   console.log('Dashboard: day:', state.day[todayIndex]);
@@ -242,9 +244,17 @@ const DashboardPage = ({
   const weekDayShortToday = state.day[todayIndex].title;
   const dateToday = state.day[todayIndex].date[THIS_WEEK];
 
-  const lessonNow = state.days[todayIndex][whatLesson(now, "now").num][0];
-  const lessonNext = state.days[todayIndex][whatLesson(now, "next").num][0];
-  const lessonCurrent = state.days[todayIndex][getCurrentLesson(new Date())][0];
+  const lessonNowIdx = whatLesson(now, "now").num;
+  const lessonNextIdx = whatLesson(now, "next").num;
+
+  const lessonNow = state.days[todayIndex][lessonNowIdx][THIS_WEEK];
+  const lessonNext = state.days[todayIndex][lessonNextIdx][THIS_WEEK];
+
+  const lessonCurrent = state.days[todayIndex][getCurrentLesson(new Date())][THIS_WEEK];
+
+  // whatLesson(new Date(), "next").num
+
+  const isTeacherAndCorrect = !state.student && state.teacher_correct;
 
   const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
     `Сегодня ${count} с ${from} до ${to}`
@@ -268,14 +278,14 @@ const DashboardPage = ({
           >
             <CardParagraph2 style={{fontSize: "20px"}}>
               {
-                state.today === 0
+                isSunday
                   ? DAY_OFF_TEXT
                   : `${weekDayShortToday}, ${dateToday}`
               }
             </CardParagraph2>
             <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
               {
-                state.today !== 0 &&
+                isSunday &&
                 lessonCountToday !== 0
                   ? formatLessonsCountFromTo(
                     pairNumberToPairNumText(lessonCountToday),
@@ -288,12 +298,12 @@ const DashboardPage = ({
           </TextBox>
         </Row>
 
-        <ScheduleSectionTitleRow />
+        <ScheduleSectionTitleRow/>
 
         <Card style={{width: "90%", marginLeft: "1em", marginTop: "0.5em"}}>
 
           {
-            getCurrentLesson(new Date(Date.now())) !== undefined
+            getCurrentLesson(new Date()) !== undefined
               ? (
                 <CardBody style={{padding: "0 0 0 0"}}>
                   <CardContent compact style={{padding: "0.3em 0.3em"}}>
@@ -305,66 +315,44 @@ const DashboardPage = ({
                         <TextBox>
 
                           <TextBoxSubTitle lines={8}>
-                            {
-                              lessonCurrent[3]
-                            }
+                            {lessonCurrent.startAndFinishTime}
                           </TextBoxSubTitle>
+
                           < CardBody2 style={{color: ACCENT_TEXT_COLOR, fontSize: "18px"}}>
-                            {
-                              lessonCurrent.lessonName
-                            }
+                            {lessonCurrent.lessonName}
                           </ CardBody2>
 
                           {
-                            !state.student && state.teacher_correct
-                              ? (
-                                <TextBoxTitle>
-                                  {lessonCurrent[7]}
-                                </TextBoxTitle>
-                              )
-                              : (
-                                <a
-                                  onClick={() => handleTeacherChange()}
-                                >
-                                  {lessonCurrent[1]}
-                                </a>
-                              )
+                            isTeacherAndCorrect
+                              ? <GroupNumber text={lessonCurrent.groupNumber}/>
+                              : <TeacherName
+                                text={lessonCurrent.teacher}
+                                onClick={() => handleTeacherChange()}
+                            />
                           }
 
                           <LinkToOnline
-                            url={lessonCurrent[6]}
+                            url={lessonCurrent.url}
                           />
 
                         </TextBox>
                       }
 
                       contentRight={
-                        <TextBox>
-                          <Badge
-                            text={
-                              lessonCurrent[2]}
-                            contentLeft={<IconLocation size="xs"/>}
-                            style={{backgroundColor: COLOR_BLACK}}
-                          />
-                          <TextBoxTitle>
-                            {
-                              lessonTypeAdjToNoun(lessonCurrent[4])
-                            }
-                          </TextBoxTitle>
-
-                        </TextBox>
+                        <LessonRightContent
+                          room={lessonCurrent.room}
+                          lessonType={
+                            // todo: это преобразование должно быть раньше
+                            lessonTypeAdjToNoun(lessonCurrent.lessonType)
+                          }
+                        />
                       }
                       contentLeft={
-                        lessonCurrent[1] !== ""
-                          ? (
-                            <Badge
-                              text={
-                                lessonCurrent[5][0]
-                              }
-                              view="primary" style={{marginRight: "0.5em"}} size="l"
-                            />
-                          )
-                          : (<div></div>)
+                        <LessonLeftContent
+                          visible={lessonCurrent.lessonName !== ""}
+                          // todo: lessonNumber не должен содержать точку
+                          text={lessonCurrent.lessonNumber[0]}
+                        />
                       }
                     />
                   </CardContent>
@@ -374,7 +362,7 @@ const DashboardPage = ({
 
           }
           {
-            whatLesson(new Date(Date.now()), "next").num !== undefined
+            lessonNextIdx !== undefined
               ? (
                 <CardBody>
                   <CardContent>
@@ -388,9 +376,7 @@ const DashboardPage = ({
                       content={
                         <TextBox>
                           <TextBoxSubTitle lines={8}>
-                            {
-                              lessonNext[3]
-                            }
+                            {lessonNext[3]}
                           </TextBoxSubTitle>
                           < CardBody2 style={{fontSize: "18px"}}>
                             {
@@ -398,19 +384,17 @@ const DashboardPage = ({
                             }
                           </ CardBody2>
                           {
-                            !state.student && state.teacher_correct
+                            isTeacherAndCorrect
                               ? (
                                 <TextBoxTitle>
-                                  {lessonNext[7]}
+                                  {lessonNext.groupNumber}
                                 </TextBoxTitle>
                               )
                               : (
                                 <a
-                                  onClick={() => {
-                                    handleTeacherChange()
-                                  }}
+                                  onClick={() => handleTeacherChange()}
                                 >
-                                  {lessonNext[1]}
+                                  {lessonNext.teacher}
                                 </a>
                               )
                           }
@@ -423,6 +407,16 @@ const DashboardPage = ({
                       }
 
                       contentRight={
+
+                        <LessonRightContent
+                          room={lessonNext.room}
+                          lessonType={
+                            // todo: это преобразование должно быть раньше
+                            lessonTypeAdjToNoun(lessonNext.lessonType)
+                          }
+                        />
+
+/*
                         <TextBox>
                           <Badge
                             text={lessonNext[2]}
@@ -435,18 +429,14 @@ const DashboardPage = ({
                           </TextBoxTitle>
 
                         </TextBox>
+*/
                       }
                       contentLeft={
-                        lessonNow[1] !== ""
-                          ? (
-                            <Badge
-                              text={lessonNow[5]}
-                              view="primary"
-                              style={{marginRight: "0.5em"}}
-                              size="l"
-                            />
-                          )
-                          : (<div></div>)
+                        <LessonLeftContent
+                          visible={lessonNow.lessonName !== ''}
+                          // todo: lessonNumber не должен содержать точку
+                          text={lessonNow.lessonNumber[0]}
+                        />
                       }
                     />
                   </CardContent>

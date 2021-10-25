@@ -1296,9 +1296,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   // получить дату первого дня недели
   getFirstDayWeek(date: Date): string {
+
     // номер дня недели
     const now = new Date();
     this.setState({today: now.getDay()});
+
     const weekDay = date.getDay()
     let firstDay: number;
     if (weekDay === 0) {
@@ -1681,7 +1683,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         getScheduleTeacherFromDb(
           teacherData.id,
-          this.getFirstDayWeek(new Date(Date.now()))
+          this.getFirstDayWeek(new Date())
         ).then((response) => {
           this.showWeekSchedule(response, 0);
         });
@@ -1763,7 +1765,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           getScheduleFromDb(
             group_response["id"],
             String(this.state.engGroup),
-            this.getFirstDayWeek(new Date(Date.now())))
+            this.getFirstDayWeek(new Date()))
             .then((response) => {
               this.showWeekSchedule(response, 0);
               console.log(String(this.state.engGroup));
@@ -1844,12 +1846,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     return (
 
       <SpinnerPage
-        character={
-          this
-            .state
-            .character
-        }
-
+        character={this.state.character}
       />
     )
   }

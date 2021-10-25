@@ -64,7 +64,7 @@ const LessonName = (
   )
 }
 
-const GroupNumber = (
+export const GroupNumber = (
   {
     text,
   }: {
@@ -78,26 +78,30 @@ const GroupNumber = (
   )
 }
 
-const TeacherName = (
+export const TeacherName = (
   {
     text,
+    style={},
     onClick,
   }: {
     text: string
+    style?: React.CSSProperties
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
   }
 ) => {
   return (
     <a
       href='#'
-      style={{color: "white"}}
-      onClick={(event) => onClick(event)}>
+      // style={{color: "white"}}
+      style={style}
+      onClick={(event) => onClick(event)}
+    >
       {text}
     </a>
   )
 }
 
-const LeftContent = (
+export const LessonLeftContent = (
   {
     text,
     visible,
@@ -155,6 +159,7 @@ const MainContent = (
           />
           : <TeacherName
             text={teacher}
+            style={{color: "white"}}
             onClick={() => onTeacherClick(teacher)}
           />
       }
@@ -164,7 +169,7 @@ const MainContent = (
   )
 }
 
-const RightContent = (
+export const LessonRightContent = (
   {
     room,
     lessonType,
@@ -177,7 +182,9 @@ const RightContent = (
     <TextBox>
       <Badge
         text={room}
-        contentLeft={<IconLocation size="xs"/>}
+        contentLeft={
+          <IconLocation size="xs"/>
+        }
         style={{backgroundColor: COLOR_BLACK}}
       />
       <TextBoxTitle>
@@ -226,7 +233,7 @@ const ScheduleLesson = (
       />
     }
     contentRight={
-      <RightContent
+      <LessonRightContent
         room={bell.room}
         lessonType={
           // todo: это преобразование должно быть раньше
@@ -235,7 +242,7 @@ const ScheduleLesson = (
       />
     }
     contentLeft={
-      <LeftContent
+      <LessonLeftContent
         visible={true}
         // todo: lessonNumber не должен содержать точку
         text={bell.lessonNumber[0]}
