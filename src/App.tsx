@@ -1797,34 +1797,59 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   Spinner() {
     console.log('Spinner: this.state.spinner:', this.state.spinner)
-    const myinterval = setInterval(() => {
-      console.log("today", this.state.today)
-      if (this.state.spinner) {
-        setTimeout(() => {
-          if (this.state.today === 0) {
+
+    const CHECK_INTERVAL = 100;
+    const REDIRECT_DELAY = 100;
+
+    // делаем периодическую проверку
+    const checkInterval = setInterval(() => {
+        console.log("today", this.state.today)
+
+        // если признак `spinner` выставлен
+        if (this.state.spinner) {
+
+          // переходим на другую страницу с задержкой
+          setTimeout(() => {
             console.log("this.state.flag", this.state.flag)
-            if (this.state.flag) {
-              console.log('Spinner: page:', 7)
-              this.setState({page: 7})
-            } else {
-              console.log('Spinner: page:', 8)
-              this.setState({page: 8})
-            }
-          } else if (this.state.flag) {
-            console.log('Spinner: page: today:', this.state.today)
-            this.setState({page: this.state.today});
-          } else {
-            console.log('Spinner: page:', 8)
-            this.setState({page: 8});
-          }
-        }, 100);
-        clearInterval(myinterval)
-      }
-    }, 100);
+
+            const pageNo = this.state.today === 0
+              ? this.state.flag ? 7 : 8
+              : this.state.flag ? this.state.today : 8
+            console.log('Spinner: pageNo:', pageNo)
+
+            // переходим на другую страницу
+            this.setState({page: pageNo});
+
+            // if (this.state.today === 0) {
+            //    console.log("this.state.flag", this.state.flag)
+            //    if (this.state.flag) {
+            //      console.log('Spinner: page:', 7)
+            //      this.setState({page: 7})
+            //    } else {
+            //      console.log('Spinner: page:', 8)
+            //      this.setState({page: 8})
+            //    }
+            //  } else if (this.state.flag) {
+            //    console.log('Spinner: page: today:', this.state.today)
+            //    this.setState({page: this.state.today});
+            //  } else {
+            //    console.log('Spinner: page:', 8)
+            //    this.setState({page: 8});
+            //  }
+          }, REDIRECT_DELAY);
+          clearInterval(checkInterval)
+        }
+      },CHECK_INTERVAL);
 
     return (
+
       <SpinnerPage
-        character={this.state.character}
+        character={
+          this
+            .state
+            .character
+        }
+
       />
     )
   }
