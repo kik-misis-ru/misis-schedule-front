@@ -16,7 +16,7 @@ export const ScheduleDayLessons = ({
                                      // today,
                                      // weekParam,
                                      // timeParam,
-                                     isCorrectTeacher,
+                                     isTeacherAndValid,
                                      isToday,
                                      onTeacherClick,
                                    }: {
@@ -27,7 +27,7 @@ export const ScheduleDayLessons = ({
   currentLessonNumber: string | undefined,
   // weekParam: THIS_OR_OTHER_WEEK,
   // timeParam: number,
-  isCorrectTeacher: boolean,
+  isTeacherAndValid: boolean,
   isToday: boolean,
   onTeacherClick: (teacherName: string) => void
 }) => {
@@ -53,8 +53,8 @@ export const ScheduleDayLessons = ({
                 bell={bell}
                 startTime={LessonStartEnd[bellIndex].start}
                 endTime={LessonStartEnd[bellIndex].end}
-                isCorrectTeacher={isCorrectTeacher}
-                isCurrentLesson={isCurrentLesson}
+                isTeacherAndValid={isTeacherAndValid}
+                isAccented={isCurrentLesson}
                 onTeacherClick={(teacherName) => onTeacherClick(teacherName)}
               />
             )

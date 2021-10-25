@@ -28,7 +28,7 @@ import {lessonTypeAdjToNoun} from '../utils';
 import LinkToOnline from './LinkToOnline';
 
 
-const StartAndFinishTime = (
+export const LessonStartAndFinishTime = (
   {
     time
   }: {
@@ -42,17 +42,17 @@ const StartAndFinishTime = (
   )
 }
 
-const LessonName = (
+export const LessonName = (
   {
-    isCurrentLesson,
+    isAccented,
     text,
   }: {
-    isCurrentLesson: boolean
+    isAccented: boolean
     text: string
   }
 ) => {
   return (
-    isCurrentLesson
+    isAccented
       ? <CardHeadline3 style={{
         color: ACCENT_TEXT_COLOR,
       }}>
@@ -129,8 +129,8 @@ const MainContent = (
     teacher,
     time,
     url,
-    isCurrentLesson,
-    isCorrectTeacher,
+    isAccented,
+    isTeacherAndValid,
     onTeacherClick,
   }: {
     lessonName: string
@@ -138,22 +138,22 @@ const MainContent = (
     teacher: string
     time: string
     url: string
-    isCurrentLesson: boolean
-    isCorrectTeacher: boolean
+    isAccented: boolean
+    isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
   return (
     <TextBox>
-      <StartAndFinishTime
+      <LessonStartAndFinishTime
         time={time}
       />
       <LessonName
-        isCurrentLesson={isCurrentLesson}
         text={lessonName}
+        isAccented={isAccented}
       />
       {
-        isCorrectTeacher
+        isTeacherAndValid
           ? <GroupNumber
             text={groupNumber}
           />
@@ -200,15 +200,15 @@ const ScheduleLesson = (
     bell,
     startTime,
     endTime,
-    isCurrentLesson,
-    isCorrectTeacher,
+    isAccented,
+    isTeacherAndValid,
     onTeacherClick,
   }: {
     bell: Bell
     startTime: string
     endTime: string
-    isCurrentLesson: boolean
-    isCorrectTeacher: boolean
+    isAccented: boolean
+    isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
@@ -227,8 +227,8 @@ const ScheduleLesson = (
         time={
           formatStartEndTime(startTime, endTime)
         }
-        isCurrentLesson={isCurrentLesson}
-        isCorrectTeacher={isCorrectTeacher}
+        isAccented={isAccented}
+        isTeacherAndValid={isTeacherAndValid}
         onTeacherClick={onTeacherClick}
       />
     }

@@ -14,7 +14,7 @@ export const ScheduleDayFull = ({
                                   currentLessonNumber,
                                   // weekParam,
                                   // timeParam,
-                                  isCorrectTeacher,
+                                  isTeacherAndValid,
                                   isToday,
                                   isSunday,
                                   // today,
@@ -29,7 +29,7 @@ export const ScheduleDayFull = ({
   currentLessonNumber: string | undefined,
   // weekParam: THIS_OR_OTHER_WEEK,
   // timeParam: number,
-  isCorrectTeacher: boolean,
+  isTeacherAndValid: boolean,
   isToday: boolean,
   isSunday: boolean,
   // today: number,
@@ -51,7 +51,7 @@ export const ScheduleDayFull = ({
                     currentLessonNumber={currentLessonNumber}
                     // weekParam={weekParam}
                     // timeParam={timeParam}
-                    isCorrectTeacher={isCorrectTeacher}
+                    isTeacherAndValid={isTeacherAndValid}
                     isToday={isToday}
                     // today={today}
                     onTeacherClick={(teacherName) => onTeacherClick(teacherName)}

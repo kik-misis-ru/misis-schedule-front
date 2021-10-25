@@ -37,16 +37,23 @@ import {
   formatTimeHhMm,
 } from '../utils';
 import {
-  HOME_PAGE_NO,
+  HOME_PAGE_NO, LessonStartEnd,
   NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
 } from '../App';
 import LinkToOnline from '../components/LinkToOnline';
 import {NowOrWill} from "../types/AssistantReceiveAction";
-import {CHAR_TIMEPARAMOY, Character, THIS_WEEK, TodayOrTomorrow} from "../types/base";
+import {CHAR_TIMEPARAMOY, Character, THIS_WEEK, TodayOrTomorrow} from "../types/base.d";
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
-import {GroupNumber,TeacherName,LessonLeftContent,LessonRightContent} from "../components/ScheduleLesson";
+import ScheduleLesson, {
+  LessonStartAndFinishTime,
+  LessonName,
+  GroupNumber,
+  TeacherName,
+  LessonLeftContent,
+  LessonRightContent
+} from "../components/ScheduleLesson";
 import {IAppState} from "../App";
 
 
@@ -182,7 +189,7 @@ const NowTitle = () => (
 )
 
 
-const NoLessons = () => (
+const NoLesson = () => (
   < CardBody2 style={{fontSize: "18px"}}>
     Пары нет🎊
   </CardBody2>
@@ -195,7 +202,7 @@ const NoLessonsNow = () => (
 
       <NowTitle/>
 
-      <NoLessons/>
+      <NoLesson/>
 
     </CardContent>
   </CardBody>
@@ -211,8 +218,6 @@ const DashboardPage = ({
                          getTimeFirstLesson,
                          getEndLastLesson,
                          whatLesson,
-
-
                        }: {
   state: IAppState
   character: Character
@@ -247,18 +252,27 @@ const DashboardPage = ({
   const lessonNowIdx = whatLesson(now, "now").num;
   const lessonNextIdx = whatLesson(now, "next").num;
 
-  const lessonNow = state.days[todayIndex][lessonNowIdx][THIS_WEEK];
-  const lessonNext = state.days[todayIndex][lessonNextIdx][THIS_WEEK];
+  console.log('whatLesson(now, "now"):', whatLesson(now, "now"));
+  console.log('todayIndex:', todayIndex);
+  console.log('lessonNowIdx:', lessonNowIdx);
+  console.log('state.days[todayIndex]:', state.days[todayIndex]);
+  console.log('state.days[todayIndex][lessonNowIdx]:', state.days[todayIndex][lessonNowIdx]);
 
-  const lessonCurrent = state.days[todayIndex][getCurrentLesson(new Date())][THIS_WEEK];
+  const lessonNow = state.days[todayIndex]?.[lessonNowIdx]?.[THIS_WEEK];
+  const lessonNext = state.days[todayIndex]?.[lessonNextIdx]?.[THIS_WEEK];
+
+  const lessonCurrentIdx = getCurrentLesson(new Date());
+  const lessonCurrent = state.days[todayIndex]?.[lessonCurrentIdx]?.[THIS_WEEK];
 
   // whatLesson(new Date(), "next").num
 
-  const isTeacherAndCorrect = !state.student && state.teacher_correct;
+  const isTeacherAndValid = !state.student && state.teacher_correct;
 
   const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
     `Сегодня ${count} с ${from} до ${to}`
   )
+
+  console.log(`isSunday: ${isSunday}, lessonCountToday: ${lessonCountToday}`);
 
   return (
     <DeviceThemeProvider>
@@ -285,7 +299,7 @@ const DashboardPage = ({
             </CardParagraph2>
             <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
               {
-                isSunday &&
+                !isSunday &&
                 lessonCountToday !== 0
                   ? formatLessonsCountFromTo(
                     pairNumberToPairNumText(lessonCountToday),
@@ -310,25 +324,37 @@ const DashboardPage = ({
 
                     <NowTitle/>
 
+                    <ScheduleLesson
+                      bell={lessonCurrent}
+                      startTime={LessonStartEnd[lessonCurrentIdx].start}
+                      endTime={LessonStartEnd[lessonCurrentIdx].end}
+                      isTeacherAndValid={isTeacherAndValid}
+                      isAccented={true}
+                      // todo: задавать имя преподавателя
+                      onTeacherClick={(teacherName) => handleTeacherChange()}
+                    />
+
+{/*
                     <CellListItem
                       content={
                         <TextBox>
 
-                          <TextBoxSubTitle lines={8}>
-                            {lessonCurrent.startAndFinishTime}
-                          </TextBoxSubTitle>
+                          <LessonStartAndFinishTime
+                            time={lessonCurrent.startAndFinishTime}
+                          />
 
-                          < CardBody2 style={{color: ACCENT_TEXT_COLOR, fontSize: "18px"}}>
-                            {lessonCurrent.lessonName}
-                          </ CardBody2>
+                          <LessonName
+                            text={lessonCurrent.lessonName}
+                            isAccented={true}
+                          />
 
                           {
-                            isTeacherAndCorrect
+                            isTeacherAndValid
                               ? <GroupNumber text={lessonCurrent.groupNumber}/>
                               : <TeacherName
                                 text={lessonCurrent.teacher}
                                 onClick={() => handleTeacherChange()}
-                            />
+                              />
                           }
 
                           <LinkToOnline
@@ -355,6 +381,7 @@ const DashboardPage = ({
                         />
                       }
                     />
+*/}
                   </CardContent>
                 </CardBody>
               )
@@ -366,25 +393,37 @@ const DashboardPage = ({
               ? (
                 <CardBody>
                   <CardContent>
+
                     <TextBox>
                       <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
                         Дальше
                       </CardParagraph1>
                     </TextBox>
 
+
+                    <ScheduleLesson
+                      bell={lessonCurrent}
+                      startTime={LessonStartEnd[lessonNextIdx].start}
+                      endTime={LessonStartEnd[lessonNextIdx].end}
+                      isTeacherAndValid={isTeacherAndValid}
+                      isAccented={true}
+                      // todo: задавать имя преподавателя
+                      onTeacherClick={(teacherName) => handleTeacherChange()}
+                    />
+
+{/*
                     <CellListItem
                       content={
                         <TextBox>
-                          <TextBoxSubTitle lines={8}>
-                            {lessonNext[3]}
-                          </TextBoxSubTitle>
-                          < CardBody2 style={{fontSize: "18px"}}>
-                            {
-                              lessonNext.lessonName
-                            }
-                          </ CardBody2>
+                          <LessonStartAndFinishTime
+                            time={lessonNext.startAndFinishTime}
+                          />
+                          <LessonName
+                            text={lessonCurrent.lessonName}
+                            isAccented={true}
+                          />
                           {
-                            isTeacherAndCorrect
+                            isTeacherAndValid
                               ? (
                                 <GroupNumber
                                   text={lessonNext.groupNumber}
@@ -395,26 +434,14 @@ const DashboardPage = ({
                                 style={{color: "white"}}
                                 onClick={() => handleTeacherChange()}
                               />
-/*
-                              (
-                                <a
-                                  onClick={() => handleTeacherChange()}
-                                >
-                                  {lessonNext.teacher}
-                                </a>
-                              )
-*/
                           }
-
                           <LinkToOnline
-                            url={lessonNext[6]}
+                            url={lessonNext.url}
                           />
 
                         </TextBox>
                       }
-
                       contentRight={
-
                         <LessonRightContent
                           room={lessonNext.room}
                           lessonType={
@@ -422,21 +449,6 @@ const DashboardPage = ({
                             lessonTypeAdjToNoun(lessonNext.lessonType)
                           }
                         />
-
-/*
-                        <TextBox>
-                          <Badge
-                            text={lessonNext[2]}
-                            contentLeft={
-                              <IconLocation size="xs"/>
-                            }
-                            style={{backgroundColor: COLOR_BLACK}}/>
-                          <TextBoxTitle>
-                            {lessonNext[4]}
-                          </TextBoxTitle>
-
-                        </TextBox>
-*/
                       }
                       contentLeft={
                         <LessonLeftContent
@@ -446,6 +458,7 @@ const DashboardPage = ({
                         />
                       }
                     />
+*/}
                   </CardContent>
                 </CardBody>
               )

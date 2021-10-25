@@ -12,7 +12,7 @@ export default {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
-    isCorrectTeacher: {
+    isTeacherAndValid: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },

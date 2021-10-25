@@ -600,10 +600,11 @@ export class App extends React.Component<IAppProps, IAppState> {
       const todayIndex = this.state.today - 1
       const day = this.state.days[todayIndex]
       for (let bellIdx in day) {
-        const lesson = this.state.days[todayIndex][bellIdx][0];
+        const lesson = day[bellIdx][0];
+        const thisLessonStartEnd = LessonStartEnd[Number(bellIdx)];
         if (
-          (formatTimeHhMm(date) > LessonStartEnd[Number(bellIdx)].start) &&
-          (formatTimeHhMm(date) < LessonStartEnd[Number(bellIdx)].end) &&
+          (formatTimeHhMm(date) > thisLessonStartEnd.start) &&
+          (formatTimeHhMm(date) < thisLessonStartEnd.end) &&
           (LessonStartEnd[Number(bellIdx)].start !== "")
         ) {
           return lesson.lessonNumber[0]
@@ -668,94 +669,119 @@ export class App extends React.Component<IAppProps, IAppState> {
   } { //определяет название пары, которая идет или будет
     // ключ - номер пары, значение - перерыв до этой пары
 
-    if (this.state.today == 0) {
-      return {
+    console.log(`whatLesson: when: ${when} date:`, date)
+
+    const isSunday = (this.state.today == 0)
+    const todayWorkDayIndex = this.state.today - 1;
+    const todayBells = this.state.day[todayWorkDayIndex]
+    const todayLessons = this.state.days[todayWorkDayIndex]
+
+    if (isSunday) {
+      const result = {
         lesson: undefined,
         type: when,
         num: undefined,
       }
+      console.log(`whatLesson: isSunday: result:`, result)
+      return result;
+
     } else {
-      console.log('whatLesson: count:', this.state.day[this.state.today - 1].count[0]);
-      if (formatTimeHhMm(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0, 5)) {
+      console.log('whatLesson: count:', todayBells.count[0]);
+      if (formatTimeHhMm(date) < this.getTimeFirstLesson(todayWorkDayIndex + 1)[0].slice(0, 5)) {
         console.log(true)
       }
-      console.log("whatLesson: что за пара", formatTimeHhMm(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
-      if (this.state.today !== 0) {
-        const currentLesson = this.getCurrentLesson(date);
+      console.log("whatLesson: что за пара", formatTimeHhMm(date), when, this.getTimeFirstLesson(todayWorkDayIndex + 1)[0].slice(0, 5));
 
-        if (
-          (currentLesson !== undefined) &&
-          (when === "now")
-        ) {
-          for (let bellIdx in this.state.days[this.state.today - 1]) {
-            if (
-              (this.state.days[this.state.today - 1][bellIdx][0][5][0] === this.getCurrentLesson(date)) &&
-              (this.state.days[this.state.today - 1][bellIdx][0][5][0] !== "")
-            ) {
-              return {
-                lesson: this.state.days[this.state.today - 1][bellIdx][0][0],
-                type: "now",
-                num: parseInt(currentLesson)
-              };
-            }
-          }
+      // if (this.state.today !== 0) {
+      const currLessonNum = this.getCurrentLesson(date);
 
-        } else if (
-          (when === "will") &&
-          (currentLesson !== undefined) &&
-          (parseInt(currentLesson) + 1 < 8)
-        ) {
-          console.log("whatLesson: будет")
-          for (let bell in this.state.days[this.state.today - 1]) {
-            console.log('whatLesson:', parseInt(currentLesson) + 1);
-            if (
-              (this.state.days[this.state.today - 1][bell][0][5][0] == parseInt(currentLesson) + 1) &&
-              (this.state.days[this.state.today - 1][bell][0][5][0] !== "")
-            ) {
-              return {
-                lesson: this.state.days[this.state.today - 1][bell][0][0],
-                type: "next",
-                num: parseInt(currentLesson) + 1
-              };
-            }
+      //
+      if (
+        (when === "now") &&
+        (currLessonNum !== undefined)
+      ) {
+        for (let bellIdx in todayLessons) {
+          const lesson = todayLessons[bellIdx][THIS_WEEK];
+
+          if (
+            // todo: убрать точку из номера пары
+            (lesson.lessonNumber[0] === currLessonNum) &&
+            (lesson.lessonNumber[0] !== "")
+          ) {
+            return {
+              lesson: lesson[0],
+              type: "now",
+              num: parseInt(currLessonNum)
+            };
           }
-        } else if (
-          (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
-          (formatTimeHhMm(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
-        ) {
-          console.log('whatLesson:', this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0]);
-          return {
-            lesson: this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0],
-            type: "will",
-            num: parseInt(this.getTimeFirstLesson(this.state.today)[1])
+        }
+
+      } else if (
+        (when === "will") &&
+        (currLessonNum !== undefined) &&
+        (parseInt(currLessonNum) + 1 < 8)
+      ) {
+        console.log("whatLesson: будет")
+        for (let bell in todayLessons) {
+          console.log('whatLesson:', parseInt(currLessonNum) + 1);
+          const lesson = todayLessons[bell][THIS_WEEK];
+
+          if (
+            // todo: убрать точку из номера пары
+            (lesson.lessonNumber[0] == String(parseInt(currLessonNum) + 1) ) &&
+            (lesson.lessonNumber[0] !== "")
+          ) {
+            return {
+              lesson: lesson[0],
+              type: "next",
+              num: parseInt(currLessonNum) + 1
+            };
           }
-        } else {
-          for (let i in breaks) {
-            if (
-              (formatTimeHhMm(date) > breaks[i].slice(0, 5) && formatTimeHhMm(date) < breaks[i].slice(6)) &&
-              (this.state.days[this.state.today - 1][i][0][5][0] !== "")
-            ) {
-              return {
-                lesson: this.state.days[this.state.today - 1][i][0][0],
-                type: "will",
-                num: parseInt(i)
-              };
-            } else {
-              return {
-                lesson: undefined,
-                type: when,
-                num: undefined
-              };
-            }
+        }
+      } else if (
+        (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
+        (formatTimeHhMm(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
+      ) {
+        console.log('whatLesson:', todayLessons[parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0]);
+        return {
+          lesson: todayLessons[parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0],
+          type: "will",
+          num: parseInt(this.getTimeFirstLesson(this.state.today)[1])
+        }
+      } else {
+        for (let i in breaks) {
+          const startTime = breaks[i].slice(0, 5);
+          const endTime = breaks[i].slice(6);
+          if (
+            (
+              formatTimeHhMm(date) > startTime &&
+              formatTimeHhMm(date) < endTime
+            ) &&
+            (todayLessons[i][0][5][0] !== "")
+          ) {
+            return {
+              lesson: todayLessons[i][0][0],
+              type: "will",
+              num: parseInt(i)
+            };
+          } else {
+            return {
+              lesson: undefined,
+              type: when,
+              num: undefined
+            };
           }
         }
       }
+      // }
     }
-    return {
+    const result = {
       lesson: undefined,
       type: when,
-      num: undefined
-    };
+      num: undefined,
+    }
+    console.log(`whatLesson: not found: result:`, result)
+    return result;
   }
 
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
@@ -769,16 +795,23 @@ export class App extends React.Component<IAppProps, IAppState> {
   } {
     let nextLessonRoom
     let numberNearestLesson
+
     // проверяем, что сегодня не воскресенье
-    if (this.state.today !== 0) {
+    const isSunday = (this.state.today === 0)
+
+    if (!isSunday) {
+
       // определяем номер ближайшей пары
       for (let i in breaks) {
+        const startTime = breaks[i].slice(0, 5);
+        const endTime = breaks[i].slice(6);
+
         if (formatTimeHhMm(date) < breaks['1']) {
           numberNearestLesson = '1';
           break
         } else if (
-          formatTimeHhMm(date) > breaks[i].slice(0, 5) &&
-          formatTimeHhMm(date) < breaks[i].slice(6)
+          formatTimeHhMm(date) > startTime &&
+          formatTimeHhMm(date) < endTime
         ) {
           numberNearestLesson = i;
           break
@@ -1095,8 +1128,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                 "when": "now",
               }
             }
-            const whatlesson = this.whatLesson(new Date(Date.now()), action.note.when);
-            console.log(this.whatLesson(new Date(Date.now()), action.note.when))
+            const whatlesson = this.whatLesson(new Date(), action.note.when);
+            console.log(this.whatLesson(new Date(), action.note.when))
             this.sendData({
               action_id: "say4",
               parameters: whatlesson,
@@ -1632,7 +1665,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               currentLessonNumber={current}
               // weekParam={weekParam}
               // timeParam={timeParam}
-              isCorrectTeacher={isTeacher}
+              isTeacherAndValid={isTeacher}
               isToday={this.state.today === timeParam && weekParam === THIS_WEEK}
               isSunday={timeParam == 7}
               // today={this.state.today}
@@ -1805,43 +1838,43 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     // делаем периодическую проверку
     const checkInterval = setInterval(() => {
-        console.log("today", this.state.today)
+      console.log("today", this.state.today)
 
-        // если признак `spinner` выставлен
-        if (this.state.spinner) {
+      // если признак `spinner` выставлен
+      if (this.state.spinner) {
 
-          // переходим на другую страницу с задержкой
-          setTimeout(() => {
-            console.log("this.state.flag", this.state.flag)
+        // переходим на другую страницу с задержкой
+        setTimeout(() => {
+          console.log("this.state.flag", this.state.flag)
 
-            const pageNo = this.state.today === 0
-              ? this.state.flag ? 7 : 8
-              : this.state.flag ? this.state.today : 8
-            console.log('Spinner: pageNo:', pageNo)
+          const pageNo = this.state.today === 0
+            ? this.state.flag ? 7 : 8
+            : this.state.flag ? this.state.today : 8
+          console.log('Spinner: pageNo:', pageNo)
 
-            // переходим на другую страницу
-            this.setState({page: pageNo});
+          // переходим на другую страницу
+          this.setState({page: pageNo});
 
-            // if (this.state.today === 0) {
-            //    console.log("this.state.flag", this.state.flag)
-            //    if (this.state.flag) {
-            //      console.log('Spinner: page:', 7)
-            //      this.setState({page: 7})
-            //    } else {
-            //      console.log('Spinner: page:', 8)
-            //      this.setState({page: 8})
-            //    }
-            //  } else if (this.state.flag) {
-            //    console.log('Spinner: page: today:', this.state.today)
-            //    this.setState({page: this.state.today});
-            //  } else {
-            //    console.log('Spinner: page:', 8)
-            //    this.setState({page: 8});
-            //  }
-          }, REDIRECT_DELAY);
-          clearInterval(checkInterval)
-        }
-      },CHECK_INTERVAL);
+          // if (this.state.today === 0) {
+          //    console.log("this.state.flag", this.state.flag)
+          //    if (this.state.flag) {
+          //      console.log('Spinner: page:', 7)
+          //      this.setState({page: 7})
+          //    } else {
+          //      console.log('Spinner: page:', 8)
+          //      this.setState({page: 8})
+          //    }
+          //  } else if (this.state.flag) {
+          //    console.log('Spinner: page: today:', this.state.today)
+          //    this.setState({page: this.state.today});
+          //  } else {
+          //    console.log('Spinner: page:', 8)
+          //    this.setState({page: 8});
+          //  }
+        }, REDIRECT_DELAY);
+        clearInterval(checkInterval)
+      }
+    }, CHECK_INTERVAL);
 
     return (
 

@@ -19,7 +19,7 @@ export default {
       type: {name: 'string', required: false},
       defaultValue: '2',
     },
-    isCorrectTeacher: {
+    isTeacherAndValid: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
@@ -41,13 +41,13 @@ const Template: ComponentStory<typeof ScheduleDayFull> = (args, context) => (
 export const GroupView = Template.bind({});
 GroupView.args = {
   isReady: true,
-  isCorrectTeacher: false,
+  isTeacherAndValid: false,
 };
 
 export const TeacherView = Template.bind({});
 TeacherView.args = {
   isReady: true,
-  isCorrectTeacher: true,
+  isTeacherAndValid: true,
 };
 
 export const Sunday = Template.bind({});
