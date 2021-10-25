@@ -386,17 +386,24 @@ const DashboardPage = ({
                           {
                             isTeacherAndCorrect
                               ? (
-                                <TextBoxTitle>
-                                  {lessonNext.groupNumber}
-                                </TextBoxTitle>
+                                <GroupNumber
+                                  text={lessonNext.groupNumber}
+                                />
                               )
-                              : (
+                              : <TeacherName
+                                text={lessonNext.teacher}
+                                style={{color: "white"}}
+                                onClick={() => handleTeacherChange()}
+                              />
+/*
+                              (
                                 <a
                                   onClick={() => handleTeacherChange()}
                                 >
                                   {lessonNext.teacher}
                                 </a>
                               )
+*/
                           }
 
                           <LinkToOnline
