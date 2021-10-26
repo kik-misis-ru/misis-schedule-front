@@ -17,8 +17,13 @@ import logo from "../images/logo.png";
 
 export const HeaderLogoCol = () => {
   return (
-    <Col style={{maxWidth: '3rem'}}>
-      <Image src={logo} ratio="1 / 1"/>
+    <Col
+      style={{maxWidth: '3rem'}}
+    >
+      <Image
+        src={logo}
+        ratio="1 / 1"
+      />
     </Col>
   )
 }

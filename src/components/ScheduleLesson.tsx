@@ -20,7 +20,7 @@ import {LessonStartEnd} from "../App";
 //import { text, background, gradient } from "@sberdevices/plasma-tokens";
 // import "../themes/App.css";
 import {ACCENT_TEXT_COLOR, COLOR_BLACK} from "./consts";
-import {Bell} from "../ScheduleStructure";
+import {Bell} from "../types/ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
 // import {THIS_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
@@ -197,14 +197,14 @@ export const LessonRightContent = (
 
 const ScheduleLesson = (
   {
-    bell,
+    lesson,
     startTime,
     endTime,
     isAccented,
     isTeacherAndValid,
     onTeacherClick,
   }: {
-    bell: Bell
+    lesson: Bell
     startTime: string
     endTime: string
     isAccented: boolean
@@ -220,10 +220,10 @@ const ScheduleLesson = (
   return <CellListItem
     content={
       <MainContent
-        lessonName={bell.lessonName}
-        groupNumber={bell.groupNumber}
-        teacher={bell.teacher}
-        url={bell.url}
+        lessonName={lesson.lessonName}
+        groupNumber={lesson.groupNumber}
+        teacher={lesson.teacher}
+        url={lesson.url}
         time={
           formatStartEndTime(startTime, endTime)
         }
@@ -234,18 +234,17 @@ const ScheduleLesson = (
     }
     contentRight={
       <LessonRightContent
-        room={bell.room}
+        room={lesson.room}
         lessonType={
           // todo: это преобразование должно быть раньше
-          lessonTypeAdjToNoun(bell.lessonType)
+          lessonTypeAdjToNoun(lesson.lessonType)
         }
       />
     }
     contentLeft={
       <LessonLeftContent
         visible={true}
-        // todo: lessonNumber не должен содержать точку
-        text={bell.lessonNumber[0]}
+        text={lesson.lessonNumber}
       />
     }
   />

@@ -1,7 +1,7 @@
 import React from "react";
 
 import {IScheduleDays} from "../App";
-import {Bell} from "../ScheduleStructure";
+import {Bell} from "../types/ScheduleStructure";
 import {dayLessons} from "../stories/consts";
 import {THIS_OR_OTHER_WEEK, THIS_WEEK} from "../types/base.d";
 import ScheduleLesson from "./ScheduleLesson";
@@ -34,25 +34,24 @@ export const ScheduleDayLessons = ({
   return (
     <React.Fragment>
       {
-        dayLessons.map((bell, bellIndex) => {
+        dayLessons.map((lesson, lessonIndex) => {
 
           const getIsCurrentLesson = () => (
-            // todo: убрать второй символ в lessonNumber
-            bell.lessonNumber[0] === currentLessonNumber
-            && bell.teacher !== ""
+            lesson.lessonNumber === currentLessonNumber
+            && lesson.teacher !== ""
             && isToday
             // && today === timeParam
             // && weekParam === THIS_WEEK
           );
           const isCurrentLesson = getIsCurrentLesson();
 
-          return bell.lessonName !== ""
+          return lesson.lessonName !== ""
             ? (
               <ScheduleLesson
-                key={bellIndex}
-                bell={bell}
-                startTime={LessonStartEnd[bellIndex].start}
-                endTime={LessonStartEnd[bellIndex].end}
+                key={lessonIndex}
+                lesson={lesson}
+                startTime={LessonStartEnd[lessonIndex].start}
+                endTime={LessonStartEnd[lessonIndex].end}
                 isTeacherAndValid={isTeacherAndValid}
                 isAccented={isCurrentLesson}
                 onTeacherClick={(teacherName) => onTeacherClick(teacherName)}
@@ -60,7 +59,7 @@ export const ScheduleDayLessons = ({
             )
             : (
               <div
-                key={bellIndex}
+                key={lessonIndex}
               ></div>
             )
         })

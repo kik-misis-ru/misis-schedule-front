@@ -24,7 +24,7 @@ export default {
       type: {name: 'string', required: false},
       defaultValue: '11:30',
     },
-    bell: {
+    lesson: {
       defaultValue: lesson
     }
   },

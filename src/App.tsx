@@ -34,7 +34,7 @@ import buildings from './data/buldings.json'
 import filial from './data/filial.json';
 import schedule from "./schedule";
 
-import {Bell} from './ScheduleStructure'
+import {Bell} from './types/ScheduleStructure'
 
 import "./themes/App.css";
 import {DocStyle, getThemeBackgroundByChar} from "./themes/tools";
@@ -502,10 +502,12 @@ export class App extends React.Component<IAppProps, IAppState> {
   getEndLastLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    for (let bell = 6; bell > 0; bell--) {
-      const lessonName = this.state.days[dayNumber][bell][THIS_WEEK].lessonName
+    console.log(`getEndLastLesson: todayOrTomorrow: ${todayOrTomorrow}, dayShift: ${dayShift}, dayNumber: ${dayNumber}`);
+
+    for (let lessonIdx = 6; lessonIdx > 0; lessonIdx--) {
+      const lessonName = this.state.days[dayNumber][lessonIdx][THIS_WEEK].lessonName
       if (lessonName !== "") {
-        return LessonStartEnd[bell].end
+        return LessonStartEnd[lessonIdx].end
       }
     }
   }
@@ -514,7 +516,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum: number): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    const lessonName = this.state.days[dayNumber][lessonNum - 1][0].lessonName;
+    const lessonName = this.state.days[dayNumber][lessonNum - 1][THIS_WEEK].lessonName;
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
@@ -600,14 +602,15 @@ export class App extends React.Component<IAppProps, IAppState> {
       const todayIndex = this.state.today - 1
       const day = this.state.days[todayIndex]
       for (let bellIdx in day) {
-        const lesson = day[bellIdx][0];
+        // console.log(`getCurrentLesson: bellIdx: ${bellIdx}, typeof bellIdx: ${typeof bellIdx}`);
+        const lesson = day[bellIdx][THIS_WEEK];
         const thisLessonStartEnd = LessonStartEnd[Number(bellIdx)];
         if (
           (formatTimeHhMm(date) > thisLessonStartEnd.start) &&
           (formatTimeHhMm(date) < thisLessonStartEnd.end) &&
-          (LessonStartEnd[Number(bellIdx)].start !== "")
+          (thisLessonStartEnd.start !== "")
         ) {
-          return lesson.lessonNumber[0]
+          return lesson.lessonNumber
         }
       }
     }
@@ -635,28 +638,28 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   /**
    *
-   * @param daynum
+   * @param dayNumber
    * @returns {[
    *   string,   -- строка, содержащая начало и конец пары
    *   string,   -- порядковый номер пары (1 символ)
    * ]}
    */
-  getTimeFirstLesson(daynum: number): [string, string] {
-    let first = '';
-    let num = '';
-    let week = 0;
-    if (daynum < this.state.today) {
-      week = 1;
+  getTimeFirstLesson(dayNumber: number): [string, string] {
+    let lessonsStart = '';
+    let lessonNumber = '';
+    let week: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    if (dayNumber < this.state.today) {
+      week = OTHER_WEEK;
     }
-    for (let bellIdx in this.state.days[daynum - 1]) {
-      const bell = this.state.days[daynum - 1][bellIdx][week]
-      if (bell.lessonName !== "") {
-        first = LessonStartEnd[Number(bellIdx)].start
-        num = bell.lessonNumber[0];
+    for (let lessonIdx in this.state.days[dayNumber - 1]) {
+      const lesson = this.state.days[dayNumber - 1][lessonIdx][week]
+      if (lesson.lessonName !== "") {
+        lessonsStart = LessonStartEnd[Number(lessonIdx)].start
+        lessonNumber = lesson.lessonNumber;
         break
       }
     }
-    return [first, num];
+    return [lessonsStart, lessonNumber];
   }
 
   whatLesson(
@@ -686,7 +689,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       return result;
 
     } else {
-      console.log('whatLesson: count:', todayBells.count[0]);
+      console.log('whatLesson: count:', todayBells.count[THIS_WEEK]);
       if (formatTimeHhMm(date) < this.getTimeFirstLesson(todayWorkDayIndex + 1)[0].slice(0, 5)) {
         console.log(true)
       }
@@ -704,9 +707,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           const lesson = todayLessons[bellIdx][THIS_WEEK];
 
           if (
-            // todo: убрать точку из номера пары
-            (lesson.lessonNumber[0] === currLessonNum) &&
-            (lesson.lessonNumber[0] !== "")
+            (lesson.lessonNumber === currLessonNum) &&
+            (lesson.lessonNumber !== "")
           ) {
             return {
               lesson: lesson[0],
@@ -728,8 +730,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
           if (
             // todo: убрать точку из номера пары
-            (lesson.lessonNumber[0] == String(parseInt(currLessonNum) + 1) ) &&
-            (lesson.lessonNumber[0] !== "")
+            (lesson.lessonNumber == String(parseInt(currLessonNum) + 1) ) &&
+            (lesson.lessonNumber !== "")
           ) {
             return {
               lesson: lesson[0],
@@ -828,9 +830,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (numberNearestLesson !== undefined) {
         for (let bell in this.state.days[this.state.today - 1]) {
           // если пара с таким номером есть в расписании
-          if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === numberNearestLesson) {
+          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === numberNearestLesson) {
             return {
-              audience: this.state.days[this.state.today - 1][bell][0].room,
+              audience: this.state.days[this.state.today - 1][bell][THIS_WEEK].room,
               type: "nearest",
               exist: "inSchedule",
             }
@@ -838,9 +840,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             // сообщаем, что такой пары нет
             console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
             for (let bell in this.state.days[this.state.today - 1]) {
-              if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] !== numberNearestLesson) {
+              if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber !== numberNearestLesson) {
                 return {
-                  audience: this.state.days[this.state.today - 1][bell][0].room,
+                  audience: this.state.days[this.state.today - 1][bell][THIS_WEEK].room,
                   type: "nearest",
                   exist: "notInSchedule",
                 }
@@ -853,8 +855,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         // вернуть номер текущей пары
         let whereCurrentLesson
         for (let bell in this.state.days[this.state.today - 1]) {
-          if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === this.getCurrentLesson(date)) {
-            whereCurrentLesson = this.state.days[this.state.today - 1][bell][0].room
+          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === this.getCurrentLesson(date)) {
+            whereCurrentLesson = this.state.days[this.state.today - 1][bell][THIS_WEEK].room
           }
         }
         if (whereCurrentLesson === "") {
@@ -870,8 +872,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
       if (numberNearestLesson === undefined && will === "will") {
         for (let bell in this.state.days[this.state.today - 1]) {
-          if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === String(Number(this.getCurrentLesson(date)) + 1)) {
-            nextLessonRoom = this.state.days[this.state.today - 1][bell][0].room
+          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === String(Number(this.getCurrentLesson(date)) + 1)) {
+            nextLessonRoom = this.state.days[this.state.today - 1][bell][THIS_WEEK].room
           }
         }
         if (nextLessonRoom !== "") {
@@ -1443,7 +1445,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
             lesson_info_state.lessonType = lesson_info.type;
-            lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            // lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
             countLessons++;
 
@@ -1464,7 +1467,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
             lesson_info_state.lessonType = lesson_info.type;
-            lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            // lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
 
             for (let name in lesson_info.groups) {
@@ -1541,7 +1545,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       weekParam = OTHER_WEEK
     }
     // this.setState({i: 0});
-    const current = this.getCurrentLesson(new Date(Date.now()));
+    const current = this.getCurrentLesson(new Date());
     const day_num = timeParam - 1;
     const index = timeParam;
     const page = weekParam === OTHER_WEEK ? 8 : 0;
@@ -1934,8 +1938,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           onGoToPage={(pageNo) => this.setState({page: pageNo})}
           handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={(date) => this.getCurrentLesson(date)}
-          getTimeFirstLesson={this.getTimeFirstLesson}
-          getEndLastLesson={this.getEndLastLesson}
+          getTimeFirstLesson={(daynum: number)=>this.getTimeFirstLesson(daynum)}
+          getEndLastLesson={(todayOrTomorrow: TodayOrTomorrow) => this.getEndLastLesson(todayOrTomorrow)}
           whatLesson={(date, when) => this.whatLesson(date, when)}
         />
       case SCHEDULE_PAGE_NO:
