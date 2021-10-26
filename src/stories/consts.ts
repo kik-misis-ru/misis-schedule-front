@@ -4,7 +4,7 @@ export const lesson = {
   teacher: 'Фамилия И.О.',
   url: 'http://ya.ru',
   room: 'Б-900',
-  lessonNumber: '1.',
+  lessonNumber: '1',
   lessonType: 'Лекционные',
 };
 

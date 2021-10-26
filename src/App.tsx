@@ -24,7 +24,7 @@ import DashboardPage from './pages/DashboardPage';
 
 import HomePage from './pages/HomePage';
 import NavigatorPage from './pages/NavigatorPage';
-import ScheduleDayFull from "./components/ScheduleDayFull";
+import ScheduleDay from "./components/ScheduleDay";
 import SpinnerPage from "./pages/SpinnerPage";
 import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
@@ -1700,7 +1700,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               ))}
             />
 
-            <ScheduleDayFull
+            <ScheduleDay
               isReady={this.state.spinner}
               // days={this.state.days}
               // day_num={day_num}
@@ -1993,7 +1993,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
 
         return <DashboardPage
-          state={this.state}
           character={this.state.character}
           isTeacherAndValid={this.getIsCorrectTeacher()}
 

@@ -49,9 +49,28 @@ const Template: ComponentStory<typeof DashboardPage> = (args, context) => (
 );
 
 export const Default = Template.bind({});
-
 Default.args = {
   // buildings,
   // character
+};
+
+export const NoCurrentLesson = Template.bind({});
+NoCurrentLesson.args = {
+  currentLesson: undefined,
+  currentLessonStartEnd: undefined,
+};
+
+export const NoNextLesson = Template.bind({});
+NoNextLesson.args = {
+  nextLesson: undefined,
+  nextLessonStartEnd: undefined,
+};
+
+export const NoBothLessons = Template.bind({});
+NoBothLessons.args = {
+  currentLesson: undefined,
+  currentLessonStartEnd: undefined,
+  nextLesson: undefined,
+  nextLessonStartEnd: undefined,
 };
 

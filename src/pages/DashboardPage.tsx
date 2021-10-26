@@ -313,7 +313,7 @@ const DashboardPage = ({
                          getEndLastLesson,
                          whatLesson,
                        }: {
-  state: IAppState
+  // state: IAppState
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
@@ -458,7 +458,7 @@ const DashboardPage = ({
                       lesson={nextLesson}
                       startEndTime={nextLessonStartEnd}
                       isTeacherAndValid={isTeacherAndValid}
-                      isAccented={true}
+                      isAccented={false}
                       // todo: задавать имя преподавателя
                       onTeacherClick={(teacherName) => handleTeacherChange()}
                     />

@@ -1,12 +1,12 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import ScheduleDayFull from '../../components/ScheduleDayFull';
+import ScheduleDay from '../../components/ScheduleDay';
 import {getDayLessons} from "../consts";
 
 export default {
-  title: 'components/ScheduleDayFull',
-  component: ScheduleDayFull,
+  title: 'components/ScheduleDay',
+  component: ScheduleDay,
   argTypes: {
     isReady: {
       type: {name: 'boolean', required: false},
@@ -32,10 +32,10 @@ export default {
       defaultValue: false,
     },
   },
-} as ComponentMeta<typeof ScheduleDayFull>;
+} as ComponentMeta<typeof ScheduleDay>;
 
-const Template: ComponentStory<typeof ScheduleDayFull> = (args, context) => (
-  <ScheduleDayFull {...args} />
+const Template: ComponentStory<typeof ScheduleDay> = (args, context) => (
+  <ScheduleDay {...args} />
 );
 
 export const GroupView = Template.bind({});
