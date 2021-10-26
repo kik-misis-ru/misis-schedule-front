@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import TabSelector from '../components/Home/TabSelector';
-import {USER_MODES} from '../pages/HomePage';
+import TabSelector from '../../components/Home/TabSelector';
+import {USER_MODES} from '../../pages/HomePage';
 
 let selectedIndex = 0;
 
 export default {
-  title: 'misis-schedule/TabSelector',
+  title: 'components/TabSelector',
   component: TabSelector,
   argTypes: {
     selectedIndex: {

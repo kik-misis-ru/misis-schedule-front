@@ -50,8 +50,7 @@ export const ScheduleDayLessons = ({
               <ScheduleLesson
                 key={lessonIndex}
                 lesson={lesson}
-                startTime={LessonStartEnd[lessonIndex].start}
-                endTime={LessonStartEnd[lessonIndex].end}
+                startEndTime={LessonStartEnd[lessonIndex]}
                 isTeacherAndValid={isTeacherAndValid}
                 isAccented={isCurrentLesson}
                 onTeacherClick={(teacherName) => onTeacherClick(teacherName)}

@@ -1,10 +1,10 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import WeekSelect from '../components/WeekSelect';
+import WeekSelect from '../../components/WeekSelect';
 
 export default {
-  title: 'misis-schedule/WeekSelect',
+  title: 'components/WeekSelect',
   component: WeekSelect,
   argTypes: {
     isMobileDevice: {

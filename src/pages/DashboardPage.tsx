@@ -38,12 +38,15 @@ import {
   formatTimeHhMm,
 } from '../utils';
 import {
-  HOME_PAGE_NO, LessonStartEnd,
+  HOME_PAGE_NO,
+  StartEnd,
+  LessonStartEnd,
   NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
 } from '../App';
 import LinkToOnline from '../components/LinkToOnline';
 import {NowOrWill} from "../types/AssistantReceiveAction";
+import {Bell} from '../types/ScheduleStructure'
 import {CHAR_TIMEPARAMOY, Character, DAY_TODAY, THIS_WEEK, TodayOrTomorrow} from "../types/base.d";
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
@@ -140,13 +143,11 @@ const CatalogueHeaderRow = () => {
 const TodaySummary = ({
                         date,
                         lessonCount,
-                        lessonsStart,
-                        lessonsEnd,
+                        lessonsStartEnd,
                       }: {
   date: Date
   lessonCount: number
-  lessonsStart: string
-  lessonsEnd: string
+  lessonsStartEnd: StartEnd
 }) => {
   const dayOfWeek = date.getDay();
   const isSunday = dayOfWeek === 0;
@@ -181,8 +182,8 @@ const TodaySummary = ({
             lessonCount !== 0
               ? formatLessonsCountFromTo(
                 pairNumberToPairNumText(lessonCount),
-                lessonsStart,
-                lessonsEnd
+                lessonsStartEnd.start,
+                lessonsStartEnd.end,
               )
               : NO_LESSONS_TODAY_TEXT
           }
@@ -293,8 +294,18 @@ const NoLesson = () => (
 
 
 const DashboardPage = ({
-                         state,
+                         // state,
                          character,
+                         isTeacherAndValid,
+
+                         todaySummary,
+
+                         currentLesson,
+                         currentLessonStartEnd,
+
+                         nextLesson,
+                         nextLessonStartEnd,
+
                          onGoToPage,
                          handleTeacherChange,
                          getCurrentLesson,
@@ -306,6 +317,20 @@ const DashboardPage = ({
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
+  isTeacherAndValid: boolean
+
+  todaySummary: {
+    date: Date,
+    lessonCount: number
+    startEnd: StartEnd
+  }
+
+  currentLesson: Bell,
+  currentLessonStartEnd: StartEnd,
+
+  nextLesson: Bell,
+  nextLessonStartEnd: StartEnd,
+
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: () => Promise<void>
   getCurrentLesson // : (date: Date) => string | undefined
@@ -322,39 +347,44 @@ const DashboardPage = ({
   // }
 
 }) => {
-  // const isSunday = (state.today === 0);
-  const todayIndex = state.today - 1;
-
-  console.log('Dashboard: day:', state.day[todayIndex]);
-
-  const now = new Date();
-  const lessonCountToday = state.day[todayIndex].count[THIS_WEEK];
-  // const weekDayShortToday = state.day[todayIndex].title;
-  // const dateToday = state.day[todayIndex].date[THIS_WEEK];
-
-  // const lessonNowIdx = whatLesson(now, "now").num;
-  const lessonNextIdx = whatLesson(now, "next").num;
-
-  // console.log('DashboardPage: whatLesson(now, "now"):', whatLesson(now, "now"));
-  // console.log('DashboardPage: todayIndex:', todayIndex);
-  // console.log('DashboardPage: lessonNowIdx:', lessonNowIdx);
-  // console.log('DashboardPage: state.days[todayIndex]:', state.days[todayIndex]);
-  // console.log('DashboardPage: state.days[todayIndex][lessonNowIdx]:', state.days[todayIndex][lessonNowIdx]);
-
-  // const lessonNow = state.days[todayIndex]?.[lessonNowIdx]?.[THIS_WEEK];
-  const lessonNext = state.days[todayIndex]?.[lessonNextIdx]?.[THIS_WEEK];
-
-  const lessonCurrentIdx = getCurrentLesson(new Date());
-  const lessonCurrent = state.days[todayIndex]?.[lessonCurrentIdx]?.[THIS_WEEK];
-
-  console.log('DashboardPage: lessonCurrent:', lessonCurrent);
-  console.log('DashboardPage: lessonNext:', lessonNext);
-
-  // whatLesson(new Date(), "next").num
-
-  const isTeacherAndValid = !state.student && state.teacher_correct;
-
-  // console.log(`isSunday: ${isSunday}, lessonCountToday: ${lessonCountToday}`);
+  // // const isSunday = (state.today === 0);
+  // const todayIndex = state.today - 1;
+  //
+  // console.log('Dashboard: day:', state.day[todayIndex]);
+  //
+  // const now = new Date();
+  // const lessonCountToday = state.day[todayIndex].count[THIS_WEEK];
+  // // const weekDayShortToday = state.day[todayIndex].title;
+  // // const dateToday = state.day[todayIndex].date[THIS_WEEK];
+  //
+  // // const lessonNowIdx = whatLesson(now, "now").num;
+  // const nextLessonIdx = whatLesson(now, "next").num;
+  //
+  // // console.log('DashboardPage: whatLesson(now, "now"):', whatLesson(now, "now"));
+  // // console.log('DashboardPage: todayIndex:', todayIndex);
+  // // console.log('DashboardPage: lessonNowIdx:', lessonNowIdx);
+  // // console.log('DashboardPage: state.days[todayIndex]:', state.days[todayIndex]);
+  // // console.log('DashboardPage: state.days[todayIndex][lessonNowIdx]:', state.days[todayIndex][lessonNowIdx]);
+  //
+  // // const lessonNow = state.days[todayIndex]?.[lessonNowIdx]?.[THIS_WEEK];
+  // // const nextLesson = state.days[todayIndex]?.[nextLessonIdx]?.[THIS_WEEK];
+  //
+  // const currentLessonIdx = getCurrentLesson(now);
+  // // const currentLesson = state.days[todayIndex]?.[currentLessonIdx]?.[THIS_WEEK];
+  //
+  // console.log('DashboardPage: currentLesson:', currentLesson);
+  // console.log('DashboardPage: nextLesson:', nextLesson);
+  //
+  // // whatLesson(new Date(), "next").num
+  //
+  // // const isTeacherAndValid = !state.student && state.teacher_correct;
+  //
+  // const lessonsStartEnd = {
+  //   start: getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5),
+  //   end: getEndLastLesson(DAY_TODAY),
+  // }
+  //
+  // // console.log(`isSunday: ${isSunday}, lessonCountToday: ${lessonCountToday}`);
 
   return (
     <DeviceThemeProvider>
@@ -368,10 +398,9 @@ const DashboardPage = ({
         />
 
         <TodaySummary
-          date={new Date()}
-          lessonCount={lessonCountToday}
-          lessonsStart={getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5)}
-          lessonsEnd={getEndLastLesson(DAY_TODAY)}
+          date={todaySummary.date}
+          lessonCount={todaySummary.lessonCount}
+          lessonsStartEnd={todaySummary.startEnd}
         />
 
         <ScheduleSectionTitleRow/>
@@ -393,12 +422,11 @@ const DashboardPage = ({
               <ScheduleLessonTitle text="Сейчас"/>
 
               {
-                !!lessonCurrent
+                !!currentLesson
                   ? (
                     <ScheduleLesson
-                      lesson={lessonCurrent}
-                      startTime={LessonStartEnd[lessonCurrentIdx].start}
-                      endTime={LessonStartEnd[lessonCurrentIdx].end}
+                      lesson={currentLesson}
+                      startEndTime={currentLessonStartEnd}
                       isTeacherAndValid={isTeacherAndValid}
                       isAccented={true}
                       // todo: задавать имя преподавателя
@@ -409,14 +437,14 @@ const DashboardPage = ({
               }
 
             </CardContent>
-{/*
+            {/*
           </CardBody>
 */}
 
-          {
-            !!lessonNext // !!lessonNextIdx
-              ? (
-                // <React.Fragment>
+            {
+              !!nextLesson // !!nextLessonIdx
+                ? (
+                  // <React.Fragment>
                   /*
                 <CardBody
                   // style={{padding: "0 0 0 0"}}
@@ -427,22 +455,21 @@ const DashboardPage = ({
                     <ScheduleLessonTitle text="Дальше"/>
 
                     <ScheduleLesson
-                      lesson={lessonNext}
-                      startTime={LessonStartEnd[lessonNextIdx].start}
-                      endTime={LessonStartEnd[lessonNextIdx].end}
+                      lesson={nextLesson}
+                      startEndTime={nextLessonStartEnd}
                       isTeacherAndValid={isTeacherAndValid}
                       isAccented={true}
                       // todo: задавать имя преподавателя
                       onTeacherClick={(teacherName) => handleTeacherChange()}
                     />
-                {/*</React.Fragment>*/}
+                    {/*</React.Fragment>*/}
                   </CardContent>
-              )
-              : (<div></div>)
-          }
+                )
+                : (<div></div>)
+            }
             {/*</CardContent>*/}
 
-            </CardBody>
+          </CardBody>
 
         </Card>
 

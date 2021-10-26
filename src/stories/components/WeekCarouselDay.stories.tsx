@@ -1,10 +1,10 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import {WeekCarouselDay} from "../components/WeekCarousel";
+import {WeekCarouselDay} from "../../components/WeekCarousel";
 
 export default {
-  title: 'misis-schedule/WeekCarouselDay',
+  title: 'components/WeekCarouselDay',
   component: WeekCarouselDay,
   argTypes: {
     text: {

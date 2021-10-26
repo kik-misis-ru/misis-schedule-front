@@ -1,10 +1,10 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import TopMenu from '../components/TopMenu';
+import TopMenu from '../../components/TopMenu';
 
 export default {
-  title: 'misis-schedule/TopMenu',
+  title: 'components/TopMenu',
   component: TopMenu,
   argTypes: {
     label: {

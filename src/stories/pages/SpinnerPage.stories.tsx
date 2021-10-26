@@ -1,10 +1,10 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import SpinnerPage from '../pages/SpinnerPage';
+import SpinnerPage from '../../pages/SpinnerPage';
 
 export default {
-  title: 'misis-schedule/SpinnerPage',
+  title: 'Pages/SpinnerPage',
   component: SpinnerPage,
   argTypes: {
   },

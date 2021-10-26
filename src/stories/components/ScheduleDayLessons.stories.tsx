@@ -1,13 +1,13 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import ScheduleDayLessons from '../components/ScheduleDayLessons';
-import {getDayLessons} from "./consts";
+import ScheduleDayLessons from '../../components/ScheduleDayLessons';
+import {getDayLessons} from "../consts";
 
 console.log('getDayLessons(5):', getDayLessons(5))
 
 export default {
-  title: 'misis-schedule/ScheduleDayLessons',
+  title: 'components/ScheduleDayLessons',
   component: ScheduleDayLessons,
   argTypes: {
     dayLessons: {

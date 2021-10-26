@@ -3,8 +3,8 @@ import {ComponentStory, ComponentMeta} from '@storybook/react';
 import moment from 'moment';
 import 'moment/locale/ru';
 
-import WeekCarousel from '../components/WeekCarousel';
-import {MS_IN_DAY, capitalize, ddMmYyToDate, ddMmYyyyToDate} from "../utils";
+import WeekCarousel from '../../components/WeekCarousel';
+import {MS_IN_DAY, capitalize, ddMmYyToDate, ddMmYyyyToDate} from "../../utils";
 
 moment.locale('ru');
 
@@ -35,7 +35,7 @@ const fakeWeekDays = (startDate: string): string[] => new Array(7)
   });
 
 export default {
-  title: 'misis-schedule/WeekCarousel',
+  title: 'components/WeekCarousel',
   component: WeekCarousel,
   argTypes: {
     carouselIndex: {

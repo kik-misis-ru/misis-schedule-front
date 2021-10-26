@@ -1,11 +1,11 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import ScheduleDayFull from '../components/ScheduleDayFull';
-import {getDayLessons} from "./consts";
+import ScheduleDayFull from '../../components/ScheduleDayFull';
+import {getDayLessons} from "../consts";
 
 export default {
-  title: 'misis-schedule/ScheduleDayFull',
+  title: 'components/ScheduleDayFull',
   component: ScheduleDayFull,
   argTypes: {
     isReady: {

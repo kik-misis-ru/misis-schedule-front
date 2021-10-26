@@ -1,12 +1,12 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import NavigatorPage from '../pages/NavigatorPage';
+import NavigatorPage from '../../pages/NavigatorPage';
 
-import buildings from '../data/buldings.json'
+import buildings from '../../data/buldings.json'
 
 export default {
-  title: 'misis-schedule/NavigatorPage',
+  title: 'Pages/NavigatorPage',
   component: NavigatorPage,
   argTypes: {
   },

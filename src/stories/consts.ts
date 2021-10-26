@@ -1,7 +1,7 @@
 export const lesson = {
   lessonName: 'Название предмета',
   groupNumber: 'БПМ-19-2',
-  teacher: 'Преподаватель И.О.',
+  teacher: 'Фамилия И.О.',
   url: 'http://ya.ru',
   room: 'Б-900',
   lessonNumber: '1.',

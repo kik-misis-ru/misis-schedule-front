@@ -13,7 +13,7 @@ import {
   IconLocation,
   //IconMoreVertical
 } from "@sberdevices/plasma-icons";
-import {LessonStartEnd} from "../App";
+import {LessonStartEnd,StartEnd} from "../App";
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 
@@ -198,15 +198,13 @@ export const LessonRightContent = (
 const ScheduleLesson = (
   {
     lesson,
-    startTime,
-    endTime,
+    startEndTime,
     isAccented,
     isTeacherAndValid,
     onTeacherClick,
   }: {
     lesson: Bell
-    startTime: string
-    endTime: string
+    startEndTime: StartEnd
     isAccented: boolean
     isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
@@ -225,7 +223,7 @@ const ScheduleLesson = (
         teacher={lesson.teacher}
         url={lesson.url}
         time={
-          formatStartEndTime(startTime, endTime)
+          formatStartEndTime(startEndTime.start, startEndTime.end)
         }
         isAccented={isAccented}
         isTeacherAndValid={isTeacherAndValid}
