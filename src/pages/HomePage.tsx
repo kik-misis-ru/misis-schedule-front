@@ -236,7 +236,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   render() {
 
-    const StudentContent = (
+    const studentContent = (
       <Container
         style={{padding: 0}}
       >
@@ -289,7 +289,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       </Container>
     );
 
-    const TeacherContent = (
+    const teacherContent = (
       <Container>
 
         <HomeTitle
@@ -343,7 +343,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
                 setValue={this.handleChange}
                 convertIdInGroupName={this.convertIdInGroupName}
                 disabled={this.state.disabled}
-                contentRight={StudentContent}
+                contentRight={studentContent}
               />
             )
             : (
@@ -366,7 +366,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
                                 </Col>
                               </Row>
 
-                              <TeacherContent/>
+                              <teacherContent/>
 
                               <Spacer100/>
                             </Container>
@@ -377,7 +377,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
                 setValue={this.handleChange}
                 convertIdInGroupName={this.convertIdInGroupName}
                 disabled={this.state.disabled}
-                contentRight={TeacherContent}
+                contentRight={teacherContent}
               />
             )
         }

@@ -14,7 +14,7 @@ import {
   getScheduleFromDb,
   getScheduleTeacherFromDb,
   getUser,
-  IsEnslishGroupExist,
+  isEnglishGroupExist,
   IScheduleApiData,
   IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar,
 } from "./APIHelper";
@@ -1464,8 +1464,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           days[day][bell][i].url = "";
           days[day][bell][i].groupNumber = "";
         }
+      }
     }
-  }
 
     for (let day_num = 1; day_num < 7; day_num++) {
 
@@ -1808,37 +1808,42 @@ export class App extends React.Component<IAppProps, IAppState> {
     })
   }
 
-  isCorrect() {
+  async isCorrect(): Promise<void> {
     console.log('App: isCorrect')
-    this.setState({correct: false, date: Date.now()})
+    this.setState({correct: false, date: Date.now()});
     let correct_sub = false;
     let correct_eng = false;
     let correct = false
 
-    let promiseGroupName = getGroupByName(this.state.group)
-    let promiseEnglishGroup = IsEnslishGroupExist(Number(this.state.engGroup))
+    let promiseGroupName = getGroupByName(this.state.group);
+    let promiseEnglishGroup = isEnglishGroupExist(Number(this.state.engGroup));
 
-    Promise.all([promiseGroupName, promiseEnglishGroup])
-      .then((response) => {
-        console.log("Response", response)
-        let group_response = response[0]
-        let english_response = response[1]
-        if (group_response["status"] == 1) {
+    return Promise.all([
+      promiseGroupName,
+      promiseEnglishGroup,
+    ])
+      .then((responses) => {
+        console.log("App: isCorrect: response", responses)
+        const [
+          group_response,
+          english_response,
+        ] = responses;
+        if (group_response.status == 1) {
           this.setState({correct: true})
           this.convertGroupNameInId();
           correct = true;
-          const groupId = String(response['id']);
+          const groupId = String(group_response.id);
           this.setState({groupId: groupId})
         }
-        if (english_response == 1) {
+        if (english_response) {
           correct_eng = true;
-          console.log(`isCorrect: correct_eng: ${correct_eng}`);
+          console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
         }
         if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) {
           correct_sub = true;
         }
         if (correct && correct_sub && correct_eng) {
-          this.setState({page:SCHEDULE_PAGE_NO})
+          this.setState({page: SCHEDULE_PAGE_NO})
           if (this.state.checked) {
             createUser(
               this.state.userId,
@@ -1846,13 +1851,15 @@ export class App extends React.Component<IAppProps, IAppState> {
               this.state.groupId,
               this.state.subGroup,
               this.state.engGroup,
-              "");
+              "",
+            );
           }
 
           getScheduleFromDb(
             group_response["id"],
             String(this.state.engGroup),
-            this.getFirstDayWeek(new Date()))
+            this.getFirstDayWeek(new Date())
+          )
             .then((response) => {
               this.showWeekSchedule(response, 0);
               console.log(String(this.state.engGroup));

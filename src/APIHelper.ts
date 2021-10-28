@@ -284,14 +284,20 @@ export async function getGroupByName(groupName: string) {
   console.log(`APIHelper: getGroupByName: groupInfo:`, groupInfo);
   return groupInfo;
 }
-export async function  IsEnslishGroupExist(group_num: number) : Promise<number>{
+
+export async function  isEnglishGroupExist(group_num: number) : Promise<boolean>{
   const url = `${API_URL}is_ensglish_group_exist`;
   const config = {
     params: {
       group_num: group_num,
     },
   };
+  console.log(`APIHelper: isEnglishGroupExist: url: "${url}", config:`, config);
+
   const response = await axios.get(url, config);
-  const {data: IsExist} = response;
-  return Number(IsExist["status"])
+
+  const {data} = response;
+  console.log(`APIHelper: getGroupByName: response:`, data);
+
+  return data.status === '1' ;
 }
