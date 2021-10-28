@@ -1395,7 +1395,17 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     } else {
       days = this.state.days
+      for (let day in days) {
+        for (let bell in days[day]) {
+          days[day][bell][i].lessonName = "";
+          days[day][bell][i].teacher = "";
+          days[day][bell][i].room = "";
+          days[day][bell][i].lessonType = "";
+          days[day][bell][i].lessonNumber = "";
+          days[day][bell][i].url = "";
+        }
     }
+  }
 
     for (let day_num = 1; day_num < 7; day_num++) {
 
@@ -1698,6 +1708,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherData.id,
           this.getFirstDayWeek(new Date(Date.now()))
         ).then((response) => {
+          console.log("Teahcer Shcedule", response)
           this.showWeekSchedule(response, 0);
         });
 
@@ -1765,6 +1776,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           correct_sub = true;
         }
         if (correct && correct_sub && correct_eng) {
+          this.setState({page:SCHEDULE_PAGE_NO})
           if (this.state.checked) {
             createUser(
               this.state.userId,
