@@ -178,15 +178,9 @@ export interface StartEnd {
   end: string
 }
 
-export const LessonStartEnd: StartEnd[] = [
-  {start: "9:00", end: "10:35"},
-  {start: "10:50", end: "12:25"},
-  {start: "12:40", end: "14:15"},
-  {start: "14:30", end: "16:05"},
-  {start: "16:20", end: "17:55"},
-  {start: "18:10", end: "19:45"},
-  {start: "20:00", end: "21:35"}
-]
+const MAX_BELL_COUNT = 8;
+
+export const LessonStartEnd: StartEnd[] = Array(MAX_BELL_COUNT).fill({start: "", end: ""})
 
 /**
  *
@@ -197,7 +191,7 @@ const TODAY_TOMORROW_DICT = {
 }
 
 
-const NO_LESSONS_NAME = "Пар нет 🎉"
+export const NO_LESSONS_NAME = "Пар нет 🎉"
 
 const DAYS_OF_WEEK_SHORT_RU = []
 
@@ -1460,7 +1454,18 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     } else {
       days = this.state.days
+      for (let day in days) {
+        for (let bell in days[day]) {
+          days[day][bell][i].lessonName = "";
+          days[day][bell][i].teacher = "";
+          days[day][bell][i].room = "";
+          days[day][bell][i].lessonType = "";
+          days[day][bell][i].lessonNumber = "";
+          days[day][bell][i].url = "";
+          days[day][bell][i].groupNumber = "";
+        }
     }
+  }
 
     for (let day_num = 1; day_num < 7; day_num++) {
 
@@ -1476,6 +1481,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           let lesson_info_state: Bell = days[day_num - 1][bell_num][i]
 
           const subgroup_name = lesson_info?.groups?.[0]?.subgroup_name;
+
+          let header = parsedSchedule.schedule[bell]['header']
+          LessonStartEnd[bell_num] = {start: header['start_lesson'], end: header['end_lesson']}
 
           if (
             (parsedSchedule.schedule[bell_num] !== undefined) &&
@@ -1762,6 +1770,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherData.id,
           this.getFirstDayWeek(new Date())
         ).then((response) => {
+          console.log("Teahcer Shcedule", response)
           this.showWeekSchedule(response, 0);
         });
 
@@ -1829,6 +1838,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           correct_sub = true;
         }
         if (correct && correct_sub && correct_eng) {
+          this.setState({page:SCHEDULE_PAGE_NO})
           if (this.state.checked) {
             createUser(
               this.state.userId,
