@@ -96,12 +96,12 @@ const initializeAssistant = (getState) => {
   return createAssistant({getState});
 };
 
-export const MyDiv100 = styled.div`
+export const Spacer100 = styled.div`
   width: 100px;
   height: 100px;
 `;
 
-export const MyDiv200 = styled.div`
+export const Spacer200 = styled.div`
   width: 200px;
   height: 200px;
 `;
@@ -782,7 +782,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       } else if (
         (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
-        (formatTimeHhMm(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
+        (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) >= formatTimeHhMm(date))
       ) {
         const firstLessonInfo = this.getTimeFirstLesson(this.state.today)
         console.log('whatLesson:', todayLessons[parseInt(firstLessonInfo[1])][0][0]);
@@ -1722,7 +1722,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }}
             />
 
-            <MyDiv200/>
+            <Spacer200/>
 
           </Container>
         </div>
