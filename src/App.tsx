@@ -185,7 +185,8 @@ export const LessonStartEnd: StartEnd[] = [
   {start: "14:30", end: "16:05"},
   {start: "16:20", end: "17:55"},
   {start: "18:10", end: "19:45"},
-  {start: "20:00", end: "21:35"}
+  {start: "20:00", end: "21:35"},
+  {start: "", end : ""}
 ]
 
 /**
@@ -197,7 +198,7 @@ const TODAY_TOMORROW_DICT = {
 }
 
 
-const NO_LESSONS_NAME = "Пар нет 🎉"
+export const NO_LESSONS_NAME = "Пар нет 🎉"
 
 const DAYS_OF_WEEK_SHORT_RU = []
 

@@ -13,7 +13,7 @@ import {
   IconLocation,
   //IconMoreVertical
 } from "@sberdevices/plasma-icons";
-import {LessonStartEnd,StartEnd} from "../App";
+import {LessonStartEnd,NO_LESSONS_NAME,StartEnd} from "../App";
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 
@@ -212,7 +212,7 @@ const ScheduleLesson = (
 ) => {
 
   const formatStartEndTime = (startTime: string, endTime: string): string => {
-    return `${startTime} - ${endTime}`;
+    return startTime ?  `${startTime} - ${endTime}` : "";
   }
 
   return <CellListItem
@@ -241,7 +241,7 @@ const ScheduleLesson = (
     }
     contentLeft={
       <LessonLeftContent
-        visible={true}
+        visible={! (lesson.lessonName == NO_LESSONS_NAME)}
         text={lesson.lessonNumber}
       />
     }

@@ -1,11 +1,13 @@
 import {Card, CardBody, CardContent, RectSkeleton} from "@sberdevices/plasma-ui";
 import React from "react";
-import {IScheduleDays, LessonStartEnd} from "../App";
+import {IScheduleDays, LessonStartEnd, NO_LESSONS_NAME} from "../App";
 import {Bell} from "../types/ScheduleStructure";
 import {OTHER_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
 // import ScheduleDayLessons from "./ScheduleDayLessons";
 import ScheduleDayOff from "./ScheduleDayOff";
 import ScheduleLesson from "./ScheduleLesson";
+
+const EMPTY_LESSON_NUM =7;
 
 
 export const ScheduleDayLessons = ({
@@ -50,7 +52,7 @@ export const ScheduleDayLessons = ({
               <ScheduleLesson
                 key={lessonIndex}
                 lesson={lesson}
-                startEndTime={LessonStartEnd[lessonIndex]}
+                startEndTime={(lesson.lessonName==NO_LESSONS_NAME ? LessonStartEnd[EMPTY_LESSON_NUM] : LessonStartEnd[lessonIndex])}
                 isTeacherAndValid={isTeacherAndValid}
                 isAccented={isCurrentLesson}
                 onTeacherClick={(teacherName) => onTeacherClick(teacherName)}
