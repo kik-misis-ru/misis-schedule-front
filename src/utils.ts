@@ -88,6 +88,19 @@ export function formatDateWithDots(date: Date): string {
 }
 
 /**
+ * получить текущее время в формате "HH:MM"
+ *
+ * @param {Date} date
+ * @returns {string}
+ */
+export function formatTimeHhMm(date: Date): string {
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  return `${(hours < 10 ? '0' : '').concat('' + hours)}:${(minutes < 10 ? '0' : '').concat('' + minutes)}`
+}
+
+
+/**
  *
  * @param {string} adj
  * @returns {string}
@@ -146,15 +159,3 @@ export function getFullGroupName(group: string, subGroup: string): string {
     ? `${group} (${subGroup})`
     : `${group} `
 }
-
-
-export const getIsCorrectTeacher = ({
-                                      isStudent,
-                                      isTeacherCorrect,
-                                    }: {
-  isStudent: boolean
-  isTeacherCorrect: boolean
-}) => {
-  return !isStudent && isTeacherCorrect
-}
-

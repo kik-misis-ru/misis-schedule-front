@@ -17,11 +17,12 @@ import {
   DASHBOARD_PAGE_NO, MyDiv100, SCHEDULE_PAGE_NO,
 } from '../App';
 import {DocStyle} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
-import Main from './Home/Main';
-import TabSelector from './Home/TabSelector'
-import {ShowSchedule} from './Home/ShowSchedule'
-import {RememberDataCheckbox} from './Home/RememberDataCheckbox'
+import {CHAR_TIMEPARAMOY, Character} from "../types/base";
+import Main from '../components/Home/Main';
+import TabSelector from '../components/Home/TabSelector'
+import {ShowSchedule} from '../components/Home/ShowSchedule'
+import {RememberDataCheckbox} from '../components/Home/RememberDataCheckbox'
+import {GoToDashboardButton, GoToScheduleButton} from "../components/TopMenu";
 
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
@@ -33,7 +34,7 @@ const LABEL_ENG_GROUP = "Число номера группы по англий�
 const LABEL_TEACHER = "Фамилия И. О.";
 const LABEL_REMEMBER_FIO = "Запомнить ФИО, если Вы преподаватель ";
 const LABEL_TO_VIEW_SCHEDULE = "Чтобы посмотреть расписание, укажите фамилию и инициалы через пробел и точку";
-const LABEL_REMEBER_GROUP = "Запомнить эту группу ";
+const LABEL_REMEMBER_GROUP = "Запомнить эту группу ";
 
 export const USER_MODES = [
   'Студент',
@@ -48,41 +49,18 @@ const HomeTitle = ({text}: { text: string }) => (
   </TextBox>
 )
 
-export const GoToMenuButton = (props) => (
-  <Button
-    size="s"
-    view="clear"
-    onClick={props.onClick}
-    pin="circle-circle"
-    contentRight={
-      <IconHouse size="s" color="inherit"/>
-    }
-  />
-)
-
-export const GoToScheduleButton = ({
-                                     disabled,
-                                     onClick,
-                                   }: {
-  disabled: boolean
-  onClick: React.MouseEventHandler<HTMLElement>
-}) => (
-  disabled
-    ? <Button
-      view="clear"
-      disabled={disabled}
-    />
-    : <Button
-      view="clear"
-      onClick={onClick}
-      contentRight={
-        <IconChevronRight size="s" color="inherit"/>
-      }
-      size="s"
-      pin="circle-circle"
-      style={{marginTop: "1em", marginRight: "1em"}}
-    />
-)
+// export const GoToMenuButton = (props) => (
+//   <Button
+//     size="s"
+//     view="clear"
+//     onClick={props.onClick}
+//     pin="circle-circle"
+//     contentRight={
+//       <IconHouse size="s" color="inherit"/>
+//     }
+//   />
+// )
+//
 
 //class Main extends React.Component {
 //  constructor(props) {
@@ -114,7 +92,7 @@ export const GoToScheduleButton = ({
 //            <GoToScheduleButton
 //              onClick={() => {
 //                this.props.convertIdInGroupName();
-//                this.handleChange("page", 17)
+//                this.handleChange("page", SCHEDULE_PAGE_NO)
 //              }}
 //              disabled={this.props.disabled}
 //            />
@@ -173,7 +151,7 @@ interface HomeViewProps {
 
   setValue: (key: string, value: any) => void
   validateInput: () => void
-  handleTeacherChange : () => void
+  handleTeacherChange: () => Promise<void>
   // handleTeacherChange
   convertIdInGroupName: () => void
 
@@ -196,7 +174,7 @@ interface HomeViewState {
   disabled: boolean
 }
 
-class HomeView extends React.Component<HomeViewProps, HomeViewState> {
+class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   constructor(props: HomeViewProps) {
     super(props);
@@ -216,7 +194,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
   }
 
   async isCorrect() {
-     await this.props.validateInput();
+    await this.props.validateInput();
   }
 
   // handleTeacherChange() {
@@ -292,7 +270,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
                       margin: "1.1em"
                     }}>
                       <RememberDataCheckbox
-                        label={LABEL_REMEBER_GROUP}
+                        label={LABEL_REMEMBER_GROUP}
                         checked={this.props.checked}
                         onChange={(value) => this.handleChange('checked', value)}
                       />
@@ -311,10 +289,8 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
 
                 <Row>
                   <Col style={{marginLeft: "auto"}}>
-                    <GoToMenuButton
-                      onClick={() => {
-                        this.handleChange("page", NAVIGATOR_PAGE_NO)
-                      }}
+                    <GoToDashboardButton
+                      onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
                     />
                     <GoToScheduleButton
                       onClick={() => {
@@ -322,6 +298,7 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
                         this.handleChange("page", SCHEDULE_PAGE_NO)
                       }}
                       disabled={this.state.disabled}
+                      style={{marginTop: "1em", marginRight: "1em"}}
                     />
                   </Col>
                 </Row>
@@ -329,7 +306,8 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
                 <div>
 
                   <TextBox>
-                    <TextBoxBigTitle style={{margin: '3%', textAlign: "center"}}>Салют! </TextBoxBigTitle>
+                    <TextBoxBigTitle
+                      style={{margin: '3%', textAlign: "center"}}>Салют! </TextBoxBigTitle>
                   </TextBox>
 
                   <TabSelector
@@ -381,4 +359,4 @@ class HomeView extends React.Component<HomeViewProps, HomeViewState> {
   }
 }
 
-export default HomeView
+export default HomePage

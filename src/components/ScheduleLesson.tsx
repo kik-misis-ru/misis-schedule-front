@@ -13,14 +13,14 @@ import {
   IconLocation,
   //IconMoreVertical
 } from "@sberdevices/plasma-icons";
-import {LessonStartEnd} from "../App";
+import {LessonStartEnd,StartEnd} from "../App";
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 
 //import { text, background, gradient } from "@sberdevices/plasma-tokens";
 // import "../themes/App.css";
-import {ACCENT_TEXT_COLOR} from "./consts";
-import {Bell} from "../ScheduleStructure";
+import {ACCENT_TEXT_COLOR, COLOR_BLACK} from "./consts";
+import {Bell} from "../types/ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
 // import {THIS_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
@@ -28,7 +28,7 @@ import {lessonTypeAdjToNoun} from '../utils';
 import LinkToOnline from './LinkToOnline';
 
 
-const StartAndFinishTime = (
+export const LessonStartAndFinishTime = (
   {
     time
   }: {
@@ -42,17 +42,17 @@ const StartAndFinishTime = (
   )
 }
 
-const LessonName = (
+export const LessonName = (
   {
-    isCurrentLesson,
+    isAccented,
     text,
   }: {
-    isCurrentLesson: boolean
+    isAccented: boolean
     text: string
   }
 ) => {
   return (
-    isCurrentLesson
+    isAccented
       ? <CardHeadline3 style={{
         color: ACCENT_TEXT_COLOR,
       }}>
@@ -64,7 +64,7 @@ const LessonName = (
   )
 }
 
-const GroupNumber = (
+export const GroupNumber = (
   {
     text,
   }: {
@@ -78,26 +78,30 @@ const GroupNumber = (
   )
 }
 
-const TeacherName = (
+export const TeacherName = (
   {
     text,
+    style={},
     onClick,
   }: {
     text: string
+    style?: React.CSSProperties
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
   }
 ) => {
   return (
     <a
       href='#'
-      style={{color: "white"}}
-      onClick={(event) => onClick(event)}>
+      // style={{color: "white"}}
+      style={style}
+      onClick={(event) => onClick(event)}
+    >
       {text}
     </a>
   )
 }
 
-const LeftContent = (
+export const LessonLeftContent = (
   {
     text,
     visible,
@@ -125,8 +129,8 @@ const MainContent = (
     teacher,
     time,
     url,
-    isCurrentLesson,
-    isCorrectTeacher,
+    isAccented,
+    isTeacherAndValid,
     onTeacherClick,
   }: {
     lessonName: string
@@ -134,27 +138,28 @@ const MainContent = (
     teacher: string
     time: string
     url: string
-    isCurrentLesson: boolean
-    isCorrectTeacher: boolean
+    isAccented: boolean
+    isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
   return (
     <TextBox>
-      <StartAndFinishTime
+      <LessonStartAndFinishTime
         time={time}
       />
       <LessonName
-        isCurrentLesson={isCurrentLesson}
         text={lessonName}
+        isAccented={isAccented}
       />
       {
-        isCorrectTeacher
+        isTeacherAndValid
           ? <GroupNumber
             text={groupNumber}
           />
           : <TeacherName
             text={teacher}
+            style={{color: "white"}}
             onClick={() => onTeacherClick(teacher)}
           />
       }
@@ -164,7 +169,7 @@ const MainContent = (
   )
 }
 
-const RightContent = (
+export const LessonRightContent = (
   {
     room,
     lessonType,
@@ -177,8 +182,10 @@ const RightContent = (
     <TextBox>
       <Badge
         text={room}
-        contentLeft={<IconLocation size="xs"/>}
-        style={{backgroundColor: "rgba(0,0,0, 0)"}}
+        contentLeft={
+          <IconLocation size="xs"/>
+        }
+        style={{backgroundColor: COLOR_BLACK}}
       />
       <TextBoxTitle>
         {lessonType}
@@ -190,18 +197,16 @@ const RightContent = (
 
 const ScheduleLesson = (
   {
-    bell,
-    startTime,
-    endTime,
-    isCurrentLesson,
-    isCorrectTeacher,
+    lesson,
+    startEndTime,
+    isAccented,
+    isTeacherAndValid,
     onTeacherClick,
   }: {
-    bell: Bell
-    startTime: string
-    endTime: string
-    isCurrentLesson: boolean
-    isCorrectTeacher: boolean
+    lesson: Bell
+    startEndTime: StartEnd
+    isAccented: boolean
+    isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
@@ -213,32 +218,31 @@ const ScheduleLesson = (
   return <CellListItem
     content={
       <MainContent
-        lessonName={bell.lessonName}
-        groupNumber={bell.groupNumber}
-        teacher={bell.teacher}
-        url={bell.url}
+        lessonName={lesson.lessonName}
+        groupNumber={lesson.groupNumber}
+        teacher={lesson.teacher}
+        url={lesson.url}
         time={
-          formatStartEndTime(startTime, endTime)
+          formatStartEndTime(startEndTime.start, startEndTime.end)
         }
-        isCurrentLesson={isCurrentLesson}
-        isCorrectTeacher={isCorrectTeacher}
+        isAccented={isAccented}
+        isTeacherAndValid={isTeacherAndValid}
         onTeacherClick={onTeacherClick}
       />
     }
     contentRight={
-      <RightContent
-        room={bell.room}
+      <LessonRightContent
+        room={lesson.room}
         lessonType={
           // todo: это преобразование должно быть раньше
-          lessonTypeAdjToNoun(bell.lessonType)
+          lessonTypeAdjToNoun(lesson.lessonType)
         }
       />
     }
     contentLeft={
-      <LeftContent
+      <LessonLeftContent
         visible={true}
-        // todo: lessonNumber не должен содержать точку
-        text={bell.lessonNumber[0]}
+        text={lesson.lessonNumber}
       />
     }
   />

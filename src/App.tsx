@@ -1,8 +1,9 @@
-import { createAssistant, createSmartappDebugger, } from "@sberdevices/assistant-client";
-import { Container, DeviceThemeProvider, Spinner, } from '@sberdevices/plasma-ui';
 import React from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import styled from "styled-components";
+import {createAssistant, createSmartappDebugger,} from "@sberdevices/assistant-client";
+import {Container, DeviceThemeProvider, Spinner,} from '@sberdevices/plasma-ui';
+import {detectDevice} from '@sberdevices/plasma-ui/utils';
 
 import {
   createUser,
@@ -17,27 +18,28 @@ import {
   IScheduleApiData,
   IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar,
 } from "./APIHelper";
-import { ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR, } from './components/consts';
+import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
-import DashboardPage from './components/DashboardPage';
+import DashboardPage from './pages/DashboardPage';
 
-import HomeView from './components/HomeView';
-import NavigatorPage from './components/NavigatorPage';
-import ScheduleDayFull from "./components/ScheduleDayFull";
-import SpinnerPage from "./components/SpinnerPage";
+import HomePage from './pages/HomePage';
+import NavigatorPage from './pages/NavigatorPage';
+import ScheduleDay from "./components/ScheduleDay";
+import SpinnerPage from "./pages/SpinnerPage";
 import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
 
-import building from './data/buldings.json'
+import buildings from './data/buldings.json'
 import filial from './data/filial.json';
 import schedule from "./schedule";
+import {dayLessons} from "./stories/consts";
 
-import { Bell } from './ScheduleStructure'
+import {Bell} from './types/ScheduleStructure'
 
 import "./themes/App.css";
-import { DocStyle, getThemeBackgroundByChar } from "./themes/tools";
-import { AssistantAction, AssistantEvent, NowOrWill, } from './types/AssistantReceiveAction.d'
+import {DocStyle, getThemeBackgroundByChar} from "./themes/tools";
+import {AssistantAction, AssistantEvent, NowOrWill,} from './types/AssistantReceiveAction.d'
 import {
   AssistantSendAction,
   AssistantSendActionSay,
@@ -61,12 +63,13 @@ import {
   THIS_OR_OTHER_WEEK,
   THIS_WEEK,
   TodayOrTomorrow,
+  IBuilding,
 } from './types/base.d'
 import {
   formatDateWithDashes,
   formatDateWithDots,
+  formatTimeHhMm,
   getFullGroupName,
-  getIsCorrectTeacher,
   MS_IN_DAY,
   pairNumberToPairText
 } from './utils';
@@ -90,7 +93,7 @@ const initializeAssistant = (getState) => {
       getState,
     });
   }
-  return createAssistant({ getState });
+  return createAssistant({getState});
 };
 
 export const MyDiv100 = styled.div`
@@ -169,14 +172,20 @@ const numPron = {
 /**
  * Время начала и конца пар
  */
-export const LessonStartEnd = [
-  { start: "9:00", end: "10:35" },
-  { start: "10:50", end: "12:25" },
-  { start: "12:40", end: "14:15" },
-  { start: "14:30", end: "16:05" },
-  { start: "16:20", end: "17:55" },
-  { start: "18:10", end: "19:45" },
-  { start: "20:00", end: "21:35" }
+
+export interface StartEnd {
+  start: string
+  end: string
+}
+
+export const LessonStartEnd: StartEnd[] = [
+  {start: "9:00", end: "10:35"},
+  {start: "10:50", end: "12:25"},
+  {start: "12:40", end: "14:15"},
+  {start: "14:30", end: "16:05"},
+  {start: "16:20", end: "17:55"},
+  {start: "18:10", end: "19:45"},
+  {start: "20:00", end: "21:35"}
 ]
 
 /**
@@ -221,13 +230,6 @@ const DEFAULT_STATE_DAY: IDayHeader[] = [
 ]
 
 
-interface IBuilding {
-  name: string
-  address: string
-  color: string
-  short: string
-}
-
 export type ThisOtherWeekBells = Bell[]
 export type DayBells = ThisOtherWeekBells[]
 export type IScheduleDays = DayBells[]
@@ -237,7 +239,7 @@ export type IScheduleDays = DayBells[]
 interface IAppProps {
 }
 
-interface IAppState {
+export interface IAppState {
   notes: { id: string, title: string }[];
   userId: string
   page: number
@@ -265,8 +267,8 @@ interface IAppState {
 
 
   character: Character
-  // todo paramoy
-  | typeof CHAR_TIMEPARAMOY
+    // todo paramoy
+    | typeof CHAR_TIMEPARAMOY
   star: boolean
   bd: string
 
@@ -279,7 +281,7 @@ interface IAppState {
   teacher_correct: boolean
   isTeacherError: boolean
 
-  building: IBuilding[]
+  // building: IBuilding[]
 }
 
 export class App extends React.Component<IAppProps, IAppState> {
@@ -334,7 +336,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       teacher_bd: "",
       teacher_correct: false,
 
-      building: building,
+      // building: building,
     }
     // this.Home                 = Home.bind(this);
     // this.Navigator            = Navigator.bind(this);
@@ -351,11 +353,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case "character":
           console.log('componentDidMount: character:', event.character.id);
-          this.setState({ character: event.character.id });
+          this.setState({character: event.character.id});
           if (event.character.id === CHAR_TIMEPARAMOY) {
-            this.setState({ description: FILL_DATA_TO_OPEN_TEXT });
+            this.setState({description: FILL_DATA_TO_OPEN_TEXT});
           } else {
-            this.setState({ description: TO_VIEW_SET_GROUP_TEXT });
+            this.setState({description: TO_VIEW_SET_GROUP_TEXT});
           }
           break;
 
@@ -364,7 +366,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log(event);
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
-            this.setState({ userId: event.sub });
+            this.setState({userId: event.sub});
             getUser(this.state.userId).then((user) => {
 
               if (user !== "0") {
@@ -379,11 +381,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                 if (this.state.teacherId !== "") {
                   getInTeacherFromDb(this.state.teacherId)
                     .then((teacherData) => {
-                      const teacher = `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`;
-                      this.setState({
-                        teacher
-                      })
-                    }
+                        const teacher = `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`;
+                        this.setState({
+                          teacher
+                        })
+                      }
                     );
                   getScheduleTeacherFromDb(
                     this.state.teacherId,
@@ -418,16 +420,16 @@ export class App extends React.Component<IAppProps, IAppState> {
 
                 } else {
                   this.ChangePage()
-                  this.setState({ page: HOME_PAGE_NO });
+                  this.setState({page: HOME_PAGE_NO});
                 }
               } else {
                 this.ChangePage()
-                this.setState({ page: HOME_PAGE_NO });
+                this.setState({page: HOME_PAGE_NO});
               }
             })
           }
           console.log(`assistant.on(data)`, event);
-          const { action } = event;
+          const {action} = event;
           this.dispatchAssistantAction(action);
           break
 
@@ -452,42 +454,48 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log(this.state.group)
     switch (key) {
       case "group":
-        this.setState({ group: value });
+        this.setState({group: value});
         break;
       case "subGroup":
-        this.setState({ subGroup: value });
+        this.setState({subGroup: value});
         break;
       case "teacher":
-        this.setState({ teacher: value });
+        this.setState({teacher: value});
         break;
       case "page":
         this.ChangePage()
-        this.setState({ page: value });
+        this.setState({page: value});
         break;
       case "student":
-        this.setState({ student: value });
+        this.setState({student: value});
         break;
       case "teacher_checked":
-        this.setState({ teacher_checked: value });
+        this.setState({teacher_checked: value});
         break;
       case "engGroup":
-        this.setState({ engGroup: value });
+        this.setState({engGroup: value});
         break;
       case "checked":
-        this.setState({ checked: value });
+        this.setState({checked: value});
         break;
       case "description":
-        this.setState({ description: value });
+        this.setState({description: value});
         break;
       case "bd":
-        this.setState({ bd: value });
+        this.setState({bd: value});
         break;
       case "teacher_bd":
-        this.setState({ teacher_bd: value })
+        this.setState({teacher_bd: value})
         break;
       default:
         break;
     }
+  }
+
+  getIsCorrectTeacher(): boolean {
+    const isStudent = this.state.student;
+    const isTeacherCorrect = this.state.teacher_correct;
+    return !isStudent && isTeacherCorrect
   }
 
   // определяет когда начинаются пары сегодня или завтра
@@ -503,22 +511,25 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет когда кончаются пары сегодня или завтра
-  getEndLastLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
+  getEndLastLesson(todayOrTomorrow: TodayOrTomorrow): string {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    for (let bell = 6; bell > 0; bell--) {
-      const lessonName = this.state.days[dayNumber][bell][THIS_WEEK].lessonName
+    console.log(`getEndLastLesson: todayOrTomorrow: ${todayOrTomorrow}, dayShift: ${dayShift}, dayNumber: ${dayNumber}`);
+
+    for (let lessonIdx = 6; lessonIdx > 0; lessonIdx--) {
+      const lessonName = this.state.days[dayNumber][lessonIdx][THIS_WEEK].lessonName
       if (lessonName !== "") {
-        return LessonStartEnd[bell].end
+        return LessonStartEnd[lessonIdx].end
       }
     }
+    return '';
   }
 
   // определяет начало или конец энной пары сегодня или завтра
   getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum: number): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    const lessonName = this.state.days[dayNumber][lessonNum - 1][0].lessonName;
+    const lessonName = this.state.days[dayNumber][lessonNum - 1][THIS_WEEK].lessonName;
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
@@ -595,37 +606,28 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   /**
-   * получить текущее время в формате "HH:MM"
-   *
-   * @param {Date} date
-   * @returns {string}
-   */
-  getTime(date: Date): string {
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-    return `${(hours < 10 ? '0' : '').concat('' + hours)}:${(minutes < 10 ? '0' : '').concat('' + minutes)}`
-  }
-
-  /**
    * получить текущую пару
    *
    * @param date
    */
-  getCurrentLesson(date: Date): string | undefined {
+  getCurrentLesson(date: Date): string {
     if (this.state.today !== 0) {
-      const day = this.state.days[this.state.today - 1]
+      const todayIndex = this.state.today - 1
+      const day = this.state.days[todayIndex]
       for (let bellIdx in day) {
-        const lesson = this.state.days[this.state.today - 1][bellIdx][0];
+        // console.log(`getCurrentLesson: bellIdx: ${bellIdx}, typeof bellIdx: ${typeof bellIdx}`);
+        const lesson = day[bellIdx][THIS_WEEK];
+        const thisLessonStartEnd = LessonStartEnd[Number(bellIdx)];
         if (
-          // todo: почему (0, 6) ???
-          (this.getTime(date) > LessonStartEnd[Number(bellIdx)].start) &&
-          (this.getTime(date) < LessonStartEnd[Number(bellIdx)].end) &&
-          (LessonStartEnd[Number(bellIdx)].start !== "")
+          (formatTimeHhMm(date) > thisLessonStartEnd.start) &&
+          (formatTimeHhMm(date) < thisLessonStartEnd.end) &&
+          (thisLessonStartEnd.start !== "")
         ) {
-          return lesson.lessonNumber[0]
+          return lesson.lessonNumber
         }
       }
     }
+    return '';//'-1';
   }
 
   /**
@@ -639,7 +641,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     if ((this.state.today !== 0) && (this.state.today + 1 !== 7))
       for (let bell in this.state.days[this.state.today - 1]) {
         if (
-          this.getTime(date) < LessonStartEnd[Number(bell)].start &&
+          formatTimeHhMm(date) < LessonStartEnd[Number(bell)].start &&
           LessonStartEnd[Number(bell)].start !== ""
         ) {
           countRemainingLessons += 1
@@ -650,129 +652,183 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   /**
    *
-   * @param daynum
+   * @param dayNumber
    * @returns {[
-   *   string,   -- строка, содержащая начало и конец пары
+   *   string,   -- строка, содержащая начало пары
    *   string,   -- порядковый номер пары (1 символ)
    * ]}
    */
-  getTimeFirstLesson(daynum: number): [string, string] {
-    let first = '';
-    let num = '';
-    let week = 0;
-    if (daynum < this.state.today) {
-      week = 1;
+  getTimeFirstLesson(dayNumber: number): [string, string] {
+    let lessonsStart = '';
+    let lessonNumber = '';
+    let week: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    if (dayNumber < this.state.today) {
+      week = OTHER_WEEK;
     }
-    for (let bellIdx in this.state.days[daynum - 1]) {
-      const bell = this.state.days[daynum - 1][bellIdx][week]
-      if (bell.lessonName !== "") {
-        first = LessonStartEnd[Number(bellIdx)].start
-        num = bell.lessonNumber[0];
+    for (let lessonIdx in this.state.days[dayNumber - 1]) {
+      const lesson = this.state.days[dayNumber - 1][lessonIdx][week]
+      if (lesson.lessonName !== "") {
+        lessonsStart = LessonStartEnd[Number(lessonIdx)].start
+        lessonNumber = lesson.lessonNumber;
         break
       }
     }
-    return [first, num];
+    return [lessonsStart, lessonNumber];
   }
 
-  whatLesson(
-    date: Date,
-    when: NowOrWill,
-  ): {
-    lesson: string | undefined,
-    type: NowOrWill | 'next',
-    num: number | undefined,
-  } { //определяет название пары, которая идет или будет
-    // ключ - номер пары, значение - перерыв до этой пары
 
-    if (this.state.today == 0) {
-      return {
-        lesson: undefined,
-        type: when,
-        num: undefined,
-      }
-    } else {
-      console.log('whatLesson: count:', this.state.day[this.state.today - 1].count[0]);
-      if (this.getTime(date) < this.getTimeFirstLesson(this.state.today)[0].slice(0, 5)) {
-        console.log(true)
-      }
-      console.log("whatLesson: что за пара", this.getTime(date), when, this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
-      if (this.state.today !== 0) {
-        const currentLesson = this.getCurrentLesson(date);
+  getTimeFirstLesson2(dayNumber: number): { startEnd: StartEnd, startHhMm: string, number: string } | undefined {
+    let week: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    if (dayNumber < this.state.today) {
+      week = OTHER_WEEK;
+    }
+    const dayLessons = this.state.days[dayNumber - 1];
 
-        if (
-          (currentLesson !== undefined) &&
-          (when === "now")
-        ) {
-          for (let bellIdx in this.state.days[this.state.today - 1]) {
-            if (
-              (this.state.days[this.state.today - 1][bellIdx][0][5][0] === this.getCurrentLesson(date)) &&
-              (this.state.days[this.state.today - 1][bellIdx][0][5][0] !== "")
-            ) {
-              return {
-                lesson: this.state.days[this.state.today - 1][bellIdx][0][0],
-                type: "now",
-                num: parseInt(currentLesson)
-              };
-            }
-          }
+    for (let strLessonIdx in dayLessons) {
+      const lesson = dayLessons[strLessonIdx][week]
 
-        } else if (
-          (when === "will") &&
-          (currentLesson !== undefined) &&
-          (parseInt(currentLesson) + 1 < 8)
-        ) {
-          console.log("whatLesson: будет")
-          for (let bell in this.state.days[this.state.today - 1]) {
-            console.log('whatLesson:', parseInt(currentLesson) + 1);
-            if (
-              (this.state.days[this.state.today - 1][bell][0][5][0] == parseInt(currentLesson) + 1) &&
-              (this.state.days[this.state.today - 1][bell][0][5][0] !== "")
-            ) {
-              return {
-                lesson: this.state.days[this.state.today - 1][bell][0][0],
-                type: "next",
-                num: parseInt(currentLesson) + 1
-              };
-            }
-          }
-        } else if (
-          (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
-          (this.getTime(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
-        ) {
-          console.log('whatLesson:', this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0]);
-          return {
-            lesson: this.state.days[this.state.today - 1][parseInt(this.getTimeFirstLesson(this.state.today)[1])][0][0],
-            type: "will",
-            num: parseInt(this.getTimeFirstLesson(this.state.today)[1])
-          }
-        } else {
-          for (let i in breaks) {
-            if (
-              (this.getTime(date) > breaks[i].slice(0, 5) && this.getTime(date) < breaks[i].slice(6)) &&
-              (this.state.days[this.state.today - 1][i][0][5][0] !== "")
-            ) {
-              return {
-                lesson: this.state.days[this.state.today - 1][i][0][0],
-                type: "will",
-                num: parseInt(i)
-              };
-            } else {
-              return {
-                lesson: undefined,
-                type: when,
-                num: undefined
-              };
-            }
-          }
+      if (lesson.lessonName !== "") {
+        const lessonStartEnd = LessonStartEnd[Number(strLessonIdx)];
+
+        return {
+          startEnd: lessonStartEnd,
+          startHhMm: lessonStartEnd.start.slice(0, 5),
+          number: lesson.lessonNumber,
         }
       }
     }
-    return {
-      lesson: undefined,
-      type: when,
-      num: undefined
-    };
+    return undefined;
   }
+
+
+  whatLesson(
+    date: Date,
+    when: NowOrWill | 'next',
+  ): {
+    lesson: string,
+    type: NowOrWill | 'next',
+    num: number,
+  } { //определяет название пары, которая идет или будет
+    // ключ - номер пары, значение - перерыв до этой пары
+
+    console.log(`whatLesson: when: ${when} date:`, date)
+
+    const isSunday = (this.state.today === 0)
+    const todayWorkDayIndex = this.state.today - 1;
+    const todayBells = this.state.day[todayWorkDayIndex]
+    const todayLessons = this.state.days[todayWorkDayIndex]
+
+    if (isSunday) {
+      const result = {
+        lesson: '',
+        type: when,
+        num: -1,
+      }
+      console.log(`whatLesson: isSunday: result:`, result)
+      return result;
+
+    } else {
+      console.log('whatLesson: count:', todayBells.count[THIS_WEEK]);
+      const firstLessonTimeHhMm = this.getTimeFirstLesson(todayWorkDayIndex + 1)[0].slice(0, 5);
+
+      if (formatTimeHhMm(date) < firstLessonTimeHhMm) {
+        console.log('formatTimeHhMm(date) < firstLessonTimeHhMm: true')
+      }
+      console.log("whatLesson: что за пара", formatTimeHhMm(date), when, firstLessonTimeHhMm);
+
+      // if (this.state.today !== 0) {
+      const currLessonNum = this.getCurrentLesson(date);
+
+      //
+      if (
+        (when === "now") &&
+        (currLessonNum !== undefined)
+      ) {
+        for (let bellIdx in todayLessons) {
+          const lesson = todayLessons[bellIdx][THIS_WEEK];
+
+          if (
+            (lesson.lessonNumber === currLessonNum) &&
+            (lesson.lessonNumber !== "")
+          ) {
+            return {
+              lesson: lesson[0],
+              type: "now",
+              num: parseInt(currLessonNum)
+            };
+          }
+        }
+
+      } else if (
+        (when === "will") &&
+        (currLessonNum !== undefined) &&
+        (parseInt(currLessonNum) + 1 < 8)
+      ) {
+        console.log("whatLesson: будет")
+        for (let bell in todayLessons) {
+          console.log('whatLesson:', parseInt(currLessonNum) + 1);
+          const lesson = todayLessons[bell][THIS_WEEK];
+
+          if (
+            (lesson.lessonNumber == String(parseInt(currLessonNum) + 1)) &&
+            (lesson.lessonNumber !== "")
+          ) {
+            return {
+              lesson: lesson[0],
+              type: "next",
+              num: parseInt(currLessonNum) + 1
+            };
+          }
+        }
+      } else if (
+        (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
+        (formatTimeHhMm(date) <= this.getTimeFirstLesson(this.state.today)[0].slice(0, 5))
+      ) {
+        const firstLessonInfo = this.getTimeFirstLesson(this.state.today)
+        console.log('whatLesson:', todayLessons[parseInt(firstLessonInfo[1])][0][0]);
+
+        const lessonNumber = parseInt(firstLessonInfo[1]);
+        return {
+          lesson: todayLessons[lessonNumber][0][0],
+          type: "will",
+          num: lessonNumber,
+        }
+      } else {
+        for (let i in breaks) {
+          const startTime = breaks[i].slice(0, 5);
+          const endTime = breaks[i].slice(6);
+          if (
+            (
+              formatTimeHhMm(date) > startTime &&
+              formatTimeHhMm(date) < endTime
+            ) &&
+            (todayLessons[i][0][5][0] !== "")
+          ) {
+            return {
+              lesson: todayLessons[i][0][0],
+              type: "will",
+              num: parseInt(i)
+            };
+          } else {
+            return {
+              lesson: '',
+              type: when,
+              num: -1
+            };
+          }
+        }
+      }
+      // }
+    }
+    const result = {
+      lesson: '',
+      type: when,
+      num: -1,
+    }
+    console.log(`whatLesson: not found: result:`, result)
+    return result;
+  }
+
 
   // определяет ближайшую пару, если сейчас идет какая то пара, то сообщает об этом
   whereWillLesson(
@@ -785,20 +841,27 @@ export class App extends React.Component<IAppProps, IAppState> {
   } {
     let nextLessonRoom
     let numberNearestLesson
+
     // проверяем, что сегодня не воскресенье
-    if (this.state.today !== 0) {
+    const isSunday = (this.state.today === 0)
+
+    if (!isSunday) {
+
       // определяем номер ближайшей пары
       for (let i in breaks) {
-        if (this.getTime(date) < breaks['1']) {
+        const startTime = breaks[i].slice(0, 5);
+        const endTime = breaks[i].slice(6);
+
+        if (formatTimeHhMm(date) < breaks['1']) {
           numberNearestLesson = '1';
           break
         } else if (
-          this.getTime(date) > breaks[i].slice(0, 5) &&
-          this.getTime(date) < breaks[i].slice(6)
+          formatTimeHhMm(date) > startTime &&
+          formatTimeHhMm(date) < endTime
         ) {
           numberNearestLesson = i;
           break
-        } else if (this.getTime(date) > breaks['7']) {
+        } else if (formatTimeHhMm(date) > breaks['7']) {
           numberNearestLesson = null
         }
       }
@@ -811,9 +874,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (numberNearestLesson !== undefined) {
         for (let bell in this.state.days[this.state.today - 1]) {
           // если пара с таким номером есть в расписании
-          if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === numberNearestLesson) {
+          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === numberNearestLesson) {
             return {
-              audience: this.state.days[this.state.today - 1][bell][0].room,
+              audience: this.state.days[this.state.today - 1][bell][THIS_WEEK].room,
               type: "nearest",
               exist: "inSchedule",
             }
@@ -821,9 +884,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             // сообщаем, что такой пары нет
             console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
             for (let bell in this.state.days[this.state.today - 1]) {
-              if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] !== numberNearestLesson) {
+              if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber !== numberNearestLesson) {
                 return {
-                  audience: this.state.days[this.state.today - 1][bell][0].room,
+                  audience: this.state.days[this.state.today - 1][bell][THIS_WEEK].room,
                   type: "nearest",
                   exist: "notInSchedule",
                 }
@@ -836,8 +899,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         // вернуть номер текущей пары
         let whereCurrentLesson
         for (let bell in this.state.days[this.state.today - 1]) {
-          if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === this.getCurrentLesson(date)) {
-            whereCurrentLesson = this.state.days[this.state.today - 1][bell][0].room
+          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === this.getCurrentLesson(date)) {
+            whereCurrentLesson = this.state.days[this.state.today - 1][bell][THIS_WEEK].room
           }
         }
         if (whereCurrentLesson === "") {
@@ -853,8 +916,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
       if (numberNearestLesson === undefined && will === "will") {
         for (let bell in this.state.days[this.state.today - 1]) {
-          if (this.state.days[this.state.today - 1][bell][0].lessonNumber[0] === String(Number(this.getCurrentLesson(date)) + 1)) {
-            nextLessonRoom = this.state.days[this.state.today - 1][bell][0].room
+          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === String(Number(this.getCurrentLesson(date)) + 1)) {
+            nextLessonRoom = this.state.days[this.state.today - 1][bell][THIS_WEEK].room
           }
         }
         if (nextLessonRoom !== "") {
@@ -887,7 +950,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       switch (action.type) {
         case 'profile':
           this.ChangePage()
-          return this.setState({ page: HOME_PAGE_NO });
+          return this.setState({page: HOME_PAGE_NO});
           break;
 
         case 'for_today':
@@ -902,16 +965,16 @@ export class App extends React.Component<IAppProps, IAppState> {
               })
 
               this.ChangePage()
-              return this.setState({ page: 7 });
+              return this.setState({page: 7});
 
             } else {
               this.sendData({
                 action_id: "todaySchedule",
-                parameters: { day: DAY_NOT_SUNDAY },
+                parameters: {day: DAY_NOT_SUNDAY},
               })
 
               this.ChangePage()
-              return this.setState({ page: this.state.today });
+              return this.setState({page: this.state.today});
             }
           break;
 
@@ -920,17 +983,17 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.today + 1 === 7) {
               this.sendData({
                 action_id: "tomorrowSchedule",
-                parameters: { day: DAY_SUNDAY },
+                parameters: {day: DAY_SUNDAY},
               })
               this.ChangePage()
-              return this.setState({ page: 7 });
+              return this.setState({page: 7});
             } else {
               this.sendData({
                 action_id: "tomorrowSchedule",
-                parameters: { day: DAY_NOT_SUNDAY },
+                parameters: {day: DAY_NOT_SUNDAY},
               })
               this.ChangePage()
-              return this.setState({ page: this.state.today + 1 });
+              return this.setState({page: this.state.today + 1});
             }
           break;
 
@@ -938,14 +1001,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
             this.ChangePage()
-            return this.setState({ page: 8 });
+            return this.setState({page: 8});
           }
           break;
 
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.ChangePage()
-            return this.setState({ date: Date.now(), flag: true, page: SCHEDULE_PAGE_NO });
+            return this.setState({date: Date.now(), flag: true, page: SCHEDULE_PAGE_NO});
           }
           break;
 
@@ -980,13 +1043,13 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
               this.ChangePage()
-              return this.setState({ page: this.state.today });
+              return this.setState({page: this.state.today});
             } else if (this.state.today + 1 === 7) {
               this.ChangePage();
-              return this.setState({ page: 7 });
+              return this.setState({page: 7});
             } else {
               this.ChangePage();
-              this.setState({ page: this.state.today + 1 });
+              this.setState({page: this.state.today + 1});
             }
           }
           break
@@ -998,7 +1061,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
             if (action.note !== undefined) {
-              const { timestamp, dayOfWeek } = action.note;
+              const {timestamp, dayOfWeek} = action.note;
               countOfLessons = this.getAmountOfLessons(new Date(timestamp))
 
               // todo: упростить
@@ -1043,7 +1106,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 page = 7;
               }
               this.ChangePage();
-              this.setState({ page: dayNameDict[dayOfWeek][1] + page })
+              this.setState({page: dayNameDict[dayOfWeek][1] + page})
             }
 
             this.sendData({
@@ -1074,9 +1137,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({ page: 7 })
+              this.setState({page: 7})
             } else {
-              this.setState({ page: this.state.today })
+              this.setState({page: this.state.today})
             }
           }
           break
@@ -1098,7 +1161,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (whereLessonParams.exist === DAY_SUNDAY) {
               //this.setState({ page: 8 })
             } else {
-              this.setState({ page: this.state.today });
+              this.setState({page: this.state.today});
             }
           }
           break
@@ -1111,17 +1174,17 @@ export class App extends React.Component<IAppProps, IAppState> {
                 "when": "now",
               }
             }
-            const whatlesson = this.whatLesson(new Date(Date.now()), action.note.when);
-            console.log(this.whatLesson(new Date(Date.now()), action.note.when))
+            const whatlesson = this.whatLesson(new Date(), action.note.when);
+            console.log(this.whatLesson(new Date(), action.note.when))
             this.sendData({
               action_id: "say4",
               parameters: whatlesson,
             })
             this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({ page: 7 })
+              this.setState({page: 7})
             } else {
-              this.setState({ page: this.state.today });
+              this.setState({page: this.state.today});
             }
           }
           break
@@ -1132,7 +1195,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             let day1: TodayOrTomorrow = DAY_TODAY;
             let page1 = 0;
             if (action.note !== undefined) {
-              const { dayOfWeek: strDayOfWeek } = action.note;
+              const {dayOfWeek: strDayOfWeek} = action.note;
               const numDayOfWeek = parseInt(strDayOfWeek) - 1
               console.log('dispatchAssistantAction: first_lesson:', action.note)
               console.log('dispatchAssistantAction: first_lesson:', numDayOfWeek);
@@ -1161,7 +1224,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               //   // this.ChangePage();
               //   // this.setState({ page: 8 })
               // } else {
-              const { dayOfWeek: strDayOfWeek } = action.note;
+              const {dayOfWeek: strDayOfWeek} = action.note;
               const dayOfWeekIdx = parseInt(strDayOfWeek) - 1
 
               const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[dayOfWeekIdx];
@@ -1216,7 +1279,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             let daySchedule: AssistantSendActionSay6['parameters'];
             // if (this.state.group !== "") {
-            const { dayOfWeek: strDayOfWeek } = action.note[0];
+            const {dayOfWeek: strDayOfWeek} = action.note[0];
             const dayOfWeekIdx = parseInt(strDayOfWeek) - 1;
 
             const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[dayOfWeekIdx];
@@ -1247,17 +1310,17 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'group':
           if (action.note[0] === 0) {
             console.log(action.note[1].data.groupName[0]);
-            this.setState({ group: action.note[1].data.groupName[0].toUpperCase(), page: HOME_PAGE_NO });
+            this.setState({group: action.note[1].data.groupName[0].toUpperCase(), page: HOME_PAGE_NO});
           } else {
             console.log(action.note[1].data.groupName[1])
-            this.setState({ group: action.note[1].data.groupName[1].toUpperCase(), page: HOME_PAGE_NO })
+            this.setState({group: action.note[1].data.groupName[1].toUpperCase(), page: HOME_PAGE_NO})
           }
           break
 
         case 'subgroup':
           console.log('subgroup', action)
           this.ChangePage();
-          this.setState({ subGroup: action.note, page: HOME_PAGE_NO });
+          this.setState({subGroup: action.note, page: HOME_PAGE_NO});
           break
 
         default:
@@ -1271,7 +1334,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     const state = {
       item_selector: {
         items: this.state.notes.map(
-          ({ id, title }, index) => ({
+          ({id, title}, index) => ({
             number: index + 1,
             id,
             title,
@@ -1291,17 +1354,17 @@ export class App extends React.Component<IAppProps, IAppState> {
   //   })
   // }
 
-  async convertIdInGroupName() {
+  async convertIdInGroupName(): Promise<void> {
     let group = await getGroupById(Number(this.state.groupId))
-    this.setState({ group: group["name"] })
+    this.setState({group: group.name})
   }
 
   convertGroupNameInId() {
     getGroupByName(this.state.group)
       .then((response) => {
         console.log("convertNameInId", response)
-        const groupId = String(response['id']); // convert to string
-        this.setState({ groupId: groupId })
+        const groupId = String(response.id); // convert to string
+        this.setState({groupId: groupId})
       })
 
   }
@@ -1312,9 +1375,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   // получить дату первого дня недели
   getFirstDayWeek(date: Date): string {
+
     // номер дня недели
     const now = new Date();
-    this.setState({ today: now.getDay() });
+    this.setState({today: now.getDay()});
+
     const weekDay = date.getDay()
     let firstDay: number;
     if (weekDay === 0) {
@@ -1349,7 +1414,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log(response)
       })
     }
-    this.setState({ date: date, flag: false });
+    this.setState({date: date, flag: false});
   }
 
   /**
@@ -1378,7 +1443,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
-    this.setState({ spinner: true });
+    this.setState({spinner: true});
 
     let days;
     /*
@@ -1434,7 +1499,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
             lesson_info_state.lessonType = lesson_info.type;
-            lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            // lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
             countLessons++;
 
@@ -1455,7 +1521,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
             lesson_info_state.lessonType = lesson_info.type;
-            lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            // lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
+            lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
 
             for (let name in lesson_info.groups) {
@@ -1475,8 +1542,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
 
     }
-    this.setState({ spinner: true });
-    this.setState({ days: days });
+    this.setState({spinner: true});
+    this.setState({days: days});
     console.log("Days", days)
   }
 
@@ -1495,30 +1562,30 @@ export class App extends React.Component<IAppProps, IAppState> {
       timeParam -= 7
     }
 
-    this.setState({ i: 0 });
-    this.setState({ star: false });
+    this.setState({i: 0});
+    this.setState({star: false});
     if (weekParam === OTHER_WEEK) {
       console.log("OTHER WEEK")
-      this.setState({ flag: false });
+      this.setState({flag: false});
     } else {
-      this.setState({ flag: true });
+      this.setState({flag: true});
     }
     if (this.state.checked) {
-      this.setState({ star: true });
+      this.setState({star: true});
     } else {
       if (this.state.groupId == this.state.bd) {
-        this.setState({ star: true });
+        this.setState({star: true});
       } else {
-        this.setState({ star: false });
+        this.setState({star: false});
       }
     }
     if (this.state.teacher_checked) {
-      this.setState({ teacher_star: true });
+      this.setState({teacher_star: true});
     } else {
       if (this.state.teacherId == this.state.teacher_bd) {
-        this.setState({ teacher_star: true });
+        this.setState({teacher_star: true});
       } else {
-        this.setState({ teacher_star: false });
+        this.setState({teacher_star: false});
       }
     }
   }
@@ -1532,7 +1599,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       weekParam = OTHER_WEEK
     }
     // this.setState({i: 0});
-    const current = this.getCurrentLesson(new Date(Date.now()));
+    const current = this.getCurrentLesson(new Date());
     const day_num = timeParam - 1;
     const index = timeParam;
     const page = weekParam === OTHER_WEEK ? 8 : 0;
@@ -1541,10 +1608,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     const formatDate = (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
 
-    const isTeacher = getIsCorrectTeacher({
-      isStudent: this.state.student,
-      isTeacherCorrect: this.state.teacher_correct
-    });
+    const isTeacher = this.getIsCorrectTeacher();
 
     const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
@@ -1580,12 +1644,12 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     return (
       <DeviceThemeProvider>
-        <DocStyle />
+        <DocStyle/>
         {
           getThemeBackgroundByChar(this.state.character)
         }
         <div>
-          <Container style={{ padding: 0, overflow: "hidden" }}>
+          <Container style={{padding: 0, overflow: "hidden"}}>
 
             <TopMenu
               subLabel={
@@ -1603,25 +1667,25 @@ export class App extends React.Component<IAppProps, IAppState> {
                   ? handleTeacherStarChange(!this.state.teacher_star)
                   : handleGroupStarChange(!this.state.star)
               }}
-              onHomeClick={() => this.setState({ page: HOME_PAGE_NO })}
-              onDashboardClick={() => this.setState({ page: DASHBOARD_PAGE_NO })}
-            // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
+              onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
+              onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
+              // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />
 
             <WeekSelect
               onPrevWeekClick={() => {
-                this.setState({ spinner: false });
+                this.setState({spinner: false});
                 this.PreviousWeek();
-                this.setState({ flag: false, page: 8 })
+                this.setState({flag: false, page: 8})
               }}
               onThisWeekClick={() => {
                 this.CurrentWeek();
-                this.setState({ flag: true, page: SCHEDULE_PAGE_NO })
+                this.setState({flag: true, page: SCHEDULE_PAGE_NO})
               }}
               onNextWeekClick={() => {
-                this.setState({ spinner: false });
+                this.setState({spinner: false});
                 this.NextWeek();
-                this.setState({ flag: false, page: 8 })
+                this.setState({flag: false, page: 8})
               }}
             />
 
@@ -1631,7 +1695,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               markedIndex={weekParam === THIS_WEEK ? this.state.today - 1 : -1 /* current weekday can't be on 'other' week*/}
               cols={
                 this.state.day.map(d => {
-                  const { title, date } = d;
+                  const {title, date} = d;
                   const weekDayShort = title;
                   const dateDdDotMmDotYy = date[weekParam];
                   const dateDdDotMm = dateDdDotMmDotYy.slice(0, 5);
@@ -1646,7 +1710,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               ))}
             />
 
-            <ScheduleDayFull
+            <ScheduleDay
               isReady={this.state.spinner}
               // days={this.state.days}
               // day_num={day_num}
@@ -1656,7 +1720,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               currentLessonNumber={current}
               // weekParam={weekParam}
               // timeParam={timeParam}
-              isCorrectTeacher={isTeacher}
+              isTeacherAndValid={isTeacher}
               isToday={this.state.today === timeParam && weekParam === THIS_WEEK}
               isSunday={timeParam == 7}
               // today={this.state.today}
@@ -1668,7 +1732,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }}
             />
 
-            <MyDiv200 />
+            <MyDiv200/>
 
           </Container>
         </div>
@@ -1679,16 +1743,17 @@ export class App extends React.Component<IAppProps, IAppState> {
   Index() {
     const currI = this.state.i;
     if (currI < 7) {
-      this.setState({ i: currI + 1 });
+      this.setState({i: currI + 1});
     } else if (currI > 0) {
-      this.setState({ i: currI - 1 });
+      this.setState({i: currI - 1});
     }
   }
 
-  async handleTeacherChange() {
-
+  // todo исправить асинхронную работу
+  async handleTeacherChange(): Promise<void> {
     console.log(this.state.teacher)
-    getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
+
+    return getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
@@ -1696,17 +1761,16 @@ export class App extends React.Component<IAppProps, IAppState> {
         (teacherData.status == "-1") ||
         (teacherData.status == "-2")
       ) {
-        console.log("status");
+        console.log("handleTeacherChange: teacherData.status:", teacherData.status);
         this.setState({
           isTeacherError: true,
         })
-
 
       } else {
 
         getScheduleTeacherFromDb(
           teacherData.id,
-          this.getFirstDayWeek(new Date(Date.now()))
+          this.getFirstDayWeek(new Date())
         ).then((response) => {
           console.log("Teahcer Shcedule", response)
           this.showWeekSchedule(response, 0);
@@ -1748,7 +1812,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   isCorrect() {
     console.log('App: isCorrect')
-    this.setState({ correct: false, date: Date.now() })
+    this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
     let correct_eng = false;
     let correct = false
@@ -1762,17 +1826,17 @@ export class App extends React.Component<IAppProps, IAppState> {
         let group_response = response[0]
         let english_response = response[1]
         if (group_response["status"] == 1) {
-          this.setState({ correct: true })
+          this.setState({correct: true})
           this.convertGroupNameInId();
           correct = true;
           const groupId = String(response['id']);
-          this.setState({ groupId: groupId })
+          this.setState({groupId: groupId})
         }
         if (english_response == 1) {
           correct_eng = true;
           console.log(`isCorrect: correct_eng: ${correct_eng}`);
         }
-        if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")){
+        if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) {
           correct_sub = true;
         }
         if (correct && correct_sub && correct_eng) {
@@ -1785,143 +1849,185 @@ export class App extends React.Component<IAppProps, IAppState> {
               this.state.subGroup,
               this.state.engGroup,
               "");
-            }
-
-        getScheduleFromDb(
-          group_response["id"],
-          String(this.state.engGroup),
-          this.getFirstDayWeek(new Date(Date.now())))
-          .then((response) =>{
-                this.showWeekSchedule(response, 0);
-                console.log(String(this.state.engGroup));
-                this.setState({ flag: true });
-                this.convertIdInGroupName();
-                this.setState({ page: SCHEDULE_PAGE_NO, isGroupError: false });
-              })
-          } else if (this.state.correct) {
-              this.setState({ isGroupError: false });
-    
-          } else if (this.state.group === "") {
-              this.setState({ isGroupError: true })
-            } else {
-              this.setState({ isGroupError: true })
-            }
-    
-            if (!correct_sub) {
-              this.setState({ isSubGroupError: true })
-            } else {
-              this.setState({ isSubGroupError: false, star: false });
-            }
-    
-            if (!correct_eng) {
-              this.setState({ isEngGroupError: true })
-            } else {
-              this.setState({ isEngGroupError: false, star: false });
-            }
-          
-        })
-      }
-
-Spinner() {
-  console.log('Spinner: this.state.spinner:', this.state.spinner)
-  const myinterval = setInterval(() => {
-    console.log("today", this.state.today)
-    if (this.state.spinner) {
-      setTimeout(() => {
-        if (this.state.today === 0) {
-          console.log("this.state.flag", this.state.flag)
-          if (this.state.flag) {
-            console.log('Spinner: page:', 7)
-            this.setState({ page: 7 })
-          } else {
-            console.log('Spinner: page:', 8)
-            this.setState({ page: 8 })
           }
-        } else if (this.state.flag) {
-          console.log('Spinner: page: today:', this.state.today)
-          this.setState({ page: this.state.today });
+
+          getScheduleFromDb(
+            group_response["id"],
+            String(this.state.engGroup),
+            this.getFirstDayWeek(new Date()))
+            .then((response) => {
+              this.showWeekSchedule(response, 0);
+              console.log(String(this.state.engGroup));
+              this.setState({flag: true});
+              this.convertIdInGroupName();
+              this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
+            })
+        } else if (this.state.correct) {
+          this.setState({isGroupError: false});
+
+        } else if (this.state.group === "") {
+          this.setState({isGroupError: true})
         } else {
-          console.log('Spinner: page:', 8)
-          this.setState({ page: 8 });
+          this.setState({isGroupError: true})
         }
-      }, 100);
-      clearInterval(myinterval)
-    }
-  }, 100);
 
-  return (
-    <SpinnerPage character={this.state.character} />
-    /*
-          <DeviceThemeProvider>
-            <DocStyle/>
-            {
-              getThemeBackgroundByChar(this.state.character)
-            }
-            <div>
-              <Container style={{padding: 0}}>
-                <Spinner color={ACCENT_TEXT_COLOR}
-                         style={{position: " absolute", top: "40%", left: " 43%", marginRight: "-50%"}}/>
-              </Container>
-            </div>
-          </DeviceThemeProvider>
-    */
-  )
-}
+        if (!correct_sub) {
+          this.setState({isSubGroupError: true})
+        } else {
+          this.setState({isSubGroupError: false, star: false});
+        }
 
-render() {
-  let { page } = this.state;
-  console.log('App: render: page:', page);
-  if (page >= 1 && page <= 13) {
-    return this.Raspisanie(page);
+        if (!correct_eng) {
+          this.setState({isEngGroupError: true})
+        } else {
+          this.setState({isEngGroupError: false, star: false});
+        }
+
+      })
   }
-  switch (page) {
-    case HOME_PAGE_NO:
-      return <HomeView
-        // state={this.state}
-        validateInput={this.isCorrect}
-        handleTeacherChange={this.handleTeacherChange}
-        convertIdInGroupName={this.convertIdInGroupName}
-        setValue={this.setValue}
-        description={this.state.description}
+
+  Spinner() {
+    console.log('Spinner: this.state.spinner:', this.state.spinner)
+
+    const CHECK_INTERVAL = 100;
+    const REDIRECT_DELAY = 100;
+
+    // делаем периодическую проверку
+    const checkInterval = setInterval(() => {
+      console.log("today", this.state.today)
+
+      // если признак `spinner` выставлен
+      if (this.state.spinner) {
+
+        // переходим на другую страницу с задержкой
+        setTimeout(() => {
+          console.log("this.state.flag", this.state.flag)
+
+          const pageNo = this.state.today === 0
+            ? this.state.flag ? 7 : 8
+            : this.state.flag ? this.state.today : 8
+          console.log('Spinner: pageNo:', pageNo)
+
+          // переходим на другую страницу
+          this.setState({page: pageNo});
+
+          // if (this.state.today === 0) {
+          //    console.log("this.state.flag", this.state.flag)
+          //    if (this.state.flag) {
+          //      console.log('Spinner: page:', 7)
+          //      this.setState({page: 7})
+          //    } else {
+          //      console.log('Spinner: page:', 8)
+          //      this.setState({page: 8})
+          //    }
+          //  } else if (this.state.flag) {
+          //    console.log('Spinner: page: today:', this.state.today)
+          //    this.setState({page: this.state.today});
+          //  } else {
+          //    console.log('Spinner: page:', 8)
+          //    this.setState({page: 8});
+          //  }
+        }, REDIRECT_DELAY);
+        clearInterval(checkInterval)
+      }
+    }, CHECK_INTERVAL);
+
+    return (
+
+      <SpinnerPage
         character={this.state.character}
-        checked={this.state.checked}
-
-        groupId={this.state.groupId}
-        group={this.state.group}
-        isGroupError={this.state.isGroupError}
-
-        subGroup={this.state.subGroup}
-        isSubGroupError={this.state.isSubGroupError}
-
-        engGroup={this.state.engGroup}
-        isEngGroupError={this.state.isEngGroupError}
-
-        student={this.state.student}
-        teacher={this.state.teacher}
-        isTeacherError={this.state.isTeacherError}
-        // handleTeacherChange={this.handleTeacherChange}
-        teacher_checked={this.state.teacher_checked}
       />
-    case NAVIGATOR_PAGE_NO:
-      return <NavigatorPage
-        state={this.state}
-        setValue={this.setValue}
-      />
-    case DASHBOARD_PAGE_NO:
-      return <DashboardPage
-        state={this.state}
-        setValue={this.setValue}
-        handleTeacherChange={this.handleTeacherChange}
-        getCurrentLesson={(date) => this.getCurrentLesson(date)}
-        getTimeFirstLesson={this.getTimeFirstLesson}
-        getEndLastLesson={this.getEndLastLesson}
-        whatLesson={(date, when) => this.whatLesson(date, when)}
-        getTime={this.getTime}
-      />
-    case SCHEDULE_PAGE_NO:
-      return this.Spinner();
-    default:
-      break;
+    )
   }
-}
+
+  render() {
+    let {page} = this.state;
+    console.log('App: render: page:', page);
+    if (page >= 1 && page <= 13) {
+      return this.Raspisanie(page);
+    }
+    switch (page) {
+      case HOME_PAGE_NO:
+        return <HomePage
+          // state={this.state}
+          validateInput={this.isCorrect}
+          handleTeacherChange={this.handleTeacherChange}
+          convertIdInGroupName={this.convertIdInGroupName}
+          setValue={this.setValue}
+          description={this.state.description}
+          character={this.state.character}
+          checked={this.state.checked}
+
+          groupId={this.state.groupId}
+          group={this.state.group}
+          isGroupError={this.state.isGroupError}
+
+          subGroup={this.state.subGroup}
+          isSubGroupError={this.state.isSubGroupError}
+
+          engGroup={this.state.engGroup}
+          isEngGroupError={this.state.isEngGroupError}
+
+          student={this.state.student}
+          teacher={this.state.teacher}
+          isTeacherError={this.state.isTeacherError}
+          // handleTeacherChange={this.handleTeacherChange}
+          teacher_checked={this.state.teacher_checked}
+        />
+      case NAVIGATOR_PAGE_NO:
+        return <NavigatorPage
+          buildings={buildings}
+          character={this.state.character}
+          isMobileDevice={detectDevice() === "mobile"}
+          onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
+          onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
+          onScheduleClick={() => this.setState({page: SCHEDULE_PAGE_NO})}
+        />
+      case DASHBOARD_PAGE_NO:
+        const now = new Date();
+        const todayIndex = this.state.today - 1;
+
+        const currentLessonIdx = this.getCurrentLesson(now);
+        const currentLesson = this.state.days[todayIndex]?.[currentLessonIdx]?.[THIS_WEEK];
+        const currentLessonStartEnd = LessonStartEnd[currentLessonIdx]
+
+        const nextLessonIdx = this.whatLesson(now, "next").num;
+        const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx]?.[THIS_WEEK];
+        const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
+
+        const todaySummary = {
+          date: now,
+          lessonCount: this.state.day[todayIndex].count[THIS_WEEK],
+          startEnd: {
+            start: this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5),
+            end: this.getEndLastLesson(DAY_TODAY),
+          }
+        }
+
+        return <DashboardPage
+          character={this.state.character}
+          isTeacherAndValid={this.getIsCorrectTeacher()}
+
+          todaySummary={todaySummary}
+
+          currentLesson={currentLesson}
+          currentLessonStartEnd={currentLessonStartEnd}
+
+          nextLesson={nextLesson}
+          nextLessonStartEnd={nextLessonStartEnd}
+
+          onGoToPage={(pageNo) => this.setState({page: pageNo})}
+          handleTeacherChange={this.handleTeacherChange}
+          getCurrentLesson={(date) => this.getCurrentLesson(date)}
+          getTimeFirstLesson={(daynum: number) => this.getTimeFirstLesson(daynum)}
+          getEndLastLesson={(todayOrTomorrow: TodayOrTomorrow) => this.getEndLastLesson(todayOrTomorrow)}
+          whatLesson={(date, when) => this.whatLesson(date, when)}
+        />
+      case SCHEDULE_PAGE_NO:
+        return this.Spinner();
+      default:
+        break;
+    }
+  }
+
 }

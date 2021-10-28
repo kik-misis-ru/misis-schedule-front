@@ -2,42 +2,19 @@ import React, {DetailedHTMLProps, HTMLAttributes} from "react";
 import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
-import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
-
-// import "../../themes/App.css";
 import {
   DASHBOARD_PAGE_NO,
+  SCHEDULE_PAGE_NO,
   MyDiv100,
 } from '../../App';
 import {
-  GoToMenuButton,
+  GoToDashboardButton,
   GoToScheduleButton,
-} from '../HomeView';
+} from '../TopMenu';
 
-
-// const GoToMenuButton = (props) => <Button
-//   size="s"
-//   view="clear"
-//   onClick={props.onClick}
-//   pin="circle-circle"
-//   contentRight={
-//     <IconHouse size="s" color="inherit"/>
-//   }
-// />
-
-// const GoToScheduleButton = (props) => <Button
-//   view="clear"
-//   onClick={props.onClick}
-//   contentRight={
-//     <IconChevronRight size="s" color="inherit"/>
-//   }
-//   size="s"
-//   pin="circle-circle"
-//   style={{marginTop: "1em", marginRight: "1em"}}
-// />
 
 interface MainProps {
-  setValue
+  setValue: (key: string, value: any) => void
   convertIdInGroupName: () => void
   disabled: boolean
   contentRight: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
@@ -65,7 +42,7 @@ class Main extends React.Component<MainProps> {
 
         <Row>
           <Col style={{marginLeft: "auto"}}>
-            <GoToMenuButton
+            <GoToDashboardButton
               onClick={() => {
                 this.handleChange("page", DASHBOARD_PAGE_NO)
               }}
@@ -73,7 +50,7 @@ class Main extends React.Component<MainProps> {
             <GoToScheduleButton
               onClick={() => {
                 this.props.convertIdInGroupName();
-                this.handleChange("page", 17)
+                this.handleChange("page", SCHEDULE_PAGE_NO)
               }}
               disabled={this.props.disabled}
             />

@@ -2,20 +2,33 @@ import React from "react";
 import styled from "styled-components";
 import {Button, CardHeadline2, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle,  CardParagraph1,
 } from "@sberdevices/plasma-ui";
-import {IconHouse, IconNavigationArrow, IconSettings, IconStar, IconStarFill} from "@sberdevices/plasma-icons";
+import {
+  IconHouse,
+  IconNavigationArrow,
+  IconSettings,
+  IconStar,
+  IconStarFill,
+  IconMoreVertical,
+  IconChevronRight
+} from "@sberdevices/plasma-icons";
 
 import logo from "../images/logo.png";
 
 
-export const HeaderLogo = () => {
+export const HeaderLogoCol = () => {
   return (
-    <Col style={{maxWidth: '3rem'}}>
-      <Image src={logo} ratio="1 / 1"/>
+    <Col
+      style={{maxWidth: '3rem'}}
+    >
+      <Image
+        src={logo}
+        ratio="1 / 1"
+      />
     </Col>
   )
 }
 
-export const HeaderTitle = ({
+export const HeaderTitleCol = ({
                        title
                      }: {
   title: string
@@ -28,7 +41,7 @@ export const HeaderTitle = ({
 )
 
 
-export const HeaderTitle2 = ({
+export const HeaderTitleCol2 = ({
                        title
                      }: {
   title: string
@@ -43,7 +56,7 @@ export const HeaderTitle2 = ({
 
 const DEFAULT_SCHEDULE_TEXT = 'Расписание занятий';
 
-export function HeaderSchedule({
+export function HeaderScheduleCol({
                                  label = DEFAULT_SCHEDULE_TEXT,
                                  subLabel,
                                }: {
@@ -128,6 +141,47 @@ export const GoToHomeButton = ({
   />
 )
 
+// export const GoToScheduleButton = ({
+//                           onClick,
+//                         }: {
+//   onClick: React.MouseEventHandler<HTMLElement>
+// }) => (
+//   <Button
+//     size="s"
+//     view="clear"
+//     pin="circle-circle"
+//     onClick={(event) => onClick(event)}
+//     contentRight={
+//       <IconMoreVertical size="s" color="inherit"/>
+//     }
+//   />
+// )
+
+export const GoToScheduleButton = ({
+                                     disabled=false,
+                                     style={},
+                                     onClick,
+                                   }: {
+  disabled?: boolean
+  style?: Object
+  onClick: React.MouseEventHandler<HTMLElement>
+}) => (
+  disabled
+    ? <Button
+      view="clear"
+      disabled={disabled}
+    />
+    : <Button
+      size="s"
+      view="clear"
+      pin="circle-circle"
+      onClick={(event) => onClick(event)}
+      contentRight={
+        <IconChevronRight size="s" color="inherit"/>
+      }
+      style={style}
+    />
+)
 
 export const TopMenu = ({
                    label,
@@ -149,9 +203,9 @@ export const TopMenu = ({
   return (
     <Row style={{margin: "1em"}}>
 
-      <HeaderLogo/>
+      <HeaderLogoCol/>
 
-      <HeaderSchedule
+      <HeaderScheduleCol
         label={label}
         subLabel={subLabel}
       />

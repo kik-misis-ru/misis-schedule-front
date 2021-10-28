@@ -1,7 +1,7 @@
 import {Row, TextBox, TextBoxBigTitle} from "@sberdevices/plasma-ui";
 import React from "react";
 
-const DAY_OFF_TEXT = 'Выходной 😋';
+export const DAY_OFF_TEXT = 'Выходной 😋';
 
 export const ScheduleDayOff = () => (
   <Row style={{

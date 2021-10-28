@@ -1,30 +1,29 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
-import ScheduleLesson from '../components/ScheduleLesson';
-import {lesson} from "./consts";
+import ScheduleLesson from '../../components/ScheduleLesson';
+import {lesson} from "../consts";
 
 export default {
-  title: 'misis-schedule/ScheduleLesson',
+  title: 'components/ScheduleLesson',
   component: ScheduleLesson,
   argTypes: {
     isCurrentLesson: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
-    isCorrectTeacher: {
+    isTeacherAndValid: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
-    startTime: {
-      type: {name: 'string', required: false},
-      defaultValue: '10:00',
+    startEndTime: {
+      // type: {name: 'string', required: false},
+      defaultValue: {
+        start: '10:00',
+        end: '11:00',
+      },
     },
-    endTime: {
-      type: {name: 'string', required: false},
-      defaultValue: '11:30',
-    },
-    bell: {
+    lesson: {
       defaultValue: lesson
     }
   },
