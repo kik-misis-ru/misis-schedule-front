@@ -178,16 +178,9 @@ export interface StartEnd {
   end: string
 }
 
-export const LessonStartEnd: StartEnd[] = [
-  {start: "9:00", end: "10:35"},
-  {start: "10:50", end: "12:25"},
-  {start: "12:40", end: "14:15"},
-  {start: "14:30", end: "16:05"},
-  {start: "16:20", end: "17:55"},
-  {start: "18:10", end: "19:45"},
-  {start: "20:00", end: "21:35"},
-  {start: "", end : ""}
-]
+const MAX_BELL_COUNT = 8;
+
+export const LessonStartEnd: StartEnd[] = Array(MAX_BELL_COUNT).fill({start: "", end: ""})
 
 /**
  *
@@ -1469,6 +1462,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           days[day][bell][i].lessonType = "";
           days[day][bell][i].lessonNumber = "";
           days[day][bell][i].url = "";
+          days[day][bell][i].groupNumber = "";
         }
     }
   }
@@ -1487,6 +1481,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           let lesson_info_state: Bell = days[day_num - 1][bell_num][i]
 
           const subgroup_name = lesson_info?.groups?.[0]?.subgroup_name;
+
+          let header = parsedSchedule.schedule[bell]['header']
+          LessonStartEnd[bell_num] = {start: header['start_lesson'], end: header['end_lesson']}
 
           if (
             (parsedSchedule.schedule[bell_num] !== undefined) &&
