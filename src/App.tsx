@@ -1850,7 +1850,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.convertGroupNameInId();
           correct = true;
         }
-        if (english_response) {
+        if (english_response || this.state.engGroup=="") {
           correct_eng = true;
           console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
         }
