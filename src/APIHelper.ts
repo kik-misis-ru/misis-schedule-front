@@ -285,7 +285,7 @@ export async function getGroupByName(groupName: string) {
   return groupInfo;
 }
 export async function  IsEnslishGroupExist(group_num: number) : Promise<number>{
-  const url = `${API_URL}is_ensglish_group_exist`;
+  const url = `${API_URL}is_english_group_exist`;
   const config = {
     params: {
       group_num: group_num,

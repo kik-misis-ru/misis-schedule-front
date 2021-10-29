@@ -73,6 +73,7 @@ import {
   MS_IN_DAY,
   pairNumberToPairText
 } from './utils';
+import { group } from "console";
 
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
@@ -1298,7 +1299,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'show_schedule':
           console.log("показать расписание");
           if (this.state.page === 0)
-            return this.isCorrect();
+            return this.Load_Schedule();
           break;
 
         case 'group':
@@ -1808,12 +1809,28 @@ export class App extends React.Component<IAppProps, IAppState> {
     })
   }
 
+
+  Load_Schedule(){
+    console.log("LoadSchedule", this.state.groupId)
+    getScheduleFromDb(
+      this.state.groupId,
+      String(this.state.engGroup),
+      this.getFirstDayWeek(new Date()))
+      .then((response) => {
+        this.showWeekSchedule(response, 0);
+        console.log(String(this.state.engGroup));
+        this.setState({flag: true});
+        this.convertIdInGroupName();
+        this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
+      })
+  }
+
   isCorrect() {
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now()})
     let correct_sub = false;
     let correct_eng = false;
-    let correct = false
+    let correct = false;
 
     let promiseGroupName = getGroupByName(this.state.group)
     let promiseEnglishGroup = IsEnslishGroupExist(Number(this.state.engGroup))
@@ -1827,8 +1844,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.setState({correct: true})
           this.convertGroupNameInId();
           correct = true;
-          const groupId = String(response['id']);
-          this.setState({groupId: groupId})
         }
         if (english_response == 1) {
           correct_eng = true;
@@ -1847,19 +1862,12 @@ export class App extends React.Component<IAppProps, IAppState> {
               this.state.subGroup,
               this.state.engGroup,
               "");
+              const groupId = String(group_response.id);
+              console.log("GROUP_ID:", groupId)
+              this.setState({groupId: groupId}, () =>{this.Load_Schedule()})
           }
 
-          getScheduleFromDb(
-            group_response["id"],
-            String(this.state.engGroup),
-            this.getFirstDayWeek(new Date()))
-            .then((response) => {
-              this.showWeekSchedule(response, 0);
-              console.log(String(this.state.engGroup));
-              this.setState({flag: true});
-              this.convertIdInGroupName();
-              this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
-            })
+          
         } else if (this.state.correct) {
           this.setState({isGroupError: false});
 
