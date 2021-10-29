@@ -1370,7 +1370,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   // получить дату первого дня недели
   getFirstDayWeek(date: Date): string {
-
     // номер дня недели
     const now = new Date();
     this.setState({today: now.getDay()});
@@ -1860,16 +1859,18 @@ export class App extends React.Component<IAppProps, IAppState> {
         if (correct && correct_sub && correct_eng) {
           this.setState({page: SCHEDULE_PAGE_NO})
           if (this.state.checked) {
-            createUser(
-              this.state.userId,
-              filial.id,
-              this.state.groupId,
-              this.state.subGroup,
-              this.state.engGroup,
-              "");
               const groupId = String(group_response.id);
               console.log("GROUP_ID:", groupId)
-              this.setState({groupId: groupId}, () =>{this.Load_Schedule()})
+              this.setState({groupId: groupId}, () =>{
+                createUser(
+                  this.state.userId,
+                  filial.id,
+                  this.state.groupId,
+                  this.state.subGroup,
+                  this.state.engGroup,
+                  "")
+                this.Load_Schedule()
+                })
           }
 
           
