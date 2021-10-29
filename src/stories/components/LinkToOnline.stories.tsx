@@ -22,3 +22,6 @@ const Template: ComponentStory<typeof LinkToOnline> = (args, context) => (
   <LinkToOnline {...args} />
 );
 
+export const Default = Template.bind({});
+
+

@@ -14,3 +14,5 @@ const Template: ComponentStory<typeof ScheduleDayOff> = (args, context) => (
   <ScheduleDayOff/>
 );
 
+export const Default = Template.bind({});
+
