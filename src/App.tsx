@@ -181,6 +181,8 @@ export interface StartEnd {
 
 const MAX_BELL_COUNT = 8;
 
+const FIRST_DAY_OTHER_WEEK = 8;
+
 export const LessonStartEnd: StartEnd[] = Array(MAX_BELL_COUNT).fill({start: "", end: ""})
 
 /**
@@ -363,9 +365,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             console.log("Sub", event.sub);
             this.setState({userId: event.sub});
             getUser(this.state.userId).then((user) => {
-
               if (user !== "0") {
-                console.log('user', user)
                 this.setState({
                   groupId: user.group_id,
                   subGroup: user.subgroup_name,
@@ -996,7 +996,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
             this.ChangePage()
-            return this.setState({page: 8});
+            return this.setState({page: FIRST_DAY_OTHER_WEEK});
           }
           break;
 
@@ -1601,7 +1601,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     const current = this.getCurrentLesson(new Date());
     const day_num = timeParam - 1;
     const index = timeParam;
-    const page = weekParam === OTHER_WEEK ? 8 : 0;
+    const page = weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0;
 
     // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
 
@@ -1675,7 +1675,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               onPrevWeekClick={() => {
                 this.setState({spinner: false});
                 this.PreviousWeek();
-                this.setState({flag: false, page: 8})
+                this.setState({flag: false, page: FIRST_DAY_OTHER_WEEK})
               }}
               onThisWeekClick={() => {
                 this.CurrentWeek();
@@ -1684,7 +1684,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               onNextWeekClick={() => {
                 this.setState({spinner: false});
                 this.NextWeek();
-                this.setState({flag: false, page: 8})
+                this.setState({flag: false, page: FIRST_DAY_OTHER_WEEK})
               }}
             />
 
@@ -1915,8 +1915,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log("this.state.flag", this.state.flag)
 
           const pageNo = this.state.today === 0
-            ? this.state.flag ? 7 : 8
-            : this.state.flag ? this.state.today : 8
+            ? this.state.flag ? 7 : FIRST_DAY_OTHER_WEEK
+            : this.state.flag ? this.state.today : FIRST_DAY_OTHER_WEEK
           console.log('Spinner: pageNo:', pageNo)
 
           // переходим на другую страницу
