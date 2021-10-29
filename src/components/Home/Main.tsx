@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   DASHBOARD_PAGE_NO,
   SCHEDULE_PAGE_NO,
-  MyDiv100,
+  Spacer100,
 } from '../../App';
 import {
   GoToDashboardButton,
@@ -20,50 +20,61 @@ interface MainProps {
   contentRight: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 }
 
-class Main extends React.Component<MainProps> {
-  constructor(props: MainProps) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this)
-    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
-  }
+const Main = ({
+                disabled,
+                contentRight,
+                setValue,
+                convertIdInGroupName,
+              }: MainProps) => {
 
-  handleChange(key, e) {
-    this.props.setValue(key, e);
-  }
+  const TopMenuRow = () => (
+    <Row
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+      }}
+    >
+      <Col
+        // style={{marginLeft: "auto"}}
+      >
+        <GoToDashboardButton
+          onClick={() => {
+            setValue("page", DASHBOARD_PAGE_NO)
+          }}
+        />
+        <GoToScheduleButton
+          onClick={() => {
+            convertIdInGroupName();
+            setValue("page", SCHEDULE_PAGE_NO)
+          }}
+          disabled={disabled}
+        />
+      </Col>
+    </Row>
 
-  convertIdInGroupName() {
-    this.props.convertIdInGroupName();
-  }
+  )
 
+  return (
+    <Container
+      // style={{padding: 0}}
+    >
+      <TopMenuRow/>
+      <Cell
+        content={
+          contentRight
+        }
+        style={{
+          // padding: 0,
+          margin: '0 auto',
+        }}
+      >
+      </Cell>
 
-  render() {
-    return (
-      <Container style={{padding: 0}}>
+      <Spacer100/>
 
-        <Row>
-          <Col style={{marginLeft: "auto"}}>
-            <GoToDashboardButton
-              onClick={() => {
-                this.handleChange("page", DASHBOARD_PAGE_NO)
-              }}
-            />
-            <GoToScheduleButton
-              onClick={() => {
-                this.props.convertIdInGroupName();
-                this.handleChange("page", SCHEDULE_PAGE_NO)
-              }}
-              disabled={this.props.disabled}
-            />
-          </Col>
-        </Row>
-        <Cell
-          content={this.props.contentRight}>
-          style={{padding: 0}}
-        </Cell>
-        <MyDiv100/>
-      </Container>
-    )
-  }
+    </Container>
+  )
 }
 
 export default Main

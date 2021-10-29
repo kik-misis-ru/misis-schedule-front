@@ -1,7 +1,7 @@
 import React from "react";
 import {Row, Tabs, TabItem} from '@sberdevices/plasma-ui';
 
-export const TabSelector = ({
+export const TabSelectorRow = ({
                               tabs,
                               selectedIndex,
                               onSelect,
@@ -35,4 +35,4 @@ export const TabSelector = ({
   )
 }
 
-export default TabSelector
+export default TabSelectorRow
