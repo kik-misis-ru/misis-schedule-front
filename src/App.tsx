@@ -1962,10 +1962,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       case HOME_PAGE_NO:
         return <HomePage
           // state={this.state}
-          validateInput={this.isCorrect}
-          handleTeacherChange={this.handleTeacherChange}
-          convertIdInGroupName={this.convertIdInGroupName}
-          setValue={this.setValue}
+          onValidateInput={this.isCorrect}
+          onHandleTeacherChange={this.handleTeacherChange}
+          onConvertIdInGroupName={this.convertIdInGroupName}
+          onSetValue={this.setValue}
           description={this.state.description}
           character={this.state.character}
           checked={this.state.checked}

@@ -178,11 +178,11 @@ interface HomeViewProps {
   checked: boolean
   description: string
 
-  setValue: (key: string, value: any) => void
-  validateInput: () => void
-  handleTeacherChange: () => Promise<void>
+  onSetValue: (key: string, value: any) => void
+  onValidateInput: () => void
+  onHandleTeacherChange: () => Promise<void>
   // handleTeacherChange
-  convertIdInGroupName: () => void
+  onConvertIdInGroupName: () => void
 
   group: string
   isGroupError: boolean
@@ -207,31 +207,31 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   constructor(props: HomeViewProps) {
     super(props);
-    this.handleChange = this.handleChange.bind(this)
+    this.onHandleChange = this.onHandleChange.bind(this)
     // this.handleTeacherChange = this.handleTeacherChange.bind(this);
-    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+    this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     let disabled = true;
     if (props.groupId !== "") disabled = false;
     this.state = {disabled: disabled}
-    this.handleChange("description", props.character === "joy"
+    this.onHandleChange("description", props.character === "joy"
       ? DESC_JOY
       : DESC_OTHERS)
   }
 
-  handleChange(key: string, value: any): void {
-    this.props.setValue(key, value);
+  onHandleChange(key: string, value: any): void {
+    this.props.onSetValue(key, value);
   }
 
   async isCorrect() {
-    await this.props.validateInput();
+    await this.props.onValidateInput();
   }
 
   // handleTeacherChange() {
   //   this.props.handleTeacherChange();
   // }
 
-  convertIdInGroupName() {
-    this.props.convertIdInGroupName();
+  onConvertIdInGroupName() {
+    this.props.onConvertIdInGroupName();
   }
 
   render() {
@@ -248,7 +248,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <TabSelectorRow
           tabs={USER_MODES}
           selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
         />
 
         <HomeDescription
@@ -259,38 +259,38 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           label={LABEL_GROUP}
           isError={this.props.isGroupError}
           value={this.props.group}
-          onChange={(value) => this.handleChange('group', value)}
+          onChange={(value) => this.onHandleChange('group', value)}
         />
 
         <TextFieldForUserInfo
           label={LABEL_SUB_GROUP}
           isError={this.props.isSubGroupError}
           value={this.props.subGroup}
-          onChange={(value) => this.handleChange('subGroup', value)}
+          onChange={(value) => this.onHandleChange('subGroup', value)}
         />
 
         <TextFieldForUserInfo
           label={LABEL_ENG_GROUP}
           isError={this.props.isEngGroupError}
           value={this.props.engGroup}
-          onChange={(value) => this.handleChange('engGroup', value)}
+          onChange={(value) => this.onHandleChange('engGroup', value)}
         />
 
         <RememberCheckboxRow
           label={LABEL_REMEMBER_GROUP}
           checked={this.props.checked}
-          onChange={(value) => this.handleChange('checked', value)}
+          onChange={(value) => this.onHandleChange('checked', value)}
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.validateInput()}
+          onClick={() => this.props.onValidateInput()}
         />
 
       </Container>
     );
 
     const teacherContent = (
-      <Container>
+      <Container style={{padding: 0}}>
 
         <HomeTitle
           text={HOME_TITLE}
@@ -300,7 +300,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <TabSelectorRow
           tabs={USER_MODES}
           selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.handleChange("student", tabIndex === 0)}
+          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
         />
 
         <HomeDescription
@@ -311,19 +311,19 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           label={LABEL_TEACHER}
           value={this.props.teacher}
           isError={this.props.isTeacherError}
-          onChange={(value) => this.handleChange('teacher', value)}
+          onChange={(value) => this.onHandleChange('teacher', value)}
         />
 
         <RememberCheckboxRow
           label={LABEL_REMEMBER_FIO}
           checked={this.props.teacher_checked}
           onChange={(value: boolean) => {
-            this.handleChange("teacher_checked", value);
+            this.onHandleChange("teacher_checked", value);
           }}
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.handleTeacherChange()}
+          onClick={() => this.props.onHandleTeacherChange()}
         />
 
       </Container>
@@ -340,8 +340,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           this.props.student
             ? (
               <Main
-                setValue={this.handleChange}
-                convertIdInGroupName={this.convertIdInGroupName}
+                setValue={this.onHandleChange}
+                convertIdInGroupName={this.onConvertIdInGroupName}
                 disabled={this.state.disabled}
                 contentRight={studentContent}
               />
@@ -374,8 +374,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
 
               <Main
-                setValue={this.handleChange}
-                convertIdInGroupName={this.convertIdInGroupName}
+                setValue={this.onHandleChange}
+                convertIdInGroupName={this.onConvertIdInGroupName}
                 disabled={this.state.disabled}
                 contentRight={teacherContent}
               />
