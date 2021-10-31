@@ -2004,9 +2004,18 @@ export class App extends React.Component<IAppProps, IAppState> {
         const currentLessonStartEnd = LessonStartEnd[currentLessonIdx]
 
         const nextLessonIdx = this.whatLesson(now, "next").num;
-        const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx]?.[THIS_WEEK];
+        const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx-1]?.[THIS_WEEK];
+        console.log(this.whatLesson(now, "next").num, "next")
         const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
-
+        const todaySummary = {
+          date: now,
+          lessonCount: 0,
+          startEnd: {
+            start: "",
+            end: "",
+          }
+        }
+        if (todayIndex !=-1){
         const todaySummary = {
           date: now,
           lessonCount: this.state.day[todayIndex].count[THIS_WEEK],
@@ -2015,11 +2024,10 @@ export class App extends React.Component<IAppProps, IAppState> {
             end: this.getEndLastLesson(DAY_TODAY),
           }
         }
-
+      } 
         return <DashboardPage
           character={this.state.character}
           isTeacherAndValid={this.getIsCorrectTeacher()}
-
           todaySummary={todaySummary}
 
           currentLesson={currentLesson}
@@ -2027,7 +2035,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
           nextLesson={nextLesson}
           nextLessonStartEnd={nextLessonStartEnd}
-
+          groupId={this.state.groupId}
           onGoToPage={(pageNo) => this.setState({page: pageNo})}
           handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={(date) => this.getCurrentLesson(date)}

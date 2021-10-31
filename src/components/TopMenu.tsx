@@ -220,13 +220,13 @@ export const TopMenu = ({
           starred={starred}
           onClick={() => onStarClick()}
         />
-        <GoToDashboardButton
-          onClick={() => onDashboardClick()}
-        />
+        
         <GoToHomeButton
           onClick={() => onHomeClick()}
         />
-
+        <GoToDashboardButton
+                  onClick={() => onDashboardClick()}
+                />
         {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>
     </Row>

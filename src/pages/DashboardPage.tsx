@@ -1,5 +1,5 @@
 import React, {MouseEventHandler} from "react";
-import {Container, Row, Col, Button, DeviceThemeProvider} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, Button, DeviceThemeProvider, TextBoxBiggerTitle, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
@@ -10,8 +10,9 @@ import {
   //CardMedia,
   CardParagraph1,
   CardParagraph2,
-  //TextBoxBigTitle,
+  TextBoxBigTitle,
   TextBox,
+  TextBoxLabel,
   TextBoxSubTitle,
   TextBoxTitle,
   Badge,
@@ -102,14 +103,14 @@ const ScheduleSectionTitleRow = () => (
     <Col
       style={{
         marginLeft: "2em",
-        paddingTop: "1em"
+        paddingTop: "0.5em"
       }}
     >
-      <IconStarFill/>
+      <IconStarFill  color="grey"/>
     </Col>
 
     <Col style={{
-      paddingTop: "1.1em"
+      paddingTop: "0.6em"
     }}>
       <TextBox>
         <CardHeadline3>
@@ -126,7 +127,7 @@ const CatalogueHeaderRow = () => {
   return (
     <Row>
       <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
-        <IconApps/>
+        <IconApps color="grey"/>
       </Col>
       <Col style={{paddingTop: "1.1em"}}>
         <TextBox>
@@ -228,6 +229,48 @@ const DashboardCard = ({
   )
 }
 
+const GetCloser = ({
+    onGoToPage,
+  }: {
+  onGoToPage: (pageNo) => void
+  }) => {
+  return (
+  <Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+
+  <Card  onClick={() => onGoToPage(HOME_PAGE_NO)} style={{padding: "0 0 0 0", width: "95%", height: "6vh"}}>
+  
+            <CardBody
+              style={{padding: "0 0 0 0"}}
+            >
+                    <CardContent style={{padding: "0 0 0 0"}}>
+                    <CellListItem 
+                    style={{padding: "0 0 0 0"}}
+                    contentLeft={
+                    <TextBox>
+                       <TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em"}}>
+                       🥺
+                       </TextBoxBiggerTitle>
+                    </TextBox>}
+                    content={
+                      <TextBox >
+                        <Body1 >
+                       Станем ближе?
+                       </Body1>
+
+                    </TextBox>
+                    }
+                    >
+                    </CellListItem>
+                    </CardContent>
+  
+            </CardBody>
+  
+          </Card>
+
+  </Row>
+
+  )
+}
 
 const CatalogueItems = ({
                           onGoToPage,
@@ -239,7 +282,7 @@ const CatalogueItems = ({
 
       <DashboardCard
         text="Расписание"
-        onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
+        onClick={() => onGoToPage(HOME_PAGE_NO)}
       />
 
       <DashboardCard
@@ -264,9 +307,9 @@ const CatalogueItems = ({
 const ScheduleLessonTitle = ({text}: { text: string }) => (
   <TextBox
     // @ts-ignore
-    style={{color: DEFAULT_TEXT_COLOR}}
+    
   >
-    <CardParagraph1>
+    <CardParagraph1 style={{color: "grey"}}>
       {text}
     </CardParagraph1>
   </TextBox>
@@ -302,7 +345,7 @@ const DashboardPage = ({
 
                          currentLesson,
                          currentLessonStartEnd,
-
+                         groupId,
                          nextLesson,
                          nextLessonStartEnd,
 
@@ -318,7 +361,7 @@ const DashboardPage = ({
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
   isTeacherAndValid: boolean
-
+  groupId: String
   todaySummary: {
     date: Date,
     lessonCount: number
@@ -347,44 +390,44 @@ const DashboardPage = ({
   // }
 
 }) => {
-  // // const isSunday = (state.today === 0);
-  // const todayIndex = state.today - 1;
-  //
+  //const isSunday = (state.today === 0);
+  //const todayIndex = state.today - 1;
+  
   // console.log('Dashboard: day:', state.day[todayIndex]);
-  //
+  
   // const now = new Date();
   // const lessonCountToday = state.day[todayIndex].count[THIS_WEEK];
-  // // const weekDayShortToday = state.day[todayIndex].title;
-  // // const dateToday = state.day[todayIndex].date[THIS_WEEK];
-  //
-  // // const lessonNowIdx = whatLesson(now, "now").num;
+  // const weekDayShortToday = state.day[todayIndex].title;
+  // const dateToday = state.day[todayIndex].date[THIS_WEEK];
+  
+  // const lessonNowIdx = whatLesson(now, "now").num;
   // const nextLessonIdx = whatLesson(now, "next").num;
-  //
-  // // console.log('DashboardPage: whatLesson(now, "now"):', whatLesson(now, "now"));
-  // // console.log('DashboardPage: todayIndex:', todayIndex);
-  // // console.log('DashboardPage: lessonNowIdx:', lessonNowIdx);
-  // // console.log('DashboardPage: state.days[todayIndex]:', state.days[todayIndex]);
-  // // console.log('DashboardPage: state.days[todayIndex][lessonNowIdx]:', state.days[todayIndex][lessonNowIdx]);
-  //
-  // // const lessonNow = state.days[todayIndex]?.[lessonNowIdx]?.[THIS_WEEK];
-  // // const nextLesson = state.days[todayIndex]?.[nextLessonIdx]?.[THIS_WEEK];
-  //
+  
+  // console.log('DashboardPage: whatLesson(now, "now"):', whatLesson(now, "now"));
+  // console.log('DashboardPage: todayIndex:', todayIndex);
+  // console.log('DashboardPage: lessonNowIdx:', lessonNowIdx);
+  // console.log('DashboardPage: state.days[todayIndex]:', state.days[todayIndex]);
+  // console.log('DashboardPage: state.days[todayIndex][lessonNowIdx]:', state.days[todayIndex][lessonNowIdx]);
+  
+  // const lessonNow = state.days[todayIndex]?.[lessonNowIdx]?.[THIS_WEEK];
+  // const nextLesson = state.days[todayIndex]?.[nextLessonIdx]?.[THIS_WEEK];
+  
   // const currentLessonIdx = getCurrentLesson(now);
   // // const currentLesson = state.days[todayIndex]?.[currentLessonIdx]?.[THIS_WEEK];
-  //
+  
   // console.log('DashboardPage: currentLesson:', currentLesson);
   // console.log('DashboardPage: nextLesson:', nextLesson);
-  //
-  // // whatLesson(new Date(), "next").num
-  //
-  // // const isTeacherAndValid = !state.student && state.teacher_correct;
-  //
+  
+  // whatLesson(new Date(), "next").num
+  
+  // const isTeacherAndValid = !state.student && state.teacher_correct;
+  
   // const lessonsStartEnd = {
   //   start: getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5),
   //   end: getEndLastLesson(DAY_TODAY),
   // }
-  //
-  // // console.log(`isSunday: ${isSunday}, lessonCountToday: ${lessonCountToday}`);
+  
+  // console.log(`isSunday: ${isSunday}, lessonCountToday: ${lessonCountToday}`);
 
   return (
     <DeviceThemeProvider>
@@ -402,14 +445,18 @@ const DashboardPage = ({
           lessonCount={todaySummary.lessonCount}
           lessonsStartEnd={todaySummary.startEnd}
         />
-
+        {groupId !="" ? (
+        <Row>
         <ScheduleSectionTitleRow/>
 
         <Card style={{
-          width: "90%",
-          marginLeft: "1em",
+          width: "85%",
+          marginLeft: "1.5em",
           marginTop: "0.5em",
-        }}>
+          marginRight: "1.5em"
+        }}
+        onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
+        >
 
           <CardBody
             // style={{padding: "0 0 0 0"}}
@@ -472,7 +519,13 @@ const DashboardPage = ({
           </CardBody>
 
         </Card>
-
+        </Row>) : 
+        (
+          <GetCloser
+          onGoToPage={(pageNo) => onGoToPage(pageNo)}
+          />
+        )
+}
 
         <CatalogueHeaderRow/>
 
