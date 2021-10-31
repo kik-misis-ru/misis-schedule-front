@@ -20,6 +20,8 @@ import {
   CardHeadline3,
   CardHeadline2,
   Image,
+  LineSkeleton,
+  RectSkeleton,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
 import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/plasma-icons";
@@ -144,11 +146,13 @@ const CatalogueHeaderRow = () => {
 const TodaySummary = ({
                         date,
                         lessonCount,
-                        lessonsStartEnd,
+                        lessonsStart,
+                        lessonsEnd
                       }: {
   date: Date
   lessonCount: number
-  lessonsStartEnd: StartEnd
+  lessonsStart: string
+  lessonsEnd: string
 }) => {
   const dayOfWeek = date.getDay();
   const isSunday = dayOfWeek === 0;
@@ -160,6 +164,7 @@ const TodaySummary = ({
   const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
     `Сегодня ${count} с ${from} до ${to}`
   )
+  console.log(lessonsStart, "lessoncount")
 
   return (
     <Row>
@@ -183,8 +188,8 @@ const TodaySummary = ({
             lessonCount !== 0
               ? formatLessonsCountFromTo(
                 pairNumberToPairNumText(lessonCount),
-                lessonsStartEnd.start,
-                lessonsStartEnd.end,
+                lessonsStart,
+                lessonsEnd,
               )
               : NO_LESSONS_TODAY_TEXT
           }
@@ -340,15 +345,15 @@ const DashboardPage = ({
                          // state,
                          character,
                          isTeacherAndValid,
-
-                         todaySummary,
-
+                         start,
+                         end,
+                         count,
                          currentLesson,
                          currentLessonStartEnd,
                          groupId,
                          nextLesson,
                          nextLessonStartEnd,
-
+                         spinner,
                          onGoToPage,
                          handleTeacherChange,
                          getCurrentLesson,
@@ -362,12 +367,10 @@ const DashboardPage = ({
     | typeof CHAR_TIMEPARAMOY
   isTeacherAndValid: boolean
   groupId: String
-  todaySummary: {
-    date: Date,
-    lessonCount: number
-    startEnd: StartEnd
-  }
-
+  spinner: Boolean
+  count: number,
+  start: string,
+  end: string,
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
 
@@ -439,14 +442,16 @@ const DashboardPage = ({
         <HeaderRow
           onHomeClick={() => onGoToPage(HOME_PAGE_NO)}
         />
-
-        <TodaySummary
-          date={todaySummary.date}
-          lessonCount={todaySummary.lessonCount}
-          lessonsStartEnd={todaySummary.startEnd}
+        { spinner===true ?
+        (<Row>
+          <TodaySummary
+          date={new Date()}
+          lessonCount={count}
+          lessonsStart={start}
+          lessonsEnd={end}
         />
         {groupId !="" ? (
-        <Row>
+        <Col>
         <ScheduleSectionTitleRow/>
 
         <Card style={{
@@ -519,20 +524,30 @@ const DashboardPage = ({
           </CardBody>
 
         </Card>
-        </Row>) : 
+        </Col>
+        ) : 
         (
           <GetCloser
           onGoToPage={(pageNo) => onGoToPage(pageNo)}
           />
         )
 }
-
+</Row>)
+      :(
+        <Col style={{margin: "1em"}}>
+        <LineSkeleton size="headline1" roundness={8} />
+        <LineSkeleton size="headline3" roundness={8} />
+        <LineSkeleton size="headline2" roundness={8} style={{marginTop: "0.5em"}}/>
+        <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em"}} roundness={16} />
+        </Col>
+      )
+      }
         <CatalogueHeaderRow/>
 
         <CatalogueItems
           onGoToPage={(pageNo) => onGoToPage(pageNo)}
         />
-
+        
 
         <div style={{
           width: '200px',

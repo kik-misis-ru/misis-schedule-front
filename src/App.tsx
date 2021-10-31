@@ -80,7 +80,7 @@ export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
 
-const INITIAL_PAGE = 17;
+const INITIAL_PAGE = 16;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
@@ -392,7 +392,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.ChangePage()
                   this.setState({
                     student: false,
-                    page: SCHEDULE_PAGE_NO,
+                    //page: DASHBOARD_PAGE_NO,
                     teacher_checked: true,
                     teacher_star: true,
                     teacher_bd: this.state.teacherId,
@@ -405,7 +405,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     console.log("Get shcedule")
                     this.ChangePage()
                     this.setState({
-                      page: SCHEDULE_PAGE_NO,
+                      //page: DASHBOARD_PAGE_NO,
                       checked: true,
                       star: true,
                       bd: this.state.groupId,
@@ -415,12 +415,13 @@ export class App extends React.Component<IAppProps, IAppState> {
 
                 } else {
                   this.ChangePage()
-                  this.setState({page: HOME_PAGE_NO});
+                  //this.setState({page: DASHBOARD_PAGE_NO});
                 }
               } else {
                 this.ChangePage()
-                this.setState({page: HOME_PAGE_NO});
+                
               }
+              this.setState({page: DASHBOARD_PAGE_NO});
             })
           }
           console.log(`assistant.on(data)`, event);
@@ -510,14 +511,13 @@ export class App extends React.Component<IAppProps, IAppState> {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
     console.log(`getEndLastLesson: todayOrTomorrow: ${todayOrTomorrow}, dayShift: ${dayShift}, dayNumber: ${dayNumber}`);
-
-    for (let lessonIdx = 6; lessonIdx > 0; lessonIdx--) {
-      const lessonName = this.state.days[dayNumber][lessonIdx][THIS_WEEK].lessonName
-      if (lessonName !== "") {
-        return LessonStartEnd[lessonIdx].end
+    let lessonEnd = '';
+    for (let lessonIdx in this.state.days[dayNumber]) {
+      if (this.state.days[dayNumber][lessonIdx][THIS_WEEK].lessonName !== "") {
+        lessonEnd = LessonStartEnd[lessonIdx].end;
       }
     }
-    return '';
+    return lessonEnd;
   }
 
   // определяет начало или конец энной пары сегодня или завтра
@@ -1470,8 +1470,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     for (let day_num = 1; day_num < 7; day_num++) {
 
       // todo
-      let countLessons = this.state.day[day_num - 1].count[i]
-      countLessons = 0;
+      let countLessons = 0;
+      this.state.day[day_num - 1].count[i] = 0;
 
       if (parsedSchedule.schedule !== null) {
         this.state.day[day_num - 1].date[i] = parsedSchedule.schedule_header[`day_${day_num}`].date;
@@ -1501,6 +1501,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
             countLessons++;
+            this.state.day[day_num - 1].count[i]++;
 
           } else if (
             (parsedSchedule.schedule[bell] !== undefined) &&
@@ -1527,12 +1528,13 @@ export class App extends React.Component<IAppProps, IAppState> {
               lesson_info_state.groupNumber += `${lesson_info.groups[name].name} `;
             }
             countLessons++;
+            this.state.day[day_num - 1].count[i]++;
 
           } else {
             lesson_info_state.reset();
           }
         }
-        if (countLessons === 0)
+        if (this.state.day[day_num - 1].count[i] === 0)
           days[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
 
       } else {
@@ -1542,7 +1544,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     this.setState({spinner: true});
     this.setState({days: days});
-    console.log("Days", days)
+    console.log("Days", days, "Day", this.state.day)
   }
 
 
@@ -2006,33 +2008,37 @@ export class App extends React.Component<IAppProps, IAppState> {
         const nextLessonIdx = this.whatLesson(now, "next").num;
         const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx-1]?.[THIS_WEEK];
         console.log(this.whatLesson(now, "next").num, "next")
+        const count = this.state.day[this.state.today - 1]?.count[0]
         const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
-        const todaySummary = {
-          date: now,
-          lessonCount: 0,
-          startEnd: {
-            start: "",
-            end: "",
-          }
-        }
-        if (todayIndex !=-1){
-        const todaySummary = {
-          date: now,
-          lessonCount: this.state.day[todayIndex].count[THIS_WEEK],
-          startEnd: {
-            start: this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5),
-            end: this.getEndLastLesson(DAY_TODAY),
-          }
-        }
-      } 
+        const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
+        const end= this.getEndLastLesson(DAY_TODAY);
+        // const todaySummary = {
+        //   date: now,
+        //   lessonCount: 0,
+        //   startEnd: {
+        //     start: "",
+        //     end: "",
+        //   }
+        // }
+        // if (todayIndex !=-1){
+        // const todaySummary = {
+        //   date: now,
+        //   lessonCount: this.state.day[this.state.today - 1].count[0],
+        //   startEnd: {
+            
+        //   }
+        // }
+        console.log(count, "todaysummary") 
+      
         return <DashboardPage
           character={this.state.character}
           isTeacherAndValid={this.getIsCorrectTeacher()}
-          todaySummary={todaySummary}
-
+          start={start}
+          end={end}
+          count={count}
+          spinner={this.state.spinner}
           currentLesson={currentLesson}
           currentLessonStartEnd={currentLessonStartEnd}
-
           nextLesson={nextLesson}
           nextLessonStartEnd={nextLessonStartEnd}
           groupId={this.state.groupId}
