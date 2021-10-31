@@ -451,9 +451,9 @@ const DashboardPage = ({
           lessonsEnd={end}
         />
         {groupId !="" ? (
-        <Col>
-        <ScheduleSectionTitleRow/>
 
+          <Col size={12}>
+        <ScheduleSectionTitleRow/>
         <Card style={{
           width: "85%",
           marginLeft: "1.5em",
