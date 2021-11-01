@@ -314,7 +314,7 @@ const ScheduleLessonTitle = ({text}: { text: string }) => (
     // @ts-ignore
     
   >
-    <CardParagraph1 style={{color: "grey"}}>
+    <CardParagraph1 style={{color: "grey", marginTop: "0.5em"}}>
       {text}
     </CardParagraph1>
   </TextBox>
@@ -455,7 +455,7 @@ const DashboardPage = ({
           <Col size={12}>
         <ScheduleSectionTitleRow/>
         <Card style={{
-          width: "85%",
+          width: "90%",
           marginLeft: "1.5em",
           marginTop: "0.5em",
           marginRight: "1.5em"
@@ -468,7 +468,7 @@ const DashboardPage = ({
           >
             <CardContent
               // compact
-              // style={{padding: "0.3em 0.3em"}}
+              style={{padding: "0 0.4em 0 0.4em"}}
             >
 
               <ScheduleLessonTitle text="Сейчас"/>
@@ -488,7 +488,7 @@ const DashboardPage = ({
                   : <NoLesson/>
               }
 
-            </CardContent>
+            </CardContent >
             {/*
           </CardBody>
 */}
@@ -502,9 +502,9 @@ const DashboardPage = ({
                   // style={{padding: "0 0 0 0"}}
                 >
 */
-                  <CardContent>
+                  <CardContent style={{padding: "0.4em 0.4em 0.4em 0.4em"}}>
 
-                    <ScheduleLessonTitle text="Дальше"/>
+                    <ScheduleLessonTitle text="Дальше" />
 
                     <ScheduleLesson
                       lesson={nextLesson}

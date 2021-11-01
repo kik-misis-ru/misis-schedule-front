@@ -23,6 +23,8 @@ import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 import DashboardPage from './pages/DashboardPage';
 
 import HomePage from './pages/HomePage';
+import Contacts from './pages/Contacts';
+import FAQ from './pages/FAQ';
 import NavigatorPage from './pages/NavigatorPage';
 import ScheduleDay from "./components/ScheduleDay";
 import SpinnerPage from "./pages/SpinnerPage";
@@ -79,6 +81,8 @@ export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
+export const CONTACTS_PAGE_NO = 18;
+export const FAQ_PAGE_NO = 19;
 
 const INITIAL_PAGE = 16;
 
@@ -2002,33 +2006,17 @@ export class App extends React.Component<IAppProps, IAppState> {
         const todayIndex = this.state.today - 1;
 
         const currentLessonIdx = this.getCurrentLesson(now);
-        const currentLesson = this.state.days[todayIndex]?.[currentLessonIdx]?.[THIS_WEEK];
-        const currentLessonStartEnd = LessonStartEnd[currentLessonIdx]
+        const currentLesson = this.state.days[todayIndex]?.[parseInt(currentLessonIdx)-1]?.[THIS_WEEK];
+        const currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx)-1]
 
-        const nextLessonIdx = this.whatLesson(now, "next").num;
+        const nextLessonIdx = this.whatLesson(now, "will").num ;
         const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx-1]?.[THIS_WEEK];
-        console.log(this.whatLesson(now, "next").num, "next")
+        console.log(this.whatLesson(now, "will").num, "next")
         const count = this.state.day[this.state.today - 1]?.count[0]
         const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
         const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
         const end= this.getEndLastLesson(DAY_TODAY);
-        // const todaySummary = {
-        //   date: now,
-        //   lessonCount: 0,
-        //   startEnd: {
-        //     start: "",
-        //     end: "",
-        //   }
-        // }
-        // if (todayIndex !=-1){
-        // const todaySummary = {
-        //   date: now,
-        //   lessonCount: this.state.day[this.state.today - 1].count[0],
-        //   startEnd: {
-            
-        //   }
-        // }
-        console.log(count, "todaysummary") 
+        console.log(nextLesson, "todaysummary") 
       
         return <DashboardPage
           character={this.state.character}
@@ -2051,6 +2039,16 @@ export class App extends React.Component<IAppProps, IAppState> {
         />
       case SCHEDULE_PAGE_NO:
         return this.Spinner();
+      case CONTACTS_PAGE_NO:
+        return <Contacts 
+        character={this.state.character}
+        onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
+        />
+      case FAQ_PAGE_NO:
+        return <FAQ 
+        character={this.state.character}
+        onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
+        />
       default:
         break;
     }

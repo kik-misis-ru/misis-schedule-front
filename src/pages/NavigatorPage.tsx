@@ -159,11 +159,8 @@ const NavigatorPage = ({
               />
 
               <Col style={{margin: "0 0 0 auto"}}>
-                <GoToHomeButton
-                  onClick={() => onHomeClick()}
-                />
-                <GoToScheduleButton
-                  onClick={() => onScheduleClick()}
+                <GoToDashboardButton
+                  onClick={() => onDashboardClick()}
                 />
               </Col>
 
