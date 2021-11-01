@@ -48,7 +48,7 @@ const FAQ = ({
               <HeaderLogoCol/>
 
               <HeaderTitleCol2
-                title="Контакты"
+                title="Часто задаваемые вопросы"
               />
 
               <Col style={{margin: "0 0 0 auto"}}>
@@ -62,7 +62,7 @@ const FAQ = ({
             <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
               <CardBody style={{padding: "0 0 0 0"}}>
 
-                <CardMedia src={karta}/>
+                {/* <CardMedia src={karta}/> */}
 
                 <CardContent compact style={{padding: "0.3em 0.3em"}}>
                   

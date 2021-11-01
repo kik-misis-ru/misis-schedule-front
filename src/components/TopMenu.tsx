@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {Button, CardHeadline2, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle,  CardParagraph1,
+import {Button, CardHeadline2, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle,  CardParagraph1, Body2
 } from "@sberdevices/plasma-ui";
 import {
   IconHouse,
@@ -33,7 +33,7 @@ export const HeaderTitleCol = ({
                      }: {
   title: string
 }) => (
-  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.6em"}}>
     <TextBox>
       <CardHeadline2>{title}</CardHeadline2>
     </TextBox>
@@ -48,7 +48,7 @@ export const HeaderTitleCol2 = ({
 }) => (
   <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
     <TextBox>
-      <CardParagraph1>{title}</CardParagraph1>
+      <Body2>{title}</Body2>
     </TextBox>
   </Col>
 )

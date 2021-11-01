@@ -1,5 +1,5 @@
 import React, {MouseEventHandler} from "react";
-import {Container, Row, Col, Button, DeviceThemeProvider, TextBoxBiggerTitle, Body1} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, Button, DeviceThemeProvider, TextBoxBiggerTitle, Body1, Caption} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
@@ -46,6 +46,8 @@ import {
   LessonStartEnd,
   NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
+  CONTACTS_PAGE_NO,
+  FAQ_PAGE_NO,
 } from '../App';
 import LinkToOnline from '../components/LinkToOnline';
 import {NowOrWill} from "../types/AssistantReceiveAction";
@@ -206,9 +208,11 @@ const LessonCardBody = () => {
 
 const DashboardCard = ({
                          text,
+                         sub,
                          onClick,
                        }: {
   text: string
+  sub: string
   onClick?: MouseEventHandler<HTMLElement>
 }) => {
   return (
@@ -223,6 +227,9 @@ const DashboardCard = ({
         <CardBody>
           <CardContent>
             <TextBox>
+              <Caption style={{color:"grey"}}>
+                {sub}
+              </Caption>
               <CardHeadline3>
                 {text}
               </CardHeadline3>
@@ -287,20 +294,26 @@ const CatalogueItems = ({
 
       <DashboardCard
         text="Расписание"
+        sub="Другое"
         onClick={() => onGoToPage(HOME_PAGE_NO)}
       />
 
       <DashboardCard
         text="Карта"
+        sub="Как добраться"
         onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
       />
 
       <DashboardCard
         text="FAQ"
+        sub="Часто задаваемые вопросы"
+        onClick={() => onGoToPage(FAQ_PAGE_NO)}
       />
 
       <DashboardCard
         text="Контакты"
+        sub="Помощь"
+        onClick={() => onGoToPage(CONTACTS_PAGE_NO)}
       />
 
     </Row>
@@ -393,45 +406,7 @@ const DashboardPage = ({
   // }
 
 }) => {
-  //const isSunday = (state.today === 0);
-  //const todayIndex = state.today - 1;
   
-  // console.log('Dashboard: day:', state.day[todayIndex]);
-  
-  // const now = new Date();
-  // const lessonCountToday = state.day[todayIndex].count[THIS_WEEK];
-  // const weekDayShortToday = state.day[todayIndex].title;
-  // const dateToday = state.day[todayIndex].date[THIS_WEEK];
-  
-  // const lessonNowIdx = whatLesson(now, "now").num;
-  // const nextLessonIdx = whatLesson(now, "next").num;
-  
-  // console.log('DashboardPage: whatLesson(now, "now"):', whatLesson(now, "now"));
-  // console.log('DashboardPage: todayIndex:', todayIndex);
-  // console.log('DashboardPage: lessonNowIdx:', lessonNowIdx);
-  // console.log('DashboardPage: state.days[todayIndex]:', state.days[todayIndex]);
-  // console.log('DashboardPage: state.days[todayIndex][lessonNowIdx]:', state.days[todayIndex][lessonNowIdx]);
-  
-  // const lessonNow = state.days[todayIndex]?.[lessonNowIdx]?.[THIS_WEEK];
-  // const nextLesson = state.days[todayIndex]?.[nextLessonIdx]?.[THIS_WEEK];
-  
-  // const currentLessonIdx = getCurrentLesson(now);
-  // // const currentLesson = state.days[todayIndex]?.[currentLessonIdx]?.[THIS_WEEK];
-  
-  // console.log('DashboardPage: currentLesson:', currentLesson);
-  // console.log('DashboardPage: nextLesson:', nextLesson);
-  
-  // whatLesson(new Date(), "next").num
-  
-  // const isTeacherAndValid = !state.student && state.teacher_correct;
-  
-  // const lessonsStartEnd = {
-  //   start: getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5),
-  //   end: getEndLastLesson(DAY_TODAY),
-  // }
-  
-  // console.log(`isSunday: ${isSunday}, lessonCountToday: ${lessonCountToday}`);
-
   return (
     <DeviceThemeProvider>
       <DocStyle/>

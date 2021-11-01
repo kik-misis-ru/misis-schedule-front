@@ -425,7 +425,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 this.ChangePage()
                 
               }
-              this.setState({page: DASHBOARD_PAGE_NO});
+              //this.setState({page: DASHBOARD_PAGE_NO});
             })
           }
           console.log(`assistant.on(data)`, event);
