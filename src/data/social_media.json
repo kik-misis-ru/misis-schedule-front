@@ -1,0 +1,12 @@
+[
+    { "name": "Вконтакте", "logo": "../images/vk.png", "link": "https://vk.com/nust_misis"},
+    { "name": "Telegram", "logo": "../images/tg.png", "link": "https://t.me/nust_misis"},
+    { "name": "Instagram", "logo": "../images/ig.png", "link": "https://www.instagram.com/NUST_MISIS/"},
+    { "name": "Одноклассники", "logo": "../images/ok.png", "link": "https://ok.ru/group/56080999448603"},
+    { "name": "Facebook", "logo": "../images/fb.png", "link": "https://www.facebook.com/misis.ru/"},
+    { "name": "TikTok", "logo": "../images/tt.png", "link": "https://www.tiktok.com/@nust_misis?lang=ru-RU"},
+    { "name": "YouTube", "logo": "../images/yt.png", "link": "https://www.youtube.com/nustmisis"},
+    { "name": "Flickr", "logo": "../images/fl.png", "link": "https://www.flickr.com/photos/99294142@N08/"},
+    { "name": "Twitter", "logo": "../images/tw.png", "link": "https://www.twitter.com/nust_misis"},
+    { "name": "Яндекс.Дзен", "logo": "../images/yd.png", "link": "https://www.zen.yandex.ru/id/5cd6e73edc906400b27ff7d7"}
+]

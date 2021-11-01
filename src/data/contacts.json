@@ -1,0 +1,20 @@
+[
+    {
+        "site": "https://misis.ru",
+        "text": "Официальный сайт",
+        "tel": "",
+        "mail":""
+    },
+    {
+        "site":"",
+        "text":"Канцелярия",
+        "tel":"8 495 955-00-32",
+        "mail":"kancela@misis.ru"
+    },
+    {
+        "site":"",
+        "text":"Приемная комиссия",
+        "tel":"8 499 649-44-80",
+        "mail":"vopros@misis.ru"
+    }
+]
