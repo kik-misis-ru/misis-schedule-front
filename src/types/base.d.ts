@@ -28,9 +28,9 @@ export const OTHER_WEEK = 1;
 export type THIS_OR_OTHER_WEEK = typeof THIS_WEEK | typeof OTHER_WEEK;
 
 //
-export const CHAR_SBER = 'sber';
-export const CHAR_EVA = 'eva';
-export const CHAR_JOY = 'joy';
+export const CHAR_SBER = 'sber'; // Сбер
+export const CHAR_EVA = 'eva';   // Афина
+export const CHAR_JOY = 'joy';   // Джой
 export const CHAR_TIMEPARAMOY = 'timeParamoy';
 export type Character = typeof CHAR_SBER
   | typeof CHAR_EVA

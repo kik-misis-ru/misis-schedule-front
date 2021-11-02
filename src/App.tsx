@@ -125,6 +125,16 @@ const breaks = {
   '7': '19:45'
 }
 
+const daysOfWeekShort = [
+  "Вс",
+  "Пн",
+  "Вт",
+  "Ср",
+  "Чт",
+  "Пт",
+  "Сб",
+]
+
 const dayNameDict = {
   "Пн": ["В понедельник", 1],
   "Вт": ["Во вторник", 2],
@@ -350,7 +360,9 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     this._assistant = initializeAssistant(() => this.getStateForAssistant());
     this._assistant.on("data", (event: AssistantEvent) => {
-      switch (event.type) {
+      console.log('_assistant.on("data") event:', event);
+
+      switch (event?.type) {
 
         case "character":
           console.log('componentDidMount: character:', event.character.id);
@@ -587,7 +599,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   /**
    * подсчет количества пар в указанную дату
-   * возвращает массив с днем недели и количеством пар в этот день
+   * возвращает массив с днем недели (Пн,Вт,...)
+   * и количеством пар в этот день
    *
    * @param {Date} date
    * @returns {string}
@@ -1097,17 +1110,19 @@ export class App extends React.Component<IAppProps, IAppState> {
 
               const pairText = pairNumberToPairText(pairCount);
 
+              const [inDayOfWeek,dayOfWeekIndex] = dayNameDict[dayOfWeek]
+
               howManyParams = {
                 lesson: pairText,
                 day: day,
-                dayName: dayNameDict[dayOfWeek][0],
+                dayName: inDayOfWeek,
                 amount: numPron[pairCount]
               }
-              if (dayNameDict[dayOfWeek][1] < this.state.today) {
+              if (dayOfWeekIndex < this.state.today) {
                 page = 7;
               }
               this.ChangePage();
-              this.setState({page: dayNameDict[dayOfWeek][1] + page})
+              this.setState({page: dayOfWeekIndex + page})
             }
 
             this.sendData({
@@ -1168,7 +1183,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'what_lesson':
-          console.log("какая пара")
+          console.log("what_lesson: какая пара")
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             if (action.note === undefined) {
               action.note = {
@@ -1176,7 +1191,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
             const whatlesson = this.whatLesson(new Date(), action.note.when);
-            console.log(this.whatLesson(new Date(), action.note.when))
+            console.log('what_lesson: whatlesson:', whatlesson)
             this.sendData({
               action_id: "say4",
               parameters: whatlesson,
@@ -1192,7 +1207,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'first_lesson':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            let number: string;
+            let firstLessonNumStr: string;
+            // let day: TodayOrTomorrow;
             let day1: TodayOrTomorrow = DAY_TODAY;
             let page1 = 0;
             if (action.note !== undefined) {
@@ -1200,7 +1216,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               const numDayOfWeek = parseInt(strDayOfWeek) - 1
               console.log('dispatchAssistantAction: first_lesson:', action.note)
               console.log('dispatchAssistantAction: first_lesson:', numDayOfWeek);
-              number = this.getTimeFirstLesson(numDayOfWeek)[1]
+              firstLessonNumStr = this.getTimeFirstLesson(numDayOfWeek)[1]
               if (String(this.state.today + 1) === strDayOfWeek) {
                 day1 = DAY_TODAY;
                 page1 = 0
@@ -1209,15 +1225,16 @@ export class App extends React.Component<IAppProps, IAppState> {
                 page1 = 0
               }
             } else {
-              console.error('dispatchAssistantAction: first_lesson: action.note is undefined');
+              console.warn('dispatchAssistantAction: first_lesson: action.note is undefined');
               // todo: fix fallback
-              number = this.getTimeFirstLesson(0)[1];
-              day = DAY_TODAY
+              firstLessonNumStr = this.getTimeFirstLesson(0)[1];
+              // day = DAY_TODAY
+              day1 = DAY_TODAY
             }
             let whichFirst: AssistantSendActionSay5['parameters'] = {
               day1: DAY_SUNDAY,
             }
-            if (/*this.state.group !== "" && */number !== undefined) {
+            if (/*this.state.group !== "" && */firstLessonNumStr !== undefined) {
               // if (number === undefined) {
               //   whichFirst = {
               //     day1: DAY_SUNDAY,
@@ -1227,13 +1244,14 @@ export class App extends React.Component<IAppProps, IAppState> {
               // } else {
               const {dayOfWeek: strDayOfWeek} = action.note;
               const dayOfWeekIdx = parseInt(strDayOfWeek) - 1
+              const dayOfWeekShortName = daysOfWeekShort[dayOfWeekIdx];
 
-              const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[dayOfWeekIdx];
+              const [inDayOfWeek, dayOfWeekIdx1] = dayNameDict[dayOfWeekShortName];
 
               whichFirst = {
-                num: ordinalGenitiveCaseSingularFemDict[number[0]],
+                num: ordinalGenitiveCaseSingularFemDict[firstLessonNumStr/*[0]*/],
                 day: day1,
-                dayName: dayOfWeekNameLong
+                dayName: inDayOfWeek
               }
               if (dayOfWeekIdx1 < this.state.today) {
                 page1 = 7;
