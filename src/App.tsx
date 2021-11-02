@@ -396,6 +396,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.ChangePage()
                   this.setState({
                     student: false,
+                    flag: true,
                     //page: DASHBOARD_PAGE_NO,
                     teacher_checked: true,
                     teacher_star: true,
@@ -410,6 +411,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     this.ChangePage()
                     this.setState({
                       //page: DASHBOARD_PAGE_NO,
+                      flag: true,
                       checked: true,
                       star: true,
                       bd: this.state.groupId,
@@ -1596,7 +1598,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   Raspisanie(timeParam: number) {
-    console.log('Raspisanie: timeParam:', timeParam)
+    //console.log('Raspisanie: timeParam:', timeParam)
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
     if (timeParam > 7) {
       timeParam -= 7;
@@ -1864,6 +1866,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
         if (correct && correct_sub && correct_eng) {
           this.setState({page: SCHEDULE_PAGE_NO})
+          this.Load_Schedule()
           if (this.state.checked) {
               const groupId = String(group_response.id);
               console.log("GROUP_ID:", groupId)
@@ -1875,7 +1878,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.state.subGroup,
                   this.state.engGroup,
                   "")
-                this.Load_Schedule()
+                
                 })
           }
 
@@ -1939,6 +1942,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           //      this.setState({page: 8})
           //    }
           //  } else if (this.state.flag) {
+          //   console.log("this.state.flag", this.state.flag)
           //    console.log('Spinner: page: today:', this.state.today)
           //    this.setState({page: this.state.today});
           //  } else {
@@ -1960,7 +1964,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   render() {
     let {page} = this.state;
-    console.log('App: render: page:', page);
     if (page >= 1 && page <= 13) {
       return this.Raspisanie(page);
     }
