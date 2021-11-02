@@ -60,7 +60,7 @@ type NowOrWill = 'now' | 'will'
 
 interface AssistantActionWhere {
   type: 'where'
-  note: {
+  note?: {
     when: NowOrWill
   }
 }

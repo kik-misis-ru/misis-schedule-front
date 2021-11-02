@@ -1161,7 +1161,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'what_lesson':
-          console.log("какая пара")
+          console.log("what_lesson: какая пара")
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             if (action.note === undefined) {
               action.note = {
@@ -1169,7 +1169,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
             const whatlesson = this.whatLesson(new Date(), action.note.when);
-            console.log(this.whatLesson(new Date(), action.note.when))
+            console.log('what_lesson: whatlesson:', whatlesson)
             this.sendData({
               action_id: "say4",
               parameters: whatlesson,
