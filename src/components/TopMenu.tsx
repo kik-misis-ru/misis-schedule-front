@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {Button, CardHeadline2, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle,  CardParagraph1,
+import {Button, CardHeadline2, Col, Image, Row, TextBox, TextBoxSubTitle, TextBoxTitle,  CardParagraph1, Body2
 } from "@sberdevices/plasma-ui";
 import {
   IconHouse,
@@ -33,7 +33,7 @@ export const HeaderTitleCol = ({
                      }: {
   title: string
 }) => (
-  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.6em"}}>
     <TextBox>
       <CardHeadline2>{title}</CardHeadline2>
     </TextBox>
@@ -46,9 +46,9 @@ export const HeaderTitleCol2 = ({
                      }: {
   title: string
 }) => (
-  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.7em"}}>
     <TextBox>
-      <CardParagraph1>{title}</CardParagraph1>
+      <Body2>{title}</Body2>
     </TextBox>
   </Col>
 )
@@ -220,13 +220,13 @@ export const TopMenu = ({
           starred={starred}
           onClick={() => onStarClick()}
         />
-        <GoToDashboardButton
-          onClick={() => onDashboardClick()}
-        />
+        
         <GoToHomeButton
           onClick={() => onHomeClick()}
         />
-
+        <GoToDashboardButton
+                  onClick={() => onDashboardClick()}
+                />
         {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>
     </Row>

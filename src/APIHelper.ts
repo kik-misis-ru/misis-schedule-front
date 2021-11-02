@@ -284,9 +284,8 @@ export async function getGroupByName(groupName: string) {
   console.log(`APIHelper: getGroupByName: groupInfo:`, groupInfo);
   return groupInfo;
 }
-
-export async function  isEnglishGroupExist(group_num: number) : Promise<boolean>{
-  const url = `${API_URL}is_ensglish_group_exist`;
+export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>{
+  const url = `${API_URL}is_english_group_exist`;
   const config = {
     params: {
       group_num: group_num,

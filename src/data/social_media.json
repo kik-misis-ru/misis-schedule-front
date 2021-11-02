@@ -1,0 +1,52 @@
+[
+    { 
+        "name": "Вконтакте", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833568/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/vk_yckocl.png",
+        "link": "https://vk.com/nust_misis"
+    },
+    { 
+        "name": "Telegram", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/tg_amm08s.png", 
+        "link": "https://t.me/nust_misis"
+    },
+    { 
+        "name": "Instagram", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/ig_svxtdd.png", 
+        "link": "https://www.instagram.com/NUST_MISIS/"
+    },
+    { 
+        "name": "Одноклассники", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/ok_qzyhdc.png", 
+        "link": "https://ok.ru/group/56080999448603"
+    },
+    { 
+        "name": "Facebook", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/fb_ytjgyc.png", 
+        "link": "https://www.facebook.com/misis.ru/"
+    },
+    { 
+        "name": "TikTok", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/tt_geqx59.png", 
+        "link": "https://www.tiktok.com/@nust_misis?lang=ru-RU"
+    },
+    { 
+        "name": "YouTube", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/yt_shjt0f.png", 
+        "link": "https://www.youtube.com/nustmisis"
+    },
+    { 
+        "name": "Flickr", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/fl_jnbawd.png", 
+        "link": "https://www.flickr.com/photos/99294142@N08/"
+    },
+    { 
+        "name": "Twitter", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/tw_yyle7r.png", 
+        "link": "https://www.twitter.com/nust_misis"
+    },
+    { 
+        "name": "Яндекс.Дзен", 
+        "logo": "https://res.cloudinary.com/unext-misis/image/upload/v1635833567/%D0%9C%D0%98%D0%A0%20%D0%9C%D0%98%D0%A1%D0%B8%D0%A1/yd_dhu6bd.png", 
+        "link": "https://www.zen.yandex.ru/id/5cd6e73edc906400b27ff7d7"
+    }
+]

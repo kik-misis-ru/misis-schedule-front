@@ -43,13 +43,13 @@ const Main = ({
             setValue("page", DASHBOARD_PAGE_NO)
           }}
         />
-        <GoToScheduleButton
+        {/* <GoToScheduleButton
           onClick={() => {
             convertIdInGroupName();
             setValue("page", SCHEDULE_PAGE_NO)
           }}
           disabled={disabled}
-        />
+        /> */}
       </Col>
     </Row>
 
