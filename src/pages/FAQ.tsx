@@ -2,23 +2,17 @@ import React from "react";
 import {Container, Row, Col, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Card,
-  CardBody,
-  CardContent,
-  CardMedia,
-  TextBox,
-  TextBoxSubTitle,
-  TextBoxTitle,
-  Badge,
-  CellListItem,
+  Headline3,
 } from "@sberdevices/plasma-ui";
-import {IconLocation} from "@sberdevices/plasma-icons";
+import faq from '../data/faq.json';
 
-import karta from "../images/Karta.png";
+
+
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
-import {COLOR_BLACK} from '../components/consts';
+import {SocialList} from '../components/SocialList'
+import {FAQCard} from '../components/FAQCard'
 import {
   HeaderLogoCol,
   HeaderTitleCol2,
@@ -27,7 +21,7 @@ import {
 
 
 
-const FAQ = ({
+const Contacts = ({
                          character,
                          onDashboardClick,
                        }: {
@@ -58,19 +52,13 @@ const FAQ = ({
               </Col>
 
             </Row>
-
-            <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
-              <CardBody style={{padding: "0 0 0 0"}}>
-
-                {/* <CardMedia src={karta}/> */}
-
-                <CardContent compact style={{padding: "0.3em 0.3em"}}>
-                  
-                </CardContent>
-
-              </CardBody>
-
-            </Card>
+            {faq.map((faq) =>(
+              <FAQCard
+                questions={faq.questions}
+                text={faq.text}
+                answers={faq.answers}
+              />
+            ))}
             <div style={{
               width: '200px',
               height: '300px',
@@ -79,4 +67,4 @@ const FAQ = ({
   </DeviceThemeProvider>
 }
 
-export default FAQ
+export default Contacts

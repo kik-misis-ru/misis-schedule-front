@@ -46,7 +46,7 @@ export const HeaderTitleCol2 = ({
                      }: {
   title: string
 }) => (
-  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.7em"}}>
     <TextBox>
       <Body2>{title}</Body2>
     </TextBox>

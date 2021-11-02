@@ -1,5 +1,5 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, DeviceThemeProvider, Caption, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
@@ -9,6 +9,7 @@ import {
   TextBox,
   TextBoxSubTitle,
   TextBoxTitle,
+  TextBoxLabel,
   Badge,
   CellListItem,
 } from "@sberdevices/plasma-ui";
@@ -42,12 +43,12 @@ const BuildingListItem = ({
   <CellListItem
     content={
       <TextBox>
-        <TextBoxTitle>
+        <Body1>
           {building.name}
-        </TextBoxTitle>
-        <TextBoxSubTitle>
+        </Body1>
+        <TextBoxLabel >
           {building.address}
-        </TextBoxSubTitle>
+        </TextBoxLabel>
       </TextBox>
     }
     contentLeft={

@@ -443,7 +443,7 @@ const DashboardPage = ({
           >
             <CardContent
               // compact
-              style={{padding: "0 0.4em 0 0.4em"}}
+              style={{padding: "0 0.2em 0.5em 0.8em"}}
             >
 
               <ScheduleLessonTitle text="Сейчас"/>
@@ -477,7 +477,7 @@ const DashboardPage = ({
                   // style={{padding: "0 0 0 0"}}
                 >
 */
-                  <CardContent style={{padding: "0.4em 0.4em 0.4em 0.4em"}}>
+                  <CardContent style={{padding: "0 0.2em 0.5em 0.8em"}}>
 
                     <ScheduleLessonTitle text="Дальше" />
 
