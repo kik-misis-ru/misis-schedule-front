@@ -116,7 +116,7 @@ link: string,
 <CellListItem
 contentLeft={
     <div>
-   <a href={link}><img src={logo}></img></a>
+   <a href={link}><img src="fl.png"></img></a>
    
   </div>
 }
@@ -186,7 +186,7 @@ const Contacts = ({
               />
             ))}
                    
-           <div style={{margin: "1em"}}>
+           <div style={{margin: "1.5em"}}>
             <Headline3>
             Мы в соцсетях
             </Headline3>
