@@ -5,13 +5,13 @@ import {
   Headline3,
 } from "@sberdevices/plasma-ui";
 import faq from '../data/faq.json';
-
+import lib from '../data/libraries.json';
 
 
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
-import {SocialList} from '../components/SocialList'
+import {Libraries} from '../components/Libraries'
 import {FAQCard} from '../components/FAQCard'
 import {
   HeaderLogoCol,
@@ -20,8 +20,7 @@ import {
 } from '../components/TopMenu';
 
 
-
-const Contacts = ({
+const FAQ = ({
                          character,
                          onDashboardClick,
                        }: {
@@ -59,6 +58,14 @@ const Contacts = ({
                 answers={faq.answers}
               />
             ))}
+            {lib.map((lib) =>(
+            <Libraries
+            questions={lib.questions}
+            text={lib.text}
+            answers={lib.answers}
+            site={lib.site}
+            />
+            ))}
             <div style={{
               width: '200px',
               height: '300px',
@@ -67,4 +74,4 @@ const Contacts = ({
   </DeviceThemeProvider>
 }
 
-export default Contacts
+export default FAQ
