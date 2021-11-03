@@ -30,8 +30,8 @@ answers: string[],
 }) => {
 let flag=false;
 const Click=()=>{
-  
-  return flag=!flag;
+  console.log(flag)
+  //return flag=!flag;
 }
 return (
   <Col style={{margin: "0 1em 1em 1em"}}>

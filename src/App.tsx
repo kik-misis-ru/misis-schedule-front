@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {createAssistant, createSmartappDebugger,} from "@sberdevices/assistant-client";
 import {Container, DeviceThemeProvider, Spinner,} from '@sberdevices/plasma-ui';
 import {detectDevice} from '@sberdevices/plasma-ui/utils';
+import { Guid } from 'js-guid';
 
 import {
   createUser,
@@ -364,7 +365,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case "smart_app_data":
           console.log("User");
-          console.log(event);
+          console.log("EVENT",event);
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
             this.setState({userId: event.sub});
@@ -1962,6 +1963,26 @@ export class App extends React.Component<IAppProps, IAppState> {
     let {page} = this.state;
     console.log('App: render: page:', page);
     if (page >= 1 && page <= 13) {
+      let guid = Guid.newGuid()
+      this._assistant.sendData({
+        "messageName": "GET_RUNTIME_PERMISSIONS",
+        "sessionId": guid,
+        "messageId": 0,
+        "uuid": {
+          "userChannel": "B2C",
+          "sub": "noN0Crr3wgIDB0zPleKresJJBnQWbTybFS96aH/CO1ag1UKZFmqfjY9pgDfQAAv8DJiarMJBCd+OSKUzNTk2jw0W/jbBIC6V/xwQdmSX5cA3bAbhWkZVtK9z3zFc8Mkh3O1nZa/qn3SAagVDNjZIB6p4Z9Wzb0Lm/uzDjpy3qh0="
+        },
+        "payload": {
+          "server_action": {
+            "parameters": {
+              "type": [
+                "service_push"
+              ]
+            }
+          }
+        }
+      }
+    )
       return this.Raspisanie(page);
     }
     switch (page) {
