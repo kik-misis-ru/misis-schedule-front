@@ -415,6 +415,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                     teacher_bd: this.state.teacherId,
                     teacher_correct: true
                   });
+                  const datePlusWeek = this.state.date + SEVEN_DAYS;
+                  this.getScheduleFromDb(datePlusWeek)
                 } else if (this.state.groupId !== "") {
                   getScheduleFromDb(this.state.groupId, this.state.engGroup, this.getFirstDayWeek(new Date(this.state.date))).then((response) => {
                     this.showWeekSchedule(response, 0)
@@ -430,7 +432,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                       student: true
                     });
                   });
-
+                  const datePlusWeek = this.state.date + SEVEN_DAYS;
+                  this.getScheduleFromDb(datePlusWeek)
                 } else {
                   this.ChangePage()
                   //this.setState({page: DASHBOARD_PAGE_NO});
@@ -719,7 +722,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     date: Date,
     when: NowOrWill | 'next',
   ): {
-    lesson: string,
+    lesson: string | undefined,
     type: NowOrWill | 'next',
     num: number,
   } { //определяет название пары, которая идет или будет
@@ -734,7 +737,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     if (isSunday) {
       const result = {
-        lesson: '',
+        lesson: undefined,
         type: when,
         num: -1,
       }
@@ -825,7 +828,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             };
           } else {
             return {
-              lesson: '',
+              lesson: undefined,
               type: when,
               num: -1
             };
@@ -835,7 +838,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       // }
     }
     const result = {
-      lesson: '',
+      lesson: undefined,
       type: when,
       num: -1,
     }
@@ -1075,7 +1078,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
             if (action.note !== undefined) {
+              
               const {timestamp, dayOfWeek} = action.note;
+              console.log(timestamp, this.getAmountOfLessons(new Date(timestamp)), "how many")
+              
               countOfLessons = this.getAmountOfLessons(new Date(timestamp))
 
               // todo: упростить
@@ -1111,7 +1117,6 @@ export class App extends React.Component<IAppProps, IAppState> {
               const pairText = pairNumberToPairText(pairCount);
 
               const [inDayOfWeek,dayOfWeekIndex] = dayNameDict[dayOfWeek]
-
               howManyParams = {
                 lesson: pairText,
                 day: day,
