@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {Col, Row} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -28,10 +28,15 @@ questions: string
 text: string
 answers: string[],
 }) => {
-let flag=false;
+const [flag, setFlag] = useState(false);
 const Click=()=>{
+<<<<<<< HEAD
   console.log(flag)
   //return flag=!flag;
+=======
+  
+  setFlag(!flag);
+>>>>>>> b4f3b5a06c8104614527780b351ba76b4cceb715
 }
 return (
   <Col style={{margin: "0 1em 1em 1em"}}>
@@ -46,30 +51,29 @@ marginTop: "0.5em",
 <CardBody style={{padding: "0 0 0 0"}}>
 <CardContent style={{padding: "0 0 0 0"}}>
 <CellListItem 
-style={{padding: "0 0 0 0", paddingLeft: "0.5em"}}
+style={{display:"flex", flexDirection: "row", alignItems: "flex-start", padding: "0 0 0 0", paddingLeft: "0.5em"}}
 
-
-
-content={
-  !flag ? (
-
-<TextBox >
-  <Row>
-  <Col size={3}>
-<TextBoxLabel style={{color:"grey"}}>
-{questions}
-</TextBoxLabel>
-</Col>
-<Col>
-<Button 
-style={{margin: "0 0 0 auto"}}
+contentRight={
+  <Button 
+  style={{display:"flex", flexDirection: "row", alignItems: "flex-start", margin: "0 0 auto 0"}}
 size="s"
 view="clear"
 pin="circle-circle"
 onClick={() => {Click() }}
-contentRight={ flag ? (
+contentRight={ !flag ? (
   <IconChevronDown  size="s" color="inherit"/>) : (<IconChevronUp  size="s" color="inherit"/>)
 }/>
+}
+
+content={
+  flag ? (
+
+<TextBox >
+  <Row>
+  <Col style={{margin: "0 0 0 auto"}}>
+<TextBoxLabel style={{color:"grey"}}>
+{questions}
+</TextBoxLabel>
 </Col>
 </Row>
 {answers.map((answer) =>(
@@ -77,10 +81,15 @@ contentRight={ flag ? (
               {answer}
               </Body1>
             ))}
-</TextBox>) : (<TextBox >
+</TextBox>) : (
+<TextBox >
+  <Row style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+  <Col >
 <TextBoxLabel style={{color:"grey"}}>
 {questions}
 </TextBoxLabel>
+</Col>
+</Row>
 </TextBox>)
 }
 />

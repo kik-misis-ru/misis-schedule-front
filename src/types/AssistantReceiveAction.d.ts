@@ -5,7 +5,18 @@ import {
 
 //
 
-interface AssistantEventCharacter {
+interface AssistantEventGeneric {
+  type: string
+  sdk_meta: {
+    mid: string //
+                // "-1"
+                // "1635880800399"
+    requestId   // undefined
+  }
+
+}
+
+interface AssistantEventCharacter extends AssistantEventGeneric {
   type: 'character'
   character: {
     id: Character
@@ -47,8 +58,13 @@ interface AssistantActionWhenLesson {
 interface AssistantActionHowMany {
   type: 'how_many'
   note: {
-    timestamp: string
     dayOfWeek: string
+    day: string // "3"
+    dayOfWeek: string // "4"
+    month: string // "11"
+    timestamp: number // 1635897600000
+    value: string // "2021-11-03T00:00:00"
+    year: string // "2021"
   }
 }
 
@@ -60,7 +76,7 @@ type NowOrWill = 'now' | 'will'
 
 interface AssistantActionWhere {
   type: 'where'
-  note: {
+  note?: {
     when: NowOrWill
   }
 }
@@ -76,6 +92,12 @@ interface AssistantActionFirstLesson {
   type: 'first_lesson'
   note: {
     dayOfWeek: string
+    day: string // "3"
+    dayOfWeek: string // "4"
+    month: string // "11"
+    timestamp: number // 1635897600000
+    value: string // "2021-11-03T00:00:00"
+    year: string // "2021"
   }
 }
 
@@ -129,13 +151,33 @@ export type AssistantAction = AssistantActionProfile
 
 //
 
-interface AssistantEventSmartAppData {
+interface AssistantEventSmartAppData extends AssistantEventGeneric {
   type: 'smart_app_data'
-  sub: string               // идентификатор пользователя
+  sub: string     // идентификатор пользователя
+                  // "noN0Crr3wgIDB0zPleKresJJBnQWbTybFS96aH/CO1ag1UKZFmqfjY9pgDfQAAv8DJiarMJBCd+OSKUzNTk2jw0W/jbBIC6V/xwQdmSX5cA3bAbhWkZVtK9z3zFc8Mkh3O1nZa/qn3SAagVDNjZIB6p4Z9Wzb0Lm
+  user_id: string //
+                  // "webdbg_userid_rwe0x9uv3qbmr4sw5uxfc"
   action: AssistantAction
+  //action: "init-user"
+  // sdk_meta: {mid: "1635879771615"}
+  // sub: "noN0Crr3wgIDB0zPleKresJJBnQWbTybFS96aH/CO1ag1UKZFmqfjY9pgDfQAAv8DJiarMJBCd+OSKUzNTk2jw0W/jbBIC6V/xwQdmSX5cA3bAbhWkZVtK9z3zFc8Mkh3O1nZa/qn3SAagVDNjZIB6p4Z9Wzb0Lm/uzDjpy3qh0="
+  // type: "smart_app_data"
+  // user_id: "webdbg_userid_rwe0x9uv3qbmr4sw5uxfc"
+}
+
+interface AssistantEventInsets extends AssistantEventGeneric {
+  type: "insets"
+  insets: {
+    bottom: number
+    left: number
+    right: number
+    top: number
+  }
 }
 
 export type AssistantEvent = AssistantEventCharacter
   | AssistantEventSmartAppData
+  | AssistantEventInsets
+  | undefined
 
 //

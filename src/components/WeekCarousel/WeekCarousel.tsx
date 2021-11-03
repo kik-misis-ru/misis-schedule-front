@@ -18,6 +18,7 @@ export const WeekCarousel = ({
   onIndexChange: (index: number) => void
   onSelect: (weekDayIndex: number) => void
 }) => {
+  console.log(carouselIndex, selectedIndex, markedIndex, "index");
   return (
     <Row style={{
       margin: "0.5em", marginRight: "0",
@@ -28,9 +29,7 @@ export const WeekCarousel = ({
           as={Row}
           axis="x"
           index={carouselIndex}
-          scrollSnapType="mandatory"
-          animatedScrollByIndex={true}
-          detectActive={true}
+          detectActive
           detectThreshold={0.5}
           onIndexChange={(index: number) => onIndexChange(index)}
           paddingStart="0%"
