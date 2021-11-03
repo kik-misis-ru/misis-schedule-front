@@ -2037,7 +2037,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
         const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
         const end= this.getEndLastLesson(DAY_TODAY);
-        console.log(nextLesson, "todaysummary") 
+        console.log(nextLessonStartEnd, "todaysummary") 
       
         return <DashboardPage
           character={this.state.character}
