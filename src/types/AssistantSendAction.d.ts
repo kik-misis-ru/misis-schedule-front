@@ -37,7 +37,7 @@ export interface AssistantSendActionSay {
 export interface AssistantSendActionSay1 {
   action_id: 'say1'
   parameters: {
-    day: typeof DAY_SUNDAY,
+    day: typeof DAY_SUNDAY|undefined,
   } | {
     day: TodayOrTomorrow,
     lesson?: string,
@@ -80,7 +80,7 @@ export interface AssistantSendActionSay5 {
     day1: typeof DAY_SUNDAY
   } | {
     num: string
-    day: typeof DAY_TODAY
+    day: udefined | typeof DAY_TODAY
       | typeof DAY_TOMORROW,
     dayName: string,
   }

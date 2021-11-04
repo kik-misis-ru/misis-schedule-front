@@ -83,6 +83,7 @@ export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
 export const CONTACTS_PAGE_NO = 18;
 export const FAQ_PAGE_NO = 19;
+export const SETTING_PAGE_NO = 20;
 
 const INITIAL_PAGE = 16;
 
@@ -136,12 +137,12 @@ const daysOfWeekShort = [
 ]
 
 const dayNameDict = {
-  "Пн": ["В понедельник", 1],
-  "Вт": ["Во вторник", 2],
-  "Ср": ["В среду", 3],
-  "Чт": ["В четверг", 4],
-  "Пт": ["В пятницу", 5],
-  "Сб": ["В субботу", 6]
+  "Пн": ["понедельник", 1],
+  "Вт": ["вторник", 2],
+  "Ср": ["среду", 3],
+  "Чт": ["четверг", 4],
+  "Пт": ["пятницу", 5],
+  "Сб": ["субботу", 6]
 }
 
 /**
@@ -966,6 +967,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     if (action) {
       switch (action.type) {
         case 'profile':
+          console.log("profile");
           this.ChangePage()
           return this.setState({page: HOME_PAGE_NO});
           break;
@@ -1073,7 +1075,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'how_many':
           let countOfLessons: [string, number] | undefined;
-          let day: TodayOrTomorrow;
+          let day: TodayOrTomorrow| undefined;
           let page = 0;
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
@@ -1092,7 +1094,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 day = DAY_TOMORROW;
                 page = 0
               } else { // fallback
-                day = DAY_TODAY
+                day = undefined
                 page = 0
               }
             } else {
@@ -1214,7 +1216,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             let firstLessonNumStr: string;
             // let day: TodayOrTomorrow;
-            let day1: TodayOrTomorrow = DAY_TODAY;
+            let day1: undefined | TodayOrTomorrow = DAY_TODAY;
             let page1 = 0;
             if (action.note !== undefined) {
               const {dayOfWeek: strDayOfWeek} = action.note;
@@ -1228,13 +1230,17 @@ export class App extends React.Component<IAppProps, IAppState> {
               } else if (String(this.state.today + 2) === strDayOfWeek) {
                 day1 = DAY_TOMORROW;
                 page1 = 0
+              } else 
+              {
+
+                day1 = undefined;
               }
             } else {
               console.warn('dispatchAssistantAction: first_lesson: action.note is undefined');
               // todo: fix fallback
               firstLessonNumStr = this.getTimeFirstLesson(0)[1];
               // day = DAY_TODAY
-              day1 = DAY_TODAY
+              day1 = undefined
             }
             let whichFirst: AssistantSendActionSay5['parameters'] = {
               day1: DAY_SUNDAY,
@@ -1258,6 +1264,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 day: day1,
                 dayName: inDayOfWeek
               }
+              console.log(whichFirst)
               if (dayOfWeekIdx1 < this.state.today) {
                 page1 = 7;
               }
@@ -1305,9 +1312,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             // if (this.state.group !== "") {
             const {dayOfWeek: strDayOfWeek} = action.note[0];
             const dayOfWeekIdx = parseInt(strDayOfWeek) - 1;
-
-            const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[dayOfWeekIdx];
-
+           console.log(dayOfWeekIdx, "day")
+            const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekIdx-1].title];
+            
             daySchedule = {
               dayName: dayOfWeekNameLong,
             }
@@ -1327,10 +1334,23 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'show_schedule':
           console.log("показать расписание");
-          if (this.state.page === 0)
-            return this.Load_Schedule();
+          
+          return this.Load_Schedule();
           break;
 
+        case 'navigation':
+          console.log("показать навигацию");
+          this.ChangePage();
+          this.setState({page: NAVIGATOR_PAGE_NO});
+          break;
+        case 'faq':
+          this.ChangePage();
+          this.setState({page: FAQ_PAGE_NO});
+          return ;
+        case 'contacts':
+          this.ChangePage();
+          this.setState({page: CONTACTS_PAGE_NO});
+          return ;
         case 'group':
           if (action.note[0] === 0) {
             console.log(action.note[1].data.groupName[0]);
@@ -2075,6 +2095,31 @@ export class App extends React.Component<IAppProps, IAppState> {
         character={this.state.character}
         onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
         />
+      // case SETTING_PAGE_NO:
+      //     return <Settings 
+      //     character={this.state.character}
+      //     onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
+      //     onSetValue={this.setValue}
+      //     description={this.state.description}
+      //     character={this.state.character}
+      //     checked={this.state.checked}
+
+      //     groupId={this.state.groupId}
+      //     group={this.state.group}
+      //     isGroupError={this.state.isGroupError}
+
+      //     subGroup={this.state.subGroup}
+      //     isSubGroupError={this.state.isSubGroupError}
+
+      //     engGroup={this.state.engGroup}
+      //     isEngGroupError={this.state.isEngGroupError}
+
+      //     student={this.state.student}
+      //     teacher={this.state.teacher}
+      //     isTeacherError={this.state.isTeacherError}
+      //     // handleTeacherChange={this.handleTeacherChange}
+      //     teacher_checked={this.state.teacher_checked}
+      //     />
       default:
         break;
     }
