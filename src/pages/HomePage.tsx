@@ -156,7 +156,7 @@ const TextFieldForUserInfo = ({
       className="editText"
       // placeholder="Напиши номер своей академической группы"
       value={value}
-      style={{margin: "1em"}}
+      style={{margin: "0.5em"}}
       // onChange={(event) => {
       //   onChange(fieldType, event.target.value)
       // }}

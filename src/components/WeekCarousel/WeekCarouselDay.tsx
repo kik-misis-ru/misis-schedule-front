@@ -2,7 +2,7 @@ import React from "react";
 import {Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  CarouselCol
+  CarouselItem
 } from "@sberdevices/plasma-ui";
 
 
@@ -20,8 +20,9 @@ export const WeekCarouselDay = ({
   onClick: (event: React.MouseEventHandler<HTMLElement>) => void
 }) => {
   return (
-    <CarouselCol>
+    <CarouselItem>
       <Button
+        scrollSnapAlign="center"
         view={isSelected ? "secondary" : "clear"}
         style={{
           margin: "0.5em",
@@ -36,7 +37,7 @@ export const WeekCarouselDay = ({
         // text={ text + moment(date).format(format)}
         onClick={(event) => onClick(event)}
       />
-    </CarouselCol>
+    </CarouselItem>
   )
 }
 

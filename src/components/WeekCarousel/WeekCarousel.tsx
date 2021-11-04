@@ -19,6 +19,7 @@ export const WeekCarousel = ({
   onSelect: (weekDayIndex: number) => void
 }) => {
   console.log(carouselIndex, selectedIndex, markedIndex, "index");
+  const [index, setIndex] = React.useState(0);
   return (
     <Row style={{
       margin: "0.5em", marginRight: "0",
@@ -28,10 +29,11 @@ export const WeekCarousel = ({
         <Carousel
           as={Row}
           axis="x"
-          index={carouselIndex}
+          scrollSnapType="mandatory"
+          index={index}
           detectActive
           detectThreshold={0.5}
-          onIndexChange={(index: number) => onIndexChange(index)}
+          onIndexChange={(i) => setIndex(i)}
           paddingStart="0%"
           paddingEnd="40%"
         >
