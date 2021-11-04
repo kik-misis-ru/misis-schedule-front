@@ -57,7 +57,7 @@ const Main = ({
 
   return (
     <Container
-      // style={{padding: 0}}
+      style={{padding: 0, overflow: "hidden"}}
     >
       <TopMenuRow/>
       <Cell
