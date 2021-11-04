@@ -22,10 +22,11 @@ export const WeekCarouselDay = ({
   return (
     <CarouselItem>
       <Button
-        scrollSnapAlign="center"
+        scrollSnapAlign="start"
         view={isSelected ? "secondary" : "clear"}
         style={{
           margin: "0.5em",
+          
           color: isMarked
             ? "var(--plasma-colors-accent)"
             : ""

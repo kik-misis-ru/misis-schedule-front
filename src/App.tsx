@@ -262,7 +262,6 @@ export interface IAppState {
   group: string
   groupId: string
   correct: boolean
-  i: number
   day: IDayHeader[]
   days: IScheduleDays
   spinner: boolean
@@ -323,7 +322,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       subGroup: "",
       engGroup: "",
       correct: false,
-      i: 0,
       day: DEFAULT_STATE_DAY,
       days: [],
       spinner: false,
@@ -1610,8 +1608,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       weekParam = OTHER_WEEK
       timeParam -= 7
     }
-
-    this.setState({i: 0});
     this.setState({star: false});
     if (weekParam === OTHER_WEEK) {
       console.log("OTHER WEEK")
@@ -1739,7 +1735,6 @@ export class App extends React.Component<IAppProps, IAppState> {
             />
 
             <WeekCarousel
-              carouselIndex={this.state.i}
               selectedIndex={index - 1}
               markedIndex={weekParam === THIS_WEEK ? this.state.today - 1 : -1 /* current weekday can't be on 'other' week*/}
               cols={
@@ -1753,7 +1748,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                     : '';
                 })
               }
-              onIndexChange={(index) => this.Index()}
               onSelect={(weekDayIndex) => this.setValue("page", (
                 weekDayIndex + page + (weekParam === OTHER_WEEK ? 0 : 1)
               ))}
@@ -1789,14 +1783,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     );
   }
 
-  Index() {
-    const currI = this.state.i;
-    if (currI < 7) {
-      this.setState({i: currI + 1});
-    } else if (currI > 0) {
-      this.setState({i: currI - 1});
-    }
-  }
 
   // todo исправить асинхронную работу
   async handleTeacherChange(): Promise<void> {
