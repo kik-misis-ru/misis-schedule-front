@@ -17,10 +17,15 @@ export const WeekCarousel = ({
   const [index, setIndex] = React.useState(selectedIndex);
   return (
     <Row style={{
-      
+      width: "100%",
+      marginRight: "0",
       overflow: "hidden"
     }}>
-      <CarouselGridWrapper >
+      <CarouselGridWrapper style={{
+      width: "100%",
+      marginRight: "0",
+      overflow: "hidden"
+    }}>
         <Carousel
           as={Row}
           axis="x"
