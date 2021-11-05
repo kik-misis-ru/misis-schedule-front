@@ -2,9 +2,9 @@ export class Bell {
   lessonName: string
   teacher: string
   room: string
-  startAndfinishTime: string
+  // startAndFinishTime: string
   lessonType: string
-  lessonNumber: any
+  lessonNumber: string
   url: string
   groupNumber: string
 
@@ -12,7 +12,7 @@ export class Bell {
     lessonName = "",
     teacher = "",
     room = "",
-    startAndfinishTime = "",
+    // startAndFinishTime = "",
     lessonType = "",
     lessonNumber = "",
     url = "",
@@ -21,7 +21,7 @@ export class Bell {
     this.lessonName = lessonName;
     this.teacher = teacher;
     this.room = room;
-    this.startAndfinishTime = startAndfinishTime;
+    // this.startAndFinishTime = startAndFinishTime;
     this.lessonType = lessonType;
     this.lessonNumber = lessonNumber;
     this.url = url;
@@ -32,7 +32,7 @@ export class Bell {
     this.lessonName = "";
     this.teacher = "";
     this.room = "";
-    this.startAndfinishTime = "";
+    // this.startAndFinishTime = "";
     this.lessonType = "";
     this.lessonNumber = "";
     this.url = "";
