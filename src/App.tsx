@@ -385,17 +385,23 @@ export class App extends React.Component<IAppProps, IAppState> {
             getSchedulebyUserId(this.state.userId).then((response) =>{
               console.log("getScheduleByUserId", response)
               if(response.teacher_id != "" ){
-                const teacher = `${response.teacherInfo.last_name} ${response.teacherInfo.first_name}. ${response.teacherInfo.mid_name}.`;
-                             this.setState({
-                              teacher
-                             })
+                const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
+                this.setState({
+                  groupId: response.groupId,
+                  subGroup: response.subgroup_name,
+                  engGroup: response.eng_group,
+                  teacherId: response.teacher_id,
+                  student: false,
+                  teacher_correct: true
+                })
+
               }
               else{
                 this.setState({
                   groupId: response.groupId,
                   subGroup: response.subgroup_name,
                   engGroup: response.eng_group,
-                  teacherId: response.teacher_id,
+                  teacherId: response.teacher_id
                 })
                 this.setState({ group: response.groupName })
                 this.ChangePage()
@@ -2017,6 +2023,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
         const end= this.getEndLastLesson(DAY_TODAY);
         console.log(nextLessonStartEnd, "todaysummary") 
+        console.log("this.state.teacherId", this.state.teacherId)
       
         return <DashboardPage
           character={this.state.character}
@@ -2030,6 +2037,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           nextLesson={nextLesson}
           nextLessonStartEnd={nextLessonStartEnd}
           groupId={this.state.groupId}
+          teacherId={this.state.teacherId}
           onGoToPage={(pageNo) => this.setState({page: pageNo})}
           handleTeacherChange={this.handleTeacherChange}
           getCurrentLesson={(date) => this.getCurrentLesson(date)}

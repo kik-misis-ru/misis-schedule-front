@@ -385,6 +385,7 @@ const DashboardPage = ({
                          currentLesson,
                          currentLessonStartEnd,
                          groupId,
+                         teacherId,
                          nextLesson,
                          nextLessonStartEnd,
                          spinner,
@@ -401,6 +402,7 @@ const DashboardPage = ({
     | typeof CHAR_TIMEPARAMOY
   isTeacherAndValid: boolean
   groupId: String
+  teacherId: String
   spinner: Boolean
   count: number,
   start: string,
@@ -446,7 +448,7 @@ const DashboardPage = ({
           lessonsStart={start}
           lessonsEnd={end}
         />
-        {groupId !="" ? (
+        {groupId !="" || teacherId!="" ? (
 
           <Col size={12}>
         <ScheduleSectionTitleRow/>
