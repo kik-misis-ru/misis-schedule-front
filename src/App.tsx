@@ -19,7 +19,6 @@ import {
   IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar, IScheduleByUserIdData, ITeacherInfo,
   getSchedulebyUserId
 } from "./APIHelper";
-import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
 import DashboardPage from './pages/DashboardPage';
 
@@ -35,9 +34,6 @@ import WeekSelect from "./components/WeekSelect";
 
 import buildings from './data/buldings.json'
 import filial from './data/filial.json';
-import schedule from "./schedule";
-import {dayLessons} from "./stories/consts";
-
 import {Bell} from './types/ScheduleStructure'
 
 import "./themes/App.css";
@@ -66,7 +62,6 @@ import {
   THIS_OR_OTHER_WEEK,
   THIS_WEEK,
   TodayOrTomorrow,
-  IBuilding,
 } from './types/base.d'
 import {
   formatDateWithDashes,
@@ -76,8 +71,6 @@ import {
   MS_IN_DAY,
   pairNumberToPairText
 } from './utils';
-import { group } from "console";
-
 export const HOME_PAGE_NO = 0;
 export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
@@ -392,7 +385,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                   engGroup: response.eng_group,
                   teacherId: response.teacher_id,
                   student: false,
-                  teacher_correct: true
+                  teacher_correct: true,
+                  teacher: teacher
                 })
 
               }
