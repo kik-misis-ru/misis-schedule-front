@@ -81,8 +81,8 @@ export interface IScheduleByUserIdData {
   filialId: string,
   groupId: string,
   groupName: string,
-  subGroup: string,
-  engGroup: string,
+  subgroup_name: string,
+  eng_group: string,
   teacher_id: string,
   teacherInfo: ITeacherInfo
 }

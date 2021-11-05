@@ -393,8 +393,8 @@ export class App extends React.Component<IAppProps, IAppState> {
               else{
                 this.setState({
                   groupId: response.groupId,
-                  subGroup: response.subGroup,
-                  engGroup: response.engGroup,
+                  subGroup: response.subgroup_name,
+                  engGroup: response.eng_group,
                   teacherId: response.teacher_id,
                 })
                 this.setState({ group: response.groupName })
