@@ -35,7 +35,7 @@ const Click=()=>{
 }
 return (
   <Col style={{margin: "0 1em 1em 1em"}}>
-<Headline3>
+<Headline3 >
 {text}
 </Headline3>
 <Card
@@ -65,7 +65,7 @@ content={
 
 <TextBox >
   <Row>
-  <Col style={{margin: "0 0 0 auto"}}>
+  <Col style={{margin: "0 0 0 0"}}>
 <TextBoxLabel style={{color:"grey"}}>
 {questions}
 </TextBoxLabel>

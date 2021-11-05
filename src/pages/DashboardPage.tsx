@@ -161,7 +161,32 @@ const TodaySummary = ({
   const weekDayShortToday = capitalize(
     moment(date).format('dd')
   );
+  const day = {
+    "Пн": "Понедельник",
+    "Вт": "Вторник",
+    "Ср": "Средa", 
+    "Чт": "Четверг", 
+    "Пт": "Пятница", 
+    "Сб": "Суббота",
+  }
+  const month = {
+    "01": "января",
+    "02": "февраля",
+    "03": "марта",
+    "04": "апреля",
+    "05": "мая",
+    "06": "июня",
+    "07": "июля",
+    "08": "августа",
+    "09": "сентября",
+    "10": "октября",
+    "11": "ноября",
+    "12": "декабря",
+  }
   const dateToday = moment(date).format('DD.MM.YY');
+  let dateDay = ""
+  dateToday.slice(0, 1)==="0" ? dateDay = dateToday.slice(1, 2) : dateDay = dateToday.slice(0, 2)
+
 
   const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
     `Сегодня ${count} с ${from} до ${to}`
@@ -181,7 +206,7 @@ const TodaySummary = ({
           {
             isSunday
               ? DAY_OFF_TEXT
-              : `${weekDayShortToday}, ${dateToday}`
+              : `${day[weekDayShortToday]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
           }
         </CardParagraph2>
         <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
@@ -201,10 +226,6 @@ const TodaySummary = ({
   )
 }
 
-
-const LessonCardBody = () => {
-
-}
 
 const DashboardCard = ({
                          text,

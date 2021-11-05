@@ -36,7 +36,7 @@ const Main = ({
       }}
     >
       <Col
-        // style={{marginLeft: "auto"}}
+         style={{margin: "1em"}}
       >
         <GoToDashboardButton
           onClick={() => {
@@ -57,7 +57,7 @@ const Main = ({
 
   return (
     <Container
-      // style={{padding: 0}}
+      style={{padding: 0, overflow: "hidden"}}
     >
       <TopMenuRow/>
       <Cell
@@ -72,8 +72,10 @@ const Main = ({
       </Cell>
 
       <Spacer100/>
-
+    <div
+    style={{height: "100px", width: "100px"}}></div>
     </Container>
+    
   )
 }
 

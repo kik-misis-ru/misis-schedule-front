@@ -114,6 +114,19 @@ interface AssistantActionDaySchedule {
 
 interface AssistantActionShowSchedule {
   type: 'show_schedule'
+  
+}
+
+interface AssistantActionShowNavigation {
+  type: 'navigation'
+}
+
+interface AssistantActionShowFAQ {
+  type: 'faq'
+}
+
+interface AssistantActionShowContacts {
+  type: 'contacts'
 }
 
 interface AssistantActionGroup {
@@ -145,9 +158,12 @@ export type AssistantAction = AssistantActionProfile
   | AssistantActionWhatLesson
   | AssistantActionFirstLesson
   | AssistantActionDaySchedule
-  | AssistantActionShowSchedule
+  | AssistantActionShowSchedule    
   | AssistantActionGroup
-  | AssistantActionSubgroup;
+  | AssistantActionSubgroup
+  | AssistantActionShowNavigation
+  | AssistantActionShowFAQ
+  | AssistantActionShowContacts;
 
 //
 

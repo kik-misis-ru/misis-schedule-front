@@ -21,7 +21,7 @@ export const RememberCheckboxRow = ({
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",
-        margin: "1.1em"
+        margin: "0.8em"
       }}
     >
       <Checkbox

@@ -18,11 +18,11 @@ import logo from "../images/logo.png";
 export const HeaderLogoCol = () => {
   return (
     <Col
-      style={{maxWidth: '3rem'}}
+      style={{maxWidth: '2.3rem', padding: "0 0 0 0"}}
     >
       <Image
         src={logo}
-        ratio="1 / 1"
+        
       />
     </Col>
   )
@@ -203,7 +203,7 @@ export const TopMenu = ({
   return (
     <Row style={{margin: "1em"}}>
 
-      <HeaderLogoCol/>
+      <HeaderLogoCol />
 
       <HeaderScheduleCol
         label={label}

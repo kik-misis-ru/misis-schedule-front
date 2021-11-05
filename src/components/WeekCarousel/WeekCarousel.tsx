@@ -4,36 +4,38 @@ import {Carousel, CarouselGridWrapper, Row} from "@sberdevices/plasma-ui";
 import WeekCarouselDay from "./WeekCarouselDay";
 
 export const WeekCarousel = ({
-                               carouselIndex,
                                selectedIndex,
                                markedIndex,
                                cols,
-                               onIndexChange,
                                onSelect,
                              }: {
-  carouselIndex: number
   selectedIndex: number
   markedIndex: number
   cols: string[]
-  onIndexChange: (index: number) => void
   onSelect: (weekDayIndex: number) => void
 }) => {
-  console.log(carouselIndex, selectedIndex, markedIndex, "index");
+  const [index, setIndex] = React.useState(selectedIndex);
   return (
     <Row style={{
-      margin: "0.5em", marginRight: "0",
+      width: "100%",
+      marginRight: "0",
       overflow: "hidden"
     }}>
-      <CarouselGridWrapper>
+      <CarouselGridWrapper style={{
+      width: "100%",
+      marginRight: "0",
+      overflow: "hidden"
+    }}>
         <Carousel
           as={Row}
           axis="x"
-          index={carouselIndex}
+          scrollSnapType="mandatory"
+          index={index}
           detectActive
           detectThreshold={0.5}
-          onIndexChange={(index: number) => onIndexChange(index)}
+          onIndexChange={(i) => setIndex(i)}
           paddingStart="0%"
-          paddingEnd="40%"
+          paddingEnd="50%"
         >
           {
             cols.map((text, i) => {

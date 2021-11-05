@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   TextBoxBigTitle,
   TextBox,
-  TextBoxSubTitle,
+  Caption
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
@@ -67,13 +67,12 @@ const HomeDescription = ({
   text: string
 }) => (
   <TextBox>
-    <TextBoxSubTitle style={{
+    <Caption style={{
       margin: '1.5em',
-      textAlign: "center",
-      color: "white"
+      textAlign: "center"
     }}>
       {text}
-    </TextBoxSubTitle>
+    </Caption>
   </TextBox>
 
 )
@@ -157,7 +156,7 @@ const TextFieldForUserInfo = ({
       className="editText"
       // placeholder="Напиши номер своей академической группы"
       value={value}
-      style={{margin: "1em"}}
+      style={{margin: "0.5em"}}
       // onChange={(event) => {
       //   onChange(fieldType, event.target.value)
       // }}
