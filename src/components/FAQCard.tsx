@@ -71,7 +71,7 @@ content={
 </TextBoxLabel>
 </Col>
 </Row>
-{answers.map((answer) =>(
+{answers?.map((answer) =>(
               <Body1 style={{color:"white"}}>
               {answer}
               </Body1>
