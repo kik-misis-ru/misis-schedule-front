@@ -30,13 +30,8 @@ answers: string[],
 }) => {
 const [flag, setFlag] = useState(false);
 const Click=()=>{
-<<<<<<< HEAD
-  console.log(flag)
-  //return flag=!flag;
-=======
   
   setFlag(!flag);
->>>>>>> b4f3b5a06c8104614527780b351ba76b4cceb715
 }
 return (
   <Col style={{margin: "0 1em 1em 1em"}}>

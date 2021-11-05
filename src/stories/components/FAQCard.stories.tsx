@@ -17,7 +17,7 @@ export default {
       },
     answer: {
     type: {name: 'string', required: true},
-    defaultValue: faq[0].answers,
+    defaultValue: faq[0],
     }
   },
 } as ComponentMeta<typeof FAQCard>;
