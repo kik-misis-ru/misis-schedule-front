@@ -4,7 +4,6 @@ import styled from "styled-components";
 import {createAssistant, createSmartappDebugger,} from "@sberdevices/assistant-client";
 import {Container, DeviceThemeProvider, Spinner,} from '@sberdevices/plasma-ui';
 import {detectDevice} from '@sberdevices/plasma-ui/utils';
-import { Guid } from 'js-guid';
 
 import {
   createUser,
@@ -17,7 +16,8 @@ import {
   getUser,
   IsEnglishGroupExist,
   IScheduleApiData,
-  IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar,
+  IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar, IScheduleByUserIdData, ITeacherInfo,
+  getSchedulebyUserId
 } from "./APIHelper";
 import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
@@ -376,75 +376,41 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case "smart_app_data":
           console.log("User");
-          console.log("EVENT",event);
+          console.log(event);
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
             this.setState({userId: event.sub});
-            getUser(this.state.userId).then((user) => {
-              if (user !== "0") {
-                this.setState({
-                  groupId: user.group_id,
-                  subGroup: user.subgroup_name,
-                  engGroup: user.eng_group,
-                  teacherId: user.teacher_id,
-                })
-                this.convertIdInGroupName()
-                if (this.state.teacherId !== "") {
-                  getInTeacherFromDb(this.state.teacherId)
-                    .then((teacherData) => {
-                        const teacher = `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`;
-                        this.setState({
-                          teacher
-                        })
-                      }
-                    );
-                  getScheduleTeacherFromDb(
-                    this.state.teacherId,
-                    this.getFirstDayWeek(new Date(this.state.date))
-                  )
-                    .then((response) => {
-                      this.showWeekSchedule(response, 0)
-                    });
-                  this.ChangePage()
-                  this.setState({
-                    student: false,
-                    flag: true,
-                    //page: DASHBOARD_PAGE_NO,
-                    teacher_checked: true,
-                    teacher_star: true,
-                    teacher_bd: this.state.teacherId,
-                    teacher_correct: true
-                  });
-                  const datePlusWeek = this.state.date + SEVEN_DAYS;
-                  this.getScheduleFromDb(datePlusWeek)
-                } else if (this.state.groupId !== "") {
-                  getScheduleFromDb(this.state.groupId, this.state.engGroup, this.getFirstDayWeek(new Date(this.state.date))).then((response) => {
-                    this.showWeekSchedule(response, 0)
-                  }).then(() => {
-                    console.log("Get shcedule")
-                    this.ChangePage()
-                    this.setState({
-                      //page: DASHBOARD_PAGE_NO,
-                      flag: true,
-                      checked: true,
-                      star: true,
-                      bd: this.state.groupId,
-                      student: true
-                    });
-                  });
-                  const datePlusWeek = this.state.date + SEVEN_DAYS;
-                  this.getScheduleFromDb(datePlusWeek)
-                } else {
-                  this.ChangePage()
-                  //this.setState({page: DASHBOARD_PAGE_NO});
-                }
-              } else {
-                this.ChangePage()
-                
+            const now = new Date();
+            this.setState({today: now.getDay()});
+            getSchedulebyUserId(this.state.userId).then((response) =>{
+              console.log("getScheduleByUserId", response)
+              if(response.teacher_id != "" ){
+                const teacher = `${response.teacherInfo.last_name} ${response.teacherInfo.first_name}. ${response.teacherInfo.mid_name}.`;
+                             this.setState({
+                              teacher
+                             })
               }
-              //this.setState({page: DASHBOARD_PAGE_NO});
-            })
-          }
+              else{
+                this.setState({
+                  groupId: response.groupId,
+                  subGroup: response.subGroup,
+                  engGroup: response.engGroup,
+                  teacherId: response.teacher_id,
+                })
+                this.setState({ group: response.groupName })
+                this.ChangePage()
+                this.setState({
+                  //page: DASHBOARD_PAGE_NO,
+                  flag: true,
+                  checked: true,
+                  star: true,
+                  bd: this.state.groupId,
+                  student: true
+                });
+              }
+              this.showWeekSchedule(response.schedule, 0)
+            }
+            )}
           console.log(`assistant.on(data)`, event);
           const {action} = event;
           this.dispatchAssistantAction(action);
@@ -1995,26 +1961,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   render() {
     let {page} = this.state;
     if (page >= 1 && page <= 13) {
-      let guid = Guid.newGuid()
-      this._assistant.sendData({
-        "messageName": "GET_RUNTIME_PERMISSIONS",
-        "sessionId": guid,
-        "messageId": 0,
-        "uuid": {
-          "userChannel": "B2C",
-          "sub": "noN0Crr3wgIDB0zPleKresJJBnQWbTybFS96aH/CO1ag1UKZFmqfjY9pgDfQAAv8DJiarMJBCd+OSKUzNTk2jw0W/jbBIC6V/xwQdmSX5cA3bAbhWkZVtK9z3zFc8Mkh3O1nZa/qn3SAagVDNjZIB6p4Z9Wzb0Lm/uzDjpy3qh0="
-        },
-        "payload": {
-          "server_action": {
-            "parameters": {
-              "type": [
-                "service_push"
-              ]
-            }
-          }
-        }
-      }
-    )
       return this.Raspisanie(page);
     }
     switch (page) {
@@ -2066,6 +2012,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx-1]?.[THIS_WEEK];
         console.log(this.whatLesson(now, "will").num, "next")
         const count = this.state.day[this.state.today - 1]?.count[0]
+        console.log("COUNT", this.state.today)
         const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
         const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
         const end= this.getEndLastLesson(DAY_TODAY);

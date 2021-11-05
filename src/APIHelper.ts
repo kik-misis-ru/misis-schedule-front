@@ -69,6 +69,24 @@ export interface IScheduleApiData {
   schedule_header: IScheduleHeader
 }
 
+export interface ITeacherInfo{
+  last_name: string,
+  first_name: string,
+  mid_name: string
+}
+
+export interface IScheduleByUserIdData {
+  schedule: IScheduleApiData,
+  userId: string,
+  filialId: string,
+  groupId: string,
+  groupName: string,
+  subGroup: string,
+  engGroup: string,
+  teacher_id: string,
+  teacherInfo: ITeacherInfo
+}
+
 //
 
 //const API_URL = "http://127.0.0.1:8000/";
@@ -103,7 +121,6 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
     },
   };
   console.log(`APIHelper: getScheduleTeacherFromDb: url: "${url}", config:`, config);
-
   const response = await axios.get(url, config);
 
   const {data: rawSchedule} = response;
@@ -111,6 +128,22 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
   console.log(`APIHelper: getScheduleTeacherFromDb: parsedSchedule:`, parsedSchedule);
   return parsedSchedule;
 }
+
+export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByUserIdData>{
+  const url = `${API_URL}schedule_by_user_id`;
+  const config={
+    params:{
+      user_id: user_id
+    }
+  }
+  const response = await axios.get(url, config);
+
+  const {data: rawSchedule} = response;
+  const parsedSchedule: IScheduleByUserIdData = JSON.parse(rawSchedule);
+  console.log(`APIHelper: schedule_by_user_id: parsedSchedule:`, parsedSchedule);
+  return parsedSchedule;
+}
+
 
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {
   const url = `${API_URL}teacher`;
