@@ -475,6 +475,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       case "teacher_bd":
         this.setState({teacher_bd: value})
         break;
+      case "flag":
+        this.setState({flag: value})
+        break;
       default:
         break;
     }

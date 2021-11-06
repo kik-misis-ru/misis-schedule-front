@@ -29,6 +29,7 @@ import {
   import {
     getFullGroupName,
   } from '../utils';
+import { threadId } from "worker_threads";
 
 
   const FIRST_DAY_OTHER_WEEK = 8;
@@ -78,6 +79,9 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
     constructor(props) {
         super(props);
         this.onHandleChange = this.onHandleChange.bind(this)
+        this.PreviousWeek = this.PreviousWeek.bind(this)
+        this.NextWeek = this.NextWeek.bind(this);
+        this.CurrentWeek = this.CurrentWeek.bind(this);
         let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
         let _timeparam = props.timeParam
         if (props.timeParam > 7) {
@@ -98,6 +102,15 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
         }
 
         // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
+    }
+    PreviousWeek(){
+        this.props.PreviousWeek()
+    }
+    NextWeek(){
+        this.props.NextWeek()
+    }
+    CurrentWeek(){
+        this.props.CurrentWeek();
     }
 
     onHandleChange(key: string, value: any): void {
@@ -134,18 +147,18 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
             <WeekSelect
               onPrevWeekClick={() => {
                 this.onHandleChange("spinner",false);
-                this.props.PreviousWeek();
+                this.PreviousWeek();
                 this.onHandleChange("flag", false)
                 this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
               }}
               onThisWeekClick={() => {
-                this.props.CurrentWeek();
+                this.CurrentWeek();
                 this.onHandleChange("flag", true)
                 this.onHandleChange("page", SCHEDULE_PAGE_NO)
               }}
               onNextWeekClick={() => {
                 this.onHandleChange("spinner", false);
-                this.props.NextWeek();
+                this.NextWeek();
                 this.onHandleChange("flag", false)
                 this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
               }}
@@ -165,9 +178,12 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                     : '';
                 })
               }
-              onSelect={(weekDayIndex) => this.onHandleChange("page", (
-                weekDayIndex + this.state.page + (this.state.weekParam === OTHER_WEEK ? 0 : 1)
-              ))}
+              onSelect={(weekDayIndex) => {
+                console.log("NEW_PAGE", weekDayIndex + this.state.page + (this.state.weekParam === OTHER_WEEK ? 0 : 1))
+                this.onHandleChange("page", (
+                    weekDayIndex + this.state.page + (this.state.weekParam === OTHER_WEEK ? 0 : 1)
+                  ))
+              }}
             />
 
             <ScheduleDay
