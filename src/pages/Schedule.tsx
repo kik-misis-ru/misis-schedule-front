@@ -179,7 +179,6 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                 })
               }
               onSelect={(weekDayIndex) => {
-                console.log("NEW_PAGE", weekDayIndex + this.state.page + (this.state.weekParam === OTHER_WEEK ? 0 : 1))
                 this.onHandleChange("page", (
                     weekDayIndex + this.state.page + (this.state.weekParam === OTHER_WEEK ? 0 : 1)
                   ))
