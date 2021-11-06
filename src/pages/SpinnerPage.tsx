@@ -16,7 +16,7 @@ export const SpinnerPage = (
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(character)
+        getThemeBackgroundByChar(`${character}_light`)
       }
       <div>
         <Container

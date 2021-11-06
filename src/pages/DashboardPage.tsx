@@ -209,7 +209,7 @@ const TodaySummary = ({
               : `${day[weekDayShortToday]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
           }
         </CardParagraph2>
-        <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
+        <CardParagraph1 style={{color: "grey"}}>
           {
             !isSunday &&
             lessonCount !== 0
@@ -432,7 +432,7 @@ const DashboardPage = ({
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(character)
+        getThemeBackgroundByChar(`${character}_light`)
       }
       <Container style={{padding: 0}}>
         <HeaderRow

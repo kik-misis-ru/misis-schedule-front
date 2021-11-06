@@ -159,7 +159,7 @@ const MainContent = (
           />
           : <TeacherName
             text={teacher}
-            style={{color: "white"}}
+            style={{color: "var(--plasma-colors-button-primary)"}}
             onClick={() => onTeacherClick(teacher)}
           />
       }
@@ -185,7 +185,7 @@ export const LessonRightContent = (
         contentLeft={
           <IconLocation size="xs"/>
         }
-        style={{backgroundColor: COLOR_BLACK}}
+        style={{backgroundColor: COLOR_BLACK, color: "var(--plasma-colors-button-primary)"}}
       />
       <TextBoxTitle>
         {lessonType}

@@ -14,12 +14,15 @@ const ThemeBackgroundJoyLight = createGlobalStyle(lightJoy);
 
 export const getThemeBackgroundByChar = (character: Character
   // todo: что такое 'timeParamoy' ???
-  | typeof CHAR_TIMEPARAMOY
+  | typeof CHAR_TIMEPARAMOY | string
 ) => {
   const themeBackgroundByChar = {
-    [CHAR_SBER]: <ThemeBackgroundSber/>,
-    [CHAR_EVA]: <ThemeBackgroundEva/>,
-    [CHAR_JOY]: <ThemeBackgroundJoy/>,
+    "sber_dark": <ThemeBackgroundSber/>,
+    "eva_dark": <ThemeBackgroundEva/>,
+    "joy_dark": <ThemeBackgroundJoy/>,
+    "sber_light": <ThemeBackgroundSberLight/>,
+    "eva_light": <ThemeBackgroundEvaLight/>,
+    "joy_light": <ThemeBackgroundJoyLight/>,
   }
   const themeBackground = themeBackgroundByChar[character];
   return themeBackground || null;

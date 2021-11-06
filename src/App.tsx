@@ -16,7 +16,8 @@ import {
   getUser,
   IsEnglishGroupExist,
   IScheduleApiData,
-  IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar,
+  IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar, IScheduleByUserIdData, ITeacherInfo,
+  getSchedulebyUserId
 } from "./APIHelper";
 import {ACCENT_TEXT_COLOR, DEFAULT_TEXT_COLOR,} from './components/consts';
 
@@ -379,76 +380,43 @@ export class App extends React.Component<IAppProps, IAppState> {
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
             this.setState({userId: event.sub});
-            getUser(this.state.userId).then((user) => {
-              if (user !== "0") {
-                this.setState({
-                  groupId: user.group_id,
-                  subGroup: user.subgroup_name,
-                  engGroup: user.eng_group,
-                  teacherId: user.teacher_id,
-                })
-                this.convertIdInGroupName()
-                if (this.state.teacherId !== "") {
-                  getInTeacherFromDb(this.state.teacherId)
-                    .then((teacherData) => {
-                        const teacher = `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`;
-                        this.setState({
-                          teacher
-                        })
-                      }
-                    );
-                  getScheduleTeacherFromDb(
-                    this.state.teacherId,
-                    this.getFirstDayWeek(new Date(this.state.date))
-                  )
-                    .then((response) => {
-                      this.showWeekSchedule(response, 0)
-                    });
-                  this.ChangePage()
-                  this.setState({
-                    student: false,
-                    flag: true,
-                    //page: DASHBOARD_PAGE_NO,
-                    teacher_checked: true,
-                    teacher_star: true,
-                    teacher_bd: this.state.teacherId,
-                    teacher_correct: true
-                  });
-                  const datePlusWeek = this.state.date + SEVEN_DAYS;
-                  this.getScheduleFromDb(datePlusWeek)
-                } else if (this.state.groupId !== "") {
-                  getScheduleFromDb(this.state.groupId, this.state.engGroup, this.getFirstDayWeek(new Date(this.state.date))).then((response) => {
-                    this.showWeekSchedule(response, 0)
-                  }).then(() => {
-                    console.log("Get shcedule")
-                    this.ChangePage()
-                    this.setState({
-                      //page: DASHBOARD_PAGE_NO,
-                      flag: true,
-                      checked: true,
-                      star: true,
-                      bd: this.state.groupId,
-                      student: true
-                    });
-                  });
-                  const datePlusWeek = this.state.date + SEVEN_DAYS;
-                  this.getScheduleFromDb(datePlusWeek)
-                } else {
-                  this.ChangePage()
-                  //this.setState({page: DASHBOARD_PAGE_NO});
-                }
-              } else {
-                this.ChangePage()
-                
+            getSchedulebyUserId(this.state.userId).then((response) =>{
+              console.log("getScheduleByUserId", response)
+              if(response.teacher_id != "" ){
+                const teacher = `${response.teacherInfo.last_name} ${response.teacherInfo.first_name}. ${response.teacherInfo.mid_name}.`;
+                             this.setState({
+                              teacher
+                             })
               }
-              //this.setState({page: DASHBOARD_PAGE_NO});
+              else if (response.group_id!=""){
+                console.log(response);
+                this.setState({
+                  groupId: response.group_id,
+                  subGroup: response.subgroup_name,
+                  engGroup: response.eng_group,
+                  teacherId: response.teacher_id,
+                  group: response.groupName,
+                  flag: true,
+                  checked: true,
+                  star: true,
+                  bd: this.state.groupId,
+                  student: true
+                })
+                console.log(this.state.subGroup, "subgroup")
+              }
+              const now = new Date();
+              this.setState({today: now.getDay()});
+              // const datePlusWeek = this.state.date + SEVEN_DAYS;
+              // this.getScheduleFromDb(datePlusWeek)
+              this.showWeekSchedule(response.schedule, 0)
             })
-          }
+          
           console.log(`assistant.on(data)`, event);
           const {action} = event;
           this.dispatchAssistantAction(action);
+          }
           break
-
+          
         default:
           break
       }
@@ -1691,7 +1659,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       <DeviceThemeProvider>
         <DocStyle/>
         {
-          getThemeBackgroundByChar(this.state.character)
+          getThemeBackgroundByChar(`${this.state.character}_light`)
         }
         <div>
           <Container style={{padding: 0, overflow: "hidden"}}>
@@ -1922,6 +1890,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
 
         if (!correct_sub) {
+          console.log("subGroup", this.state.subGroup)
           this.setState({isSubGroupError: true})
         } else {
           this.setState({isSubGroupError: false, star: false});
@@ -2048,7 +2017,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
         const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
         const end= this.getEndLastLesson(DAY_TODAY);
-        console.log(nextLessonStartEnd, "todaysummary") 
+        console.log(todayIndex, "count") 
       
         return <DashboardPage
           character={this.state.character}
