@@ -31,6 +31,7 @@ import SpinnerPage from "./pages/SpinnerPage";
 import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
+import Schedule from './pages/Schedule';
 
 import buildings from './data/buldings.json'
 import filial from './data/filial.json';
@@ -298,6 +299,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.isCorrect = this.isCorrect.bind(this)
     this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+    this.getCurrentLesson = this.getCurrentLesson.bind(this);
+    this.NextWeek = this.NextWeek.bind(this);
+    this.CurrentWeek = this.CurrentWeek.bind(this);
+    this.PreviousWeek = this.PreviousWeek.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
@@ -1961,7 +1966,26 @@ export class App extends React.Component<IAppProps, IAppState> {
   render() {
     let {page} = this.state;
     if (page >= 1 && page <= 13) {
-      return this.Raspisanie(page);
+      return <Schedule
+      timeParam={page}
+      onSetValue={this.setValue}
+    teacher={this.state.teacher}
+    groupName={this.state.group}
+    character={this.state.character}
+    isTeacher={! this.state.student}
+    teacher_star={this.state.teacher_star}
+    star={this.state.star}
+    PreviousWeek={this.PreviousWeek}
+    CurrentWeek={this.CurrentWeek}
+    NextWeek ={this.NextWeek}
+    getCurrentLesson={this.getCurrentLesson}
+    handleTeacherChange={this.handleTeacherChange}
+    weekParam={page>7 ? 1 : 0}
+    day={this.state.day}
+    spinner={this.state.spinner}
+    today = {this.state.today}
+    days = {this.state.days}
+      />
     }
     switch (page) {
       case HOME_PAGE_NO:
