@@ -303,6 +303,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.NextWeek = this.NextWeek.bind(this);
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
+    this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
@@ -1968,6 +1969,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   render() {
     let {page} = this.state;
+    console.log("App: render, page:", page)
+
     if (page >= 1 && page <= 13) {
       return <Schedule
       timeParam={page}
@@ -1988,6 +1991,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     spinner={this.state.spinner}
     today = {this.state.today}
     days = {this.state.days}
+    group ={this.state.group}
+    subGroup= {this.state.subGroup}
+    getIsCorrectTeacher = {this.getIsCorrectTeacher}
       />
     }
     switch (page) {
