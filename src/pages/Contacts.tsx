@@ -34,7 +34,7 @@ const Contacts = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(`${character}_dark`)
+      getThemeBackgroundByChar(character, 'dark')
     }
           <Container style={{padding: 0}}>
 
@@ -53,14 +53,17 @@ const Contacts = ({
               </Col>
 
             </Row>
-            {contacts_data.map((contact) =>(
+            {
+              contacts_data.map((contact, index) =>(
               <ContactsCard
+                key={index}
                 site={contact.site}
                 text={contact.text}
                 tel={contact.tel}
                 mail={contact.mail}
               />
-            ))}
+            ))
+            }
                    
            <div style={{margin: "0 1.3em 1.3em 1.3em"}}>
             <Headline3 style={{marginBottom: "0.5em"}}>

@@ -14,14 +14,9 @@ import {
   CellListItem,
 } from "@sberdevices/plasma-ui";
 import {
-    HOME_PAGE_NO,
-    StartEnd,
-    LessonStartEnd,
-    NAVIGATOR_PAGE_NO,
-    SCHEDULE_PAGE_NO,
-    CONTACTS_PAGE_NO,
-    FAQ_PAGE_NO,
-  } from '../App';
+  StartEnd,
+  LessonStartEnd,
+} from '../App';
 import {IconLocation} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
 import karta from "../images/Karta.png";
@@ -38,69 +33,68 @@ import {
 } from '../components/TopMenu';
 
 
-
-const Lesson = ({
-                         character,
-                         page,
-                         spinner,
-                         currentLesson,
-                         isTeacherAndValid,
-                         currentLessonStartEnd,
-                         onGoToPage,
-                         onDashboardClick,
-                         handleTeacherChange,
-                       }: {
+const Lesson = (props: {
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
-  page: number,
   isTeacherAndValid: boolean,
   currentLesson: Bell,
   spinner: Boolean,
   currentLessonStartEnd: StartEnd,
   onDashboardClick: () => void
-  onGoToPage: (pageNo: number) => void
   handleTeacherChange: () => Promise<void>
 }) => {
+  const {
+    character,
+    spinner,
+    currentLesson,
+    isTeacherAndValid,
+    currentLessonStartEnd,
+    onDashboardClick,
+    handleTeacherChange,
+  } = props;
+
+  console.log('Lesson:props:', props)
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(`${character}_dark`)
+      getThemeBackgroundByChar(character, 'dark')
     }
-          <Container style={{padding: 0}}>
+    <Container style={{padding: 0}}>
 
-            <Row style={{margin: "1em"}}>
+      <Row style={{margin: "1em"}}>
 
-              <HeaderLogoCol/>
+        <HeaderLogoCol/>
 
-              <HeaderTitleCol2
-                title="Карточка пары"
-              />
+        <HeaderTitleCol2
+          title="Карточка пары"
+        />
 
-              <Col style={{margin: "0 0 0 auto"}}>
-                <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
-                />
-              </Col>
+        <Col style={{margin: "0 0 0 auto"}}>
+          <GoToDashboardButton
+            onClick={() => onDashboardClick()}
+          />
+        </Col>
 
-            </Row>
-            { spinner===true ?
-        (
-            <LessonCard
-                      lesson={currentLesson}
-                      startEndTime={currentLessonStartEnd}
-                      isTeacherAndValid={isTeacherAndValid}
-                      isAccented={true}
-                      // todo: задавать имя преподавателя
-                      onTeacherClick={(teacherName) => handleTeacherChange()}
-                    />) : (<div></div>)
-        }
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
-          </Container>
-        
+      </Row>
+      {
+        spinner === true
+          ? <LessonCard
+            lesson={currentLesson}
+            startEndTime={currentLessonStartEnd}
+            isTeacherAndValid={isTeacherAndValid}
+            isAccented={true}
+            // todo: задавать имя преподавателя
+            onTeacherClick={(teacherName) => handleTeacherChange()}
+          />
+          : <div></div>
+      }
+      <div style={{
+        width: '200px',
+        height: '300px',
+      }}></div>
+    </Container>
+
   </DeviceThemeProvider>
 }
 

@@ -1,5 +1,7 @@
 import React from 'react';
+import {MemoryRouter} from 'react-router';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
+import {Container, DeviceThemeProvider, Spinner,} from '@sberdevices/plasma-ui';
 
 import ScheduleLesson from '../../components/ScheduleLesson';
 import {lesson} from "../consts";
@@ -8,7 +10,7 @@ export default {
   title: 'components/ScheduleLesson',
   component: ScheduleLesson,
   argTypes: {
-    isCurrentLesson: {
+    isAccented: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
@@ -30,11 +32,12 @@ export default {
 } as ComponentMeta<typeof ScheduleLesson>;
 
 const Template: ComponentStory<typeof ScheduleLesson> = (args, context) => (
-  <ScheduleLesson {...args} />
+  <MemoryRouter>
+    <ScheduleLesson {...args} />
+  </MemoryRouter>
 );
 
 export const Default = Template.bind({});
 
-Default.args = {
-};
+Default.args = {};
 

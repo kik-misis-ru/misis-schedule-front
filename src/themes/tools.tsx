@@ -3,7 +3,12 @@ import React from "react";
 import styled, {createGlobalStyle} from "styled-components";
 import {darkEva, darkJoy, darkSber, lightEva, lightJoy, lightSber} from "@sberdevices/plasma-tokens/themes";
 
-import {CHAR_EVA, CHAR_JOY, CHAR_SBER, CHAR_TIMEPARAMOY, Character} from "../types/base.d";
+import {
+  CHAR_EVA, CHAR_JOY, CHAR_SBER, CHAR_TIMEPARAMOY, Character,
+  THEME_DARK,
+  THEME_LIGHT,
+  ThemeType,
+} from "../types/base.d";
 
 const ThemeBackgroundSber = createGlobalStyle(darkSber);
 const ThemeBackgroundEva = createGlobalStyle(darkEva);
@@ -12,19 +17,22 @@ const ThemeBackgroundSberLight = createGlobalStyle(lightSber);
 const ThemeBackgroundEvaLight = createGlobalStyle(lightEva);
 const ThemeBackgroundJoyLight = createGlobalStyle(lightJoy);
 
-export const getThemeBackgroundByChar = (character: Character
-  // todo: что такое 'timeParamoy' ???
-  | typeof CHAR_TIMEPARAMOY | string
+export const getThemeBackgroundByChar = (
+  character: Character
+    // todo: что такое 'timeParamoy' ???
+    | typeof CHAR_TIMEPARAMOY | string,
+  themeType: ThemeType
 ) => {
   const themeBackgroundByChar = {
-    "sber_dark": <ThemeBackgroundSber/>,
-    "eva_dark": <ThemeBackgroundEva/>,
-    "joy_dark": <ThemeBackgroundJoy/>,
-    "sber_light": <ThemeBackgroundSberLight/>,
-    "eva_light": <ThemeBackgroundEvaLight/>,
-    "joy_light": <ThemeBackgroundJoyLight/>,
+    [CHAR_SBER + '_' + THEME_DARK]: <ThemeBackgroundSber/>,
+    [CHAR_EVA + '_' + THEME_DARK]: <ThemeBackgroundEva/>,
+    [CHAR_JOY + '_' + THEME_DARK]: <ThemeBackgroundJoy/>,
+    [CHAR_SBER + '_' + THEME_LIGHT]: <ThemeBackgroundSberLight/>,
+    [CHAR_EVA + '_' + THEME_LIGHT]: <ThemeBackgroundEvaLight/>,
+    [CHAR_JOY + '_' + THEME_LIGHT]: <ThemeBackgroundJoyLight/>,
   }
-  const themeBackground = themeBackgroundByChar[character];
+  const themeName = character + '_' + themeType;
+  const themeBackground = themeBackgroundByChar[themeName];
   return themeBackground || null;
 }
 

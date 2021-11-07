@@ -13,7 +13,7 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  NAVIGATOR_PAGE_NO,
+  // NAVIGATOR_PAGE_NO,
   DASHBOARD_PAGE_NO,
   SCHEDULE_PAGE_NO,
   Spacer100,
@@ -332,7 +332,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(`${this.props.character}_dark`)
+        getThemeBackgroundByChar(this.props.character, 'dark')
       }
       <div>
         {

@@ -130,7 +130,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
      return <DeviceThemeProvider>
         <DocStyle/>
         {
-          getThemeBackgroundByChar(`${this.props.character}_dark`)
+          getThemeBackgroundByChar(this.props.character, 'dark')
         }
         <div>
           <Container style={{padding: 0, overflow: "hidden"}}>

@@ -13,7 +13,7 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  NAVIGATOR_PAGE_NO,
+  // NAVIGATOR_PAGE_NO,
   DASHBOARD_PAGE_NO,
   SCHEDULE_PAGE_NO,
   Spacer100,
@@ -329,59 +329,61 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     )
 
 
-    return <DeviceThemeProvider>
-      <DocStyle/>
-      {
-        getThemeBackgroundByChar(`${this.props.character}_dark`)
-      }
-      <div>
+    return (
+      <DeviceThemeProvider>
+        <DocStyle/>
         {
-          this.props.student
-            ? (
-              <Main
-                setValue={this.onHandleChange}
-                convertIdInGroupName={this.onConvertIdInGroupName}
-                disabled={this.state.disabled}
-                contentRight={studentContent}
-              />
-            )
-            : (
-              /*
-                            <Container style={{padding: 0}}>
-
-                              <Row>
-                                <Col style={{marginLeft: "auto"}}>
-                                  <GoToDashboardButton
-                                    onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
-                                  />
-                                  <GoToScheduleButton
-                                    onClick={() => {
-                                      this.props.convertIdInGroupName();
-                                      this.handleChange("page", SCHEDULE_PAGE_NO)
-                                    }}
-                                    disabled={this.state.disabled}
-                                    style={{marginTop: "1em", marginRight: "1em"}}
-                                  />
-                                </Col>
-                              </Row>
-
-                              <teacherContent/>
-
-                              <Spacer100/>
-                            </Container>
-              */
-
-
-              <Main
-                setValue={this.onHandleChange}
-                convertIdInGroupName={this.onConvertIdInGroupName}
-                disabled={this.state.disabled}
-                contentRight={teacherContent}
-              />
-            )
+          getThemeBackgroundByChar(this.props.character, 'dark')
         }
-      </div>
-    </DeviceThemeProvider>
+        <div>
+          {
+            this.props.student
+              ? (
+                <Main
+                  setValue={this.onHandleChange}
+                  convertIdInGroupName={this.onConvertIdInGroupName}
+                  disabled={this.state.disabled}
+                  contentRight={studentContent}
+                />
+              )
+              : (
+                /*
+                              <Container style={{padding: 0}}>
+
+                                <Row>
+                                  <Col style={{marginLeft: "auto"}}>
+                                    <GoToDashboardButton
+                                      onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
+                                    />
+                                    <GoToScheduleButton
+                                      onClick={() => {
+                                        this.props.convertIdInGroupName();
+                                        this.handleChange("page", SCHEDULE_PAGE_NO)
+                                      }}
+                                      disabled={this.state.disabled}
+                                      style={{marginTop: "1em", marginRight: "1em"}}
+                                    />
+                                  </Col>
+                                </Row>
+
+                                <teacherContent/>
+
+                                <Spacer100/>
+                              </Container>
+                */
+
+
+                <Main
+                  setValue={this.onHandleChange}
+                  convertIdInGroupName={this.onConvertIdInGroupName}
+                  disabled={this.state.disabled}
+                  contentRight={teacherContent}
+                />
+              )
+          }
+        </div>
+      </DeviceThemeProvider>
+    )
   }
 }
 
