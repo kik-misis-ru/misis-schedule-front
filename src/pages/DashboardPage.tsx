@@ -56,14 +56,7 @@ import {Bell} from '../types/ScheduleStructure'
 import {CHAR_TIMEPARAMOY, Character, DAY_TODAY, THIS_WEEK, TodayOrTomorrow} from "../types/base.d";
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
-import ScheduleLesson, {
-  LessonStartAndFinishTime,
-  LessonName,
-  GroupNumber,
-  TeacherName,
-  LessonLeftContent,
-  LessonRightContent
-} from "../components/ScheduleLesson";
+import ScheduleLesson from "../components/ScheduleLesson";
 import {IAppState} from "../App";
 
 
@@ -435,7 +428,7 @@ const DashboardPage = ({
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(`${character}_light`)
+        getThemeBackgroundByChar(`${character}_dark`)
       }
       <Container style={{padding: 0}}>
         <HeaderRow

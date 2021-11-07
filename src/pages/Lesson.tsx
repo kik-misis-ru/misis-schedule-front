@@ -65,7 +65,7 @@ const Lesson = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(`${character}_light`)
+      getThemeBackgroundByChar(`${character}_dark`)
     }
           <Container style={{padding: 0}}>
 

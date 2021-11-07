@@ -332,7 +332,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(`${this.props.character}_light`)
+        getThemeBackgroundByChar(`${this.props.character}_dark`)
       }
       <div>
         {

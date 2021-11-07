@@ -34,7 +34,7 @@ const Contacts = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character)
+      getThemeBackgroundByChar(`${character}_dark`)
     }
           <Container style={{padding: 0}}>
 

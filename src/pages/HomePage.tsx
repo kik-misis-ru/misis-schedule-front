@@ -332,7 +332,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(`${this.props.character}_light`)
+        getThemeBackgroundByChar(`${this.props.character}_dark`)
       }
       <div>
         {
