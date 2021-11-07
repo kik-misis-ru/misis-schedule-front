@@ -77,14 +77,14 @@ export interface ITeacherInfo{
 
 export interface IScheduleByUserIdData {
   schedule: IScheduleApiData,
-  user_id: string,
-  filial_id: string,
-  group_id: string,
+  userId: string,
+  filialId: string,
+  groupId: string,
   groupName: string,
   subgroup_name: string,
   eng_group: string,
   teacher_id: string,
-  teacherInfo: ITeacherInfo
+  teacher_info: ITeacherInfo
 }
 
 //

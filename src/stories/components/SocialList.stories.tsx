@@ -2,7 +2,6 @@ import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 import {lesson} from '../consts';
 import {SocialList} from '../../components/SocialList';
-import vk from '../../images/vk.png'
 
 export default {
   title: 'components/SocialList',

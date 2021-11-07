@@ -214,6 +214,7 @@ const ScheduleLesson = (
   const formatStartEndTime = (startTime: string, endTime: string): string => {
     return startTime ?  `${startTime} - ${endTime}` : "";
   }
+  console.log(lesson, "lesson")
 
   return <CellListItem
     content={

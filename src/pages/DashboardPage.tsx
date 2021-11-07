@@ -47,6 +47,7 @@ import {
   NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
   CONTACTS_PAGE_NO,
+  SETTING_PAGE_NO,
   FAQ_PAGE_NO,
 } from '../App';
 import LinkToOnline from '../components/LinkToOnline';
@@ -385,6 +386,7 @@ const DashboardPage = ({
                          currentLesson,
                          currentLessonStartEnd,
                          groupId,
+                         teacherId,
                          nextLesson,
                          nextLessonStartEnd,
                          spinner,
@@ -401,6 +403,7 @@ const DashboardPage = ({
     | typeof CHAR_TIMEPARAMOY
   isTeacherAndValid: boolean
   groupId: String
+  teacherId: String
   spinner: Boolean
   count: number,
   start: string,
@@ -436,7 +439,7 @@ const DashboardPage = ({
       }
       <Container style={{padding: 0}}>
         <HeaderRow
-          onHomeClick={() => onGoToPage(HOME_PAGE_NO)}
+          onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
         />
         { spinner===true ?
         (<Row>
@@ -446,7 +449,7 @@ const DashboardPage = ({
           lessonsStart={start}
           lessonsEnd={end}
         />
-        {groupId !="" ? (
+        {groupId !="" || teacherId!="" ? (
 
           <Col size={12}>
         <ScheduleSectionTitleRow/>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 import {SocialListItem} from '../../components/SocialList';
-import vk from '../../images/vk.png'
+import data from '../../data/social_media.json'
 
 export default {
   title: 'components/SocialListItem',
@@ -9,15 +9,15 @@ export default {
   argTypes: {
     link: {
       type: {name: 'string', required: true},
-      defaultValue: 'https://vk.com',
+      defaultValue: data[0].link,
     },
     name: {
         type: {name: 'string', required: true},
-        defaultValue: 'ВКонтакте',
+        defaultValue: data[0].name,
       },
     logo: {
     type: {name: 'string', required: true},
-    defaultValue: vk
+    defaultValue: data[0].logo
     }
   },
 } as ComponentMeta<typeof SocialListItem>;
