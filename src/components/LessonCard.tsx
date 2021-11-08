@@ -99,8 +99,9 @@ console.log(teacher, groupNumber)
       <TextBoxTitle>
         {time}
       </TextBoxTitle>
-      </TextBox>
       <LinkToOnline url={url}/>
+      </TextBox>
+      
       </Row>
       <Row>
         { teacher  ?
