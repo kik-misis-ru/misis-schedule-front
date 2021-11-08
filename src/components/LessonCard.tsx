@@ -14,7 +14,8 @@ import {
   Body1,
   Cell,
   TextField,
-  CellDisclosure
+  CellDisclosure,
+  Row
 } from "@sberdevices/plasma-ui";
 import {
   //IconSettings,
@@ -42,7 +43,8 @@ import {
   LessonLeftContent,
   LessonRightContent
 } from "../components/ScheduleLesson";
-
+import { Container } from "@sberdevices/plasma-ui/node_modules/@sberdevices/plasma-core";
+import {history, IAppState} from "../App";
 
 const MainContent = (
   {
@@ -57,6 +59,8 @@ const MainContent = (
     room,
     isTeacherAndValid,
     onTeacherClick,
+    onGoToPage,
+    
   }: {
     lessonName: string
     lessonNumber: string
@@ -69,14 +73,17 @@ const MainContent = (
     isAccented: boolean
     isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
+    onGoToPage: (pageNo: number) => void
   }
 ) => {
 
-  const sanitizeRoom = (room: string): number =>
-    parseInt(room?.replace(/[^\d]/g, ''));
-
+  const sanitizeRoom = (room: string): string =>
+    room?.replace(/[^\d]/g, '');
+console.log(teacher, groupNumber)
   return (
-    <TextBox>
+    <Container style={{padding: "0 0.5em 0.5em 0.5em"}}>
+    <Row style={{margin:"0 0.5em 0.5em 0.5em"}}>
+    <TextBox >
       <LessonName
         text={lessonName}
         lessonNumber={lessonNumber}
@@ -92,32 +99,49 @@ const MainContent = (
       <TextBoxTitle>
         {time}
       </TextBoxTitle>
+      </TextBox>
       <LinkToOnline url={url}/>
+      </Row>
+      <Row>
+        { teacher  ?
       <Card
         onClick={() => onTeacherClick(teacher)}
-        style={{marginTop: "1em"}}
+        style={{margin: "1em 0.5em 0.5em 0.5em", width: "90vw"}}
       >
-        <CardContent>
-          <Footnote1 style={{color: "grey"}}>
-            Преподаватель
-          </Footnote1>
+        <CardContent >
+          
           {
             isTeacherAndValid
-              ? <GroupNumber
+              ? 
+              <TextBox>
+                <Footnote1 style={{color: "grey"}}>
+            Группы
+          </Footnote1>
+              <GroupNumber
                 text={groupNumber}
               />
-              : <Body1>{teacher}</Body1>
+               </TextBox> 
+              : <TextBox>
+                <Footnote1 style={{color: "grey"}}>
+            Преподаватель
+          </Footnote1>
+          <Body1>{teacher}</Body1>
+          </TextBox>
 
           }
         </CardContent>
-      </Card>
-      <Card style={{marginTop: "1em"}}>
+      </Card> : <div></div>
+}
+      </Row>
+      <Row>
+      <Card style={{margin: "1em 0.5em 0.5em 0.5em", width: "90vw"}} onClick={() => history.push('/navigation')}>
         <CardContent compact>
           <Cell
             contentLeft={
               <IconLocation/>
             }
             content={
+              sanitizeRoom(room) !="" ?
               <TextBox>
                 <Body1 style={{marginLeft: "0.5em"}}>
                   Корпус {room?.[0]}
@@ -125,7 +149,12 @@ const MainContent = (
                 <TextBoxLabel style={{color: "grey", marginLeft: "0.5em"}}>
                   Кабинет {sanitizeRoom(room)}
                 </TextBoxLabel>
-              </TextBox>
+              </TextBox> 
+              : <TextBox>
+              <Body1 style={{marginLeft: "0.5em"}}>
+                 {room}
+              </Body1>
+            </TextBox> 
             }
             contentRight={
               <CellDisclosure/>
@@ -133,19 +162,21 @@ const MainContent = (
           />
         </CardContent>
       </Card>
-
+</Row>
       <TextField
         // id="tf"
         label="Заметка "
         className="editText"
         // placeholder="Напиши номер своей академической группы"
-        style={{margin: "1em 0 0 0"}}
+        style={{margin: "1em 1em 0 0"}}
         //   onChange={(event) => {
         //     onChange(event.target.value)
         //   }}
       />
 
-    </TextBox>
+    
+
+    </Container>
   )
 }
 
@@ -156,7 +187,7 @@ const LessonCard = (
     startEndTime,
     isAccented,
     isTeacherAndValid,
-
+    onGoToPage,
     onTeacherClick,
 
   }: {
@@ -164,7 +195,7 @@ const LessonCard = (
     startEndTime: StartEnd
     isAccented: boolean
     isTeacherAndValid: boolean
-
+    onGoToPage: (pageNo: number) => void
     onTeacherClick: (teacherName: string) => void
 
   }
@@ -173,9 +204,9 @@ const LessonCard = (
   const formatStartEndTime = (startTime: string, endTime: string): string => {
     return startTime ? `${startTime} - ${endTime}` : "";
   }
-
+  console.log("lesson", lesson)
   return <Cell
-    style={{margin: "0 1em 1em 1em"}}
+    style={{margin: "0 1em 1em 1em", width:"100%"}}
     content={
       <MainContent
         lessonName={lesson?.lessonName}
@@ -194,6 +225,7 @@ const LessonCard = (
         isAccented={isAccented}
         isTeacherAndValid={isTeacherAndValid}
         onTeacherClick={onTeacherClick}
+        onGoToPage={onGoToPage}
       />
     }
 

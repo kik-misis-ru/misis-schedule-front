@@ -43,6 +43,7 @@ const Lesson = (props: {
   currentLessonStartEnd: StartEnd,
   onDashboardClick: () => void
   handleTeacherChange: () => Promise<void>
+  onGoToPage: (page: number) => void
 }) => {
   const {
     character,
@@ -52,6 +53,7 @@ const Lesson = (props: {
     currentLessonStartEnd,
     onDashboardClick,
     handleTeacherChange,
+    onGoToPage
   } = props;
 
   console.log('Lesson:props:', props)
@@ -77,6 +79,8 @@ const Lesson = (props: {
         </Col>
 
       </Row>
+      <Row>
+        <Col style={{overflow: "hidden"}}>
       {
         spinner === true
           ? <LessonCard
@@ -84,11 +88,14 @@ const Lesson = (props: {
             startEndTime={currentLessonStartEnd}
             isTeacherAndValid={isTeacherAndValid}
             isAccented={true}
+            onGoToPage={(page)=> onGoToPage(page)}
             // todo: задавать имя преподавателя
             onTeacherClick={(teacherName) => handleTeacherChange()}
           />
           : <div></div>
       }
+      </Col>
+      </Row>
       <div style={{
         width: '200px',
         height: '300px',

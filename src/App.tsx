@@ -85,7 +85,7 @@ import Lesson from "./pages/Lesson";
 
 export const NON_EXISTING_PAGE_NO = -1;
 export const HOME_PAGE_NO = 0;
-// export const NAVIGATOR_PAGE_NO = 15;
+//export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
 export const CONTACTS_PAGE_NO = 18;
@@ -1894,11 +1894,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           group_response,
           english_response,
         ] = responses;
-        if (group_response.status == 1) {
+        const group = JSON.parse(group_response);
+        console.log("App: isCorrect: response: english", english_response);
+        if (group.status == 1) {
           this.setState({correct: true})
           this.convertGroupNameInId();
           correct = true;
         }
+        console.log(this.state.correct, "correct");
         if (english_response || this.state.engGroup == "") {
           correct_eng = true;
           console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
@@ -2014,7 +2017,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   render() {
     let {page} = this.state;
-    console.log("App: render, this.state:", this.state)
+    // console.log("App: render, this.state:", this.state)
 
     return (
       <Router history={history}>
@@ -2101,9 +2104,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                     character={this.state.character}
                     isTeacherAndValid={this.getIsCorrectTeacher()}
                     spinner={this.state.spinner}
-                    currentLesson={this.state.days[1]?.[match.params.lessonIndex]?.[THIS_WEEK]}
+                    currentLesson={this.state.days[this.state.page-1]?.[match.params.lessonIndex-1]?.[THIS_WEEK]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
-
+                    onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                     handleTeacherChange={this.handleTeacherChange}
                   />

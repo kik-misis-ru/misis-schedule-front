@@ -63,7 +63,7 @@ export const LessonName = (
         color: isAccented
           ? ACCENT_TEXT_COLOR
           : COLOR_BUTTON_PRIMARY
-        // textDecoration: 'none',
+        , textDecoration: 'none',
       }}
     >
       {
