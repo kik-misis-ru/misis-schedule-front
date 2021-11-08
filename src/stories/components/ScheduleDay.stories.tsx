@@ -1,4 +1,5 @@
 import React from 'react';
+import {MemoryRouter} from 'react-router';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
 import ScheduleDay from '../../components/ScheduleDay';
@@ -35,7 +36,9 @@ export default {
 } as ComponentMeta<typeof ScheduleDay>;
 
 const Template: ComponentStory<typeof ScheduleDay> = (args, context) => (
-  <ScheduleDay {...args} />
+  <MemoryRouter>
+    <ScheduleDay {...args} />
+  </MemoryRouter>
 );
 
 export const GroupView = Template.bind({});

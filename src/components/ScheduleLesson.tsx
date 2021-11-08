@@ -1,4 +1,7 @@
 import React from "react";
+import {
+  Link
+} from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import {
   CardHeadline3,
@@ -13,13 +16,13 @@ import {
   IconLocation,
   //IconMoreVertical
 } from "@sberdevices/plasma-icons";
-import {LessonStartEnd,NO_LESSONS_NAME,StartEnd} from "../App";
+import {LessonStartEnd, NO_LESSONS_NAME, StartEnd} from "../App";
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 
 //import { text, background, gradient } from "@sberdevices/plasma-tokens";
 // import "../themes/App.css";
-import {ACCENT_TEXT_COLOR, COLOR_BLACK} from "./consts";
+import {ACCENT_TEXT_COLOR, COLOR_BLACK, COLOR_PRIMARY, COLOR_BUTTON_PRIMARY} from "./consts";
 import {Bell} from "../types/ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
@@ -46,21 +49,43 @@ export const LessonName = (
   {
     isAccented,
     text,
+    lessonNumber,
   }: {
     isAccented: boolean
     text: string
+    lessonNumber: string
   }
 ) => {
   return (
-    isAccented
-      ? <CardHeadline3 style={{
-        color: ACCENT_TEXT_COLOR,
-      }}>
-        {text}
-      </CardHeadline3>
-      : <CardHeadline3>
-        {text}
-      </CardHeadline3>
+    <Link
+      to={`/lesson/${lessonNumber}`}
+      style={{
+        color: isAccented
+          ? ACCENT_TEXT_COLOR
+          : COLOR_BUTTON_PRIMARY
+        , textDecoration: 'none',
+      }}
+    >
+      {
+        isAccented
+          ? <CardHeadline3
+            style={{
+              // color: 'var(--plasma-colors-button-accent)',
+              color: ACCENT_TEXT_COLOR,
+            }}
+          >
+            {text}
+          </CardHeadline3>
+          : <CardHeadline3
+            style={{
+              // color: 'var(--plasma-colors-button-primary)',
+              color: COLOR_BUTTON_PRIMARY,
+            }}
+          >
+            {text}
+          </CardHeadline3>
+      }
+    </Link>
   )
 }
 
@@ -81,7 +106,7 @@ export const GroupNumber = (
 export const TeacherName = (
   {
     text,
-    style={},
+    style = {},
     onClick,
   }: {
     text: string
@@ -125,6 +150,7 @@ export const LessonLeftContent = (
 const MainContent = (
   {
     lessonName,
+    lessonNumber,
     groupNumber,
     teacher,
     time,
@@ -134,6 +160,7 @@ const MainContent = (
     onTeacherClick,
   }: {
     lessonName: string
+    lessonNumber: string
     groupNumber: string
     teacher: string
     time: string
@@ -150,6 +177,7 @@ const MainContent = (
       />
       <LessonName
         text={lessonName}
+        lessonNumber={lessonNumber}
         isAccented={isAccented}
       />
       {
@@ -159,10 +187,11 @@ const MainContent = (
           />
           : <TeacherName
             text={teacher}
-            style={{color: "white"}}
+            style={{color: COLOR_BUTTON_PRIMARY}}
             onClick={() => onTeacherClick(teacher)}
           />
       }
+      &nbsp;
       <LinkToOnline url={url}/>
 
     </TextBox>
@@ -185,7 +214,10 @@ export const LessonRightContent = (
         contentLeft={
           <IconLocation size="xs"/>
         }
-        style={{backgroundColor: COLOR_BLACK}}
+        style={{
+          backgroundColor: COLOR_BLACK,
+          color: COLOR_BUTTON_PRIMARY,
+        }}
       />
       <TextBoxTitle>
         {lessonType}
@@ -212,40 +244,44 @@ const ScheduleLesson = (
 ) => {
 
   const formatStartEndTime = (startTime: string, endTime: string): string => {
-    return startTime ?  `${startTime} - ${endTime}` : "";
+    return startTime ? `${startTime} - ${endTime}` : "";
   }
+  console.log(lesson, "lesson")
 
-  return <CellListItem
-    content={
-      <MainContent
-        lessonName={lesson.lessonName}
-        groupNumber={lesson.groupNumber}
-        teacher={lesson.teacher}
-        url={lesson.url}
-        time={
-          formatStartEndTime(startEndTime.start, startEndTime.end)
-        }
-        isAccented={isAccented}
-        isTeacherAndValid={isTeacherAndValid}
-        onTeacherClick={onTeacherClick}
-      />
-    }
-    contentRight={
-      <LessonRightContent
-        room={lesson.room}
-        lessonType={
-          // todo: это преобразование должно быть раньше
-          lessonTypeAdjToNoun(lesson.lessonType)
-        }
-      />
-    }
-    contentLeft={
-      <LessonLeftContent
-        visible={! (lesson.lessonName == NO_LESSONS_NAME)}
-        text={lesson.lessonNumber}
-      />
-    }
-  />
+  return (
+    <CellListItem
+      content={
+        <MainContent
+          lessonName={lesson.lessonName}
+          lessonNumber={lesson.lessonNumber}
+          groupNumber={lesson.groupNumber}
+          teacher={lesson.teacher}
+          url={lesson.url}
+          time={
+            formatStartEndTime(startEndTime.start, startEndTime.end)
+          }
+          isAccented={isAccented}
+          isTeacherAndValid={isTeacherAndValid}
+          onTeacherClick={onTeacherClick}
+        />
+      }
+      contentRight={
+        <LessonRightContent
+          room={lesson.room}
+          lessonType={
+            // todo: это преобразование должно быть раньше
+            lessonTypeAdjToNoun(lesson.lessonType)
+          }
+        />
+      }
+      contentLeft={
+        <LessonLeftContent
+          visible={!(lesson.lessonName == NO_LESSONS_NAME)}
+          text={lesson.lessonNumber}
+        />
+      }
+    />
+  )
 }
 
 export default ScheduleLesson

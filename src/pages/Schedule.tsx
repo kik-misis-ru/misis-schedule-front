@@ -100,6 +100,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
     onHandleChange(key: string, value: any): void {
         this.props.onSetValue(key, value);
       }
+    
 
       
 
@@ -129,7 +130,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
      return <DeviceThemeProvider>
         <DocStyle/>
         {
-          getThemeBackgroundByChar(this.props.character)
+          getThemeBackgroundByChar(this.props.character, 'dark')
         }
         <div>
           <Container style={{padding: 0, overflow: "hidden"}}>

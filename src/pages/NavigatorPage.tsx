@@ -104,7 +104,7 @@ const NavigatorPage = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character)
+      getThemeBackgroundByChar(character, 'dark')
     }
     {
       isMobileDevice

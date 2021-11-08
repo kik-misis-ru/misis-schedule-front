@@ -38,6 +38,12 @@ export type Character = typeof CHAR_SBER
 
 //
 
+export const THEME_DARK = 'dark'
+export const THEME_LIGHT = 'light'
+export type ThemeType = THEME_DARK | THEME_LIGHT
+
+//
+
 export interface IDayHeader {
   title: string
   date: [string, string]

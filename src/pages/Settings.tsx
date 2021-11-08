@@ -168,7 +168,7 @@ const TextFieldForUserInfo = ({
 }
 
 
-interface HomeViewProps {
+interface SettingsProps {
   groupId: string
   character: Character
     // todo paramoy
@@ -176,7 +176,7 @@ interface HomeViewProps {
   // disabled: boolean
   checked: boolean
   description: string
-
+  onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
   onHandleTeacherChange: () => Promise<void>
@@ -198,13 +198,13 @@ interface HomeViewProps {
   teacher_checked: boolean
 }
 
-interface HomeViewState {
+interface SettingsState {
   disabled: boolean
 }
 
-class HomePage extends React.Component<HomeViewProps, HomeViewState> {
+class Settings extends React.Component<SettingsProps, SettingsState> {
 
-  constructor(props: HomeViewProps) {
+  constructor(props: SettingsProps) {
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
     // this.handleTeacherChange = this.handleTeacherChange.bind(this);
@@ -241,7 +241,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       >
 
         <HomeTitle
-          text={HOME_TITLE}
+          text="Мои данные"
         />
 
         <TabSelectorRow
@@ -329,60 +329,62 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     )
 
 
-    return <DeviceThemeProvider>
-      <DocStyle/>
-      {
-        getThemeBackgroundByChar(this.props.character, 'dark')
-      }
-      <div>
+    return (
+      <DeviceThemeProvider>
+        <DocStyle/>
         {
-          this.props.student
-            ? (
-              <Main
-                setValue={this.onHandleChange}
-                convertIdInGroupName={this.onConvertIdInGroupName}
-                disabled={this.state.disabled}
-                contentRight={studentContent}
-              />
-            )
-            : (
-              /*
-                            <Container style={{padding: 0}}>
-
-                              <Row>
-                                <Col style={{marginLeft: "auto"}}>
-                                  <GoToDashboardButton
-                                    onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
-                                  />
-                                  <GoToScheduleButton
-                                    onClick={() => {
-                                      this.props.convertIdInGroupName();
-                                      this.handleChange("page", SCHEDULE_PAGE_NO)
-                                    }}
-                                    disabled={this.state.disabled}
-                                    style={{marginTop: "1em", marginRight: "1em"}}
-                                  />
-                                </Col>
-                              </Row>
-
-                              <teacherContent/>
-
-                              <Spacer100/>
-                            </Container>
-              */
-
-
-              <Main
-                setValue={this.onHandleChange}
-                convertIdInGroupName={this.onConvertIdInGroupName}
-                disabled={this.state.disabled}
-                contentRight={teacherContent}
-              />
-            )
+          getThemeBackgroundByChar(this.props.character, 'dark')
         }
-      </div>
-    </DeviceThemeProvider>
+        <div>
+          {
+            this.props.student
+              ? (
+                <Main
+                  setValue={this.onHandleChange}
+                  convertIdInGroupName={this.onConvertIdInGroupName}
+                  disabled={this.state.disabled}
+                  contentRight={studentContent}
+                />
+              )
+              : (
+                /*
+                              <Container style={{padding: 0}}>
+
+                                <Row>
+                                  <Col style={{marginLeft: "auto"}}>
+                                    <GoToDashboardButton
+                                      onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
+                                    />
+                                    <GoToScheduleButton
+                                      onClick={() => {
+                                        this.props.convertIdInGroupName();
+                                        this.handleChange("page", SCHEDULE_PAGE_NO)
+                                      }}
+                                      disabled={this.state.disabled}
+                                      style={{marginTop: "1em", marginRight: "1em"}}
+                                    />
+                                  </Col>
+                                </Row>
+
+                                <teacherContent/>
+
+                                <Spacer100/>
+                              </Container>
+                */
+
+
+                <Main
+                  setValue={this.onHandleChange}
+                  convertIdInGroupName={this.onConvertIdInGroupName}
+                  disabled={this.state.disabled}
+                  contentRight={teacherContent}
+                />
+              )
+          }
+        </div>
+      </DeviceThemeProvider>
+    )
   }
 }
 
-export default HomePage
+export default Settings

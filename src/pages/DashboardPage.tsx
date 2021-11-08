@@ -1,5 +1,14 @@
 import React, {MouseEventHandler} from "react";
-import {Container, Row, Col, Button, DeviceThemeProvider, TextBoxBiggerTitle, Body1, Caption} from '@sberdevices/plasma-ui';
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  DeviceThemeProvider,
+  TextBoxBiggerTitle,
+  Body1,
+  Caption
+} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
@@ -44,10 +53,11 @@ import {
   HOME_PAGE_NO,
   StartEnd,
   LessonStartEnd,
-  NAVIGATOR_PAGE_NO,
+  // NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
-  CONTACTS_PAGE_NO,
-  FAQ_PAGE_NO,
+  // CONTACTS_PAGE_NO,
+  // SETTING_PAGE_NO,
+  // FAQ_PAGE_NO,
 } from '../App';
 import LinkToOnline from '../components/LinkToOnline';
 import {NowOrWill} from "../types/AssistantReceiveAction";
@@ -56,7 +66,7 @@ import {CHAR_TIMEPARAMOY, Character, DAY_TODAY, THIS_WEEK, TodayOrTomorrow} from
 import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
-import {IAppState} from "../App";
+import {history, IAppState} from "../App";
 
 
 import {DAY_OFF_TEXT} from '../components/ScheduleDayOff'
@@ -103,7 +113,7 @@ const ScheduleSectionTitleRow = () => (
         paddingTop: "0.5em"
       }}
     >
-      <IconStarFill  color="grey"/>
+      <IconStarFill color="grey"/>
     </Col>
 
     <Col style={{
@@ -157,9 +167,9 @@ const TodaySummary = ({
   const day = {
     "Пн": "Понедельник",
     "Вт": "Вторник",
-    "Ср": "Средa", 
-    "Чт": "Четверг", 
-    "Пт": "Пятница", 
+    "Ср": "Средa",
+    "Чт": "Четверг",
+    "Пт": "Пятница",
     "Сб": "Суббота",
   }
   const month = {
@@ -178,7 +188,7 @@ const TodaySummary = ({
   }
   const dateToday = moment(date).format('DD.MM.YY');
   let dateDay = ""
-  dateToday.slice(0, 1)==="0" ? dateDay = dateToday.slice(1, 2) : dateDay = dateToday.slice(0, 2)
+  dateToday.slice(0, 1) === "0" ? dateDay = dateToday.slice(1, 2) : dateDay = dateToday.slice(0, 2)
 
 
   const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
@@ -202,7 +212,7 @@ const TodaySummary = ({
               : `${day[weekDayShortToday]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
           }
         </CardParagraph2>
-        <CardParagraph1 style={{color: DEFAULT_TEXT_COLOR}}>
+        <CardParagraph1 style={{color: "grey"}}>
           {
             !isSunday &&
             lessonCount !== 0
@@ -241,7 +251,7 @@ const DashboardCard = ({
         <CardBody>
           <CardContent>
             <TextBox>
-              <Caption style={{color:"grey"}}>
+              <Caption style={{color: "grey"}}>
                 {sub}
               </Caption>
               <CardHeadline3>
@@ -256,44 +266,44 @@ const DashboardCard = ({
 }
 
 const GetCloser = ({
-    onGoToPage,
-  }: {
+                     onGoToPage,
+                   }: {
   onGoToPage: (pageNo) => void
-  }) => {
+}) => {
   return (
-  <Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+    <Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
 
-  <Card  onClick={() => onGoToPage(HOME_PAGE_NO)} style={{padding: "0 0 0 0", width: "95%", height: "6vh"}}>
-  
-            <CardBody
+      <Card onClick={() => onGoToPage(HOME_PAGE_NO)} style={{padding: "0 0 0 0", width: "95%", height: "6vh"}}>
+
+        <CardBody
+          style={{padding: "0 0 0 0"}}
+        >
+          <CardContent style={{padding: "0 0 0 0"}}>
+            <CellListItem
               style={{padding: "0 0 0 0"}}
+              contentLeft={
+                <TextBox>
+                  <TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em"}}>
+                    🥺
+                  </TextBoxBiggerTitle>
+                </TextBox>}
+              content={
+                <TextBox>
+                  <Body1>
+                    Станем ближе?
+                  </Body1>
+
+                </TextBox>
+              }
             >
-                    <CardContent style={{padding: "0 0 0 0"}}>
-                    <CellListItem 
-                    style={{padding: "0 0 0 0"}}
-                    contentLeft={
-                    <TextBox>
-                       <TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em"}}>
-                       🥺
-                       </TextBoxBiggerTitle>
-                    </TextBox>}
-                    content={
-                      <TextBox >
-                        <Body1 >
-                       Станем ближе?
-                       </Body1>
+            </CellListItem>
+          </CardContent>
 
-                    </TextBox>
-                    }
-                    >
-                    </CellListItem>
-                    </CardContent>
-  
-            </CardBody>
-  
-          </Card>
+        </CardBody>
 
-  </Row>
+      </Card>
+
+    </Row>
 
   )
 }
@@ -303,6 +313,10 @@ const CatalogueItems = ({
                         }: {
   onGoToPage: (pageNo) => void
 }) => {
+
+  // let history = useHistory();
+  // use history.push('/some/path') here
+
   return (
     <Row style={{marginLeft: "1em", marginRight: "1em"}}>
 
@@ -315,19 +329,22 @@ const CatalogueItems = ({
       <DashboardCard
         text="Карта"
         sub="Как добраться"
-        onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
+        // onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
+        onClick={() => history.push('/navigation')}
       />
 
       <DashboardCard
         text="FAQ"
         sub="Часто задаваемые вопросы"
-        onClick={() => onGoToPage(FAQ_PAGE_NO)}
+        // onClick={() => onGoToPage(FAQ_PAGE_NO)}
+        onClick={() => history.push('/faq')}
       />
 
       <DashboardCard
         text="Контакты"
         sub="Помощь"
-        onClick={() => onGoToPage(CONTACTS_PAGE_NO)}
+        // onClick={() => onGoToPage(CONTACTS_PAGE_NO)}
+        onClick={() => history.push('/contacts')}
       />
 
     </Row>
@@ -339,7 +356,7 @@ const CatalogueItems = ({
 const ScheduleLessonTitle = ({text}: { text: string }) => (
   <TextBox
     // @ts-ignore
-    
+
   >
     <CardParagraph1 style={{color: "grey", marginTop: "0.5em"}}>
       {text}
@@ -422,123 +439,127 @@ const DashboardPage = ({
   // }
 
 }) => {
-  
+
   return (
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(character)
+        getThemeBackgroundByChar(character, 'dark')
       }
       <Container style={{padding: 0}}>
         <HeaderRow
-          onHomeClick={() => onGoToPage(HOME_PAGE_NO)}
+          // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
+          onHomeClick={() => history.push('/settings')}
         />
-        { spinner===true ?
-        (<Row>
-          <TodaySummary
-          date={new Date()}
-          lessonCount={count}
-          lessonsStart={start}
-          lessonsEnd={end}
-        />
-        {groupId !="" || teacherId!="" ? (
+        {
+          spinner === true
+            ? (
+              <Row>
+                <TodaySummary
+                  date={new Date()}
+                  lessonCount={count}
+                  lessonsStart={start}
+                  lessonsEnd={end}
+                />
+                {groupId != "" || teacherId != "" ? (
 
-          <Col size={12}>
-        <ScheduleSectionTitleRow/>
-        <Card style={{
-          width: "90%",
-          marginLeft: "1.5em",
-          marginTop: "0.5em",
-          marginRight: "1.5em"
-        }}
-        onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
-        >
+                    <Col size={12}>
+                      <ScheduleSectionTitleRow/>
+                      <Card style={{
+                        width: "90%",
+                        marginLeft: "1.5em",
+                        marginTop: "0.5em",
+                        marginRight: "1.5em"
+                      }}
+                            onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
+                      >
 
-          <CardBody
-            // style={{padding: "0 0 0 0"}}
-          >
-            <CardContent
-              // compact
-              style={{padding: "0 0.2em 0.5em 0.8em"}}
-            >
+                        <CardBody
+                          // style={{padding: "0 0 0 0"}}
+                        >
+                          <CardContent
+                            // compact
+                            style={{padding: "0 0.2em 0.5em 0.8em"}}
+                          >
 
-              <ScheduleLessonTitle text="Сейчас"/>
+                            <ScheduleLessonTitle text="Сейчас"/>
 
-              {
-                !!currentLesson
-                  ? (
-                    <ScheduleLesson
-                      lesson={currentLesson}
-                      startEndTime={currentLessonStartEnd}
-                      isTeacherAndValid={isTeacherAndValid}
-                      isAccented={true}
-                      // todo: задавать имя преподавателя
-                      onTeacherClick={(teacherName) => handleTeacherChange()}
-                    />
-                  )
-                  : <NoLesson/>
-              }
+                            {
+                              !!currentLesson
+                                ? (
+                                  <ScheduleLesson
+                                    lesson={currentLesson}
+                                    startEndTime={currentLessonStartEnd}
+                                    isTeacherAndValid={isTeacherAndValid}
+                                    isAccented={true}
+                                    // todo: задавать имя преподавателя
+                                    onTeacherClick={(teacherName) => handleTeacherChange()}
+                                  />
+                                )
+                                : <NoLesson/>
+                            }
 
-            </CardContent >
-            {/*
+                          </CardContent>
+                          {/*
           </CardBody>
 */}
 
-            {
-              !!nextLesson // !!nextLessonIdx
-                ? (
-                  // <React.Fragment>
-                  /*
-                <CardBody
-                  // style={{padding: "0 0 0 0"}}
-                >
-*/
-                  <CardContent style={{padding: "0 0.2em 0.5em 0.8em"}}>
+                          {
+                            !!nextLesson // !!nextLessonIdx
+                              ? (
+                                // <React.Fragment>
+                                /*
+                              <CardBody
+                                // style={{padding: "0 0 0 0"}}
+                              >
+              */
+                                <CardContent style={{padding: "0 0.2em 0.5em 0.8em"}}>
 
-                    <ScheduleLessonTitle text="Дальше" />
+                                  <ScheduleLessonTitle text="Дальше"/>
 
-                    <ScheduleLesson
-                      lesson={nextLesson}
-                      startEndTime={nextLessonStartEnd}
-                      isTeacherAndValid={isTeacherAndValid}
-                      isAccented={false}
-                      // todo: задавать имя преподавателя
-                      onTeacherClick={(teacherName) => handleTeacherChange()}
+                                  <ScheduleLesson
+                                    lesson={nextLesson}
+                                    startEndTime={nextLessonStartEnd}
+                                    isTeacherAndValid={isTeacherAndValid}
+                                    isAccented={false}
+                                    // todo: задавать имя преподавателя
+                                    onTeacherClick={(teacherName) => handleTeacherChange()}
+                                  />
+                                  {/*</React.Fragment>*/}
+                                </CardContent>
+                              )
+                              : (<div></div>)
+                          }
+                          {/*</CardContent>*/}
+
+                        </CardBody>
+
+                      </Card>
+                    </Col>
+                  ) :
+                  (
+                    <GetCloser
+                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
                     />
-                    {/*</React.Fragment>*/}
-                  </CardContent>
-                )
-                : (<div></div>)
-            }
-            {/*</CardContent>*/}
-
-          </CardBody>
-
-        </Card>
-        </Col>
-        ) : 
-        (
-          <GetCloser
-          onGoToPage={(pageNo) => onGoToPage(pageNo)}
-          />
-        )
-}
-</Row>)
-      :(
-        <Col style={{margin: "1em"}}>
-        <LineSkeleton size="headline1" roundness={8} />
-        <LineSkeleton size="headline3" roundness={8} />
-        <LineSkeleton size="headline2" roundness={8} style={{marginTop: "0.5em"}}/>
-        <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em"}} roundness={16} />
-        </Col>
-      )
-      }
+                  )
+                }
+              </Row>
+            )
+            : (
+              <Col style={{margin: "1em"}}>
+                <LineSkeleton size="headline1" roundness={8}/>
+                <LineSkeleton size="headline3" roundness={8}/>
+                <LineSkeleton size="headline2" roundness={8} style={{marginTop: "0.5em"}}/>
+                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em"}} roundness={16}/>
+              </Col>
+            )
+        }
         <CatalogueHeaderRow/>
 
         <CatalogueItems
           onGoToPage={(pageNo) => onGoToPage(pageNo)}
         />
-        
+
 
         <div style={{
           width: '200px',
