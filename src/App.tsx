@@ -1760,7 +1760,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     : '';
                 })
               }
-              onSelect={(weekDayIndex) => this.gotoPage(weekDayIndex + page + (weekParam === OTHER_WEEK ? 0 : 1)}
+              onSelect={(weekDayIndex) => this.gotoPage(weekDayIndex + page + (weekParam === OTHER_WEEK ? 0 : 1))}
             />
 
             <ScheduleDay
