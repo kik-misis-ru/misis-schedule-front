@@ -40,6 +40,7 @@ const Main = ({
       >
         <GoToDashboardButton
           onClick={() => {
+            // rewrite to gotoPage() or to history.push()
             setValue("page", DASHBOARD_PAGE_NO)
           }}
         />
