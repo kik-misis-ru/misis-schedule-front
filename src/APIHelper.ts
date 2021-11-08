@@ -329,7 +329,7 @@ export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>
   const response = await axios.get(url, config);
 
   const {data} = response;
-  console.log(`APIHelper: getGroupByName: response:`, data);
-
-  return data.status === '1' ;
+  console.log(`APIHelper: isEnglishGroupExist: response:`, data);
+  let jsonData= JSON.parse(data)
+  return jsonData.status === '1' ;
 }

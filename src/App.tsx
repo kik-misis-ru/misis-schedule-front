@@ -1878,6 +1878,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     let correct_sub = false;
     let correct_eng = false;
     let correct = false;
+    console.log("this.state.engGroup", this.state.engGroup)
 
     let promiseGroupName = getGroupByName(this.state.group);
     let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
