@@ -1896,11 +1896,11 @@ export class App extends React.Component<IAppProps, IAppState> {
         const group = JSON.parse(group_response);
         console.log("App: isCorrect: response: english", english_response);
         if (group.status == 1) {
-          this.setState({correct: true})
+          this.setState({correct: true, group: group.name, groupId: group.id})
           this.convertGroupNameInId();
           correct = true;
         }
-        console.log(this.state.correct, "correct");
+        console.log(this.state.groupId, "group Id");
         if (english_response || this.state.engGroup == "") {
           correct_eng = true;
           console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
@@ -1912,7 +1912,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.gotoPage(SCHEDULE_PAGE_NO)
           this.Load_Schedule()
           if (this.state.checked) {
-            const groupId = String(group_response.id);
+            const groupId = String(group.id);
             console.log("GROUP_ID:", groupId)
             this.setState({groupId: groupId}, () => {
               createUser(
