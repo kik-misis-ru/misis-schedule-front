@@ -33,6 +33,7 @@ import DashboardPage from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import Contacts from './pages/Contacts';
 import FAQ from './pages/FAQ';
+import Start from './pages/Start';
 import NavigatorPage from './pages/NavigatorPage';
 import ScheduleDay from "./components/ScheduleDay";
 import SpinnerPage from "./pages/SpinnerPage";
@@ -93,7 +94,7 @@ export const CONTACTS_PAGE_NO = 18;
 // export const SETTING_PAGE_NO = 20;
 export const LESSON_PAGE_NO = 21;
 
-const INITIAL_PAGE = 16;
+const INITIAL_PAGE = 22;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
@@ -396,9 +397,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log(event);
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
-            this.setState({userId: event.sub});
+            
             const now = new Date();
             this.setState({today: now.getDay()});
+            if (this.state.userId!=""){
             getSchedulebyUserId(this.state.userId).then((response) => {
                 console.log("getScheduleByUserId", response)
                 if (response.teacher_id != "") {
@@ -434,7 +436,13 @@ export class App extends React.Component<IAppProps, IAppState> {
                 }
                 this.showWeekSchedule(response.schedule, 0)
               }
-            )
+            )} else {
+              this.ChangePage()
+                  this.setState({
+                    
+                  });
+            }
+            this.setState({userId: event.sub});
             console.log(`assistant.on(data)`, event);
             const {action} = event;
             this.dispatchAssistantAction(action);
@@ -2226,6 +2234,14 @@ export class App extends React.Component<IAppProps, IAppState> {
             {
               (page === SCHEDULE_PAGE_NO) &&
               this.Spinner()
+            }
+            {
+              (page === 22) && <Start
+                
+                character={this.state.character}
+                isMobileDevice={detectDevice() === "mobile"}
+                onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+              />
             }
             {
               // (page === FAQ_PAGE_NO) &&

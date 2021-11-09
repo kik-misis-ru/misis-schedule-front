@@ -240,9 +240,9 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         style={{padding: 0}}
       >
 
-        <HomeTitle
+        {/* <HomeTitle
           text={HOME_TITLE}
-        />
+        /> */}
 
         <TabSelectorRow
           tabs={USER_MODES}
@@ -291,10 +291,10 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     const teacherContent = (
       <Container style={{padding: 0}}>
 
-        <HomeTitle
+        {/* <HomeTitle
           text={HOME_TITLE}
           // todo: margin: '3%'
-        />
+        /> */}
 
         <TabSelectorRow
           tabs={USER_MODES}

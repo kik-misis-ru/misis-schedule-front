@@ -461,7 +461,7 @@ const DashboardPage = ({
                   lessonsStart={start}
                   lessonsEnd={end}
                 />
-                {groupId != "" || teacherId != "" ? (
+
 
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
@@ -536,23 +536,26 @@ const DashboardPage = ({
 
                       </Card>
                     </Col>
-                  ) :
-                  (
-                    <GetCloser
-                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
-                    />
-                  )
-                }
+                  
+                    
+                  
+                
               </Row>
             )
-            : (
+            : (<div ></div>)}
+
+              {groupId == "" && teacherId == "" ? (<GetCloser
+                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
+                    />) : (<div ></div>)}
+               {spinner==false && (groupId != "" || teacherId != "") ?      (
               <Col style={{margin: "1em"}}>
                 <LineSkeleton size="headline1" roundness={8}/>
                 <LineSkeleton size="headline3" roundness={8}/>
                 <LineSkeleton size="headline2" roundness={8} style={{marginTop: "0.5em"}}/>
                 <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em"}} roundness={16}/>
-              </Col>
-            )
+              </Col>): (<div ></div>)
+            
+                    
         }
         <CatalogueHeaderRow/>
 
