@@ -94,7 +94,7 @@ export const CONTACTS_PAGE_NO = 18;
 // export const SETTING_PAGE_NO = 20;
 export const LESSON_PAGE_NO = 21;
 
-const INITIAL_PAGE = 22;
+const INITIAL_PAGE = 16;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
@@ -397,7 +397,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log(event);
           if (event.sub !== undefined) {
             console.log("Sub", event.sub);
-            
+            this.setState({userId: event.sub});
             const now = new Date();
             this.setState({today: now.getDay()});
             if (this.state.userId!=""){
@@ -423,7 +423,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                     teacherId: response.teacher_id
                   })
                   this.setState({group: response.groupName})
-                  this.ChangePage()
                   this.setState({
                     //page: DASHBOARD_PAGE_NO,
                     flag: true,
@@ -435,14 +434,14 @@ export class App extends React.Component<IAppProps, IAppState> {
                   });
                 }
                 this.showWeekSchedule(response.schedule, 0)
+                this.showWeekSchedule(response.schedule, 1)
               }
             )} else {
-              this.ChangePage()
                   this.setState({
                     
                   });
             }
-            this.setState({userId: event.sub});
+            
             console.log(`assistant.on(data)`, event);
             const {action} = event;
             this.dispatchAssistantAction(action);
@@ -479,7 +478,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({teacher: value});
         break;
       case "page":
-        this.ChangePage()
+        
         this.gotoPage(value);
         break;
       case "student":
@@ -1472,7 +1471,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log(response)
       })
     }
-    this.setState({date: date, flag: false});
+    this.setState({date: date, flag: true});
   }
 
   /**
@@ -1882,7 +1881,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   isCorrect() {
     console.log('App: isCorrect')
-    this.setState({correct: false, date: Date.now()});
+    this.setState({correct: false, date: Date.now(), flag: true});
     let correct_sub = false;
     let correct_eng = false;
     let correct = false;
@@ -1926,7 +1925,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               createUser(
                 this.state.userId,
                 filial.id,
-                this.state.groupId,
+                group.id,
                 this.state.subGroup,
                 this.state.engGroup,
                 "")

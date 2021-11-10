@@ -54,7 +54,7 @@ const Start = ({
     {
       isMobileDevice
         ? (
-          <Container style={{padding: 0}}>
+          <Container style={{padding: 0, overflow: "hidden"}}>
 
 <Row style={{
     margin: "1em"
@@ -79,7 +79,7 @@ const Start = ({
       Салют!
     </Headline1>
     <ParagraphText1 >
-    Мы создали СтудХаб МИСиС,
+    Мы создали Мир МИСиС,
     </ParagraphText1>
     <ParagraphText1>
     чтобы помочь студентам и преподавателям 
@@ -92,8 +92,9 @@ const Start = ({
     </ParagraphText1>
   </TextBox>
   <Button onClick={()=>{onDashboardClick()}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
-  <Image src={star}/>
+  
   </Row>
+  <Image src={star} style={{margin:"0 0 auto 0", overflow: "hidden"}}/>
             
             {/* <div style={{
               width: '200px',
@@ -117,7 +118,11 @@ const Start = ({
 
 
   </Row>
-  <Row style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+  <Row style={{display: "flex", flexDirection: "row"}}>
+  <Col>
+  <Image src={star} style={{width: "40vw", overflow: "hidden"}}/>
+  </Col>
+  <Col>
   <TextBox> 
     <Headline1
       style={{
@@ -128,7 +133,7 @@ const Start = ({
       Салют!
     </Headline1>
     <ParagraphText1 >
-    Мы создали СтудХаб МИСиС,
+    Мы создали Мир МИСиС,
     </ParagraphText1>
     <ParagraphText1>
     чтобы помочь студентам и преподавателям 
@@ -141,7 +146,7 @@ const Start = ({
     </ParagraphText1>
   </TextBox>
   <Button onClick={()=>{onDashboardClick()}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
-  <Image src={star} style={{width: "40vw"}}/>
+  </Col>
   </Row>
 
           </Container>
