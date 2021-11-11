@@ -272,6 +272,7 @@ export interface IAppState {
   description: string
   group: string
   groupId: string
+  filialId: string
   correct: boolean
   day: IDayHeader[]
   days: IScheduleDays
@@ -335,6 +336,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       description: "",
       group: "",
       groupId: "",
+      filialId: "",
       subGroup: "",
       engGroup: "",
       correct: false,
@@ -400,47 +402,42 @@ export class App extends React.Component<IAppProps, IAppState> {
             this.setState({userId: event.sub});
             const now = new Date();
             this.setState({today: now.getDay()});
-            if (this.state.userId!=""){
-            getSchedulebyUserId(this.state.userId).then((response) => {
-                console.log("getScheduleByUserId", response)
-                if (response.teacher_id != "") {
-                  const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
-                  this.setState({
-                    groupId: response.groupId,
-                    subGroup: response.subgroup_name,
-                    engGroup: response.eng_group,
-                    teacherId: response.teacher_id,
-                    student: false,
-                    teacher_correct: true,
-                    teacher: teacher
+            getUser(this.state.userId).then((user)=> {
+              
+              if (user !== "0") {
+                console.log('user', user)
+                getSchedulebyUserId(this.state.userId).then((response) => {
+                  this.gotoPage(DASHBOARD_PAGE_NO)
+                    console.log("getScheduleByUserId", response)
+                    if (response.teacher_id != "") {
+                      const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
+                      this.setState({
+                        student: false,
+                        teacher_correct: true,
+                        teacher: teacher
+                      })
+    
+                    }else if (response.groupId != "")  {
+                      this.setState({
+                        //page: DASHBOARD_PAGE_NO,
+                        flag: true,
+                        checked: true,
+                        star: true,
+                        bd: this.state.groupId,
+                        student: true,
+                        //page: LESSON_PAGE_NO
+                      });
+                    } else {
+                      this.gotoPage(22);
+                    }
+                    this.showWeekSchedule(response.schedule, 0);
+                    this.showWeekSchedule(response.schedule, 1);
                   })
 
-                } else {
-                  this.setState({
-                    groupId: response.groupId,
-                    subGroup: response.subgroup_name,
-                    engGroup: response.eng_group,
-                    teacherId: response.teacher_id
-                  })
-                  this.setState({group: response.groupName})
-                  this.setState({
-                    //page: DASHBOARD_PAGE_NO,
-                    flag: true,
-                    checked: true,
-                    star: true,
-                    bd: this.state.groupId,
-                    student: true,
-                    //page: LESSON_PAGE_NO
-                  });
+              } else {
+                this.gotoPage(22);
                 }
-                this.showWeekSchedule(response.schedule, 0)
-                this.showWeekSchedule(response.schedule, 1)
-              }
-            )} else {
-                  this.setState({
-                    
-                  });
-            }
+              })
             
             console.log(`assistant.on(data)`, event);
             const {action} = event;
@@ -2214,6 +2211,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                   start={start}
                   end={end}
                   count={count}
+                  filialId={this.state.filialId}
+                  userId={this.state.userId}
                   spinner={this.state.spinner}
                   currentLesson={currentLesson}
                   currentLessonStartEnd={currentLessonStartEnd}

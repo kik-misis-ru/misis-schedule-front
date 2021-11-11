@@ -31,6 +31,7 @@ import {
   Image,
   LineSkeleton,
   RectSkeleton,
+  CellDisclosure,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
 import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/plasma-icons";
@@ -266,46 +267,52 @@ const DashboardCard = ({
 }
 
 const GetCloser = ({
-                     onGoToPage,
-                   }: {
-  onGoToPage: (pageNo) => void
+  onGoToPage,
+}: {
+onGoToPage: (pageNo) => void
 }) => {
-  return (
-    <Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+return (
+<Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
 
-      <Card onClick={() => onGoToPage(HOME_PAGE_NO)} style={{padding: "0 0 0 0", width: "95%", height: "6vh"}}>
+<Card onClick={() => onGoToPage(HOME_PAGE_NO)} style={{padding: "0 0 0 0", width: "95%", height: "8.5vh"}}>
 
-        <CardBody
-          style={{padding: "0 0 0 0"}}
-        >
-          <CardContent style={{padding: "0 0 0 0"}}>
-            <CellListItem
-              style={{padding: "0 0 0 0"}}
-              contentLeft={
-                <TextBox>
-                  <TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em"}}>
-                    🥺
-                  </TextBoxBiggerTitle>
-                </TextBox>}
-              content={
-                <TextBox>
-                  <Body1>
-                    Станем ближе?
-                  </Body1>
+<CardBody
+style={{padding: "0 0 0 0"}}
+>
+<CardContent style={{padding: "0 0 0 0"}}>
+<CellListItem
+style={{padding: "0 0 0 0"}}
+contentLeft={
+<TextBox>
+<TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em", padding: "0 0 0 0"}}>
+ 🥺
+</TextBoxBiggerTitle>
+</TextBox>}
+content={
+<TextBox >
+<Body1 style={{padding: "0 0 0 0"}}>
+ Станем ближе?
+</Body1>
+<Body1 style={{padding: "0 0 0 0", color: "grey"}}>
+ Сохрани свои данные
+</Body1>
+</TextBox>
 
-                </TextBox>
-              }
-            >
-            </CellListItem>
-          </CardContent>
+}
+contentRight={
+<CellDisclosure style={{marginRight: "1em", marginLeft: "0.3em", padding: "0 0 0 0"}}/>
+}
+>
+</CellListItem>
+</CardContent>
 
-        </CardBody>
+</CardBody>
 
-      </Card>
+</Card>
 
-    </Row>
+</Row>
 
-  )
+)
 }
 
 const CatalogueItems = ({
@@ -392,6 +399,8 @@ const DashboardPage = ({
                          start,
                          end,
                          count,
+                         filialId,
+                         userId,
                          currentLesson,
                          currentLessonStartEnd,
                          groupId,
@@ -419,7 +428,8 @@ const DashboardPage = ({
   end: string,
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
-
+  filialId: String,
+  userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
 
@@ -544,15 +554,15 @@ const DashboardPage = ({
             )
             : (<div ></div>)}
 
-              {groupId == "" && teacherId == "" ? (<GetCloser
+              {groupId == "" && teacherId == "" && userId!=""|| userId=="0" ? (<GetCloser
                       onGoToPage={(pageNo) => onGoToPage(pageNo)}
                     />) : (<div ></div>)}
-               {spinner==false && (groupId != "" || teacherId != "") ?      (
-              <Col style={{margin: "1em"}}>
-                <LineSkeleton size="headline1" roundness={8}/>
-                <LineSkeleton size="headline3" roundness={8}/>
-                <LineSkeleton size="headline2" roundness={8} style={{marginTop: "0.5em"}}/>
-                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em"}} roundness={16}/>
+               {!spinner && groupId != "" ||  userId=="" ?      (
+              <Col >
+                <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em"}}/>
+                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em"}}/>
+                <ScheduleSectionTitleRow/>
+                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em", marginLeft: "1em"}} roundness={16}/>
               </Col>): (<div ></div>)
             
                     

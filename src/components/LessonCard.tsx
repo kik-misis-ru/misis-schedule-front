@@ -164,7 +164,7 @@ console.log(teacher, groupNumber)
         </CardContent>
       </Card>
 </Row>
-      <TextField
+      {/* <TextField
         // id="tf"
         label="Заметка "
         className="editText"
@@ -173,7 +173,7 @@ console.log(teacher, groupNumber)
         //   onChange={(event) => {
         //     onChange(event.target.value)
         //   }}
-      />
+      /> */}
 
     
 
