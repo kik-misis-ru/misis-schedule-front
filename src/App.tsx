@@ -406,7 +406,13 @@ export class App extends React.Component<IAppProps, IAppState> {
               
               if (user !== "0") {
                 console.log('user', user)
+                this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"], teacherId: user["teacher_id"], filialId: user["filial_id"]})
                 getSchedulebyUserId(this.state.userId).then((response) => {
+                  // this.setState({groupId: response.groupId,
+                  //   subGroup: response.subgroup_name,
+                  //   engGroup: response.eng_group,
+                  //   teacherId: response.teacher_id,
+                  //   filialId: response.filialId})
                   this.gotoPage(DASHBOARD_PAGE_NO)
                     console.log("getScheduleByUserId", response)
                     if (response.teacher_id != "") {
@@ -2203,7 +2209,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 const start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
                 const end = this.getEndLastLesson(DAY_TODAY);
                 console.log(nextLessonStartEnd, "todaysummary")
-                console.log("this.state.teacherId", this.state.teacherId)
+                console.log("this.state.teacherId", this.state.teacherId, this.state.groupId)
 
                 return <DashboardPage
                   character={this.state.character}

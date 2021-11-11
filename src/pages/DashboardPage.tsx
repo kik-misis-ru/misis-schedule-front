@@ -449,7 +449,7 @@ const DashboardPage = ({
   // }
 
 }) => {
-
+  console.log(groupId, teacherId, userId, "DASHBOARD")
   return (
     <DeviceThemeProvider>
       <DocStyle/>
@@ -554,10 +554,10 @@ const DashboardPage = ({
             )
             : (<div ></div>)}
 
-              {groupId == "" && teacherId == "" && userId!=""|| userId=="0" ? (<GetCloser
+              {groupId == "" && teacherId == "" && filialId!=""|| userId=="0" ? (<GetCloser
                       onGoToPage={(pageNo) => onGoToPage(pageNo)}
                     />) : (<div ></div>)}
-               {!spinner && groupId != "" ||  userId=="" ?      (
+               {!spinner &&(groupId != "" ||  teacherId != "")||  userId=="" ?      (
               <Col >
                 <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em"}}/>
