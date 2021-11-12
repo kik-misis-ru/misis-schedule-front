@@ -237,7 +237,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
 
     const studentContent = (
       <Container
-        style={{padding: 0}}
+        style={{padding: 0, overflow: "hidden"}}
       >
 
         <HomeTitle

@@ -62,7 +62,7 @@ const Lesson = (props: {
     {
       getThemeBackgroundByChar(character, 'dark')
     }
-    <Container style={{padding: 0}}>
+    <Container style={{padding: 0, overflow: "hidden"}}>
 
       <Row style={{margin: "1em"}}>
 

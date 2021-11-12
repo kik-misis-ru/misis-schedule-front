@@ -426,6 +426,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     }else if (response.groupId != "")  {
                       this.setState({
                         //page: DASHBOARD_PAGE_NO,
+                        group: response.groupName,
                         flag: true,
                         checked: true,
                         star: true,
@@ -2205,7 +2206,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 console.log(this.whatLesson(now, "will").num, "next")
                 const count = this.state.day[this.state.today - 1]?.count[0]
                 console.log("COUNT", this.state.today)
-                const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
+                const nextLessonStartEnd = LessonStartEnd[nextLessonIdx-1];
                 const start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
                 const end = this.getEndLastLesson(DAY_TODAY);
                 console.log(nextLessonStartEnd, "todaysummary")

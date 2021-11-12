@@ -110,7 +110,7 @@ export const ScheduleDay = ({
       <div style={{flexDirection: "column"}}>
         <Card style={{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
           <CardBody style={{padding: "0 0 0 0"}}>
-            <CardContent compact style={{padding: "0.3em 0.3em"}}>
+            <CardContent compact style={{padding: "0 0.3em 0 0.3em"}}>
               {
                 isSunday
                   ? <ScheduleDayOff/>

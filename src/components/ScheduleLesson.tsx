@@ -208,7 +208,7 @@ export const LessonRightContent = (
   }
 ) => {
   return (
-    <TextBox>
+    <TextBox >
       <Badge
         text={room}
         contentLeft={
@@ -219,7 +219,7 @@ export const LessonRightContent = (
           color: COLOR_BUTTON_PRIMARY,
         }}
       />
-      <TextBoxTitle>
+      <TextBoxTitle style={{paddingRight: "0.3em"}}>
         {lessonType}
       </TextBoxTitle>
     </TextBox>
@@ -249,7 +249,7 @@ const ScheduleLesson = (
   console.log(lesson, "lesson")
 
   return (
-    <CellListItem
+    <CellListItem style={{padding: "0"}}
       content={
         <MainContent
           lessonName={lesson.lessonName}

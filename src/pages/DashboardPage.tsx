@@ -456,7 +456,7 @@ const DashboardPage = ({
       {
         getThemeBackgroundByChar(character, 'dark')
       }
-      <Container style={{padding: 0}}>
+      <Container style={{padding: 0, overflow: "hidden"}}>
         <HeaderRow
           // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
           onHomeClick={() => history.push('/settings')}
@@ -559,10 +559,10 @@ const DashboardPage = ({
                     />) : (<div ></div>)}
                {!spinner &&(groupId != "" ||  teacherId != "")||  userId=="" ?      (
               <Col >
-                <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em"}}/>
-                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em"}}/>
+                <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
+                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <ScheduleSectionTitleRow/>
-                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em", marginLeft: "1em"}} roundness={16}/>
+                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em", marginLeft: "1em", width:"90%"}} roundness={16}/>
               </Col>): (<div ></div>)
             
                     
