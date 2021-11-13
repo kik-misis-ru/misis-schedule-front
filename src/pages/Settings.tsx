@@ -1,5 +1,5 @@
 import React from "react";
-import {Container, Row, Col, Button, DeviceThemeProvider} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, Button, DeviceThemeProvider, Headline3, Headline2, TextBoxRoot, Headline4} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   TextBoxBigTitle,
@@ -7,7 +7,7 @@ import {
   Caption
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
-import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
+import {IconChevronLeft, IconHouse} from "@sberdevices/plasma-icons";
 
 import {
   getThemeBackgroundByChar,
@@ -25,7 +25,10 @@ import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
 import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
 import {GoToDashboardButton, GoToScheduleButton} from "../components/TopMenu";
-
+import {
+  HeaderLogoCol,
+  HeaderTitleCol2,
+} from '../components/TopMenu';
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -240,9 +243,9 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         style={{padding: 0, overflow: "hidden"}}
       >
 
-        <HomeTitle
+        {/* <HomeTitle
           text="Мои данные"
-        />
+        /> */}
 
         <TabSelectorRow
           tabs={USER_MODES}
@@ -335,53 +338,41 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         {
           getThemeBackgroundByChar(this.props.character, 'dark')
         }
-        <div>
-          {
+        <Container style={{padding: "0", overflow: "hidden"}}>
+        <Row style={{margin: "1em"}}>
+
+<Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => this.props.onDashboardClick()} />
+
+<HeaderTitleCol2
+  title="Настройки"
+/>
+
+<Col style={{margin: "0 0 0 auto"}}>
+  <GoToDashboardButton
+    onClick={() => this.props.onDashboardClick()}
+  />
+</Col>
+
+</Row>
+<Headline2> Мои данные </Headline2>
+                                    {
             this.props.student
               ? (
-                <Main
-                  setValue={this.onHandleChange}
-                  convertIdInGroupName={this.onConvertIdInGroupName}
-                  disabled={this.state.disabled}
-                  contentRight={studentContent}
-                />
+                <TextBox>
+                  <Headline4>{this.props.group}</Headline4>
+
+                  </TextBox>
               )
               : (
-                /*
-                              <Container style={{padding: 0}}>
+                <TextBox>
+                  <Headline4>{this.props.teacher}</Headline4>
 
-                                <Row>
-                                  <Col style={{marginLeft: "auto"}}>
-                                    <GoToDashboardButton
-                                      onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
-                                    />
-                                    <GoToScheduleButton
-                                      onClick={() => {
-                                        this.props.convertIdInGroupName();
-                                        this.handleChange("page", SCHEDULE_PAGE_NO)
-                                      }}
-                                      disabled={this.state.disabled}
-                                      style={{marginTop: "1em", marginRight: "1em"}}
-                                    />
-                                  </Col>
-                                </Row>
-
-                                <teacherContent/>
-
-                                <Spacer100/>
-                              </Container>
-                */
-
-
-                <Main
-                  setValue={this.onHandleChange}
-                  convertIdInGroupName={this.onConvertIdInGroupName}
-                  disabled={this.state.disabled}
-                  contentRight={teacherContent}
-                />
+                  </TextBox>
+               
               )
           }
-        </div>
+         <Spacer100/>
+         </Container>
       </DeviceThemeProvider>
     )
   }

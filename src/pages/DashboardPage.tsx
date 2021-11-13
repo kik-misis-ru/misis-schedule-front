@@ -523,7 +523,7 @@ const DashboardPage = ({
                                 // style={{padding: "0 0 0 0"}}
                               >
               */
-                                <CardContent style={{padding: "0 0.2em 0.5em 0.8em"}}>
+                                <CardContent style={{padding: "0 0.2em 0.2em 0.8em"}}>
 
                                   <ScheduleLessonTitle text="Дальше"/>
 
