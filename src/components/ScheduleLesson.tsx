@@ -64,6 +64,7 @@ export const LessonName = (
           ? ACCENT_TEXT_COLOR
           : COLOR_BUTTON_PRIMARY
         , textDecoration: 'none',
+
       }}
     >
       {
@@ -115,6 +116,7 @@ export const TeacherName = (
   }
 ) => {
   return (
+    text != "" ? (
     <a
       href='#'
       // style={{color: "white"}}
@@ -122,7 +124,8 @@ export const TeacherName = (
       onClick={(event) => onClick(event)}
     >
       {text}
-    </a>
+    </a>) : (<div></div>)
+    
   )
 }
 
@@ -209,6 +212,7 @@ export const LessonRightContent = (
 ) => {
   return (
     <TextBox >
+      { room ? (
       <Badge
         text={room}
         contentLeft={
@@ -218,7 +222,8 @@ export const LessonRightContent = (
           backgroundColor: COLOR_BLACK,
           color: COLOR_BUTTON_PRIMARY,
         }}
-      />
+      />) : (<div></div>)
+}
       <TextBoxTitle style={{paddingRight: "0.3em"}}>
         {lessonType}
       </TextBoxTitle>

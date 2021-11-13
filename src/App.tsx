@@ -416,6 +416,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.gotoPage(DASHBOARD_PAGE_NO)
                     console.log("getScheduleByUserId", response)
                     if (response.teacher_id != "") {
+                      console.log(response.teacher_info);
                       const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
                       this.setState({
                         student: false,

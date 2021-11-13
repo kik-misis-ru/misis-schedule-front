@@ -216,14 +216,14 @@ export const TopMenu = ({
           onClick={() => onNavigatorClick()}
         />
 */}
-        <StarButtonView
+        {/* <StarButtonView
           starred={starred}
           onClick={() => onStarClick()}
-        />
+        /> */}
         
-        <GoToHomeButton
+        {/* <GoToHomeButton
           onClick={() => onHomeClick()}
-        />
+        /> */}
         <GoToDashboardButton
                   onClick={() => onDashboardClick()}
                 />
