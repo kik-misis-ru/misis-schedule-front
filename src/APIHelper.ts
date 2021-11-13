@@ -89,8 +89,8 @@ export interface IScheduleByUserIdData {
 
 //
 
-//const API_URL = "http://127.0.0.1:8000/";
-const API_URL = "https://misis-hub.herokuapp.com/";
+const API_URL = "http://127.0.0.1:8000/";
+//const API_URL = "https://misis-hub.herokuapp.com/";
 
 
 export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleApiData> {

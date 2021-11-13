@@ -415,7 +415,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   //   filialId: response.filialId})
                   this.gotoPage(DASHBOARD_PAGE_NO)
                     console.log("getScheduleByUserId", response)
-                    if (response.teacher_id != "") {
+                    if (response.teacher_id != "" && response.teacher_id!=null) {
                       const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
                       this.setState({
                         student: false,
