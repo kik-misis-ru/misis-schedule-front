@@ -116,7 +116,7 @@ export const TeacherName = (
   }
 ) => {
   return (
-    text != "" ? (
+    text != "" || text != null ? (
     <a
       href='#'
       // style={{color: "white"}}
