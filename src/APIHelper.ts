@@ -87,11 +87,16 @@ export interface IScheduleByUserIdData {
   teacher_info: ITeacherInfo
 }
 
+export interface IPushData{
+  sub: string,
+  hour: number,
+  minute: number
+}
+
 //
 
 //const API_URL = "http://127.0.0.1:8000/";
 const API_URL = "https://misis-hub.herokuapp.com/";
-
 
 export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleApiData> {
   const url = `${API_URL}schedule`;
@@ -177,6 +182,22 @@ export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherAp
   const parsedTeacherData = JSON.parse(rawTeacherData) as ITeacherApiData;
   console.log(`APIHelper: getInTeacherFromDb: parsedTeacherData:`, parsedTeacherData);
   return parsedTeacherData;
+}
+
+export async function addUserToPushNotification( sub: string, hour: number, minute: number){
+  const url = `${API_URL}add_user_to_push_notification`;
+  const data = {
+    "sub": sub, 
+    "hour": hour, 
+    "minute": minute,
+    "isActive": true
+  };
+  console.log(`APIHelper: add_user_to_push_notification: url: "${url}", data:`, data);
+
+  const response = await axios.post(url, data);
+  console.log(`APIHelper: add_user_to_push_notification: response:`, response);
+
+  return response;
 }
 
 

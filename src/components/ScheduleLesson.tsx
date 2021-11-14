@@ -56,6 +56,7 @@ export const LessonName = (
     lessonNumber: string
   }
 ) => {
+  console.log(text);
   return (
     <Link
       to={`/lesson/${lessonNumber}`}
@@ -67,25 +68,13 @@ export const LessonName = (
 
       }}
     >
-      {
-        isAccented
-          ? <CardHeadline3
-            style={{
-              // color: 'var(--plasma-colors-button-accent)',
-              color: ACCENT_TEXT_COLOR,
-            }}
+        
+          <CardHeadline3
+            style={ isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
           >
             {text}
           </CardHeadline3>
-          : <CardHeadline3
-            style={{
-              // color: 'var(--plasma-colors-button-primary)',
-              color: COLOR_BUTTON_PRIMARY,
-            }}
-          >
-            {text}
-          </CardHeadline3>
-      }
+          
     </Link>
   )
 }
@@ -115,6 +104,7 @@ export const TeacherName = (
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
   }
 ) => {
+  console.log(text);
   return (
     text != "" || text != null ? (
     <a
@@ -124,7 +114,7 @@ export const TeacherName = (
       onClick={(event) => onClick(event)}
     >
       {text}
-    </a>) : (<div></div>)
+    </a>) : (<div style={{margin: "0"}}></div>)
     
   )
 }
@@ -174,6 +164,7 @@ const MainContent = (
   }
 ) => {
   return (
+
     <TextBox>
       <LessonStartAndFinishTime
         time={time}
@@ -184,16 +175,18 @@ const MainContent = (
         isAccented={isAccented}
       />
       {
-        isTeacherAndValid
+        isTeacherAndValid && groupNumber!=""
           ? <GroupNumber
             text={groupNumber}
-          />
-          : <TeacherName
+          /> : <div></div>
+       }  
+       { !isTeacherAndValid && teacher!=""
+          ? <TeacherName
             text={teacher}
             style={{color: COLOR_BUTTON_PRIMARY}}
             onClick={() => onTeacherClick(teacher)}
-          />
-      }
+          /> : <div></div>
+       }
       &nbsp;
       <LinkToOnline url={url}/>
 
@@ -254,8 +247,9 @@ const ScheduleLesson = (
   console.log(lesson, "lesson")
 
   return (
-    <CellListItem style={{padding: "0"}}
+    <CellListItem style={{padding: "0", margin: "0"}} 
       content={
+        lesson.lessonName != "Пар нет 🎉" ?
         <MainContent
           lessonName={lesson.lessonName}
           lessonNumber={lesson.lessonNumber}
@@ -268,7 +262,9 @@ const ScheduleLesson = (
           isAccented={isAccented}
           isTeacherAndValid={isTeacherAndValid}
           onTeacherClick={onTeacherClick}
-        />
+        /> : <CardHeadline3 style={{marginLeft: "1em"}}>
+        {lesson.lessonName}
+      </CardHeadline3>
       }
       contentRight={
         <LessonRightContent

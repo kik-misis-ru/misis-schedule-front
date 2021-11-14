@@ -327,11 +327,7 @@ const CatalogueItems = ({
   return (
     <Row style={{marginLeft: "1em", marginRight: "1em"}}>
 
-      <DashboardCard
-        text="Расписание"
-        sub="Другое"
-        onClick={() => onGoToPage(HOME_PAGE_NO)}
-      />
+     
 
       <DashboardCard
         text="Карта"
@@ -339,6 +335,12 @@ const CatalogueItems = ({
         // onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
         onClick={() => history.push('/navigation')}
       />
+
+      <DashboardCard
+              text="Другое расписание"
+              sub=""
+              onClick={() => onGoToPage(HOME_PAGE_NO)}
+            />
 
       <DashboardCard
         text="FAQ"
@@ -541,13 +543,13 @@ const DashboardPage = ({
                               : (<div></div>)
                           }
                           {/*</CardContent>*/}
-
+                          <Button size="s"  >Посмотреть всё</Button>
                         </CardBody>
 
                       </Card>
                     </Col>
                   
-                    
+                   
                   
                 
               </Row>

@@ -126,7 +126,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
           groupName : getFullGroupName(this.props.group, this.props.subGroup),
           weekParam: weekParam
       }
-      console.log("Schedule: render")
+      
      return <DeviceThemeProvider>
         <DocStyle/>
         {
