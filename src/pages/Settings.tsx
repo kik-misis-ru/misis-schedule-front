@@ -265,7 +265,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.state.timePush.hour=Number(this.state.timePush.value.getHours());
     this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
     console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
-    this.setState({edit: false, })
+    if (!this.props.isEngGroupError && !this.props.isGroupError && !this.props.isSubGroupError)
+    this.setState({edit: false })
     
     await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min).then()
   }
@@ -485,6 +486,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           </Row>
       )
       }
+      <div style={{height: "100px", width: "100px"}}></div>
          <Spacer100/>
          </Container>
       </DeviceThemeProvider>

@@ -478,10 +478,10 @@ const DashboardPage = ({
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
                       <Card style={{
-                        width: "90%",
+                        width: "88%",
                         marginLeft: "1.5em",
                         marginTop: "0.5em",
-                        marginRight: "1.5em"
+                        marginRight: "2.5em"
                       }}
                             onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
                       >
@@ -497,7 +497,7 @@ const DashboardPage = ({
                             <ScheduleLessonTitle text="Сейчас"/>
 
                             {
-                              !!currentLesson
+                              !!currentLesson&&count!=0
                                 ? (
                                   <ScheduleLesson
                                     lesson={currentLesson}
@@ -517,7 +517,7 @@ const DashboardPage = ({
 */}
 
                           {
-                            !!nextLesson // !!nextLessonIdx
+                            !!nextLesson&&count!=0 // !!nextLessonIdx
                               ? (
                                 // <React.Fragment>
                                 /*

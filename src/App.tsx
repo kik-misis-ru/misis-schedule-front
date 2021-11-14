@@ -692,7 +692,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       const lesson = this.state.days[dayNumber - 1][lessonIdx][week]
       if (lesson.lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        lessonNumber = lesson.lessonNumber;
+        console.log(lessonIdx, "'lesson.lessonNumber'")
+        lessonNumber = String(Number(lessonIdx)+1);
         break
       }
     }
@@ -808,7 +809,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) >= formatTimeHhMm(date))
       ) {
         const firstLessonInfo = this.getTimeFirstLesson(this.state.today)
-        console.log('whatLesson:', todayLessons[parseInt(firstLessonInfo[1])][0][0]);
+        console.log('whatLesson:', firstLessonInfo[1]);
 
         const lessonNumber = parseInt(firstLessonInfo[1]);
         return {
@@ -1925,12 +1926,15 @@ export class App extends React.Component<IAppProps, IAppState> {
           correct_sub = true;
         }
         if (correct && correct_sub && correct_eng) {
+          if (this.state.page==HOME_PAGE_NO){
           this.gotoPage(SCHEDULE_PAGE_NO)
+          }
           this.Load_Schedule()
           if (this.state.checked) {
+            console.log()
             const groupId = String(group.id);
             console.log("GROUP_ID:", groupId)
-            this.setState({groupId: groupId, bd: group}, () => {
+            this.setState({groupId: groupId, bd: this.state.group}, () => {
               createUser(
                 this.state.userId,
                 filial.id,
