@@ -1005,7 +1005,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     })
   }
 
-  dispatchAssistantAction(action: AssistantAction) {
+  async dispatchAssistantAction(action: AssistantAction) {
     console.log("dispathcAction:", action)
     if (action) {
       switch (action.type) {
@@ -1383,7 +1383,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'show_schedule':
           console.log("показать расписание");
 
-          this.Load_Schedule();
+          await this.Load_Schedule();
           this.gotoPage(SCHEDULE_PAGE_NO);
           break;
 
@@ -1775,15 +1775,16 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  async Load_Schedule(): Promise<void> {
-    console.log("LoadSchedule", this.state.groupId, this.state.group)
+  async _loadSchedule({ groupId, engGroup }: { groupId: string, engGroup: string }): Promise<void> {
+    console.log('_loadSchedule:', groupId, engGroup)
     return await getScheduleFromDb(
-      this.state.groupId,
-      String(this.state.engGroup),
-      this.getFirstDayWeek(new Date()))
+      groupId,
+      String(engGroup),
+      this.getFirstDayWeek(new Date())
+    )
       .then((response) => {
         this.showWeekSchedule(response, 0);
-        console.log(String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
+        console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
         this.setState({
           flag: true,
           isGroupError: false,
@@ -1791,6 +1792,13 @@ export class App extends React.Component<IAppProps, IAppState> {
       })
   }
   
+  async Load_Schedule(): Promise<void> {
+    return this._loadSchedule({
+      groupId: this.state.groupId,
+      engGroup: String(this.state.engGroup),
+  });
+  }
+
   async CheckIsCorrect() : Promise<boolean>{
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now(), flag: true});
@@ -1849,7 +1857,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   }
 
-  isCorrect() {
+  async isCorrect(): Promise<void> {
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now(), flag: true});
     let correct_sub = false;
@@ -1860,11 +1868,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     let promiseGroupName = getGroupByName(this.state.group);
     let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
 
-    Promise.all([
+    return Promise.all([
       promiseGroupName,
       promiseEnglishGroup,
     ])
-      .then((responses) => {
+      .then(async (responses) => {
         console.log("App: isCorrect: response", responses)
         const [
           group_response,
@@ -1890,7 +1898,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           if (this.state.page==HOME_PAGE_NO){
           this.gotoPage(SCHEDULE_PAGE_NO)
           }
-          this.Load_Schedule()
+          await this.Load_Schedule()
           if (this.state.checked) {
             const groupId = String(group.id);
 
@@ -1951,7 +1959,10 @@ export class App extends React.Component<IAppProps, IAppState> {
         engGroup: this.state.eng_bd,
         subGroup: this.state.sub_bd
       });
-      await this.Load_Schedule();
+      await this._loadSchedule({
+        groupId: this.state.group_id_bd,
+        engGroup: this.state.eng_bd,
+      });
     }
   }
 
