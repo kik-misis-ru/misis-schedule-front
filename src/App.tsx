@@ -1784,10 +1784,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       .then((response) => {
         this.showWeekSchedule(response, 0);
         console.log(String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
-        this.setState({flag: true});
-        //this.convertIdInGroupName();
-        //this.gotoPage(SCHEDULE_PAGE_NO);
-        this.setState({isGroupError: false});
+        this.setState({
+          flag: true,
+          isGroupError: false,
+        });
       })
   }
   async CheckIsCorrect() : Promise<boolean>{
@@ -1951,17 +1951,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         subGroup: this.state.sub_bd
       });
       await this.Load_Schedule();
-      await getScheduleFromDb(
-        this.state.groupId,
-        String(this.state.engGroup),
-        this.getFirstDayWeek(new Date())
-      )
-        .then((response) => {
-          this.showWeekSchedule(response, 0);
-          console.log('Bd: getScheduleTeacherFromDb:', String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
-          this.setState({flag: true});
-          this.setState({isGroupError: false});
-        })
     }
   }
 
