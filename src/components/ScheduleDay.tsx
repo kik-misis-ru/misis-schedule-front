@@ -86,7 +86,7 @@ export const ScheduleDay = ({
                               // timeParam,
                               isTeacherAndValid,
                               isToday,
-                              isSunday,
+                              isDayOff,
                               // today,
                               // validateTeacher,
                               // onSetValue,
@@ -101,19 +101,21 @@ export const ScheduleDay = ({
   // timeParam: number,
   isTeacherAndValid: boolean,
   isToday: boolean,
-  isSunday: boolean,
+  isDayOff: boolean,
   // today: number,
   onTeacherClick: (teacherName: string) => void
 }) => (
   isReady
     ? (
       <div style={{flexDirection: "column"}}>
-        <Card style={isSunday
-                  ? {background: "rgba(0, 0, 0, 0)",  marginTop: "5%"}:{width: "90%", marginLeft: "5%", marginTop: "0.5em"}}>
+        <Card style={isDayOff
+          ? {background: "rgba(0, 0, 0, 0)",  marginTop: "5%"}
+          : {width: "90%", marginLeft: "5%", marginTop: "0.5em"}
+        }>
           <CardBody style={{padding: "0 0 0 0"}}>
             <CardContent compact style={{padding: "0 0.1em 0 0.1em"}}>
               {
-                isSunday
+                isDayOff
                   ? <ScheduleDayOff/>
                   : <ScheduleDayLessons
                     // days={days}
