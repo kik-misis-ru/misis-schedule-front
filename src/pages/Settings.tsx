@@ -86,65 +86,6 @@ const HomeDescription = ({
   </TextBox>
 
 )
-
-// export const GoToMenuButton = (props) => (
-//   <Button
-//     size="s"
-//     view="clear"
-//     onClick={props.onClick}
-//     pin="circle-circle"
-//     contentRight={
-//       <IconHouse size="s" color="inherit"/>
-//     }
-//   />
-// )
-//
-
-//class Main extends React.Component {
-//  constructor(props) {
-//    super(props);
-//    this.handleChange         = this.handleChange.bind(this)
-//    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
-//  }
-//
-//  handleChange(key, e) {
-//    this.props.setValue(key, e);
-//  }
-//
-//  convertIdInGroupName() {
-//    this.props.convertIdInGroupName();
-//  }
-//
-//
-//  render() {
-//    return (
-//      <Container style={{ padding: 0 }}>
-//
-//        <Row>
-//          <Col style={{ marginLeft: "auto" }}>
-//            <GoToMenuButton
-//              onClick={() => {
-//                this.handleChange("page", DASHBOARD_PAGE_NO)
-//              }}
-//            />
-//            <GoToScheduleButton
-//              onClick={() => {
-//                this.props.convertIdInGroupName();
-//                this.handleChange("page", SCHEDULE_PAGE_NO)
-//              }}
-//              disabled={this.props.disabled}
-//            />
-//          </Col>
-//        </Row>
-//        <Cell style={{ padding: 0 }}
-//              content={this.props.contentRight}>
-//        </Cell>
-//      </Container>
-//    )
-//  }
-//}
-
-
 const TextFieldForUserInfo = ({
                                 label,
                                 value,
@@ -221,7 +162,6 @@ interface SettingsState {
     value: Date
   }
   theme: boolean
-  
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
@@ -230,9 +170,9 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     super(props);
     
     this.onHandleChange = this.onHandleChange.bind(this);
-    //this.Save = this.Save.bind(this);
-    // this.handleTeacherChange = this.handleTeacherChange.bind(this);
+    this.Save = this.Save.bind(this);
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
+    this.onHandleTeacherChange = this.props.onHandleTeacherChange.bind(this);
     console.log()
     let edit=false;
     this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
@@ -254,10 +194,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
+  async onHandleTeacherChange(isSave: boolean){
+    await this.props.onHandleTeacherChange(isSave);
+  }
 
   async isCorrect() {
       console.log(this.props.student, "PROPS.STUDENT");
-     this.props.student ? await this.props.onValidateInput() : this.props.onHandleTeacherChange(true);
+     this.props.student ? await this.props.onValidateInput() : this.onHandleTeacherChange(true)
   }
   
 
@@ -276,7 +219,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     if (!this.props.isEngGroupError && !this.props.isGroupError && !this.props.isSubGroupError)
     this.setState({edit: false })
     this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
-    await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled).then()
+    await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
   }
 
    Edit(){
