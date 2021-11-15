@@ -235,13 +235,14 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     console.log()
     let edit=false;
+    this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
     this.state = {disabled: this.props.isActive,
       timePush: {
         hour:  this.props.pushHour == -1 ? 1 : this.props.pushHour,
         min: this.props.pushMin == -1 ? 1 : this.props.pushMin,
         value: new Date(1629996400000-68400000-2760000 + this.props.pushHour * 3600000 + this.props.pushMin * 60000)
       },
-      edit: false,
+      edit: edit,
       theme: false,
     };
     this.onHandleChange("description", props.character === "joy"
@@ -405,7 +406,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
 
 </Row > 
 
-          { this.state.edit || this.props.group==""&&this.props.teacher=="" ? (
+          { this.state.edit ? (
             <Row style={{display: "flex",
             flexDirection: "column",
             justifyContent: "center",

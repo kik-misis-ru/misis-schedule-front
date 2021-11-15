@@ -274,7 +274,7 @@ onGoToPage: (pageNo) => void
 return (
 <Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
 
-<Card onClick={() => onGoToPage(HOME_PAGE_NO)} style={{padding: "0 0 0 0", width: "100%", height: "8.5vh"}}>
+<Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.5vh"}}>
 
 <CardBody
 style={{padding: "0 0 0 0"}}
