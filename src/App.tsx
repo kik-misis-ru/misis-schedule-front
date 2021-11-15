@@ -447,11 +447,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                 this.gotoPage(22);
                 }
               })
-            
-            console.log(`assistant.on(data)`, event);
-            const {action} = event;
-            this.dispatchAssistantAction(action);
           }
+          console.log(`assistant.on(data)`, event);
+          const {action} = event;
+          this.dispatchAssistantAction(action);
           break
 
         default:
@@ -971,6 +970,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   dispatchAssistantAction(action: AssistantAction) {
+    console.log("dispathcAction:", action)
     if (action) {
       switch (action.type) {
         case 'profile':
@@ -1089,6 +1089,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           let countOfLessons: [string, number] | undefined;
           let day: TodayOrTomorrow | undefined;
           let page = 0;
+          console.log("how many. group:", this.state.group, ", teacher:", this.state.teacher)
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
             if (action.note !== undefined) {
@@ -1380,6 +1381,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             this.gotoPage(HOME_PAGE_NO);
           }
           break
+        case 'dashboard':
+          this.gotoPage(DASHBOARD_PAGE_NO)
+          break;
 
         case 'subgroup':
           console.log('subgroup', action)
