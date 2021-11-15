@@ -197,9 +197,12 @@ interface SettingsProps {
   isGroupError: boolean
   theme: string 
   ChangeTheme: () => void
+  ChangePush: (hour: number, min: number, isActive: boolean) => void
   subGroup: string
   isSubGroupError: boolean
-
+  isActive: boolean
+  pushHour: number
+  pushMin: number
   engGroup: string
   isEngGroupError: boolean
 
@@ -230,14 +233,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     //this.Save = this.Save.bind(this);
     // this.handleTeacherChange = this.handleTeacherChange.bind(this);
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
-    let disabled = true;
-    if (props.groupId !== "") disabled = false;
+    console.log()
     let edit=false;
-    this.state = {disabled: false,
+    this.state = {disabled: this.props.isActive,
       timePush: {
-        hour: 0,
-        min: 0,
-        value: new Date()
+        hour:  this.props.pushHour == -1 ? 1 : this.props.pushHour,
+        min: this.props.pushMin == -1 ? 1 : this.props.pushMin,
+        value: new Date(1629996400000-68400000-2760000 + this.props.pushHour * 3600000 + this.props.pushMin * 60000)
       },
       edit: false,
       theme: false,
@@ -271,8 +273,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
     if (!this.props.isEngGroupError && !this.props.isGroupError && !this.props.isSubGroupError)
     this.setState({edit: false })
-    
-    await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min).then()
+    this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
+    await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled).then()
   }
 
    Edit(){

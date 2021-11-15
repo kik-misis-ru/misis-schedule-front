@@ -285,7 +285,8 @@ export interface IAppState {
   isActive: boolean
   subGroup: string
   isSubGroupError: boolean
-
+  pushHour: number,
+  pushMin: number,
   engGroup: string
   isEngGroupError: boolean
 
@@ -351,6 +352,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       isSubGroupError: false,
       isEngGroupError: false,
       isActive: false,
+      pushHour: 0,
+      pushMin: 0,
       character: CHAR_SBER,
 
       star: false,
@@ -371,6 +374,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.Raspisanie = this.Raspisanie.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
+    this.ChangePush=this.ChangePush.bind(this);
     
   }
 
@@ -415,8 +419,12 @@ export class App extends React.Component<IAppProps, IAppState> {
                   //   engGroup: response.eng_group,
                   //   teacherId: response.teacher_id,
                   //   filialId: response.filialId})
-                  this.gotoPage(DASHBOARD_PAGE_NO)
-                    console.log("getScheduleByUserId", response)
+                  this.gotoPage(DASHBOARD_PAGE_NO) 
+                  this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
+                  console.log("isActive:", response.isActive)
+                  console.log("hour:",response.hour)
+                  console.log("minute:",response.minute)
+                  console.log("getScheduleByUserId", response)
                     if (response.teacher_id != "" && response.teacher_id!=null) {
                       const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
                       this.setState({
@@ -424,9 +432,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                         teacher_correct: true,
                         teacher: teacher
                       })
-                      console.log("isActive:", response.isActive)
-                      console.log("hour:",response.hour)
-                      console.log("minute:",response.minute)
+                     
     
                     }else if (response.groupId != "")  {
                       this.setState({
@@ -2043,6 +2049,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     )
   }
 
+  ChangePush(hour: number, min: number, isActive: boolean){
+    this.setState({pushHour: hour, pushMin: min, isActive: isActive});
+  }
+
   gotoPage(pageNo: number): void {
     console.log('App: gotoPage:', pageNo);
     // temporary workaround
@@ -2115,8 +2125,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                   group={this.state.group}
                   theme={this.state.theme}
                   ChangeTheme={this.ChangeTheme}
+                  ChangePush={this.ChangePush}
                   isGroupError={this.state.isGroupError}
-
+                  isActive={this.state.isActive}
+                  pushHour={this.state.pushHour}
+                  pushMin={this.state.pushMin}
                   subGroup={this.state.subGroup}
                   isSubGroupError={this.state.isSubGroupError}
 

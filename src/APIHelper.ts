@@ -187,13 +187,13 @@ export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherAp
   return parsedTeacherData;
 }
 
-export async function addUserToPushNotification( sub: string, hour: number, minute: number){
+export async function addUserToPushNotification( sub: string, hour: number, minute: number, isActive: boolean){
   const url = `${API_URL}add_user_to_push_notification`;
   const data = {
     "sub": sub, 
     "hour": hour, 
     "minute": minute,
-    "isActive": true
+    "isActive": isActive
   };
   console.log(`APIHelper: add_user_to_push_notification: url: "${url}", data:`, data);
 
