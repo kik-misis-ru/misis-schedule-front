@@ -465,11 +465,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       </Col>
       </Row>) : (
         <Row style={{margin: "1em"}}>
+          <Col size={12}>
         <Headline2 style={{margin: "0 0 1em 0"}}> Мои данные </Headline2>
-                                    {
+          </Col>
+          {
             this.props.student && this.props.bd!=""
 
-              ? (<Col>
+              ? (<Col size={10}>
               <TextBox>
                   <TextBoxLabel >
                     Номер академической группы

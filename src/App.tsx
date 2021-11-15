@@ -1861,7 +1861,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         this.setState({
           teacherId: teacherData.id,
-          student: false,
+          //
           teacher_correct: true,
           date: Date.now(),
           flag: true,
@@ -1871,6 +1871,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       }
       if (this.state.teacher_checked) {
+        this.setState({student: false,})
         createUser(
           this.state.userId,
           filial.id,
