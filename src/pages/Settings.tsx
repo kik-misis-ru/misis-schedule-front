@@ -468,13 +468,16 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         <Headline2 style={{margin: "0 0 1em 0"}}> Мои данные </Headline2>
                                     {
             this.props.student && this.props.bd!=""
-              ? (<TextBox>
-                  <TextBoxLabel>
+
+              ? (<Col>
+              <TextBox>
+                  <TextBoxLabel >
                     Номер академической группы
                   </TextBoxLabel>
                   <Headline4>{this.props.bd} </Headline4>
                   
                   </TextBox>
+                  </Col>
               )
               : (
                 <TextBox> 

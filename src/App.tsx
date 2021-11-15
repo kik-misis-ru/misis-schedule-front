@@ -282,7 +282,7 @@ export interface IAppState {
   today: number
   theme: string
   isGroupError: boolean
-
+  isActive: boolean
   subGroup: string
   isSubGroupError: boolean
 
@@ -350,7 +350,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       isTeacherError: false,
       isSubGroupError: false,
       isEngGroupError: false,
-
+      isActive: false,
       character: CHAR_SBER,
 
       star: false,
@@ -1354,7 +1354,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'show_schedule':
           console.log("показать расписание");
 
-          return this.Load_Schedule();
+          this.Load_Schedule();
+          this.gotoPage(SCHEDULE_PAGE_NO);
           break;
 
         case 'navigation':
