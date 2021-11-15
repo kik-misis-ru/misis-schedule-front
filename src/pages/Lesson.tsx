@@ -42,7 +42,7 @@ const Lesson = (props: {
   spinner: Boolean,
   currentLessonStartEnd: StartEnd,
   onDashboardClick: () => void
-  handleTeacherChange: () => Promise<void>
+  handleTeacherChange: (isSave: boolean) => Promise<void>
   onGoToPage: (page: number) => void
 }) => {
   const {
@@ -90,7 +90,7 @@ const Lesson = (props: {
             isAccented={true}
             onGoToPage={(page)=> onGoToPage(page)}
             // todo: задавать имя преподавателя
-            onTeacherClick={(teacherName) => handleTeacherChange()}
+            onTeacherClick={() => handleTeacherChange(false)}
           />
           : <div></div>
       }

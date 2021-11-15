@@ -179,7 +179,7 @@ interface HomeViewProps {
 
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
-  onHandleTeacherChange: () => Promise<void>
+  onHandleTeacherChange: (isSave: boolean) => Promise<void>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
 
@@ -322,7 +322,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onHandleTeacherChange()}
+          onClick={() => this.props.onHandleTeacherChange(this.props.teacher_checked)}
         />
 
       </Container>

@@ -436,7 +436,7 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
 
   onGoToPage: (pageNo: number) => void
-  handleTeacherChange: () => Promise<void>
+  handleTeacherChange: (isSave: boolean) => Promise<void>
   getCurrentLesson // : (date: Date) => string | undefined
   getTimeFirstLesson: (daynum: number) => [string, string]
   getEndLastLesson//: (todayOrTomorrow: TodayOrTomorrow) => string | undefined
@@ -505,7 +505,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={true}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange()}
+                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
                                   />
                                 )
                                 : <NoLesson/>
@@ -535,7 +535,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange()}
+                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>

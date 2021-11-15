@@ -190,7 +190,7 @@ interface SettingsProps {
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
-  onHandleTeacherChange: () => Promise<void>
+  onHandleTeacherChange: (isSave: boolean) => Promise<void>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   group: string
@@ -256,7 +256,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   }
 
   async isCorrect() {
-    await this.props.onValidateInput();
+     this.props.student ? await this.props.onValidateInput() : this.props.onHandleTeacherChange(true);
   }
   
 
@@ -378,7 +378,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onHandleTeacherChange()}
+          onClick={() => this.props.onHandleTeacherChange(true)}
         />
 
       </Container>

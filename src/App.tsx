@@ -371,7 +371,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     // this.Home                 = Home.bind(this);
     // this.Navigator            = Navigator.bind(this);
-    this.Raspisanie = this.Raspisanie.bind(this);
+    //this.Raspisanie = this.Raspisanie.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
@@ -1677,155 +1677,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-
-  Raspisanie(timeParam: number) {
-    //console.log('Raspisanie: timeParam:', timeParam)
-    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    if (timeParam > 7) {
-      timeParam -= 7;
-      weekParam = OTHER_WEEK
-    }
-    // this.setState({i: 0});
-    const current = this.getCurrentLesson(new Date());
-    const day_num = timeParam - 1;
-    const index = timeParam;
-    const page = weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0;
-
-    // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
-
-    const formatDate = (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
-
-    const isTeacher = this.getIsCorrectTeacher();
-
-    const groupName = getFullGroupName(this.state.group, this.state.subGroup);
-
-    const userToStar = {
-      userId: this.state.userId,
-      filialId: filial.id,
-      groupId: this.state.groupId,
-      subGroup: this.state.subGroup,
-      engGroup: this.state.engGroup,
-      teacherId: this.state.teacherId
-    }
-
-    const handleGroupStarChange = async (newValue) => {
-      this.setValue("star", newValue);
-      this.setValue("checked", newValue)
-      this.setValue("bd", newValue
-        ? this.state.groupId
-        : ''
-      )
-      return await setGroupStar(userToStar, newValue);
-    };
-
-    const handleTeacherStarChange = async (newValue) => {
-      this.setValue("teacher_star", newValue)
-      this.setValue("teacher_checked", newValue)
-      this.setValue("teacher_bd", newValue
-        ? this.state.groupId
-        : ''
-      )
-      return await setTeacherStar(userToStar, newValue);
-    };
-
-
-    return (
-      <DeviceThemeProvider>
-        <DocStyle/>
-        {
-          getThemeBackgroundByChar(this.state.character, 'light')
-        }
-        <div>
-          <Container style={{padding: 0, overflow: "hidden"}}>
-
-            <TopMenu
-              subLabel={
-                isTeacher
-                  ? this.state.teacher
-                  : groupName
-              }
-              starred={
-                isTeacher
-                  ? this.state.teacher_star
-                  : this.state.star
-              }
-              onStarClick={() => {
-                isTeacher
-                  ? handleTeacherStarChange(!this.state.teacher_star)
-                  : handleGroupStarChange(!this.state.star)
-              }}
-              onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
-              onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
-              // onNavigatorClick={() => this.gotoPage(NAVIGATOR_PAGE_NO)}
-            />
-
-            <WeekSelect
-              onPrevWeekClick={() => {
-                this.setState({spinner: false});
-                this.PreviousWeek();
-                this.setState({flag: false})
-                this.gotoPage(FIRST_DAY_OTHER_WEEK)
-              }}
-              onThisWeekClick={() => {
-                this.CurrentWeek();
-                this.setState({flag: true})
-                this.gotoPage(SCHEDULE_PAGE_NO)
-              }}
-              onNextWeekClick={() => {
-                this.setState({spinner: false});
-                this.NextWeek();
-                this.setState({flag: false})
-                this.gotoPage(FIRST_DAY_OTHER_WEEK)
-              }}
-            />
-
-            <WeekCarousel
-              selectedIndex={index - 1}
-              markedIndex={weekParam === THIS_WEEK ? this.state.today - 1 : -1 /* current weekday can't be on 'other' week*/}
-              cols={
-                this.state.day.map(d => {
-                  const {title, date} = d;
-                  const weekDayShort = title;
-                  const dateDdDotMmDotYy = date[weekParam];
-                  const dateDdDotMm = dateDdDotMmDotYy.slice(0, 5);
-                  return dateDdDotMm
-                    ? formatDate(weekDayShort, dateDdDotMm)
-                    : '';
-                })
-              }
-              onSelect={(weekDayIndex) => this.gotoPage(weekDayIndex + page + (weekParam === OTHER_WEEK ? 0 : 1))}
-            />
-
-            <ScheduleDay
-              isReady={this.state.spinner}
-              // days={this.state.days}
-              // day_num={day_num}
-              dayLessons={
-                this.state.days[day_num]?.map(bellsThisOrOtherWeek => bellsThisOrOtherWeek[weekParam])
-              }
-              currentLessonNumber={current}
-              // weekParam={weekParam}
-              // timeParam={timeParam}
-              isTeacherAndValid={isTeacher}
-              isToday={this.state.today === timeParam && weekParam === THIS_WEEK}
-              isSunday={timeParam == 7}
-              // today={this.state.today}
-              // validateTeacher={this.isCorrectTeacher}
-              // onSetValue={this.setValue}
-              onTeacherClick={async (teacherName) => {
-                this.setValue("teacher", teacherName);
-                await this.handleTeacherChange();
-              }}
-            />
-
-            <Spacer200/>
-
-          </Container>
-        </div>
-      </DeviceThemeProvider>
-    );
-  }
-
   ChangeTheme(){
     console.log(this.state.theme, "THEME")
     if (this.state.theme=="dark")
@@ -1876,6 +1727,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherId: teacherData.id,
           //
           teacher_correct: true,
+          teacher_bd: formatTeacherName(teacherData),
           date: Date.now(),
           flag: true,
           page: SCHEDULE_PAGE_NO,

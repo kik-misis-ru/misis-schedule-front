@@ -48,7 +48,7 @@ import { threadId } from "worker_threads";
     CurrentWeek: () => void
     NextWeek: () => void
     getCurrentLesson: (Date) =>string
-    handleTeacherChange: () => Promise<void>
+    handleTeacherChange: (isSave: boolean) => Promise<void>
     weekParam: number
     day: IDayHeader[]
     spinner: boolean
@@ -212,7 +212,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               // onSetValue={this.setValue}
               onTeacherClick={async (teacherName) => {
                 this.onHandleChange("teacher", teacherName);
-                await this.props.handleTeacherChange();
+                await this.props.handleTeacherChange(false);
               }}
             />
 
