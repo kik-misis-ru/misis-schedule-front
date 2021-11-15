@@ -282,7 +282,7 @@ export interface IAppState {
   today: number
   theme: string
   isGroupError: boolean
-
+  isActive: boolean
   subGroup: string
   isSubGroupError: boolean
 
@@ -350,7 +350,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       isTeacherError: false,
       isSubGroupError: false,
       isEngGroupError: false,
-
+      isActive: false,
       character: CHAR_SBER,
 
       star: false,
@@ -448,10 +448,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                 }
               })
             
-            console.log(`assistant.on(data)`, event);
-            const {action} = event;
-            this.dispatchAssistantAction(action);
+            
           }
+          console.log(`assistant.on(data)`, event);
+          const {action} = event;
+          this.dispatchAssistantAction(action);
           break
 
         default:
