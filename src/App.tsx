@@ -426,6 +426,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   console.log("minute:",response.minute)
                   console.log("getScheduleByUserId", response)
                     if (response.teacher_id != "" && response.teacher_id!=null) {
+                      console.log(`${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`);
                       const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
                       this.setState({
                         student: false,
@@ -1687,7 +1688,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   // todo исправить асинхронную работу
-  async handleTeacherChange(): Promise<void> {
+  async handleTeacherChange(isSave: boolean): Promise<void> {
     console.log(this.state.teacher)
 
     return getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
@@ -1735,7 +1736,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         });
 
       }
-      if (this.state.teacher_checked) {
+      if (isSave) {
         this.setState({student: false,})
         createUser(
           this.state.userId,

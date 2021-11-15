@@ -256,6 +256,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   }
 
   async isCorrect() {
+      console.log(this.props.student, "PROPS.STUDENT");
      this.props.student ? await this.props.onValidateInput() : this.props.onHandleTeacherChange(true);
   }
   
