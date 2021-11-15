@@ -1775,9 +1775,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  Load_Schedule(): void{
+  async Load_Schedule(): Promise<void> {
     console.log("LoadSchedule", this.state.groupId, this.state.group)
-    getScheduleFromDb(
+    return await getScheduleFromDb(
       this.state.groupId,
       String(this.state.engGroup),
       this.getFirstDayWeek(new Date()))
@@ -1790,6 +1790,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         });
       })
   }
+  
   async CheckIsCorrect() : Promise<boolean>{
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now(), flag: true});
