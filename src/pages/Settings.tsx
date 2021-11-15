@@ -195,7 +195,8 @@ interface SettingsProps {
   onConvertIdInGroupName: () => void
   group: string
   isGroupError: boolean
-
+  theme: string 
+  ChangeTheme: () => void
   subGroup: string
   isSubGroupError: boolean
 
@@ -216,6 +217,7 @@ interface SettingsState {
     min: number,
     value: Date
   }
+  theme: boolean
   
 }
 
@@ -237,7 +239,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         min: 0,
         value: new Date()
       },
-      edit: false
+      edit: false,
+      theme: false,
     };
     this.onHandleChange("description", props.character === "joy"
       ? DESC_JOY
@@ -252,6 +255,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   async isCorrect() {
     await this.props.onValidateInput();
   }
+  
 
   // handleTeacherChange() {
   //   this.props.handleTeacherChange();
@@ -377,12 +381,12 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       </Container>
     )
     
-    console.log(this.state.timePush.value);
+    console.log(this.state.timePush.value, this.props.theme);
     return (
       <DeviceThemeProvider>
         <DocStyle/>
         {
-          getThemeBackgroundByChar(this.props.character, 'dark')
+          getThemeBackgroundByChar(this.props.character, this.props.theme)
         }
         <Container style={{padding: "0", overflow: "hidden"}}>
         <Row style={{margin: "1em"}}>
@@ -451,12 +455,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}
+       {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => this.setState({theme: !this.state.theme}))}/> */}
       <Col size={4} style={{display: "flex",
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center"}}>
       <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={()=>this.Save() }>Сохранить</Button>
-      <Button size="m" style={{margin:"0.5em"}} onClick={()=>this.setState({edit: false}) }>Отмена</Button>
+      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  }}>Отмена</Button>
       </Col>
       </Row>) : (
         <Row style={{margin: "1em"}}>

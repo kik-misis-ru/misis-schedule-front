@@ -280,7 +280,7 @@ export interface IAppState {
   spinner: boolean
   date: number
   today: number
-
+  theme: string
   isGroupError: boolean
 
   subGroup: string
@@ -345,7 +345,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       spinner: false,
       date: Date.now(),
       today: 0,
-      
+      theme: "dark",
       isGroupError: false,
       isTeacherError: false,
       isSubGroupError: false,
@@ -370,6 +370,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     // this.Navigator            = Navigator.bind(this);
     this.Raspisanie = this.Raspisanie.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+    this.ChangeTheme=this.ChangeTheme.bind(this);
     
   }
 
@@ -1807,6 +1808,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     );
   }
 
+  ChangeTheme(){
+    console.log(this.state.theme, "THEME")
+    if (this.state.theme=="dark")
+    this.setState({theme: "light"})
+    else this.setState({theme: "dark"})
+  }
  
 
 
@@ -1913,7 +1920,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log("App: isCorrect: response: english", english_response);
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")
-          this.setState({correct: true, group: group.name, groupId: group.id})
+          this.setState({group: group.name, groupId: group.id})
           //this.convertGroupNameInId();
           correct = true;
         }
@@ -1934,7 +1941,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             console.log()
             const groupId = String(group.id);
             console.log("GROUP_ID:", groupId)
-            this.setState({groupId: groupId, bd: this.state.group}, () => {
+            this.setState({groupId: groupId, bd: this.state.group, correct: true}, () => {
               createUser(
                 this.state.userId,
                 filial.id,
@@ -2066,6 +2073,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <NavigatorPage
                   buildings={buildings}
                   character={this.state.character}
+                  
                   isMobileDevice={detectDevice() === "mobile"}
                   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                   onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
@@ -2092,6 +2100,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                   groupId={this.state.groupId}
                   group={this.state.group}
+                  theme={this.state.theme}
+                  ChangeTheme={this.ChangeTheme}
                   isGroupError={this.state.isGroupError}
 
                   subGroup={this.state.subGroup}
