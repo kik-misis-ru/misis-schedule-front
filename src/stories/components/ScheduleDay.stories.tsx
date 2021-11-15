@@ -28,7 +28,7 @@ export default {
       type: {name: 'boolean', required: false},
       defaultValue: true,
     },
-    isSunday: {
+    isDayOff: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
@@ -56,7 +56,7 @@ TeacherView.args = {
 export const Sunday = Template.bind({});
 Sunday.args = {
   isReady: true,
-  isSunday: true,
+  isDayOff: true,
 };
 
 export const NotReady = Template.bind({});

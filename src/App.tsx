@@ -383,7 +383,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
-    
+
   }
 
   componentDidMount() {
@@ -417,7 +417,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             const now = new Date();
             this.setState({today: now.getDay()});
             getUser(this.state.userId).then((user)=> {
-              
+
               if (user !== "0") {
                 console.log('user', user)
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"], teacherId: user["teacher_id"], filialId: user["filial_id"]})
@@ -427,7 +427,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   //   engGroup: response.eng_group,
                   //   teacherId: response.teacher_id,
                   //   filialId: response.filialId})
-                  this.gotoPage(DASHBOARD_PAGE_NO) 
+                  this.gotoPage(DASHBOARD_PAGE_NO)
                   this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
                   console.log("isActive:", response.isActive)
                   console.log("hour:",response.hour)
@@ -438,11 +438,12 @@ export class App extends React.Component<IAppProps, IAppState> {
                       const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
                       this.setState({
                         student: false,
+                        teacher_bd: teacher,
                         teacher_correct: true,
                         teacher: teacher
                       })
-                     
-    
+
+
                     }else if (response.groupId != "")  {
                       this.setState({
                         //page: DASHBOARD_PAGE_NO,
@@ -453,7 +454,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                         bd: response.groupName,
                         student: true,
                         //page: LESSON_PAGE_NO
-                        
+
                       });
                       console.log("isActive:", response.isActive)
                       console.log("hour:",response.hour)
@@ -493,7 +494,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
-    console.log(this.state.group)
+    //console.log(this.state.group)
     switch (key) {
       case "group":
         this.setState({group: value});
@@ -505,7 +506,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({teacher: value});
         break;
       case "page":
-        
+
         this.gotoPage(value);
         break;
       case "student":
@@ -1692,12 +1693,16 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({theme: "light"})
     else this.setState({theme: "dark"})
   }
- 
 
+  doSetTeacher(teacherName: string): void {
+    this.setState({teacher: teacherName}, async () => {
+      await this.handleTeacherChange(false);
+    });
+  }
 
   // todo исправить асинхронную работу
   async handleTeacherChange(isSave: boolean): Promise<void> {
-    console.log(this.state.teacher)
+    console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
 
     getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
@@ -1739,13 +1744,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacher_bd: formatTeacherName(teacherData),
           date: Date.now(),
           flag: true,
+          student: false,
           page: SCHEDULE_PAGE_NO,
           isTeacherError: false,
         });
 
       }
       if (isSave) {
-        this.setState({student: false,})
+        //this.setState({})
         createUser(
           this.state.userId,
           filial.id,
@@ -1754,7 +1760,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.engGroup,
           this.state.teacherId,
         );
-      }
+      } else this.gotoPage(SCHEDULE_PAGE_NO);
     })
   }
 
@@ -1980,7 +1986,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   render() {
     let {page} = this.state;
     // console.log("App: render, this.state:", this.state)
-
     return (
       <Router history={history}>
         <Switch>
@@ -2013,7 +2018,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <NavigatorPage
                   buildings={buildings}
                   character={this.state.character}
-                  
+
                   isMobileDevice={detectDevice() === "mobile"}
                   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                   onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
@@ -2030,6 +2035,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <Settings
                   userId={this.state.userId}
                   bd={this.state.bd}
+                  teacher_bd={this.state.teacher_bd}
                   onValidateInput={this.isCorrect}
                   onHandleTeacherChange={this.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
@@ -2100,7 +2106,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 CurrentWeek={this.CurrentWeek}
                 NextWeek={this.NextWeek}
                 getCurrentLesson={this.getCurrentLesson}
-                handleTeacherChange={this.handleTeacherChange}
+                doSetTeacher={(teacherName: string) => this.doSetTeacher(teacherName)}
                 weekParam={page > 7 ? 1 : 0}
                 day={this.state.day}
                 spinner={this.state.spinner}
@@ -2155,6 +2161,9 @@ export class App extends React.Component<IAppProps, IAppState> {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
+                // this.setState({group: this.state.bd, teacher: this.state.teacher_bd})
+                // this.convertGroupNameInId();
+                // this.Load_Schedule();
                 const todayIndex = this.state.today - 1;
 
                 const currentLessonIdx = this.getCurrentLesson(now);
@@ -2202,7 +2211,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             }
             {
               (page === 22) && <Start
-                
+
                 character={this.state.character}
                 isMobileDevice={detectDevice() === "mobile"}
                 onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
