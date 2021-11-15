@@ -77,6 +77,9 @@ export interface ITeacherInfo{
 
 export interface IScheduleByUserIdData {
   schedule: IScheduleApiData,
+  isActive: boolean, //отправка пушей
+  hour: number, //час отправки пушей
+  minute: number, //минута отправки пушей
   userId: string,
   filialId: string,
   groupId: string,

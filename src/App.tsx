@@ -424,6 +424,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                         teacher_correct: true,
                         teacher: teacher
                       })
+                      console.log("isActive:", response.isActive)
+                      console.log("hour:",response.hour)
+                      console.log("minute:",response.minute)
     
                     }else if (response.groupId != "")  {
                       this.setState({
@@ -435,7 +438,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                         bd: response.groupName,
                         student: true,
                         //page: LESSON_PAGE_NO
+                        
                       });
+                      console.log("isActive:", response.isActive)
+                      console.log("hour:",response.hour)
+                      console.log("minute:",response.minute)
                     } else {
                       this.gotoPage(22);
                     }
