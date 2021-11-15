@@ -430,6 +430,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                       const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
                       this.setState({
                         student: false,
+                        teacher_bd: teacher,
                         teacher_correct: true,
                         teacher: teacher
                       })
@@ -1917,7 +1918,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   render() {
     let {page} = this.state;
     // console.log("App: render, this.state:", this.state)
-
     return (
       <Router history={history}>
         <Switch>
@@ -1967,6 +1967,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <Settings
                   userId={this.state.userId}
                   bd={this.state.bd}
+                  teacher_bd={this.state.teacher_bd}
                   onValidateInput={this.isCorrect}
                   onHandleTeacherChange={this.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
@@ -2092,6 +2093,9 @@ export class App extends React.Component<IAppProps, IAppState> {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
+                // this.setState({group: this.state.bd, teacher: this.state.teacher_bd})
+                // this.convertGroupNameInId();
+                // this.Load_Schedule();
                 const todayIndex = this.state.today - 1;
 
                 const currentLessonIdx = this.getCurrentLesson(now);

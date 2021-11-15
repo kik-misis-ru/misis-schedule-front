@@ -127,6 +127,7 @@ interface SettingsProps {
     // todo paramoy
     | typeof CHAR_TIMEPARAMOY
   bd: string
+  teacher_bd: string
   checked: boolean
   description: string
   onDashboardClick: () => void
@@ -437,7 +438,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   <TextBoxLabel>
                    ФИО
                   </TextBoxLabel>
-                  <Headline4>{this.props.teacher}</Headline4>
+                  <Headline4>{this.props.teacher_bd}</Headline4>
                   </TextBox>
                
               ) 
