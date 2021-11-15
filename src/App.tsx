@@ -204,6 +204,12 @@ export interface StartEnd {
   end: string
 }
 
+export interface ICheckIsCorrect{
+  correct_sub: boolean
+  correct_eng: boolean
+  correct: boolean
+}
+
 const MAX_BELL_COUNT = 8;
 
 const FIRST_DAY_OTHER_WEEK = 8;
@@ -314,7 +320,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.setValue = this.setValue.bind(this)
+    this.Load_Schedule =  this.Load_Schedule.bind(this)
     this.isCorrect = this.isCorrect.bind(this)
+    this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
     this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.getCurrentLesson = this.getCurrentLesson.bind(this);
@@ -1691,7 +1699,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async handleTeacherChange(isSave: boolean): Promise<void> {
     console.log(this.state.teacher)
 
-    return getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
+    getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
@@ -1751,7 +1759,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  Load_Schedule() {
+  Load_Schedule(): void{
     console.log("LoadSchedule", this.state.groupId, this.state.group)
     getScheduleFromDb(
       this.state.groupId,
@@ -1766,6 +1774,63 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({isGroupError: false});
       })
   }
+  async CheckIsCorrect() : Promise<boolean>{
+    console.log('App: isCorrect')
+    this.setState({correct: false, date: Date.now(), flag: true});
+    let correct_sub = false;
+    let correct_eng = false;
+    let correct = false;
+    console.log("this.state.engGroup", this.state.engGroup)
+
+    let promiseGroupName = getGroupByName(this.state.group);
+    let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
+
+   return Promise.all([
+      promiseGroupName,
+      promiseEnglishGroup,
+    ])
+      .then((responses) => {
+        console.log("App: isCorrect: response", responses)
+        const [
+          group_response,
+          english_response,
+        ] = responses;
+        const group = JSON.parse(group_response);
+        console.log("App: isCorrect: response: english", english_response);
+        if (group.status == 1) {
+          console.log(group.name, group.id, "GROUP RESPONSE")
+          this.setState({group: group.name, groupId: group.id})
+          //this.convertGroupNameInId();
+          correct = true;
+        }
+        console.log(this.state.groupId, "group Id");
+        if (english_response || this.state.engGroup == "") {
+          correct_eng = true;
+          console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
+        }
+        if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) {
+          correct_sub = true;
+        }
+        this.setState({isEngGroupError: !correct_eng, isSubGroupError:!correct_sub, isGroupError: !correct})
+        const groupId = String(group.id);
+        let isCorrect = correct_eng && correct_sub && correct
+        if(isCorrect){
+          this.setState({groupId: groupId, bd: this.state.group, correct: true}, () => {
+            createUser(
+              this.state.userId,
+              filial.id,
+              group.id,
+              this.state.subGroup,
+              this.state.engGroup,
+              "")
+            })
+          }
+        return isCorrect
+
+      })
+        
+
+  }
 
   isCorrect() {
     console.log('App: isCorrect')
@@ -1778,7 +1843,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     let promiseGroupName = getGroupByName(this.state.group);
     let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
 
-    return Promise.all([
+    Promise.all([
       promiseGroupName,
       promiseEnglishGroup,
     ])
@@ -1810,7 +1875,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
           this.Load_Schedule()
           if (this.state.checked) {
-            console.log()
             const groupId = String(group.id);
             console.log("GROUP_ID:", groupId)
             this.setState({groupId: groupId, bd: this.state.group, correct: true}, () => {
@@ -1845,8 +1909,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         } else {
           this.setState({isEngGroupError: false, star: false});
         }
-
       })
+
   }
 
   Spinner() {
@@ -1985,10 +2049,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                   pushMin={this.state.pushMin}
                   subGroup={this.state.subGroup}
                   isSubGroupError={this.state.isSubGroupError}
-
+                  CheckIsCorrect={this.CheckIsCorrect}
                   engGroup={this.state.engGroup}
                   isEngGroupError={this.state.isEngGroupError}
-
+                  LoadSchedule = { this.Load_Schedule}
                   student={this.state.student}
                   teacher={this.state.teacher}
                   isTeacherError={this.state.isTeacherError}
@@ -2143,56 +2207,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 isMobileDevice={detectDevice() === "mobile"}
                 onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
               />
-            }
-            {
-              // (page === FAQ_PAGE_NO) &&
-              // <FAQ
-              //   character={this.state.character}
-              //   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
-              // />
-            }
-            {
-              // (page === LESSON_PAGE_NO) && this.state.days[0]?.[1]?.[0] != undefined &&
-              // <Lesson
-              //   character={this.state.character}
-              //   isTeacherAndValid={this.getIsCorrectTeacher()}
-              //   page={3}
-              //   spinner={this.state.spinner}
-              //   currentLesson={this.state.days[0]?.[2]?.[0]}
-              //   currentLessonStartEnd={LessonStartEnd[2]}
-              //   onGoToPage={(pageNo) => this.setState({page: pageNo})}
-              //   onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-              //   handleTeacherChange={this.handleTeacherChange}
-              // />
-              // // : <div></div>
-            }
-            {
-              // (page === SETTING_PAGE_NO) &&
-              // <Settings
-              //   onValidateInput={this.isCorrect}
-              //   onHandleTeacherChange={this.handleTeacherChange}
-              //   onConvertIdInGroupName={this.convertIdInGroupName}
-              //   onSetValue={this.setValue}
-              //   description={this.state.description}
-              //   character={this.state.character}
-              //   checked={this.state.checked}
-              //   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
-              //   groupId={this.state.groupId}
-              //   group={this.state.group}
-              //   isGroupError={this.state.isGroupError}
-              //
-              //   subGroup={this.state.subGroup}
-              //   isSubGroupError={this.state.isSubGroupError}
-              //
-              //   engGroup={this.state.engGroup}
-              //   isEngGroupError={this.state.isEngGroupError}
-              //
-              //   student={this.state.student}
-              //   teacher={this.state.teacher}
-              //   isTeacherError={this.state.isTeacherError}
-              //   // handleTeacherChange={this.handleTeacherChange}
-              //   teacher_checked={this.state.teacher_checked}
-              // />
             }
             {
               <div></div>
