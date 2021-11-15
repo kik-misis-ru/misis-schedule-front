@@ -191,6 +191,8 @@ export const TopMenu = ({
                    onStarClick,
                    onDashboardClick,
                    onHomeClick,
+                   Bd,
+                   //Load_Schedule
                  }: {
   label?: string
   subLabel: string
@@ -199,6 +201,8 @@ export const TopMenu = ({
   onStarClick: () => void
   onDashboardClick: () => void
   onHomeClick: () => void
+  Bd: () => void
+  //Load_Schedule: () => void
 }) => {
   return (
     <Row style={{margin: "1em"}}>
@@ -225,7 +229,7 @@ export const TopMenu = ({
           onClick={() => onHomeClick()}
         /> */}
         <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
+                  onClick={() => {Bd();   onDashboardClick(); }}
                 />
         {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>

@@ -57,6 +57,8 @@ import { threadId } from "worker_threads";
     group: string
     subGroup: string
     getIsCorrectTeacher: () => boolean
+    Bd: () => void
+    //Load_Schedule: () => void
 
   }
 
@@ -85,7 +87,12 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
         this.PreviousWeek = this.PreviousWeek.bind(this)
         this.NextWeek = this.NextWeek.bind(this);
         this.CurrentWeek = this.CurrentWeek.bind(this);
+        this.Bd = this.Bd.bind(this);
+        //this.Load_Schedule = this.Load_Schedule.bind(this)
         // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
+    }
+     async Bd(){
+      await this.props.Bd()
     }
     PreviousWeek(){
         this.props.PreviousWeek()
@@ -111,6 +118,8 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
           _timeparam -=7;
           weekParam = OTHER_WEEK
       }
+
+
       const getIsCorrectTeacher =() => {
         return this.props.getIsCorrectTeacher()
       }
@@ -150,6 +159,8 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               }}
               onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
               onDashboardClick={() => this.onHandleChange("page", DASHBOARD_PAGE_NO)}
+              Bd={()=> this.Bd()}
+              //Load_Schedule={()=> this.Load_Schedule()}
               // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />
 

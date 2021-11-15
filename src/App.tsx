@@ -284,6 +284,10 @@ export interface IAppState {
   isGroupError: boolean
   isActive: boolean
   subGroup: string
+  teacher_id_bd: string
+  group_id_bd: string
+  eng_bd: string
+  sub_bd: string
   isSubGroupError: boolean
   pushHour: number,
   pushMin: number,
@@ -322,6 +326,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
+    this.Bd = this.Bd.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
@@ -340,6 +345,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       filialId: "",
       subGroup: "",
       engGroup: "",
+      teacher_id_bd: "",
+      group_id_bd: "",
+      eng_bd: "",
+      sub_bd: "",
       correct: false,
       day: DEFAULT_STATE_DAY,
       days: [],
@@ -375,6 +384,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
+    this.Load_Schedule=this.Load_Schedule.bind(this);
     
   }
 
@@ -431,12 +441,14 @@ export class App extends React.Component<IAppProps, IAppState> {
                       this.setState({
                         student: false,
                         teacher_bd: teacher,
+                        teacher_id_bd: response.teacher_id,
                         teacher_correct: true,
                         teacher: teacher
                       })
                      
     
                     }else if (response.groupId != "")  {
+                      
                       this.setState({
                         //page: DASHBOARD_PAGE_NO,
                         group: response.groupName,
@@ -444,13 +456,14 @@ export class App extends React.Component<IAppProps, IAppState> {
                         checked: true,
                         star: true,
                         bd: response.groupName,
+                        group_id_bd: this.state.groupId,
+                        eng_bd: this.state.engGroup,
+                        sub_bd: this.state.subGroup,
                         student: true,
                         //page: LESSON_PAGE_NO
                         
                       });
-                      console.log("isActive:", response.isActive)
-                      console.log("hour:",response.hour)
-                      console.log("minute:",response.minute)
+                      console.log(this.state.group_id_bd, "GROUP_ID_BD");
                     } else {
                       this.gotoPage(22);
                     }
@@ -1729,7 +1742,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherId: teacherData.id,
           //
           teacher_correct: true,
-          teacher_bd: formatTeacherName(teacherData),
+          
           date: Date.now(),
           flag: true,
           student: false,
@@ -1739,7 +1752,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       }
       if (isSave) {
-        //this.setState({})
+        this.setState({teacher_bd: this.state.teacher, teacher_id_bd: this.state.teacherId})
         createUser(
           this.state.userId,
           filial.id,
@@ -1748,7 +1761,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.engGroup,
           this.state.teacherId,
         );
-      } else this.gotoPage(SCHEDULE_PAGE_NO);
+      }
     })
   }
 
@@ -1814,9 +1827,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           if (this.state.checked) {
             console.log()
             const groupId = String(group.id);
-            console.log("GROUP_ID:", groupId)
-            this.setState({groupId: groupId, bd: this.state.group, correct: true}, () => {
-              createUser(
+            
+            this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
+            
+             createUser(
                 this.state.userId,
                 filial.id,
                 group.id,
@@ -1849,6 +1863,33 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
 
       })
+  }
+
+  Bd(){
+    if (this.state.teacher_bd!=""){
+      this.setState({student: false, spinner: false})
+    getScheduleTeacherFromDb(
+      this.state.teacher_id_bd,
+      this.getFirstDayWeek(new Date())
+    ).then((response) => {
+      console.log("Teahcer Shcedule", response)
+      this.showWeekSchedule(response, 0);
+    });
+  }
+    else {
+      console.log(this.state.group_id_bd);
+      this.setState({groupId: this.state.group_id_bd, group: this.state.bd, student: true, spinner: false, engGroup: this.state.eng_bd, subGroup:this.state.sub_bd});
+      getScheduleFromDb(
+        this.state.groupId,
+        String(this.state.engGroup),
+        this.getFirstDayWeek(new Date()))
+        .then((response) => {
+          this.showWeekSchedule(response, 0);
+          console.log(String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
+          this.setState({flag: true});
+          this.setState({isGroupError: false});
+        })
+    }
   }
 
   Spinner() {
@@ -2034,6 +2075,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                 isTeacher={!this.state.student}
                 teacher_star={this.state.teacher_star}
                 star={this.state.star}
+                Bd={this.Bd}
+                //Load_Schedule={this.Load_Schedule}
                 PreviousWeek={this.PreviousWeek}
                 CurrentWeek={this.CurrentWeek}
                 NextWeek={this.NextWeek}
@@ -2079,23 +2122,10 @@ export class App extends React.Component<IAppProps, IAppState> {
               />
             }
             {
-              // (page === NAVIGATOR_PAGE_NO) &&
-              // <NavigatorPage
-              //   buildings={buildings}
-              //   character={this.state.character}
-              //   isMobileDevice={detectDevice() === "mobile"}
-              //   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
-              //   onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
-              //   onScheduleClick={() => this.gotoPage(SCHEDULE_PAGE_NO)}
-              // />
-            }
-            {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
-                // this.setState({group: this.state.bd, teacher: this.state.teacher_bd})
-                // this.convertGroupNameInId();
-                // this.Load_Schedule();
+                
                 const todayIndex = this.state.today - 1;
 
                 const currentLessonIdx = this.getCurrentLesson(now);
@@ -2126,9 +2156,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                   currentLessonStartEnd={currentLessonStartEnd}
                   nextLesson={nextLesson}
                   nextLessonStartEnd={nextLessonStartEnd}
-                  groupId={this.state.groupId}
-                  teacherId={this.state.teacherId}
+                  groupId={this.state.group_id_bd}
+                  teacherId={this.state.teacher_id_bd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
+                  Bd={()=>this.Bd()}
                   handleTeacherChange={this.handleTeacherChange}
                   getCurrentLesson={(date) => this.getCurrentLesson(date)}
                   getTimeFirstLesson={(daynum: number) => this.getTimeFirstLesson(daynum)}
@@ -2148,56 +2179,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 isMobileDevice={detectDevice() === "mobile"}
                 onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
               />
-            }
-            {
-              // (page === FAQ_PAGE_NO) &&
-              // <FAQ
-              //   character={this.state.character}
-              //   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
-              // />
-            }
-            {
-              // (page === LESSON_PAGE_NO) && this.state.days[0]?.[1]?.[0] != undefined &&
-              // <Lesson
-              //   character={this.state.character}
-              //   isTeacherAndValid={this.getIsCorrectTeacher()}
-              //   page={3}
-              //   spinner={this.state.spinner}
-              //   currentLesson={this.state.days[0]?.[2]?.[0]}
-              //   currentLessonStartEnd={LessonStartEnd[2]}
-              //   onGoToPage={(pageNo) => this.setState({page: pageNo})}
-              //   onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-              //   handleTeacherChange={this.handleTeacherChange}
-              // />
-              // // : <div></div>
-            }
-            {
-              // (page === SETTING_PAGE_NO) &&
-              // <Settings
-              //   onValidateInput={this.isCorrect}
-              //   onHandleTeacherChange={this.handleTeacherChange}
-              //   onConvertIdInGroupName={this.convertIdInGroupName}
-              //   onSetValue={this.setValue}
-              //   description={this.state.description}
-              //   character={this.state.character}
-              //   checked={this.state.checked}
-              //   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
-              //   groupId={this.state.groupId}
-              //   group={this.state.group}
-              //   isGroupError={this.state.isGroupError}
-              //
-              //   subGroup={this.state.subGroup}
-              //   isSubGroupError={this.state.isSubGroupError}
-              //
-              //   engGroup={this.state.engGroup}
-              //   isEngGroupError={this.state.isEngGroupError}
-              //
-              //   student={this.state.student}
-              //   teacher={this.state.teacher}
-              //   isTeacherError={this.state.isTeacherError}
-              //   // handleTeacherChange={this.handleTeacherChange}
-              //   teacher_checked={this.state.teacher_checked}
-              // />
             }
             {
               <div></div>

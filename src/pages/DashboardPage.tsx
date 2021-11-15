@@ -411,6 +411,7 @@ const DashboardPage = ({
                          nextLessonStartEnd,
                          spinner,
                          onGoToPage,
+                         Bd,
                          handleTeacherChange,
                          getCurrentLesson,
                          getTimeFirstLesson,
@@ -434,7 +435,7 @@ const DashboardPage = ({
   userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
-
+  Bd: () => void
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<void>
   getCurrentLesson // : (date: Date) => string | undefined
@@ -483,7 +484,7 @@ const DashboardPage = ({
                         marginTop: "0.5em",
                         marginRight: "2.5em"
                       }}
-                            onClick={() => onGoToPage(SCHEDULE_PAGE_NO)}
+                            onClick={() => {Bd(); onGoToPage(SCHEDULE_PAGE_NO)}}
                       >
 
                         <CardBody
