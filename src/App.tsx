@@ -393,7 +393,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
     this.Load_Schedule=this.Load_Schedule.bind(this);
-    
+
   }
 
   componentDidMount() {
@@ -456,7 +456,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
                     }else if (response.groupId != "")  {
-                      
+
                       this.setState({
                         //page: DASHBOARD_PAGE_NO,
                         group: response.groupName,
@@ -1729,7 +1729,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({
           isTeacherError: true})
 
-      } else 
+      } else
         getScheduleTeacherFromDb(
           teacherData.id,
           this.getFirstDayWeek(new Date())
@@ -1752,7 +1752,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherId: teacherData.id,
           //
           teacher_correct: true,
-          
+
           date: Date.now(),
           flag: true,
           student: false,
@@ -1844,7 +1844,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         return isCorrect
 
       })
-        
+
 
   }
 
@@ -1892,9 +1892,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.Load_Schedule()
           if (this.state.checked) {
             const groupId = String(group.id);
-            
+
             this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
-            
+
              createUser(
                 this.state.userId,
                 filial.id,
@@ -1930,28 +1930,35 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   }
 
-  Bd(){
-    if (this.state.teacher_bd!=""){
+  async Bd(): Promise<void> {
+    if (this.state.teacher_bd != "") {
       this.setState({student: false, spinner: false})
-    getScheduleTeacherFromDb(
-      this.state.teacher_id_bd,
-      this.getFirstDayWeek(new Date())
-    ).then((response) => {
-      console.log("Teahcer Shcedule", response)
-      this.showWeekSchedule(response, 0);
-    });
-  }
-    else {
-      console.log(this.state.group_id_bd);
-      this.setState({groupId: this.state.group_id_bd, group: this.state.bd, student: false, spinner: false, engGroup: this.state.eng_bd, subGroup:this.state.sub_bd});
-      this.Load_Schedule();
-      getScheduleFromDb(
+      await getScheduleTeacherFromDb(
+        this.state.teacher_id_bd,
+        this.getFirstDayWeek(new Date())
+      ).then((response) => {
+        console.log('Bd: getScheduleTeacherFromDb: response:', response)
+        this.showWeekSchedule(response, 0);
+      });
+    } else {
+      console.log('Bd: getScheduleTeacherFromDb: this.state.group_id_bd:', this.state.group_id_bd);
+      this.setState({
+        groupId: this.state.group_id_bd,
+        group: this.state.bd,
+        student: false,
+        spinner: false,
+        engGroup: this.state.eng_bd,
+        subGroup: this.state.sub_bd
+      });
+      await this.Load_Schedule();
+      await getScheduleFromDb(
         this.state.groupId,
         String(this.state.engGroup),
-        this.getFirstDayWeek(new Date()))
+        this.getFirstDayWeek(new Date())
+      )
         .then((response) => {
           this.showWeekSchedule(response, 0);
-          console.log(String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
+          console.log('Bd: getScheduleTeacherFromDb:', String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
           this.setState({flag: true});
           this.setState({isGroupError: false});
         })
@@ -2191,7 +2198,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
-                
+
                 let todayIndex = this.state.today - 1;
 
                 let currentLessonIdx = this.getCurrentLesson(now);

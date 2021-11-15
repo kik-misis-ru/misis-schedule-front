@@ -153,7 +153,10 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               onStarClick={() => {
               }}
               onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
-              onDashboardClick={() => {this.Bd(); this.onHandleChange("page", DASHBOARD_PAGE_NO)}}
+              onDashboardClick={async () => {
+                await this.Bd();
+                this.onHandleChange("page", DASHBOARD_PAGE_NO);
+              }}
               Bd={()=> this.Bd()}
               //Load_Schedule={()=> this.Load_Schedule()}
               // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
