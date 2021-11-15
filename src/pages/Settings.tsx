@@ -34,6 +34,7 @@ import {
   HeaderLogoCol,
   HeaderTitleCol2,
 } from '../components/TopMenu';
+import { connected } from "process";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -226,11 +227,23 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
-      let isCorrect = await this.CheckIsCorrect()
-     if(isCorrect){
-      this.setState({edit: false })
-      this.Load_Schedule()
-     }
+      if(this.props.student){
+        let isCorrect = await this.CheckIsCorrect()
+        if(isCorrect && this.props.student){
+          this.setState({edit: false })
+          this.Load_Schedule()
+         }
+      }
+      else{
+        this.onHandleTeacherChange(true).then(()=>{
+          if(!this.props.isTeacherError){
+            this.setState({edit: false })
+          }
+        })
+       
+      }
+  
+     console.log("CHECK",!this.props.isTeacherError && !this.props.student)
       this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
     addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
   }
