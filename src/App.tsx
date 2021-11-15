@@ -1347,7 +1347,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'show_schedule':
           console.log("показать расписание");
 
-          return this.Load_Schedule();
+          this.Load_Schedule();
+          this.gotoPage(SCHEDULE_PAGE_NO);
           break;
 
         case 'navigation':
