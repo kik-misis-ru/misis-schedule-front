@@ -485,7 +485,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
-    console.log(this.state.group)
+    //console.log(this.state.group)
     switch (key) {
       case "group":
         this.setState({group: value});
@@ -1731,13 +1731,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacher_bd: formatTeacherName(teacherData),
           date: Date.now(),
           flag: true,
+          student: false,
           page: SCHEDULE_PAGE_NO,
           isTeacherError: false,
         });
 
       }
       if (isSave) {
-        this.setState({student: false,})
+        //this.setState({})
         createUser(
           this.state.userId,
           filial.id,
@@ -1746,7 +1747,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.engGroup,
           this.state.teacherId,
         );
-      }
+      } else this.gotoPage(SCHEDULE_PAGE_NO);
     })
   }
 
