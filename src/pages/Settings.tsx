@@ -99,6 +99,7 @@ const TextFieldForUserInfo = ({
   // fieldType: string
   onChange: (value: string) => void
 }) => {
+  //this.onChange('group', value);
   return (
     <TextField
       // id="tf"
@@ -216,8 +217,11 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.state.timePush.hour=Number(this.state.timePush.value.getHours());
     this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
     console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
-    if (!this.props.isEngGroupError && !this.props.isGroupError && !this.props.isSubGroupError)
+    if (!this.props.isEngGroupError && !this.props.isGroupError && !this.props.isSubGroupError && this.props.student || !this.props.isTeacherError&&!this.props.student){
     this.setState({edit: false })
+    console.log(this.props.isEngGroupError, this.props.isGroupError, this.props.isSubGroupError, this.props.student, this.props.isTeacherError, this.props.student)
+    
+  }
     this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
     await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
   }
@@ -327,7 +331,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
 
       </Container>
     )
-    
+    console.log(this.props.isTeacherError, "ISTEACHERERROR")
     console.log(this.state.timePush.value, this.props.theme);
     return (
       <DeviceThemeProvider>
