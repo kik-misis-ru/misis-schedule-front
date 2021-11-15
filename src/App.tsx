@@ -1727,11 +1727,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       ) {
         console.log("handleTeacherChange: teacherData.status:", teacherData.status);
         this.setState({
-          isTeacherError: true,
-        })
+          isTeacherError: true})
 
-      } else {
-
+      } else 
         getScheduleTeacherFromDb(
           teacherData.id,
           this.getFirstDayWeek(new Date())
@@ -1750,7 +1748,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           })
         })
 
-        this.setState({
+         this.setState({
           teacherId: teacherData.id,
           //
           teacher_correct: true,
@@ -1762,7 +1760,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           isTeacherError: false,
         });
 
-      }
       if (isSave) {
         this.setState({teacher_bd: this.state.teacher, teacher_id_bd: this.state.teacherId})
         createUser(
