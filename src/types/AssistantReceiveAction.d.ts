@@ -128,6 +128,9 @@ interface AssistantActionShowFAQ {
 interface AssistantActionShowContacts {
   type: 'contacts'
 }
+interface AssistantActionShowDashBoard{
+  type: 'dashboard'
+}
 
 interface AssistantActionGroup {
   type: 'group'
@@ -163,7 +166,8 @@ export type AssistantAction = AssistantActionProfile
   | AssistantActionSubgroup
   | AssistantActionShowNavigation
   | AssistantActionShowFAQ
-  | AssistantActionShowContacts;
+  | AssistantActionShowContacts
+  |AssistantActionShowDashBoard;
 
 //
 
