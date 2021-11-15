@@ -229,7 +229,7 @@ export const TopMenu = ({
           onClick={() => onHomeClick()}
         /> */}
         <GoToDashboardButton
-                  onClick={() => {Bd();   onDashboardClick(); }}
+                  onClick={() => {Bd(); onDashboardClick(); }}
                 />
         {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>

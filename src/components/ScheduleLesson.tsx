@@ -68,13 +68,13 @@ export const LessonName = (
 
       }}
     >
-        
-          <CardHeadline3
-            style={ isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
-          >
-            {text}
-          </CardHeadline3>
-          
+
+      <CardHeadline3
+        style={isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
+      >
+        {text}
+      </CardHeadline3>
+
     </Link>
   )
 }
@@ -107,15 +107,15 @@ export const TeacherName = (
   console.log(text);
   return (
     text != "" || text != null ? (
-    <a
-      href='#'
-      // style={{color: "white"}}
-      style={style}
-      onClick={(event) => onClick(event)}
-    >
-      {text}
-    </a>) : (<div style={{margin: "0"}}></div>)
-    
+      <a
+        href='#'
+        // style={{color: "white"}}
+        style={style}
+        onClick={(event) => onClick(event)}
+      >
+        {text}
+      </a>) : (<div style={{margin: "0"}}></div>)
+
   )
 }
 
@@ -175,18 +175,18 @@ const MainContent = (
         isAccented={isAccented}
       />
       {
-        isTeacherAndValid && groupNumber!=""
+        isTeacherAndValid && groupNumber != ""
           ? <GroupNumber
             text={groupNumber}
           /> : <div></div>
-       }  
-       { !isTeacherAndValid && teacher!=""
-          ? <TeacherName
-            text={teacher}
-            style={{color: COLOR_BUTTON_PRIMARY}}
-            onClick={() => onTeacherClick(teacher)}
-          /> : <div></div>
-       }
+      }
+      {!isTeacherAndValid && teacher != ""
+        ? <TeacherName
+          text={teacher}
+          style={{color: COLOR_BUTTON_PRIMARY}}
+          onClick={() => onTeacherClick(teacher)}
+        /> : <div></div>
+      }
       &nbsp;
       <LinkToOnline url={url}/>
 
@@ -204,19 +204,19 @@ export const LessonRightContent = (
   }
 ) => {
   return (
-    <TextBox >
-      { room ? (
-      <Badge
-        text={room}
-        contentLeft={
-          <IconLocation size="xs"/>
-        }
-        style={{
-          backgroundColor: COLOR_BLACK,
-          color: COLOR_BUTTON_PRIMARY,
-        }}
-      />) : (<div></div>)
-}
+    <TextBox>
+      {room ? (
+        <Badge
+          text={room}
+          contentLeft={
+            <IconLocation size="xs"/>
+          }
+          style={{
+            backgroundColor: COLOR_BLACK,
+            color: COLOR_BUTTON_PRIMARY,
+          }}
+        />) : (<div></div>)
+      }
       <TextBoxTitle style={{paddingRight: "0.3em"}}>
         {lessonType}
       </TextBoxTitle>
@@ -246,24 +246,26 @@ const ScheduleLesson = (
   }
 
   return (
-    <CellListItem style={{padding: "0", margin: "0"}} 
+    <CellListItem
+      style={{padding: "0", margin: "0"}}
       content={
-        lesson.lessonName != "Пар нет 🎉" ?
-        <MainContent
-          lessonName={lesson.lessonName}
-          lessonNumber={lesson.lessonNumber}
-          groupNumber={lesson.groupNumber}
-          teacher={lesson.teacher}
-          url={lesson.url}
-          time={
-            formatStartEndTime(startEndTime.start, startEndTime.end)
-          }
-          isAccented={isAccented}
-          isTeacherAndValid={isTeacherAndValid}
-          onTeacherClick={onTeacherClick}
-        /> : <CardHeadline3 style={{marginLeft: "1em"}}>
-        {lesson.lessonName}
-      </CardHeadline3>
+        lesson.lessonName != "Пар нет 🎉"
+          ? <MainContent
+            lessonName={lesson.lessonName}
+            lessonNumber={lesson.lessonNumber}
+            groupNumber={lesson.groupNumber}
+            teacher={lesson.teacher}
+            url={lesson.url}
+            time={
+              formatStartEndTime(startEndTime.start, startEndTime.end)
+            }
+            isAccented={isAccented}
+            isTeacherAndValid={isTeacherAndValid}
+            onTeacherClick={onTeacherClick}
+          />
+          : <CardHeadline3 style={{marginLeft: "1em"}}>
+            {lesson.lessonName}
+          </CardHeadline3>
       }
       contentRight={
         <LessonRightContent

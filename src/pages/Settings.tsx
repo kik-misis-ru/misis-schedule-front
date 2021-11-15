@@ -148,7 +148,8 @@ interface SettingsProps {
   pushMin: number
   engGroup: string
   isEngGroupError: boolean
-
+  CheckIsCorrect: () => Promise<boolean>
+  LoadSchedule: () => void
   student: boolean
   teacher: string
   isTeacherError: boolean
@@ -175,6 +176,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.Save = this.Save.bind(this);
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     this.onHandleTeacherChange = this.props.onHandleTeacherChange.bind(this);
+    this.Load_Schedule = this.props.LoadSchedule.bind(this)
     console.log()
     let edit=false;
     this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
@@ -204,6 +206,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       console.log(this.props.student, "PROPS.STUDENT");
      this.props.student ? await this.props.onValidateInput() : this.onHandleTeacherChange(true)
   }
+  async CheckIsCorrect(){
+    return await this.props.CheckIsCorrect();
+  }
+  Load_Schedule(){
+    this.props.LoadSchedule()
+  }
+
   
 
   // handleTeacherChange() {
@@ -214,21 +223,19 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.onConvertIdInGroupName();
   }
   async Save() {
-    this.isCorrect();
-    this.state.timePush.hour=Number(this.state.timePush.value.getHours());
-    this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
-    console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
-    if (!this.props.isEngGroupError && !this.props.isGroupError && !this.props.isSubGroupError && this.props.student || !this.props.isTeacherError&&!this.props.student){
-    this.setState({edit: false })
-    console.log(this.props.isEngGroupError, this.props.isGroupError, this.props.isSubGroupError, this.props.student, this.props.isTeacherError, this.props.student)
-    
-  }
-    this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
-    await addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
+      this.state.timePush.hour=Number(this.state.timePush.value.getHours());
+      this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
+      console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
+      let isCorrect = await this.CheckIsCorrect()
+     if(isCorrect){
+      this.setState({edit: false })
+      this.Load_Schedule()
+     }
+      this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
+    addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
   }
 
    Edit(){
-    var edit = true;
     this.setState({edit: true});
   }
   render() {
@@ -412,7 +419,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center"}}>
-      <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={()=>this.Save() }>Сохранить</Button>
+      <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={ async ()=> await this.Save() }>Сохранить</Button>
       <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  }}>Отмена</Button>
       </Col>
       </Row>) : (

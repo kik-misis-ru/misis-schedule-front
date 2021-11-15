@@ -48,7 +48,7 @@ import { threadId } from "worker_threads";
     CurrentWeek: () => void
     NextWeek: () => void
     getCurrentLesson: (Date) =>string
-    handleTeacherChange: (isSave: boolean) => Promise<void>
+    doSetTeacher: (teacherName: string) => void
     weekParam: number
     day: IDayHeader[]
     spinner: boolean
@@ -73,11 +73,6 @@ import { threadId } from "worker_threads";
     weekParam: number
     timeParam: number
   }
-
-
-
-
-
 
 class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
 
@@ -158,7 +153,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               onStarClick={() => {
               }}
               onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
-              onDashboardClick={() => this.onHandleChange("page", DASHBOARD_PAGE_NO)}
+              onDashboardClick={() => {this.Bd(); this.onHandleChange("page", DASHBOARD_PAGE_NO)}}
               Bd={()=> this.Bd()}
               //Load_Schedule={()=> this.Load_Schedule()}
               // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
@@ -217,14 +212,11 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               // timeParam={timeParam}
               isTeacherAndValid={this.state.isTeacher}
               isToday={this.props.today === this.state.timeParam && this.props.weekParam === THIS_WEEK}
-              isSunday={this.state.timeParam == 7}
+              isDayOff={this.state.timeParam == 7}
               // today={this.state.today}
               // validateTeacher={this.isCorrectTeacher}
               // onSetValue={this.setValue}
-              onTeacherClick={async (teacherName) => {
-                this.onHandleChange("teacher", teacherName);
-                await this.props.handleTeacherChange(false);
-              }}
+              onTeacherClick={async (teacherName) => this.props.doSetTeacher(teacherName)}
             />
 
             <Spacer200/>

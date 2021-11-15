@@ -154,6 +154,8 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
 
 
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {
+  console.log(`APIHelper: teacher_in`, teacher_in);
+
   const url = `${API_URL}teacher`;
   const config = {
     params: {
