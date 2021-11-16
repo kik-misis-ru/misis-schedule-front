@@ -413,6 +413,7 @@ const DashboardPage = ({
                          onGoToPage,
                          Bd,
                          handleTeacherChange,
+                         isUser,
                          getCurrentLesson,
                          getTimeFirstLesson,
                          getEndLastLesson,
@@ -425,7 +426,8 @@ const DashboardPage = ({
   isTeacherAndValid: boolean
   groupId: String
   teacherId: String
-  spinner: Boolean
+  spinner: Boolean,
+  isUser: Boolean,
   count: number,
   start: string,
   end: string,
@@ -560,19 +562,21 @@ const DashboardPage = ({
             )
             : (<div ></div>)}
 
-              {groupId == "" && teacherId == "" || userId=="0" ? (<GetCloser
-                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
-                    />) : (<div ></div>)}
-               {!spinner &&(groupId != "" ||  teacherId != "")||  userId=="" ?      (
+             
+               {!spinner &&(groupId != "" ||  teacherId != "") ||!isUser ?      (
               <Col >
                 <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <ScheduleSectionTitleRow/>
                 <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em", marginLeft: "1em", width:"90%"}} roundness={16}/>
               </Col>): (<div ></div>)
-            
+
+             
                     
         }
+        {groupId == "" && teacherId == "" && isUser ? (<GetCloser
+                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
+                    />) : (<div ></div>)}
         <CatalogueHeaderRow/>
 
         <CatalogueItems

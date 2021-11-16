@@ -299,6 +299,7 @@ export interface IAppState {
   pushMin: number,
   engGroup: string
   isEngGroupError: boolean
+  isUser: boolean
 
 
   character: Character
@@ -372,7 +373,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       pushHour: 0,
       pushMin: 0,
       character: CHAR_SBER,
-
+      isUser: false,
       star: false,
       bd: "",
       student: true,
@@ -432,11 +433,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 console.log('user', user)
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"], teacherId: user["teacher_id"], filialId: user["filial_id"]})
                 getSchedulebyUserId(this.state.userId).then((response) => {
-                  // this.setState({groupId: response.groupId,
-                  //   subGroup: response.subgroup_name,
-                  //   engGroup: response.eng_group,
-                  //   teacherId: response.teacher_id,
-                  //   filialId: response.filialId})
                   this.gotoPage(DASHBOARD_PAGE_NO)
                   this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
                   console.log("isActive:", response.isActive)
@@ -451,7 +447,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                         teacher_bd: teacher,
                         teacher_id_bd: response.teacher_id,
                         teacher_correct: true,
-                        teacher: teacher
+                        teacher: teacher,
+                        isUser: true,
                       })
 
 
@@ -468,12 +465,13 @@ export class App extends React.Component<IAppProps, IAppState> {
                         eng_bd: this.state.engGroup,
                         sub_bd: this.state.subGroup,
                         student: true,
+                        isUser: true,
                         //page: LESSON_PAGE_NO
 
                       });
                       console.log(this.state.group_id_bd, "GROUP_ID_BD");
                     } else {
-                      this.setState({userId: ""})
+                      this.setState({isUser: true})
                       this.gotoPage(22);
                     }
                     this.showWeekSchedule(response.schedule, 0);
@@ -1931,7 +1929,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           }
 
 
-        } else if (this.state.correct) {
+        } else if (correct) {
           this.setState({isGroupError: false});
 
         } else {
@@ -2117,10 +2115,10 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   isActive={this.state.isActive}
                   pushHour={this.state.pushHour}
                   pushMin={this.state.pushMin}
-                  subGroup={this.state.subGroup}
+                  subGroup={this.state.sub_bd}
                   isSubGroupError={this.state.isSubGroupError}
                   CheckIsCorrect={this.CheckIsCorrect}
-                  engGroup={this.state.engGroup}
+                  engGroup={this.state.eng_bd}
                   isEngGroupError={this.state.isEngGroupError}
                   LoadSchedule = { this.Load_Schedule}
                   student={this.state.student}
@@ -2239,7 +2237,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 return <DashboardPage
                   character={this.state.character}
                   isTeacherAndValid={this.getIsCorrectTeacher()}
-                  
+                  isUser={this.state.isUser}
                   start={start}
                   end={end}
                   count={count}

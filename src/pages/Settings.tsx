@@ -383,18 +383,18 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             <Row style={{display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center"}}>
+            alignItems: "center", margin: "0 0 1.5em 0"}}>
               <TabSelectorRow
           tabs={USER_MODES}
           selectedIndex={this.props.student ? 0 : 1}
           onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
         />
         { this.props.student ? 
-          <Col size={4}>
+          <Col size={4} style={{marginTop: "1em"}}>
            <TextFieldForUserInfo
           label={LABEL_GROUP}
           isError={this.props.isGroupError}
-          value={this.props.group}
+          value={this.props.bd}
           onChange={(value) => this.onHandleChange('group', value)}
         />
 
@@ -451,13 +451,29 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             this.props.student && this.props.bd!=""
 
               ? (<Col size={10}>
-              <TextBox>
+             
+                {this.props.bd != "" ?
+                 <TextBox>
                   <TextBoxLabel >
                     Номер академической группы
                   </TextBoxLabel>
                   <Headline4>{this.props.bd} </Headline4>
+                </TextBox> : <div></div> }
+                {this.props.subGroup != "" ?
+                 <TextBox>
+                  <TextBoxLabel >
+                    Номер подгруппы
+                  </TextBoxLabel>
+                  <Headline4>{this.props.subGroup} </Headline4>
+                </TextBox> : <div></div> }
+                {this.props.engGroup != "" ?
+                 <TextBox>
+                  <TextBoxLabel >
+                    Номер группы по английскому
+                  </TextBoxLabel>
+                  <Headline4>{this.props.engGroup} </Headline4>
+                </TextBox> : <div></div> }
                   
-                  </TextBox>
                   </Col>
               )
               : (<Col size={10}>
