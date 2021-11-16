@@ -336,7 +336,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
     this.Bd = this.Bd.bind(this);
-    this.sendData = this.sendData.bind(this)
     // this.tfRef                = React.createRef();
     console.log('constructor');
     // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
@@ -2290,4 +2289,3 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     )
   }
 }
-
