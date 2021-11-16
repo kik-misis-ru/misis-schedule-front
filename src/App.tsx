@@ -473,6 +473,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                       });
                       console.log(this.state.group_id_bd, "GROUP_ID_BD");
                     } else {
+                      this.setState({userId: ""})
                       this.gotoPage(22);
                     }
                     this.showWeekSchedule(response.schedule, 0);
@@ -1009,6 +1010,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log("dispathcAction:", action)
     if (action) {
       switch (action.type) {
+        case 'settings':
+          console.log("PUSH");
+          break;
         case 'profile':
           console.log("profile");
           this.ChangePage()

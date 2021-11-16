@@ -560,7 +560,7 @@ const DashboardPage = ({
             )
             : (<div ></div>)}
 
-              {groupId == "" && teacherId == ""|| userId=="0" ? (<GetCloser
+              {groupId == "" && teacherId == ""&&userId!="" || userId=="0" ? (<GetCloser
                       onGoToPage={(pageNo) => onGoToPage(pageNo)}
                     />) : (<div ></div>)}
                {!spinner &&(groupId != "" ||  teacherId != "")||  userId=="" ?      (
