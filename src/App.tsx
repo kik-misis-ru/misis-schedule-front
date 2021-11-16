@@ -1848,7 +1848,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         let isCorrect = correct_eng && correct_sub && correct
         if(isCorrect){
           console.log("create_user")
-          this.setState({groupId: groupId, bd: this.state.group, correct: true, teacher: ""}, () => {
+          this.setState({groupId: groupId, group: group.name, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
             createUser(
               this.state.userId,
               filial.id,
@@ -1907,11 +1907,11 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           this.gotoPage(SCHEDULE_PAGE_NO)
           }
           await this.Load_Schedule()
-          if ((this.state.checked)||(this.state.page!=HOME_PAGE_NO)) {
+          if (this.state.checked) {
             const groupId = String(group.id);
-
+          
             this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
-
+            
              createUser(
                 this.state.userId,
                 filial.id,
@@ -1949,6 +1949,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
   async Bd(): Promise<void> {
     if (this.state.teacher_bd != "") {
+      
       this.setState({student: false, spinner: false})
       await getScheduleTeacherFromDb(
         this.state.teacher_id_bd,
@@ -1958,11 +1959,11 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         this.showWeekSchedule(response, 0);
       });
     } else {
-      console.log('Bd: getScheduleTeacherFromDb: this.state.group_id_bd:', this.state.group_id_bd);
+      console.log('Bd: getScheduleFromDb: this.state.group_id_bd:', this.state.group_id_bd);
       this.setState({
         groupId: this.state.group_id_bd,
         group: this.state.bd,
-        student: false,
+        student: true,
         spinner: false,
         engGroup: this.state.eng_bd,
         subGroup: this.state.sub_bd
@@ -2147,6 +2148,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           />
           <Route path="*">
             {
+
               (page >= 1 && page <= 13) &&
               <Schedule
                 timeParam={page}
@@ -2207,7 +2209,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
-
+                
                 let todayIndex = this.state.today - 1;
 
                 let currentLessonIdx = this.getCurrentLesson(now);

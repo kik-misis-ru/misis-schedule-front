@@ -235,6 +235,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
          }
       }
       else{
+        console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
           if(response){
             this.setState({edit: false })
