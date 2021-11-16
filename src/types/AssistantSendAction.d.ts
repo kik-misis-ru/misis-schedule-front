@@ -93,9 +93,14 @@ export interface AssistantSendActionSay6 {
   }
 }
 
+export interface AssistantSendSettings{
+  action_id: 'settings'
+}
+
 export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionTomorrowSchedule
   | AssistantSendActionSay
+  | AssistantSendSettings
   | AssistantSendActionSay1
   | AssistantSendActionSay2
   | AssistantSendActionSay3

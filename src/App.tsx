@@ -1001,6 +1001,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   sendData(action: AssistantSendAction) {
+    console.log(action);
     return this._assistant.sendData({
       action
     })
@@ -2095,7 +2096,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 return <Settings
                   userId={this.state.userId}
                   bd={this.state.bd}
-                  //sendData={this.sendData}
+                  sendData={this.sendData}
                   teacher_bd={this.state.teacher_bd}
                   onValidateInput={this.isCorrect}
                   onHandleTeacherChange={this.handleTeacherChange}

@@ -12,6 +12,9 @@ import {
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronLeft, IconEdit, IconHouse} from "@sberdevices/plasma-icons";
 import {
+  AssistantSendAction,
+} from '../types/AssistantSendAction.d'
+import {
   addUserToPushNotification,
 } from "../APIHelper";
 import {
@@ -131,6 +134,7 @@ interface SettingsProps {
   teacher_bd: string
   checked: boolean
   description: string
+  sendData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
@@ -417,7 +421,9 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         />
           </Col>
         }
-          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} onChange={(() => this.setState({disabled: !this.state.disabled}))}/>
+          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} onChange={(() => {this.props.sendData({
+                action_id: 'settings',
+              }); this.setState({disabled: !this.state.disabled}); })}/>
           {this.state.disabled ?
           <Col style={{display: "flex",
           flexDirection: "column",
@@ -454,18 +460,33 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   </TextBox>
                   </Col>
               )
-              : (
+              : (<Col size={10}>
                 <TextBox> 
                   <TextBoxLabel>
                    ФИО
                   </TextBoxLabel>
                   <Headline4>{this.props.teacher_bd}</Headline4>
                   </TextBox>
-               
+                  </Col>
               ) 
               
           }
-
+          <Col size={10}>
+          <TextBox>
+          <TextBoxLabel style={{margin: "1em 0 0  0"}}>
+                   Уведомления
+                  </TextBoxLabel>
+          </TextBox>
+          {
+            this.state.disabled ? 
+            <TextBox> 
+                  <Headline4>Вкл. </Headline4>
+                  </TextBox> :
+                  <TextBox> 
+                  <Headline4>Выкл.</Headline4>
+                  </TextBox>
+          }
+          </Col>
           </Row>
       )
       }
