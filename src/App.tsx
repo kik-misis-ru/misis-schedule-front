@@ -2206,12 +2206,14 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx-1];
                 let start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
                 let end = this.getEndLastLesson(DAY_TODAY);
+                
                 //console.log(nextLessonStartEnd, "todaysummary")
                 //console.log("this.state.teacherId", this.state.teacherId, this.state.groupId)
 
                 return <DashboardPage
                   character={this.state.character}
                   isTeacherAndValid={this.getIsCorrectTeacher()}
+                  
                   start={start}
                   end={end}
                   count={count}
