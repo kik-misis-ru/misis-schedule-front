@@ -1907,7 +1907,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           this.gotoPage(SCHEDULE_PAGE_NO)
           }
           await this.Load_Schedule()
-          if ((this.state.checked)||(this.state.page!=DASHBOARD_PAGE_NO)) {
+          if ((this.state.checked)||(this.state.page!=HOME_PAGE_NO)) {
             const groupId = String(group.id);
 
             this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
