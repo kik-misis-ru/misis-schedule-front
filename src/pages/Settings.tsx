@@ -250,6 +250,11 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)
       this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
     addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
+    if(this.state.disabled){
+      this.props.sendData({
+        action_id: 'settings',
+      });
+    }
   }
 
    Edit(){
@@ -421,9 +426,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         />
           </Col>
         }
-          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} onChange={(() => {this.props.sendData({
-                action_id: 'settings',
-              }); this.setState({disabled: !this.state.disabled}); })}/>
+          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} 
+          onChange={(() => { this.setState({disabled: !this.state.disabled}); })}/>
           {this.state.disabled ?
           <Col style={{display: "flex",
           flexDirection: "column",
