@@ -231,8 +231,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.onConvertIdInGroupName();
   }
   async Save() {
-      if (this.state.themeName!=this.props.theme)
-      this.props.ChangeTheme();
+      
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
@@ -358,7 +357,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           justifyContent: "center",
           alignItems: "center"}}>
       <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={ async ()=> await this.Save() }>Сохранить</Button>
-      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  }}>Отмена</Button>
+      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  if (this.state.themeName!=this.props.theme)
+      this.props.ChangeTheme();}}>Отмена</Button>
       </Col>
       </Row>) : (
         <Row style={{margin: "1em"}}>
