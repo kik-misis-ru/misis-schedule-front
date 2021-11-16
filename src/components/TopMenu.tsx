@@ -201,7 +201,7 @@ export const TopMenu = ({
   onStarClick: () => void
   onDashboardClick: () => void
   onHomeClick: () => void
-  Bd: () => void
+  Bd: () => Promise<void>
   //Load_Schedule: () => void
 }) => {
   return (
@@ -229,7 +229,10 @@ export const TopMenu = ({
           onClick={() => onHomeClick()}
         /> */}
         <GoToDashboardButton
-                  onClick={() => {Bd(); onDashboardClick(); }}
+                  onClick={async () => {
+                    await Bd();
+                    onDashboardClick();
+                  }}
                 />
         {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>

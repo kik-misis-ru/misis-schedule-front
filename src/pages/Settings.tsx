@@ -134,7 +134,7 @@ interface SettingsProps {
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
-  onHandleTeacherChange: (isSave: boolean) => Promise<void>
+  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   group: string
@@ -199,8 +199,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
-  async onHandleTeacherChange(isSave: boolean){
-    await this.props.onHandleTeacherChange(isSave);
+  async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
+    return await this.props.onHandleTeacherChange(isSave);
   }
 
   async isCorrect() {
@@ -230,17 +230,16 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       if(this.props.student){
         let isCorrect = await this.CheckIsCorrect()
         if(isCorrect && this.props.student){
+          await this.Load_Schedule()
           this.setState({edit: false })
-          this.Load_Schedule()
          }
       }
       else{
-        this.onHandleTeacherChange(true).then(()=>{
-          if(!this.props.isTeacherError){
+        this.onHandleTeacherChange(true).then((response)=>{
+          if(response){
             this.setState({edit: false })
           }
         })
-       
       }
   
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)

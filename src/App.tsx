@@ -393,7 +393,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
     this.Load_Schedule=this.Load_Schedule.bind(this);
-    
+
   }
 
   componentDidMount() {
@@ -456,7 +456,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
                     }else if (response.groupId != "")  {
-                      
+
                       this.setState({
                         //page: DASHBOARD_PAGE_NO,
                         group: response.groupName,
@@ -1005,7 +1005,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     })
   }
 
-  dispatchAssistantAction(action: AssistantAction) {
+  async dispatchAssistantAction(action: AssistantAction) {
     console.log("dispathcAction:", action)
     if (action) {
       switch (action.type) {
@@ -1383,7 +1383,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'show_schedule':
           console.log("показать расписание");
 
-          this.Load_Schedule();
+          await this.Load_Schedule();
           this.gotoPage(SCHEDULE_PAGE_NO);
           break;
 
@@ -1546,7 +1546,8 @@ export class App extends React.Component<IAppProps, IAppState> {
   /**
    * заполнение данными расписания из бд
    */
-  showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+  console.log("ParsedSchedule", parsedSchedule)
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
     this.setState({spinner: false});
@@ -1714,10 +1715,10 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // todo исправить асинхронную работу
-  async handleTeacherChange(isSave: boolean): Promise<void> {
+  async handleTeacherChange(isSave: boolean): Promise<boolean> {
     console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
 
-    getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
+    await getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
@@ -1728,8 +1729,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log("handleTeacherChange: teacherData.status:", teacherData.status);
         this.setState({
           isTeacherError: true})
+          return true
 
-      } else 
+      } else
         getScheduleTeacherFromDb(
           teacherData.id,
           this.getFirstDayWeek(new Date())
@@ -1752,7 +1754,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherId: teacherData.id,
           //
           teacher_correct: true,
-          
+
           date: Date.now(),
           flag: true,
           student: false,
@@ -1771,25 +1773,39 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.teacherId,
         );
       }
+      return false
     })
+    return false
   }
 
 
-  Load_Schedule(): void{
-    console.log("LoadSchedule", this.state.groupId, this.state.group)
-    getScheduleFromDb(
-      this.state.groupId,
-      String(this.state.engGroup),
-      this.getFirstDayWeek(new Date()))
+  async _loadSchedule({ groupId, engGroup }: { groupId: string, engGroup: string }): Promise<void> {
+    console.log('LOAD_SCHEDULE:', groupId, engGroup)
+    await getScheduleFromDb(
+      groupId,
+      String(engGroup),
+      this.getFirstDayWeek(new Date())
+    )
       .then((response) => {
+        console.log("LOAD_SCHEDULE_THEN")
         this.showWeekSchedule(response, 0);
-        console.log(String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
-        this.setState({flag: true});
-        //this.convertIdInGroupName();
-        //this.gotoPage(SCHEDULE_PAGE_NO);
-        this.setState({isGroupError: false});
+        console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
+        console.log("RESPONSE", response)
+        this.setState({
+          flag: true,
+          isGroupError: false,
+          teacher_bd: ""
+        });
       })
   }
+  
+  async Load_Schedule(): Promise<void> {
+    return await this._loadSchedule({
+      groupId: this.state.groupId,
+      engGroup: String(this.state.engGroup),
+  });
+  }
+
   async CheckIsCorrect() : Promise<boolean>{
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now(), flag: true});
@@ -1831,7 +1847,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         const groupId = String(group.id);
         let isCorrect = correct_eng && correct_sub && correct
         if(isCorrect){
-          this.setState({groupId: groupId, bd: this.state.group, correct: true}, () => {
+          console.log("create_user")
+          this.setState({groupId: groupId, bd: this.state.group, correct: true, teacher: ""}, () => {
             createUser(
               this.state.userId,
               filial.id,
@@ -1844,11 +1861,11 @@ export class App extends React.Component<IAppProps, IAppState> {
         return isCorrect
 
       })
-        
+
 
   }
 
-  isCorrect() {
+  async isCorrect(): Promise<void> {
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now(), flag: true});
     let correct_sub = false;
@@ -1859,11 +1876,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     let promiseGroupName = getGroupByName(this.state.group);
     let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
 
-    Promise.all([
+    return Promise.all([
       promiseGroupName,
       promiseEnglishGroup,
     ])
-      .then((responses) => {
+      .then(async (responses) => {
         console.log("App: isCorrect: response", responses)
         const [
           group_response,
@@ -1889,12 +1906,12 @@ export class App extends React.Component<IAppProps, IAppState> {
           if (this.state.page==HOME_PAGE_NO){
           this.gotoPage(SCHEDULE_PAGE_NO)
           }
-          this.Load_Schedule()
+          await this.Load_Schedule()
           if (this.state.checked) {
             const groupId = String(group.id);
-            
+
             this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
-            
+
              createUser(
                 this.state.userId,
                 filial.id,
@@ -1930,31 +1947,30 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   }
 
-  Bd(){
-    if (this.state.teacher_bd!=""){
+  async Bd(): Promise<void> {
+    if (this.state.teacher_bd != "") {
       this.setState({student: false, spinner: false})
-    getScheduleTeacherFromDb(
-      this.state.teacher_id_bd,
-      this.getFirstDayWeek(new Date())
-    ).then((response) => {
-      console.log("Teahcer Shcedule", response)
-      this.showWeekSchedule(response, 0);
-    });
-  }
-    else {
-      console.log(this.state.group_id_bd);
-      this.setState({groupId: this.state.group_id_bd, group: this.state.bd, student: false, spinner: false, engGroup: this.state.eng_bd, subGroup:this.state.sub_bd});
-      this.Load_Schedule();
-      getScheduleFromDb(
-        this.state.groupId,
-        String(this.state.engGroup),
-        this.getFirstDayWeek(new Date()))
-        .then((response) => {
-          this.showWeekSchedule(response, 0);
-          console.log(String(this.state.engGroup), this.state.groupId, "LOAD SCHEDULE");
-          this.setState({flag: true});
-          this.setState({isGroupError: false});
-        })
+      await getScheduleTeacherFromDb(
+        this.state.teacher_id_bd,
+        this.getFirstDayWeek(new Date())
+      ).then((response) => {
+        console.log('Bd: getScheduleTeacherFromDb: response:', response)
+        this.showWeekSchedule(response, 0);
+      });
+    } else {
+      console.log('Bd: getScheduleTeacherFromDb: this.state.group_id_bd:', this.state.group_id_bd);
+      this.setState({
+        groupId: this.state.group_id_bd,
+        group: this.state.bd,
+        student: false,
+        spinner: false,
+        engGroup: this.state.eng_bd,
+        subGroup: this.state.sub_bd
+      });
+      await this._loadSchedule({
+        groupId: this.state.group_id_bd,
+        engGroup: this.state.eng_bd,
+      });
     }
   }
 
@@ -2191,7 +2207,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
-                
+
                 let todayIndex = this.state.today - 1;
 
                 let currentLessonIdx = this.getCurrentLesson(now);

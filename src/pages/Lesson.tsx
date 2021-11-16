@@ -42,7 +42,7 @@ const Lesson = (props: {
   spinner: Boolean,
   currentLessonStartEnd: StartEnd,
   onDashboardClick: () => void
-  handleTeacherChange: (isSave: boolean) => Promise<void>
+  handleTeacherChange: (isSave: boolean) => Promise<boolean>
   onGoToPage: (page: number) => void
 }) => {
   const {

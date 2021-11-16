@@ -179,7 +179,7 @@ interface HomeViewProps {
 
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
-  onHandleTeacherChange: (isSave: boolean) => Promise<void>
+  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
 
