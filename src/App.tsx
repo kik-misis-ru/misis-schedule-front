@@ -480,6 +480,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   })
 
               } else {
+                this.setState({isUser: true});
                 this.gotoPage(22);
                 }
               })
