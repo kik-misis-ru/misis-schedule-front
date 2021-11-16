@@ -1547,6 +1547,7 @@ export class App extends React.Component<IAppProps, IAppState> {
    * заполнение данными расписания из бд
    */
 showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+  console.log("ParsedSchedule", parsedSchedule)
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
     this.setState({spinner: false});
@@ -1779,19 +1780,21 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
 
   async _loadSchedule({ groupId, engGroup }: { groupId: string, engGroup: string }): Promise<void> {
-    console.log('_loadSchedule:', groupId, engGroup)
-    return await getScheduleFromDb(
+    console.log('LOAD_SCHEDULE:', groupId, engGroup)
+    await getScheduleFromDb(
       groupId,
       String(engGroup),
       this.getFirstDayWeek(new Date())
     )
-      .then(async (response) => {
+      .then((response) => {
+        console.log("LOAD_SCHEDULE_THEN")
         this.showWeekSchedule(response, 0);
         console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
         console.log("RESPONSE", response)
         this.setState({
           flag: true,
           isGroupError: false,
+          teacher_bd: ""
         });
       })
   }
