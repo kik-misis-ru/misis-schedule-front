@@ -2119,10 +2119,10 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   isActive={this.state.isActive}
                   pushHour={this.state.pushHour}
                   pushMin={this.state.pushMin}
-                  subGroup={this.state.sub_bd}
+                  subGroup={this.state.subGroup}
                   isSubGroupError={this.state.isSubGroupError}
                   CheckIsCorrect={this.CheckIsCorrect}
-                  engGroup={this.state.eng_bd}
+                  engGroup={this.state.engGroup}
                   isEngGroupError={this.state.isEngGroupError}
                   LoadSchedule = { this.Load_Schedule}
                   student={this.state.student}
