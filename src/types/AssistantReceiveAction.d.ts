@@ -122,7 +122,7 @@ interface AssistantActionShowNavigation {
 }
 
 interface AssistantActionSettings {
-  type: 'TAKE_RUNTIME_PERMISSIONS'
+  type: 'settings'
 }
 
 interface AssistantActionShowFAQ {
