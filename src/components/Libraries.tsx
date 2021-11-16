@@ -72,11 +72,11 @@ export const Libraries = ({
   {questions}
   </TextBoxLabel>
   {answers.map((answer) =>(
-              <Body1 style={{color:"white"}}>
+              <Body1 style={{color:"var(--plasma-colors-button-primary)"}}>
               {answer}
               </Body1>
             ))}
-    <a href={site} style={{color: "white"}}>{site}</a>
+    <a href={site} style={{color: "var(--plasma-colors-button-primary)"}}>{site}</a>
   </TextBox>
   ) : (
   <TextBox >

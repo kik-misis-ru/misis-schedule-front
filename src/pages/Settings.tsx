@@ -264,98 +264,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       justifyContent: "center"}} min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}}></TimePicker>
         </Row>
     )
-    const studentContent = (
-      <Container
-        style={{padding: 0, overflow: "hidden"}}
-      >
-
-        {/* <HomeTitle
-          text="Мои данные"
-        /> */}
-
-        <TabSelectorRow
-          tabs={USER_MODES}
-          selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
-        />
-
-        <HomeDescription
-          text={this.props.description}
-        />
-
-        <TextFieldForUserInfo
-          label={LABEL_GROUP}
-          isError={this.props.isGroupError}
-          value={this.props.group}
-          onChange={(value) => this.onHandleChange('group', value)}
-        />
-
-        <TextFieldForUserInfo
-          label={LABEL_SUB_GROUP}
-          isError={this.props.isSubGroupError}
-          value={this.props.subGroup}
-          onChange={(value) => this.onHandleChange('subGroup', value)}
-        />
-
-        <TextFieldForUserInfo
-          label={LABEL_ENG_GROUP}
-          isError={this.props.isEngGroupError}
-          value={this.props.engGroup}
-          onChange={(value) => this.onHandleChange('engGroup', value)}
-        />
-
-        <RememberCheckboxRow
-          label={LABEL_REMEMBER_GROUP}
-          checked={this.props.checked}
-          onChange={(value) => this.onHandleChange('checked', value)}
-        />
-
-        <ShowScheduleButtonRow
-          onClick={() => this.props.onValidateInput()}
-        />
-
-      </Container>
-    );
-
-    const teacherContent = (
-      <Container style={{padding: 0}}>
-
-        <HomeTitle
-          text={HOME_TITLE}
-          // todo: margin: '3%'
-        />
-
-        <TabSelectorRow
-          tabs={USER_MODES}
-          selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
-        />
-
-        <HomeDescription
-          text={LABEL_TO_VIEW_SCHEDULE}
-        />
-
-        <TextFieldForUserInfo
-          label={LABEL_TEACHER}
-          value={this.props.teacher}
-          isError={this.props.isTeacherError}
-          onChange={(value) => this.onHandleChange('teacher', value)}
-        />
-
-        <RememberCheckboxRow
-          label={LABEL_REMEMBER_FIO}
-          checked={this.props.teacher_checked}
-          onChange={(value: boolean) => {
-            this.onHandleChange("teacher_checked", value);
-          }}
-        />
-
-        <ShowScheduleButtonRow
-          onClick={() => this.props.onHandleTeacherChange(true)}
-        />
-
-      </Container>
-    )
     console.log(this.props.isTeacherError, "ISTEACHERERROR")
     console.log(this.state.timePush.value, this.props.theme);
     return (
@@ -394,7 +302,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
            <TextFieldForUserInfo
           label={LABEL_GROUP}
           isError={this.props.isGroupError}
-          value={this.props.bd}
+          value={this.props.group}
           onChange={(value) => this.onHandleChange('group', value)}
         />
 

@@ -41,8 +41,8 @@ export const ContactsCard = ({
                     <Caption style={{color: "grey"}}>
                       Ссылка
                     </Caption>
-                    <Body1 style={{color: "white"}}>
-                      <a href={site} style={{color: "white"}}>
+                    <Body1 style={{color: "var(--plasma-colors-button-primary)"}}>
+                      <a href={site} style={{color: "var(--plasma-colors-button-primary)"}}>
                         {site}
                       </a>
                     </Body1>
@@ -58,8 +58,8 @@ export const ContactsCard = ({
                   <Caption style={{color: "grey"}}>
                     Телефон
                   </Caption>
-                  <Body1 style={{color: "white"}}>
-                    <a href={`tel:${tel}`} style={{color: "white"}}>
+                  <Body1 style={{color: "var(--plasma-colors-button-primary)"}}>
+                    <a href={`tel:${tel}`} style={{color: "var(--plasma-colors-button-primary)"}}>
                       {tel}
                     </a>
                   </Body1>
@@ -67,7 +67,7 @@ export const ContactsCard = ({
                   <Caption style={{color: "grey"}}>
                     Почта
                   </Caption>
-                  <a href={mail} style={{color: "white"}}>
+                  <a href={mail} style={{color: "var(--plasma-colors-button-primary)"}}>
                     {mail}
                   </a>
                 </TextBox>
