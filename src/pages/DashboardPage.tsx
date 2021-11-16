@@ -437,7 +437,7 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
   Bd: () => Promise<void>
   onGoToPage: (pageNo: number) => void
-  handleTeacherChange: (isSave: boolean) => Promise<void>
+  handleTeacherChange: (isSave: boolean) => Promise<boolean>
   getCurrentLesson // : (date: Date) => string | undefined
   getTimeFirstLesson: (daynum: number) => [string, string]
   getEndLastLesson//: (todayOrTomorrow: TodayOrTomorrow) => string | undefined

@@ -1714,10 +1714,10 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // todo исправить асинхронную работу
-  async handleTeacherChange(isSave: boolean): Promise<void> {
+  async handleTeacherChange(isSave: boolean): Promise<boolean> {
     console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
 
-    getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
+    await getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
@@ -1728,6 +1728,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log("handleTeacherChange: teacherData.status:", teacherData.status);
         this.setState({
           isTeacherError: true})
+          return true
 
       } else
         getScheduleTeacherFromDb(
@@ -1771,7 +1772,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.teacherId,
         );
       }
+      return false
     })
+    return false
   }
 
 
