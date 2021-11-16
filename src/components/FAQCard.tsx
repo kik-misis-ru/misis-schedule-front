@@ -86,7 +86,7 @@ export const FAQCard = ({
                         answers?.map((answer, index) => (
                           <Body1
                             key={index}
-                            style={{color: "white"}}
+                            style={{color: 'var(--plasma-colors-button-accent)'}}
                           >
                             {answer}
                           </Body1>

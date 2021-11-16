@@ -434,7 +434,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}
-       {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => this.setState({theme: !this.state.theme}))}/> */}
+       <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/>
       <Col size={4} style={{display: "flex",
           flexDirection: "row",
           justifyContent: "center",
@@ -445,7 +445,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       </Row>) : (
         <Row style={{margin: "1em"}}>
           <Col size={12}>
-        <Headline2 style={{margin: "0 0 1em 0"}}> Мои данные </Headline2>
+        <Headline2 style={{margin: "0 0 1em 0"}}> Мои параметры </Headline2>
           </Col>
           {
             this.props.student && this.props.bd!=""
@@ -477,12 +477,14 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   </Col>
               )
               : (<Col size={10}>
+                {this.props.teacher_bd != "" ?
                 <TextBox> 
                   <TextBoxLabel>
                    ФИО
                   </TextBoxLabel>
                   <Headline4>{this.props.teacher_bd}</Headline4>
                   </TextBox>
+                  : <div></div> }
                   </Col>
               ) 
               
@@ -496,8 +498,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           {
             this.state.disabled ? 
             <TextBox> 
-                  <Headline4>Вкл. </Headline4>
-                  </TextBox> :
+                  <Headline4>Вкл. </Headline4>                
+                  <TextBoxLabel >
+                  Время отправки 
+                 </TextBoxLabel>
+                 <Headline4>{this.state.timePush.hour}:{this.state.timePush.min}</Headline4>
+                  </TextBox>
+                  :
                   <TextBox> 
                   <Headline4>Выкл.</Headline4>
                   </TextBox>

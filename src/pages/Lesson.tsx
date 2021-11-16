@@ -41,12 +41,14 @@ const Lesson = (props: {
   currentLesson: Bell,
   spinner: Boolean,
   currentLessonStartEnd: StartEnd,
+  theme: string 
   onDashboardClick: () => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
   onGoToPage: (page: number) => void
 }) => {
   const {
     character,
+    theme,
     spinner,
     currentLesson,
     isTeacherAndValid,
@@ -60,7 +62,7 @@ const Lesson = (props: {
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character, 'dark')
+      getThemeBackgroundByChar(character, theme)
     }
     <Container style={{padding: 0, overflow: "hidden"}}>
 
