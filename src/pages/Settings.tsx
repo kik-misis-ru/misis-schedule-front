@@ -170,6 +170,8 @@ interface SettingsState {
     value: Date
   }
   theme: boolean
+  themeName: string
+  
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
@@ -193,6 +195,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       },
       edit: edit,
       theme: false,
+      themeName: this.props.theme,
     };
     this.onHandleChange("description", props.character === "joy"
       ? DESC_JOY
@@ -228,6 +231,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.onConvertIdInGroupName();
   }
   async Save() {
+      if (this.state.themeName!=this.props.theme)
+      this.props.ChangeTheme();
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
@@ -238,6 +243,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           this.setState({edit: false })
          }
       }
+      
       else{
         console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
