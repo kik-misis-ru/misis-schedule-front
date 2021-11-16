@@ -2095,6 +2095,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 return <Settings
                   userId={this.state.userId}
                   bd={this.state.bd}
+                  //sendData={this.sendData}
                   teacher_bd={this.state.teacher_bd}
                   onValidateInput={this.isCorrect}
                   onHandleTeacherChange={this.handleTeacherChange}
