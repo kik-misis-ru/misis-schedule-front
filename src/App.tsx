@@ -1532,6 +1532,7 @@ export class App extends React.Component<IAppProps, IAppState> {
    * Заполнение расписанием на следующую неделю
    */
   async NextWeek() {
+    this.setState({spinner: false});
     const datePlusWeek = this.state.date + SEVEN_DAYS;
     return this.getScheduleFromDb(datePlusWeek);
   }
@@ -1544,6 +1545,7 @@ export class App extends React.Component<IAppProps, IAppState> {
    * Заполнение расписанием на предыдущую неделю
    */
   async PreviousWeek() {
+    this.setState({spinner: false});
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
     return this.getScheduleFromDb(dateMinusWeek);
   }

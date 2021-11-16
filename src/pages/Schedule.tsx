@@ -107,7 +107,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
       
       
     render(){
-      console.log(this.props.groupName, "SCHEDULE GROUPNAME")
+      
       let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
       let _timeparam = this.props.timeParam
       if (this.props.timeParam > 7) {
@@ -131,6 +131,8 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
           groupName : getFullGroupName(this.props.group, this.props.subGroup),
           weekParam: weekParam
       }
+
+      console.log(this.props.spinner, "SPINNER")
       
      return <DeviceThemeProvider>
         <DocStyle/>
