@@ -86,6 +86,7 @@ const BuildingList = ({
 
 const NavigatorPage = ({
                          character,
+                         theme,
                          buildings,
                          isMobileDevice,
                          onDashboardClick,
@@ -95,6 +96,7 @@ const NavigatorPage = ({
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
+  theme: string
   buildings: IBuilding[]
   isMobileDevice: boolean
   onDashboardClick: () => void
@@ -104,7 +106,7 @@ const NavigatorPage = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character, 'dark')
+      getThemeBackgroundByChar(character, theme)
     }
     {
       isMobileDevice

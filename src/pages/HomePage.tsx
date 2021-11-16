@@ -176,7 +176,7 @@ interface HomeViewProps {
   // disabled: boolean
   checked: boolean
   description: string
-
+  theme: string 
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
@@ -332,7 +332,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(this.props.character, 'dark')
+        getThemeBackgroundByChar(this.props.character, this.props.theme)
       }
       <div>
         {

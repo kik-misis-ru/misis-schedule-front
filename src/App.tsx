@@ -2030,6 +2030,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     return (
 
       <SpinnerPage
+        theme={this.state.theme}
         character={this.state.character}
       />
     )
@@ -2058,6 +2059,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
               ({match}) => {
                 return <Contacts
                   character={this.state.character}
+                  theme={this.state.theme}
                   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                 />
               }
@@ -2069,6 +2071,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
               ({match}) => {
                 return <FAQ
                   character={this.state.character}
+                  theme={this.state.theme}
                   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                 />
               }
@@ -2081,7 +2084,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 return <NavigatorPage
                   buildings={buildings}
                   character={this.state.character}
-
+                  theme={this.state.theme}
                   isMobileDevice={detectDevice() === "mobile"}
                   onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                   onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
@@ -2144,6 +2147,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                     character={this.state.character}
                     isTeacherAndValid={this.getIsCorrectTeacher()}
                     spinner={this.state.spinner}
+                    theme={this.state.theme}
                     currentLesson={this.state.days[this.state.page-1]?.[match.params.lessonIndex-1]?.[THIS_WEEK]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
@@ -2164,6 +2168,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 teacher={this.state.teacher}
                 groupName={this.state.group}
                 character={this.state.character}
+                theme={this.state.theme}
                 isTeacher={!this.state.student}
                 teacher_star={this.state.teacher_star}
                 star={this.state.star}
@@ -2194,6 +2199,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 onSetValue={this.setValue}
                 description={this.state.description}
                 character={this.state.character}
+                theme={this.state.theme}
                 checked={this.state.checked}
 
                 groupId={this.state.groupId}
@@ -2238,6 +2244,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
                 return <DashboardPage
                   character={this.state.character}
+                  theme={this.state.theme}
                   isTeacherAndValid={this.getIsCorrectTeacher()}
                   isUser={this.state.isUser}
                   start={start}
@@ -2268,8 +2275,9 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
             }
             {
               (page === 22) && <Start
-
+                
                 character={this.state.character}
+                theme={this.state.theme}
                 isMobileDevice={detectDevice() === "mobile"}
                 onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
               />

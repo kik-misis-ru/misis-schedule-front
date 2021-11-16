@@ -412,6 +412,7 @@ const DashboardPage = ({
                          spinner,
                          onGoToPage,
                          Bd,
+                         theme,
                          handleTeacherChange,
                          isUser,
                          getCurrentLesson,
@@ -431,6 +432,7 @@ const DashboardPage = ({
   count: number,
   start: string,
   end: string,
+  theme: string
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
   filialId: String,
@@ -459,7 +461,7 @@ const DashboardPage = ({
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(character, 'dark')
+        getThemeBackgroundByChar(character, theme)
       }
       <Container style={{padding: 0, overflow: "hidden"}}>
         <HeaderRow
