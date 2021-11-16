@@ -8,7 +8,6 @@ import faq from '../data/faq.json';
 import lib from '../data/libraries.json';
 
 
-
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
 import {Libraries} from '../components/Libraries'
@@ -21,9 +20,11 @@ import {
 
 
 const FAQ = ({
-                         character,
-                         onDashboardClick,
-                       }: {
+               character,
+               theme,
+               onDashboardClick,
+             }: {
+  theme: string
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
@@ -32,45 +33,51 @@ const FAQ = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character)
+      getThemeBackgroundByChar(character, theme)
     }
-          <Container style={{padding: 0}}>
+    <Container style={{padding: 0, overflow: "hidden"}}>
 
-            <Row style={{margin: "1em"}}>
+      <Row style={{margin: "1em"}}>
 
-              <HeaderLogoCol/>
+        <HeaderLogoCol/>
 
-              <HeaderTitleCol2
-                title="Часто задаваемые вопросы"
-              />
+        <HeaderTitleCol2
+          title="Часто задаваемые вопросы"
+        />
 
-              <Col style={{margin: "0 0 0 auto"}}>
-                <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
-                />
-              </Col>
+        <Col style={{margin: "0 0 0 auto"}}>
+          <GoToDashboardButton
+            onClick={() => onDashboardClick()}
+          />
+        </Col>
 
-            </Row>
-            {faq.map((faq) =>(
-              <FAQCard
-                questions={faq.questions}
-                text={faq.text}
-                answers={faq.answers}
-              />
-            ))}
-            {lib.map((lib) =>(
-            <Libraries
+      </Row>
+      {
+        faq?.map((faq, index) => (
+          <FAQCard
+            key={index}
+            questions={faq.questions}
+            text={faq.text}
+            answers={faq.answers}
+          />
+        ))
+      }
+      {
+        lib?.map((lib, index) => (
+          <Libraries
+            key={index}
             questions={lib.questions}
             text={lib.text}
             answers={lib.answers}
             site={lib.site}
-            />
-            ))}
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
-          </Container>
+          />
+        ))
+      }
+      <div style={{
+        width: '200px',
+        height: '300px',
+      }}></div>
+    </Container>
   </DeviceThemeProvider>
 }
 

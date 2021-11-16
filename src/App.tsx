@@ -1,4 +1,12 @@
 import React from "react";
+// import {
+//   BrowserRouter as Router,
+//   Switch,
+//   Route,
+//   Link
+// } from "react-router-dom";
+import {Router, Route, Switch} from 'react-router';
+import {createBrowserHistory} from 'history';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from "styled-components";
 import {createAssistant, createSmartappDebugger,} from "@sberdevices/assistant-client";
@@ -17,7 +25,8 @@ import {
   IsEnglishGroupExist,
   IScheduleApiData,
   IScheduleLessonInfo, ITeacherApiData, setGroupStar, setTeacherStar, IScheduleByUserIdData, ITeacherInfo,
-  getSchedulebyUserId
+  getSchedulebyUserId,
+  addUserToPushNotification,
 } from "./APIHelper";
 
 import DashboardPage from './pages/DashboardPage';
@@ -25,12 +34,15 @@ import DashboardPage from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import Contacts from './pages/Contacts';
 import FAQ from './pages/FAQ';
+import Start from './pages/Start';
 import NavigatorPage from './pages/NavigatorPage';
 import ScheduleDay from "./components/ScheduleDay";
 import SpinnerPage from "./pages/SpinnerPage";
 import TopMenu from './components/TopMenu';
 import WeekCarousel from "./components/WeekCarousel";
 import WeekSelect from "./components/WeekSelect";
+import Schedule from './pages/Schedule';
+import Settings from './pages/Settings';
 
 import buildings from './data/buldings.json'
 import filial from './data/filial.json';
@@ -71,13 +83,17 @@ import {
   MS_IN_DAY,
   pairNumberToPairText
 } from './utils';
+import Lesson from "./pages/Lesson";
+
+export const NON_EXISTING_PAGE_NO = -1;
 export const HOME_PAGE_NO = 0;
-export const NAVIGATOR_PAGE_NO = 15;
+//export const NAVIGATOR_PAGE_NO = 15;
 export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
 export const CONTACTS_PAGE_NO = 18;
-export const FAQ_PAGE_NO = 19;
-export const SETTING_PAGE_NO = 20;
+// export const FAQ_PAGE_NO = 19;
+// export const SETTING_PAGE_NO = 20;
+export const LESSON_PAGE_NO = 21;
 
 const INITIAL_PAGE = 16;
 
@@ -188,6 +204,12 @@ export interface StartEnd {
   end: string
 }
 
+export interface ICheckIsCorrect{
+  correct_sub: boolean
+  correct_eng: boolean
+  correct: boolean
+}
+
 const MAX_BELL_COUNT = 8;
 
 const FIRST_DAY_OTHER_WEEK = 8;
@@ -240,6 +262,8 @@ export type ThisOtherWeekBells = Bell[]
 export type DayBells = ThisOtherWeekBells[]
 export type IScheduleDays = DayBells[]
 
+export const history = createBrowserHistory();
+
 //
 
 interface IAppProps {
@@ -255,20 +279,27 @@ export interface IAppState {
   description: string
   group: string
   groupId: string
+  filialId: string
   correct: boolean
   day: IDayHeader[]
   days: IScheduleDays
   spinner: boolean
   date: number
   today: number
-
+  theme: string
   isGroupError: boolean
-
+  isActive: boolean
   subGroup: string
+  teacher_id_bd: string
+  group_id_bd: string
+  eng_bd: string
+  sub_bd: string
   isSubGroupError: boolean
-
+  pushHour: number,
+  pushMin: number,
   engGroup: string
   isEngGroupError: boolean
+  isUser: boolean
 
 
   character: Character
@@ -276,7 +307,6 @@ export interface IAppState {
     | typeof CHAR_TIMEPARAMOY
   star: boolean
   bd: string
-
   student: boolean
   teacher: string
   teacherId: string
@@ -295,9 +325,18 @@ export class App extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.setValue = this.setValue.bind(this)
+    this.Load_Schedule =  this.Load_Schedule.bind(this)
     this.isCorrect = this.isCorrect.bind(this)
+    this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
     this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+    this.getCurrentLesson = this.getCurrentLesson.bind(this);
+    this.NextWeek = this.NextWeek.bind(this);
+    this.CurrentWeek = this.CurrentWeek.bind(this);
+    this.PreviousWeek = this.PreviousWeek.bind(this);
+    this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
+    this.Bd = this.Bd.bind(this);
+    this.sendData = this.sendData.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
@@ -313,22 +352,29 @@ export class App extends React.Component<IAppProps, IAppState> {
       description: "",
       group: "",
       groupId: "",
+      filialId: "",
       subGroup: "",
       engGroup: "",
+      teacher_id_bd: "",
+      group_id_bd: "",
+      eng_bd: "",
+      sub_bd: "",
       correct: false,
       day: DEFAULT_STATE_DAY,
       days: [],
       spinner: false,
       date: Date.now(),
       today: 0,
-
+      theme: "dark",
       isGroupError: false,
       isTeacherError: false,
       isSubGroupError: false,
       isEngGroupError: false,
-
+      isActive: false,
+      pushHour: 0,
+      pushMin: 0,
       character: CHAR_SBER,
-
+      isUser: false,
       star: false,
       bd: "",
       student: true,
@@ -344,8 +390,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     // this.Home                 = Home.bind(this);
     // this.Navigator            = Navigator.bind(this);
-    this.Raspisanie = this.Raspisanie.bind(this);
+    //this.Raspisanie = this.Raspisanie.bind(this);
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
+    this.ChangeTheme=this.ChangeTheme.bind(this);
+    this.ChangePush=this.ChangePush.bind(this);
+    this.Load_Schedule=this.Load_Schedule.bind(this);
+
   }
 
   componentDidMount() {
@@ -356,6 +406,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log('_assistant.on("data") event:', event);
 
       switch (event?.type) {
+
+        // case "push":
+
 
         case "character":
           console.log('componentDidMount: character:', event.character.id);
@@ -375,42 +428,62 @@ export class App extends React.Component<IAppProps, IAppState> {
             this.setState({userId: event.sub});
             const now = new Date();
             this.setState({today: now.getDay()});
-            getSchedulebyUserId(this.state.userId).then((response) =>{
-              console.log("getScheduleByUserId", response)
-              if(response.teacher_id != "" ){
-                const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
-                this.setState({
-                  groupId: response.groupId,
-                  subGroup: response.subgroup_name,
-                  engGroup: response.eng_group,
-                  teacherId: response.teacher_id,
-                  student: false,
-                  teacher_correct: true,
-                  teacher: teacher
-                })
+            getUser(this.state.userId).then((user)=> {
 
-              }
-              else{
-                this.setState({
-                  groupId: response.groupId,
-                  subGroup: response.subgroup_name,
-                  engGroup: response.eng_group,
-                  teacherId: response.teacher_id
-                })
-                this.setState({ group: response.groupName })
-                this.ChangePage()
-                this.setState({
-                  //page: DASHBOARD_PAGE_NO,
-                  flag: true,
-                  checked: true,
-                  star: true,
-                  bd: this.state.groupId,
-                  student: true
-                });
-              }
-              this.showWeekSchedule(response.schedule, 0)
-            }
-            )}
+              if (user !== "0") {
+                console.log('user', user)
+                this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"], teacherId: user["teacher_id"], filialId: user["filial_id"]})
+                getSchedulebyUserId(this.state.userId).then((response) => {
+                  this.gotoPage(DASHBOARD_PAGE_NO)
+                  this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
+                  console.log("isActive:", response.isActive)
+                  console.log("hour:",response.hour)
+                  console.log("minute:",response.minute)
+                  console.log("getScheduleByUserId", response)
+                    if (response.teacher_id != "" && response.teacher_id!=null) {
+                      console.log(`${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`);
+                      const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
+                      this.setState({
+                        student: false,
+                        teacher_bd: teacher,
+                        teacher_id_bd: response.teacher_id,
+                        teacher_correct: true,
+                        teacher: teacher,
+                        isUser: true,
+                      })
+
+
+                    }else if (response.groupId != "")  {
+
+                      this.setState({
+                        //page: DASHBOARD_PAGE_NO,
+                        group: response.groupName,
+                        flag: true,
+                        checked: true,
+                        star: true,
+                        bd: response.groupName,
+                        group_id_bd: this.state.groupId,
+                        eng_bd: this.state.engGroup,
+                        sub_bd: this.state.subGroup,
+                        student: true,
+                        isUser: true,
+                        //page: LESSON_PAGE_NO
+
+                      });
+                      console.log(this.state.group_id_bd, "GROUP_ID_BD");
+                    } else {
+                      this.setState({isUser: true})
+                      this.gotoPage(22);
+                    }
+                    this.showWeekSchedule(response.schedule, 0);
+                    this.showWeekSchedule(response.schedule, 1);
+                  })
+
+              } else {
+                this.gotoPage(22);
+                }
+              })
+          }
           console.log(`assistant.on(data)`, event);
           const {action} = event;
           this.dispatchAssistantAction(action);
@@ -434,7 +507,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
-    console.log(this.state.group)
+    //console.log(this.state.group)
     switch (key) {
       case "group":
         this.setState({group: value});
@@ -446,8 +519,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({teacher: value});
         break;
       case "page":
-        this.ChangePage()
-        this.setState({page: value});
+
+        this.gotoPage(value);
         break;
       case "student":
         this.setState({student: value});
@@ -469,6 +542,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         break;
       case "teacher_bd":
         this.setState({teacher_bd: value})
+        break;
+      case "flag":
+        this.setState({flag: value})
         break;
       default:
         break;
@@ -652,7 +728,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       const lesson = this.state.days[dayNumber - 1][lessonIdx][week]
       if (lesson.lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        lessonNumber = lesson.lessonNumber;
+        console.log(lessonIdx, "'lesson.lessonNumber'")
+        lessonNumber = String(Number(lessonIdx)+1);
         break
       }
     }
@@ -768,7 +845,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) >= formatTimeHhMm(date))
       ) {
         const firstLessonInfo = this.getTimeFirstLesson(this.state.today)
-        console.log('whatLesson:', todayLessons[parseInt(firstLessonInfo[1])][0][0]);
+        console.log('whatLesson:', firstLessonInfo[1]);
 
         const lessonNumber = parseInt(firstLessonInfo[1]);
         return {
@@ -923,18 +1000,23 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   sendData(action: AssistantSendAction) {
+    console.log(action);
     return this._assistant.sendData({
       action
     })
   }
 
-  dispatchAssistantAction(action: AssistantAction) {
+  async dispatchAssistantAction(action: AssistantAction) {
+    console.log("dispathcAction:", action)
     if (action) {
       switch (action.type) {
+        case 'settings':
+          console.log("PUSH");
+          break;
         case 'profile':
           console.log("profile");
           this.ChangePage()
-          return this.setState({page: HOME_PAGE_NO});
+          return this.gotoPage(HOME_PAGE_NO);
           break;
 
         case 'for_today':
@@ -949,7 +1031,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               })
 
               this.ChangePage()
-              return this.setState({page: 7});
+              return this.gotoPage(7);
 
             } else {
               this.sendData({
@@ -958,7 +1040,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               })
 
               this.ChangePage()
-              return this.setState({page: this.state.today});
+              return this.gotoPage(this.state.today);
             }
           break;
 
@@ -970,14 +1052,14 @@ export class App extends React.Component<IAppProps, IAppState> {
                 parameters: {day: DAY_SUNDAY},
               })
               this.ChangePage()
-              return this.setState({page: 7});
+              return this.gotoPage(7);
             } else {
               this.sendData({
                 action_id: "tomorrowSchedule",
                 parameters: {day: DAY_NOT_SUNDAY},
               })
               this.ChangePage()
-              return this.setState({page: this.state.today + 1});
+              return this.gotoPage(this.state.today + 1);
             }
           break;
 
@@ -985,14 +1067,19 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
             this.ChangePage()
-            return this.setState({page: FIRST_DAY_OTHER_WEEK});
+            return this.gotoPage(FIRST_DAY_OTHER_WEEK);
           }
           break;
 
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.ChangePage()
-            return this.setState({date: Date.now(), flag: true, page: SCHEDULE_PAGE_NO});
+            this.setState({
+              date: Date.now(),
+              flag: true,
+            });
+            this.gotoPage(SCHEDULE_PAGE_NO);
+            return
           }
           break;
 
@@ -1027,28 +1114,29 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
               this.ChangePage()
-              return this.setState({page: this.state.today});
+              return this.gotoPage(this.state.today);
             } else if (this.state.today + 1 === 7) {
               this.ChangePage();
-              return this.setState({page: 7});
+              return this.gotoPage(7);
             } else {
               this.ChangePage();
-              this.setState({page: this.state.today + 1});
+              this.gotoPage(this.state.today + 1);
             }
           }
           break
 
         case 'how_many':
           let countOfLessons: [string, number] | undefined;
-          let day: TodayOrTomorrow| undefined;
+          let day: TodayOrTomorrow | undefined;
           let page = 0;
+          console.log("how many. group:", this.state.group, ", teacher:", this.state.teacher)
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
             if (action.note !== undefined) {
-              
+
               const {timestamp, dayOfWeek} = action.note;
               console.log(timestamp, this.getAmountOfLessons(new Date(timestamp)), "how many")
-              
+
               countOfLessons = this.getAmountOfLessons(new Date(timestamp))
 
               // todo: упростить
@@ -1083,7 +1171,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
               const pairText = pairNumberToPairText(pairCount);
 
-              const [inDayOfWeek,dayOfWeekIndex] = dayNameDict[dayOfWeek]
+              const [inDayOfWeek, dayOfWeekIndex] = dayNameDict[dayOfWeek]
               howManyParams = {
                 lesson: pairText,
                 day: day,
@@ -1094,7 +1182,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 page = 7;
               }
               this.ChangePage();
-              this.setState({page: dayOfWeekIndex + page})
+              this.gotoPage(dayOfWeekIndex + page)
             }
 
             this.sendData({
@@ -1125,9 +1213,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (this.state.group !== "")
               this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({page: 7})
+              this.gotoPage(7)
             } else {
-              this.setState({page: this.state.today})
+              this.gotoPage(this.state.today)
             }
           }
           break
@@ -1149,7 +1237,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (whereLessonParams.exist === DAY_SUNDAY) {
               //this.setState({ page: 8 })
             } else {
-              this.setState({page: this.state.today});
+              this.gotoPage(this.state.today);
             }
           }
           break
@@ -1157,7 +1245,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'what_lesson':
           console.log("what_lesson: какая пара")
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            if (action.note === undefined) {
+            if (!action.note) {
               action.note = {
                 "when": "now",
               }
@@ -1170,9 +1258,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
             this.ChangePage();
             if (this.state.today === 0) {
-              this.setState({page: 7})
+              this.gotoPage(7)
             } else {
-              this.setState({page: this.state.today});
+              this.gotoPage(this.state.today);
             }
           }
           break
@@ -1195,8 +1283,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               } else if (String(this.state.today + 2) === strDayOfWeek) {
                 day1 = DAY_TOMORROW;
                 page1 = 0
-              } else 
-              {
+              } else {
 
                 day1 = undefined;
               }
@@ -1277,9 +1364,9 @@ export class App extends React.Component<IAppProps, IAppState> {
             // if (this.state.group !== "") {
             const {dayOfWeek: strDayOfWeek} = action.note[0];
             const dayOfWeekIdx = parseInt(strDayOfWeek) - 1;
-           console.log(dayOfWeekIdx, "day")
-            const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekIdx-1].title];
-            
+            console.log(dayOfWeekIdx, "day")
+            const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekIdx - 1].title];
+
             daySchedule = {
               dayName: dayOfWeekNameLong,
             }
@@ -1299,37 +1386,51 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'show_schedule':
           console.log("показать расписание");
-          
-          return this.Load_Schedule();
+
+          await this.Load_Schedule();
+          this.gotoPage(SCHEDULE_PAGE_NO);
           break;
 
         case 'navigation':
           console.log("показать навигацию");
           this.ChangePage();
-          this.setState({page: NAVIGATOR_PAGE_NO});
+          // this.gotoPage(NAVIGATOR_PAGE_NO);
+          history.push('/navigation')
           break;
         case 'faq':
           this.ChangePage();
-          this.setState({page: FAQ_PAGE_NO});
-          return ;
+          // this.gotoPage(FAQ_PAGE_NO);
+          history.push('/faq')
+          return;
         case 'contacts':
           this.ChangePage();
-          this.setState({page: CONTACTS_PAGE_NO});
-          return ;
+          // this.setState({page: CONTACTS_PAGE_NO});
+          history.push('/contacts')
+          return;
         case 'group':
           if (action.note[0] === 0) {
             console.log(action.note[1].data.groupName[0]);
-            this.setState({group: action.note[1].data.groupName[0].toUpperCase(), page: HOME_PAGE_NO});
+            this.setState({
+              group: action.note[1].data.groupName[0].toUpperCase(),
+            });
+            this.gotoPage(HOME_PAGE_NO);
           } else {
             console.log(action.note[1].data.groupName[1])
-            this.setState({group: action.note[1].data.groupName[1].toUpperCase(), page: HOME_PAGE_NO})
+            this.setState({
+              group: action.note[1].data.groupName[1].toUpperCase(),
+            })
+            this.gotoPage(HOME_PAGE_NO);
           }
           break
+        case 'dashboard':
+          this.gotoPage(DASHBOARD_PAGE_NO)
+          break;
 
         case 'subgroup':
           console.log('subgroup', action)
           this.ChangePage();
-          this.setState({subGroup: action.note, page: HOME_PAGE_NO});
+          this.setState({subGroup: action.note});
+          this.gotoPage(HOME_PAGE_NO);
           break
 
         default:
@@ -1364,6 +1465,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   // }
 
   async convertIdInGroupName(): Promise<void> {
+    console.log(this.state.groupId);
     let group = await getGroupById(Number(this.state.groupId))
     this.setState({group: group.name})
   }
@@ -1422,13 +1524,14 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log(response)
       })
     }
-    this.setState({date: date, flag: false});
+    this.setState({date: date, flag: true});
   }
 
   /**
    * Заполнение расписанием на следующую неделю
    */
   async NextWeek() {
+    this.setState({spinner: false});
     const datePlusWeek = this.state.date + SEVEN_DAYS;
     return this.getScheduleFromDb(datePlusWeek);
   }
@@ -1441,6 +1544,7 @@ export class App extends React.Component<IAppProps, IAppState> {
    * Заполнение расписанием на предыдущую неделю
    */
   async PreviousWeek() {
+    this.setState({spinner: false});
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
     return this.getScheduleFromDb(dateMinusWeek);
   }
@@ -1448,10 +1552,11 @@ export class App extends React.Component<IAppProps, IAppState> {
   /**
    * заполнение данными расписания из бд
    */
-  showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+  console.log("ParsedSchedule", parsedSchedule)
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
-    this.setState({spinner: true});
+    this.setState({spinner: false});
 
     let days;
     /*
@@ -1602,160 +1707,24 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-
-  Raspisanie(timeParam: number) {
-    //console.log('Raspisanie: timeParam:', timeParam)
-    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    if (timeParam > 7) {
-      timeParam -= 7;
-      weekParam = OTHER_WEEK
-    }
-    // this.setState({i: 0});
-    const current = this.getCurrentLesson(new Date());
-    const day_num = timeParam - 1;
-    const index = timeParam;
-    const page = weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0;
-
-    // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
-
-    const formatDate = (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`;
-
-    const isTeacher = this.getIsCorrectTeacher();
-
-    const groupName = getFullGroupName(this.state.group, this.state.subGroup);
-
-    const userToStar = {
-      userId: this.state.userId,
-      filialId: filial.id,
-      groupId: this.state.groupId,
-      subGroup: this.state.subGroup,
-      engGroup: this.state.engGroup,
-      teacherId: this.state.teacherId
-    }
-
-    const handleGroupStarChange = async (newValue) => {
-      this.setValue("star", newValue);
-      this.setValue("checked", newValue)
-      this.setValue("bd", newValue
-        ? this.state.groupId
-        : ''
-      )
-      return await setGroupStar(userToStar, newValue);
-    };
-
-    const handleTeacherStarChange = async (newValue) => {
-      this.setValue("teacher_star", newValue)
-      this.setValue("teacher_checked", newValue)
-      this.setValue("teacher_bd", newValue
-        ? this.state.groupId
-        : ''
-      )
-      return await setTeacherStar(userToStar, newValue);
-    };
-
-
-    return (
-      <DeviceThemeProvider>
-        <DocStyle/>
-        {
-          getThemeBackgroundByChar(this.state.character)
-        }
-        <div>
-          <Container style={{padding: 0, overflow: "hidden"}}>
-
-            <TopMenu
-              subLabel={
-                isTeacher
-                  ? this.state.teacher
-                  : groupName
-              }
-              starred={
-                isTeacher
-                  ? this.state.teacher_star
-                  : this.state.star
-              }
-              onStarClick={() => {
-                isTeacher
-                  ? handleTeacherStarChange(!this.state.teacher_star)
-                  : handleGroupStarChange(!this.state.star)
-              }}
-              onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
-              onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-              // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
-            />
-
-            <WeekSelect
-              onPrevWeekClick={() => {
-                this.setState({spinner: false});
-                this.PreviousWeek();
-                this.setState({flag: false, page: FIRST_DAY_OTHER_WEEK})
-              }}
-              onThisWeekClick={() => {
-                this.CurrentWeek();
-                this.setState({flag: true, page: SCHEDULE_PAGE_NO})
-              }}
-              onNextWeekClick={() => {
-                this.setState({spinner: false});
-                this.NextWeek();
-                this.setState({flag: false, page: FIRST_DAY_OTHER_WEEK})
-              }}
-            />
-
-            <WeekCarousel
-              selectedIndex={index - 1}
-              markedIndex={weekParam === THIS_WEEK ? this.state.today - 1 : -1 /* current weekday can't be on 'other' week*/}
-              cols={
-                this.state.day.map(d => {
-                  const {title, date} = d;
-                  const weekDayShort = title;
-                  const dateDdDotMmDotYy = date[weekParam];
-                  const dateDdDotMm = dateDdDotMmDotYy.slice(0, 5);
-                  return dateDdDotMm
-                    ? formatDate(weekDayShort, dateDdDotMm)
-                    : '';
-                })
-              }
-              onSelect={(weekDayIndex) => this.setValue("page", (
-                weekDayIndex + page + (weekParam === OTHER_WEEK ? 0 : 1)
-              ))}
-            />
-
-            <ScheduleDay
-              isReady={this.state.spinner}
-              // days={this.state.days}
-              // day_num={day_num}
-              dayLessons={
-                this.state.days[day_num]?.map(bellsThisOrOtherWeek => bellsThisOrOtherWeek[weekParam])
-              }
-              currentLessonNumber={current}
-              // weekParam={weekParam}
-              // timeParam={timeParam}
-              isTeacherAndValid={isTeacher}
-              isToday={this.state.today === timeParam && weekParam === THIS_WEEK}
-              isSunday={timeParam == 7}
-              // today={this.state.today}
-              // validateTeacher={this.isCorrectTeacher}
-              // onSetValue={this.setValue}
-              onTeacherClick={async (teacherName) => {
-                this.setValue("teacher", teacherName);
-                await this.handleTeacherChange();
-              }}
-            />
-
-            <Spacer200/>
-
-          </Container>
-        </div>
-      </DeviceThemeProvider>
-    );
+  ChangeTheme(){
+    console.log(this.state.theme, "THEME")
+    if (this.state.theme=="dark")
+    this.setState({theme: "light"})
+    else this.setState({theme: "dark"})
   }
 
+  doSetTeacher(teacherName: string): void {
+    this.setState({teacher: teacherName}, async () => {
+      await this.handleTeacherChange(false);
+    });
+  }
 
   // todo исправить асинхронную работу
-  async handleTeacherChange(): Promise<void> {
-    console.log(this.state.teacher)
+  async handleTeacherChange(isSave: boolean): Promise<boolean> {
+    console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
 
-    return getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
+    await getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
@@ -1765,11 +1734,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       ) {
         console.log("handleTeacherChange: teacherData.status:", teacherData.status);
         this.setState({
-          isTeacherError: true,
-        })
+          isTeacherError: true})
+          return true
 
-      } else {
-
+      } else
         getScheduleTeacherFromDb(
           teacherData.id,
           this.getFirstDayWeek(new Date())
@@ -1788,18 +1756,20 @@ export class App extends React.Component<IAppProps, IAppState> {
           })
         })
 
-        this.setState({
+         this.setState({
           teacherId: teacherData.id,
-          student: false,
+          //
           teacher_correct: true,
+
           date: Date.now(),
           flag: true,
+          student: false,
           page: SCHEDULE_PAGE_NO,
           isTeacherError: false,
         });
 
-      }
-      if (this.state.teacher_checked) {
+      if (isSave) {
+        this.setState({teacher_bd: this.state.teacher, teacher_id_bd: this.state.teacherId})
         createUser(
           this.state.userId,
           filial.id,
@@ -1809,36 +1779,51 @@ export class App extends React.Component<IAppProps, IAppState> {
           this.state.teacherId,
         );
       }
+      return false
     })
+    return false
   }
 
 
-  Load_Schedule(){
-    console.log("LoadSchedule", this.state.groupId)
-    getScheduleFromDb(
-      this.state.groupId,
-      String(this.state.engGroup),
-      this.getFirstDayWeek(new Date()))
+  async _loadSchedule({ groupId, engGroup }: { groupId: string, engGroup: string }): Promise<void> {
+    console.log('LOAD_SCHEDULE:', groupId, engGroup)
+    await getScheduleFromDb(
+      groupId,
+      String(engGroup),
+      this.getFirstDayWeek(new Date())
+    )
       .then((response) => {
+        console.log("LOAD_SCHEDULE_THEN")
         this.showWeekSchedule(response, 0);
-        console.log(String(this.state.engGroup));
-        this.setState({flag: true});
-        this.convertIdInGroupName();
-        this.setState({page: SCHEDULE_PAGE_NO, isGroupError: false});
+        console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
+        console.log("RESPONSE", response)
+        this.setState({
+          flag: true,
+          isGroupError: false,
+          teacher_bd: ""
+        });
       })
   }
+  
+  async Load_Schedule(): Promise<void> {
+    return await this._loadSchedule({
+      groupId: this.state.groupId,
+      engGroup: String(this.state.engGroup),
+  });
+  }
 
-  isCorrect() {
+  async CheckIsCorrect() : Promise<boolean>{
     console.log('App: isCorrect')
-    this.setState({correct: false, date: Date.now()});
+    this.setState({correct: false, date: Date.now(), flag: true});
     let correct_sub = false;
     let correct_eng = false;
     let correct = false;
+    console.log("this.state.engGroup", this.state.engGroup)
 
     let promiseGroupName = getGroupByName(this.state.group);
     let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
 
-    return Promise.all([
+   return Promise.all([
       promiseGroupName,
       promiseEnglishGroup,
     ])
@@ -1848,12 +1833,75 @@ export class App extends React.Component<IAppProps, IAppState> {
           group_response,
           english_response,
         ] = responses;
-        if (group_response.status == 1) {
-          this.setState({correct: true})
-          this.convertGroupNameInId();
+        const group = JSON.parse(group_response);
+        console.log("App: isCorrect: response: english", english_response);
+        if (group.status == 1) {
+          console.log(group.name, group.id, "GROUP RESPONSE")
+          this.setState({group: group.name, groupId: group.id})
+          //this.convertGroupNameInId();
           correct = true;
         }
-        if (english_response || this.state.engGroup=="") {
+        console.log(this.state.groupId, "group Id");
+        if (english_response || this.state.engGroup == "") {
+          correct_eng = true;
+          console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
+        }
+        if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) {
+          correct_sub = true;
+        }
+        this.setState({isEngGroupError: !correct_eng, isSubGroupError:!correct_sub, isGroupError: !correct})
+        const groupId = String(group.id);
+        let isCorrect = correct_eng && correct_sub && correct
+        if(isCorrect){
+          console.log("create_user")
+          this.setState({groupId: groupId, group: group.name, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
+            createUser(
+              this.state.userId,
+              filial.id,
+              group.id,
+              this.state.subGroup,
+              this.state.engGroup,
+              "")
+            })
+          }
+        return isCorrect
+
+      })
+
+
+  }
+
+  async isCorrect(): Promise<void> {
+    console.log('App: isCorrect')
+    this.setState({correct: false, date: Date.now(), flag: true});
+    let correct_sub = false;
+    let correct_eng = false;
+    let correct = false;
+    console.log("this.state.engGroup", this.state.engGroup)
+
+    let promiseGroupName = getGroupByName(this.state.group);
+    let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
+
+    return Promise.all([
+      promiseGroupName,
+      promiseEnglishGroup,
+    ])
+      .then(async (responses) => {
+        console.log("App: isCorrect: response", responses)
+        const [
+          group_response,
+          english_response,
+        ] = responses;
+        const group = JSON.parse(group_response);
+        console.log("App: isCorrect: response: english", english_response);
+        if (group.status == 1) {
+          console.log(group.name, group.id, "GROUP RESPONSE")
+          this.setState({group: group.name, groupId: group.id})
+          //this.convertGroupNameInId();
+          correct = true;
+        }
+        console.log(this.state.groupId, "group Id");
+        if (english_response || this.state.engGroup == "") {
           correct_eng = true;
           console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
         }
@@ -1861,34 +1909,36 @@ export class App extends React.Component<IAppProps, IAppState> {
           correct_sub = true;
         }
         if (correct && correct_sub && correct_eng) {
-          this.setState({page: SCHEDULE_PAGE_NO})
-          this.Load_Schedule()
+          if (this.state.page==HOME_PAGE_NO){
+          this.gotoPage(SCHEDULE_PAGE_NO)
+          }
+          await this.Load_Schedule()
           if (this.state.checked) {
-              const groupId = String(group_response.id);
-              console.log("GROUP_ID:", groupId)
-              this.setState({groupId: groupId}, () =>{
-                createUser(
-                  this.state.userId,
-                  filial.id,
-                  this.state.groupId,
-                  this.state.subGroup,
-                  this.state.engGroup,
-                  "")
-                
-                })
+            const groupId = String(group.id);
+          
+            this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
+            
+             createUser(
+                this.state.userId,
+                filial.id,
+                group.id,
+                this.state.subGroup,
+                this.state.engGroup,
+                "")
+
+            })
           }
 
-          
-        } else if (this.state.correct) {
+
+        } else if (correct) {
           this.setState({isGroupError: false});
 
-        } else if (this.state.group === "") {
-          this.setState({isGroupError: true})
         } else {
           this.setState({isGroupError: true})
         }
 
         if (!correct_sub) {
+          console.log("subGroup", this.state.subGroup)
           this.setState({isSubGroupError: true})
         } else {
           this.setState({isSubGroupError: false, star: false});
@@ -1899,19 +1949,45 @@ export class App extends React.Component<IAppProps, IAppState> {
         } else {
           this.setState({isEngGroupError: false, star: false});
         }
-
       })
+
+  }
+
+  async Bd(): Promise<void> {
+    if (this.state.teacher_bd != "") {
+      
+      this.setState({student: false, spinner: false})
+      await getScheduleTeacherFromDb(
+        this.state.teacher_id_bd,
+        this.getFirstDayWeek(new Date())
+      ).then((response) => {
+        console.log('Bd: getScheduleTeacherFromDb: response:', response)
+        this.showWeekSchedule(response, 0);
+      });
+    } else {
+      console.log('Bd: getScheduleFromDb: this.state.group_id_bd:', this.state.group_id_bd);
+      this.setState({
+        groupId: this.state.group_id_bd,
+        group: this.state.bd,
+        student: true,
+        spinner: false,
+        engGroup: this.state.eng_bd,
+        subGroup: this.state.sub_bd
+      });
+      await this._loadSchedule({
+        groupId: this.state.group_id_bd,
+        engGroup: this.state.eng_bd,
+      });
+    }
   }
 
   Spinner() {
-    console.log('Spinner: this.state.spinner:', this.state.spinner)
 
-    const CHECK_INTERVAL = 100;
-    const REDIRECT_DELAY = 100;
+    const CHECK_INTERVAL = 1;
+    const REDIRECT_DELAY = 1;
 
     // делаем периодическую проверку
     const checkInterval = setInterval(() => {
-      console.log("today", this.state.today)
 
       // если признак `spinner` выставлен
       if (this.state.spinner) {
@@ -1926,7 +2002,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log('Spinner: pageNo:', pageNo)
 
           // переходим на другую страницу
-          this.setState({page: pageNo});
+          this.gotoPage(pageNo);
 
           // if (this.state.today === 0) {
           //    console.log("this.state.flag", this.state.flag)
@@ -1953,132 +2029,264 @@ export class App extends React.Component<IAppProps, IAppState> {
     return (
 
       <SpinnerPage
+        theme={this.state.theme}
         character={this.state.character}
       />
     )
   }
 
-  render() {
-    let {page} = this.state;
-    if (page >= 1 && page <= 13) {
-      return this.Raspisanie(page);
-    }
-    switch (page) {
-      case HOME_PAGE_NO:
-        return <HomePage
-          // state={this.state}
-          onValidateInput={this.isCorrect}
-          onHandleTeacherChange={this.handleTeacherChange}
-          onConvertIdInGroupName={this.convertIdInGroupName}
-          onSetValue={this.setValue}
-          description={this.state.description}
-          character={this.state.character}
-          checked={this.state.checked}
-
-          groupId={this.state.groupId}
-          group={this.state.group}
-          isGroupError={this.state.isGroupError}
-
-          subGroup={this.state.subGroup}
-          isSubGroupError={this.state.isSubGroupError}
-
-          engGroup={this.state.engGroup}
-          isEngGroupError={this.state.isEngGroupError}
-
-          student={this.state.student}
-          teacher={this.state.teacher}
-          isTeacherError={this.state.isTeacherError}
-          // handleTeacherChange={this.handleTeacherChange}
-          teacher_checked={this.state.teacher_checked}
-        />
-      case NAVIGATOR_PAGE_NO:
-        return <NavigatorPage
-          buildings={buildings}
-          character={this.state.character}
-          isMobileDevice={detectDevice() === "mobile"}
-          onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-          onHomeClick={() => this.setState({page: HOME_PAGE_NO})}
-          onScheduleClick={() => this.setState({page: SCHEDULE_PAGE_NO})}
-        />
-      case DASHBOARD_PAGE_NO:
-        const now = new Date();
-        const todayIndex = this.state.today - 1;
-
-        const currentLessonIdx = this.getCurrentLesson(now);
-        const currentLesson = this.state.days[todayIndex]?.[parseInt(currentLessonIdx)-1]?.[THIS_WEEK];
-        const currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx)-1]
-
-        const nextLessonIdx = this.whatLesson(now, "will").num ;
-        const nextLesson = this.state.days[todayIndex]?.[nextLessonIdx-1]?.[THIS_WEEK];
-        console.log(this.whatLesson(now, "will").num, "next")
-        const count = this.state.day[this.state.today - 1]?.count[0]
-        console.log("COUNT", this.state.today)
-        const nextLessonStartEnd = LessonStartEnd[nextLessonIdx];
-        const start= this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
-        const end= this.getEndLastLesson(DAY_TODAY);
-        console.log(nextLessonStartEnd, "todaysummary") 
-        console.log("this.state.teacherId", this.state.teacherId)
-      
-        return <DashboardPage
-          character={this.state.character}
-          isTeacherAndValid={this.getIsCorrectTeacher()}
-          start={start}
-          end={end}
-          count={count}
-          spinner={this.state.spinner}
-          currentLesson={currentLesson}
-          currentLessonStartEnd={currentLessonStartEnd}
-          nextLesson={nextLesson}
-          nextLessonStartEnd={nextLessonStartEnd}
-          groupId={this.state.groupId}
-          teacherId={this.state.teacherId}
-          onGoToPage={(pageNo) => this.setState({page: pageNo})}
-          handleTeacherChange={this.handleTeacherChange}
-          getCurrentLesson={(date) => this.getCurrentLesson(date)}
-          getTimeFirstLesson={(daynum: number) => this.getTimeFirstLesson(daynum)}
-          getEndLastLesson={(todayOrTomorrow: TodayOrTomorrow) => this.getEndLastLesson(todayOrTomorrow)}
-          whatLesson={(date, when) => this.whatLesson(date, when)}
-        />
-      case SCHEDULE_PAGE_NO:
-        return this.Spinner();
-      case CONTACTS_PAGE_NO:
-        return <Contacts 
-        character={this.state.character}
-        onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-        />
-      case FAQ_PAGE_NO:
-        return <FAQ 
-        character={this.state.character}
-        onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-        />
-      // case SETTING_PAGE_NO:
-      //     return <Settings 
-      //     character={this.state.character}
-      //     onDashboardClick={() => this.setState({page: DASHBOARD_PAGE_NO})}
-      //     onSetValue={this.setValue}
-      //     description={this.state.description}
-      //     character={this.state.character}
-      //     checked={this.state.checked}
-
-      //     groupId={this.state.groupId}
-      //     group={this.state.group}
-      //     isGroupError={this.state.isGroupError}
-
-      //     subGroup={this.state.subGroup}
-      //     isSubGroupError={this.state.isSubGroupError}
-
-      //     engGroup={this.state.engGroup}
-      //     isEngGroupError={this.state.isEngGroupError}
-
-      //     student={this.state.student}
-      //     teacher={this.state.teacher}
-      //     isTeacherError={this.state.isTeacherError}
-      //     // handleTeacherChange={this.handleTeacherChange}
-      //     teacher_checked={this.state.teacher_checked}
-      //     />
-      default:
-        break;
-    }
+  ChangePush(hour: number, min: number, isActive: boolean){
+    this.setState({pushHour: hour, pushMin: min, isActive: isActive});
   }
 
+  gotoPage(pageNo: number): void {
+    console.log('App: gotoPage:', pageNo);
+    // temporary workaround
+    history.push('/');
+    this.setState({page: pageNo});
+  }
+
+  render() {
+    let {page} = this.state;
+    // console.log("App: render, this.state:", this.state)
+    return (
+      <Router history={history}>
+        <Switch>
+          <Route
+            path="/contacts"
+            render={
+              ({match}) => {
+                return <Contacts
+                  character={this.state.character}
+                  theme={this.state.theme}
+                  onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+                />
+              }
+            }
+          />
+          <Route
+            path="/faq"
+            render={
+              ({match}) => {
+                return <FAQ
+                  character={this.state.character}
+                  theme={this.state.theme}
+                  onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+                />
+              }
+            }
+          />
+          <Route
+            path="/navigation"
+            render={
+              ({match}) => {
+                return <NavigatorPage
+                  buildings={buildings}
+                  character={this.state.character}
+                  theme={this.state.theme}
+                  isMobileDevice={detectDevice() === "mobile"}
+                  onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+                  onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
+                  onScheduleClick={() => this.gotoPage(SCHEDULE_PAGE_NO)}
+                />
+              }
+            }
+          />
+          <Route
+            path="/settings"
+            // component={
+            render={
+              ({match}) => {
+                return <Settings
+                  userId={this.state.userId}
+                  bd={this.state.bd}
+                  sendData={this.sendData}
+                  teacher_bd={this.state.teacher_bd}
+                  onValidateInput={this.isCorrect}
+                  onHandleTeacherChange={this.handleTeacherChange}
+                  onConvertIdInGroupName={this.convertIdInGroupName}
+                  onSetValue={this.setValue}
+                  description={this.state.description}
+                  character={this.state.character}
+                  checked={this.state.checked}
+                  onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+                  groupId={this.state.groupId}
+                  group={this.state.group}
+                  theme={this.state.theme}
+                  ChangeTheme={this.ChangeTheme}
+                  ChangePush={this.ChangePush}
+                  isGroupError={this.state.isGroupError}
+                  isActive={this.state.isActive}
+                  pushHour={this.state.pushHour}
+                  pushMin={this.state.pushMin}
+                  subGroup={this.state.subGroup}
+                  isSubGroupError={this.state.isSubGroupError}
+                  CheckIsCorrect={this.CheckIsCorrect}
+                  engGroup={this.state.engGroup}
+                  isEngGroupError={this.state.isEngGroupError}
+                  LoadSchedule = { this.Load_Schedule}
+                  student={this.state.student}
+                  teacher={this.state.teacher}
+                  isTeacherError={this.state.isTeacherError}
+                  // handleTeacherChange={this.handleTeacherChange}
+                  teacher_checked={this.state.teacher_checked}
+                />
+              }
+            }
+          />
+          <Route
+            path="/lesson/:lessonIndex"
+            render={
+              ({match}) => {
+                // temporary workaround
+                console.log("/lesson/...: this.state.page:", this.state.page)
+                // if (this.state.page!==NON_EXISTING_PAGE_NO) this.gotoPage(NON_EXISTING_PAGE_NO);
+                return (
+                  <Lesson
+                    character={this.state.character}
+                    isTeacherAndValid={this.getIsCorrectTeacher()}
+                    spinner={this.state.spinner}
+                    theme={this.state.theme}
+                    currentLesson={this.state.days[this.state.page-1]?.[match.params.lessonIndex-1]?.[THIS_WEEK]}
+                    currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
+                    onGoToPage={(pageNo) => this.gotoPage(pageNo)}
+                    onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+                    handleTeacherChange={this.handleTeacherChange}
+                  />
+                )
+              }
+            }
+          />
+          <Route path="*">
+            {
+
+              (page >= 1 && page <= 13) &&
+              <Schedule
+                timeParam={page}
+                onSetValue={this.setValue}
+                teacher={this.state.teacher}
+                groupName={this.state.group}
+                character={this.state.character}
+                theme={this.state.theme}
+                isTeacher={!this.state.student}
+                teacher_star={this.state.teacher_star}
+                star={this.state.star}
+                Bd={this.Bd}
+                //Load_Schedule={this.Load_Schedule}
+                PreviousWeek={this.PreviousWeek}
+                CurrentWeek={this.CurrentWeek}
+                NextWeek={this.NextWeek}
+                getCurrentLesson={this.getCurrentLesson}
+                doSetTeacher={(teacherName: string) => this.doSetTeacher(teacherName)}
+                weekParam={page > 7 ? 1 : 0}
+                day={this.state.day}
+                spinner={this.state.spinner}
+                today={this.state.today}
+                days={this.state.days}
+                group={this.state.group}
+                subGroup={this.state.subGroup}
+                getIsCorrectTeacher={this.getIsCorrectTeacher}
+              />
+            }
+            {
+              (page === HOME_PAGE_NO) &&
+              <HomePage
+                // state={this.state}
+                onValidateInput={this.isCorrect}
+                onHandleTeacherChange={this.handleTeacherChange}
+                onConvertIdInGroupName={this.convertIdInGroupName}
+                onSetValue={this.setValue}
+                description={this.state.description}
+                character={this.state.character}
+                theme={this.state.theme}
+                checked={this.state.checked}
+
+                groupId={this.state.groupId}
+                group={this.state.group}
+                isGroupError={this.state.isGroupError}
+
+                subGroup={this.state.subGroup}
+                isSubGroupError={this.state.isSubGroupError}
+
+                engGroup={this.state.engGroup}
+                isEngGroupError={this.state.isEngGroupError}
+
+                student={this.state.student}
+                teacher={this.state.teacher}
+                isTeacherError={this.state.isTeacherError}
+                // handleTeacherChange={this.handleTeacherChange}
+                teacher_checked={this.state.teacher_checked}
+              />
+            }
+            {
+              (page === DASHBOARD_PAGE_NO) &&
+              (() => {
+                const now = new Date();
+                
+                let todayIndex = this.state.today - 1;
+
+                let currentLessonIdx = this.getCurrentLesson(now);
+                let currentLesson = this.state.days[todayIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
+                let currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx) - 1]
+
+                let nextLessonIdx = this.whatLesson(now, "will").num;
+                let nextLesson = this.state.days[todayIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
+                //console.log(this.whatLesson(now, "will").num, "next")
+                let count = this.state.day[this.state.today - 1]?.count[0]
+                //console.log("COUNT", this.state.today)
+                let nextLessonStartEnd = LessonStartEnd[nextLessonIdx-1];
+                let start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
+                let end = this.getEndLastLesson(DAY_TODAY);
+                
+                //console.log(nextLessonStartEnd, "todaysummary")
+                //console.log("this.state.teacherId", this.state.teacherId, this.state.groupId)
+
+                return <DashboardPage
+                  character={this.state.character}
+                  theme={this.state.theme}
+                  isTeacherAndValid={this.getIsCorrectTeacher()}
+                  isUser={this.state.isUser}
+                  start={start}
+                  end={end}
+                  count={count}
+                  filialId={this.state.filialId}
+                  userId={this.state.userId}
+                  spinner={this.state.spinner}
+                  currentLesson={currentLesson}
+                  currentLessonStartEnd={currentLessonStartEnd}
+                  nextLesson={nextLesson}
+                  nextLessonStartEnd={nextLessonStartEnd}
+                  groupId={this.state.group_id_bd}
+                  teacherId={this.state.teacher_id_bd}
+                  onGoToPage={(pageNo) => this.gotoPage(pageNo)}
+                  Bd={()=>this.Bd()}
+                  handleTeacherChange={this.handleTeacherChange}
+                  getCurrentLesson={(date) => this.getCurrentLesson(date)}
+                  getTimeFirstLesson={(daynum: number) => this.getTimeFirstLesson(daynum)}
+                  getEndLastLesson={(todayOrTomorrow: TodayOrTomorrow) => this.getEndLastLesson(todayOrTomorrow)}
+                  whatLesson={(date, when) => this.whatLesson(date, when)}
+                />
+              })()
+            }
+            {
+              (page === SCHEDULE_PAGE_NO) &&
+              this.Spinner()
+            }
+            {
+              (page === 22) && <Start
+                
+                character={this.state.character}
+                theme={this.state.theme}
+                isMobileDevice={detectDevice() === "mobile"}
+                onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
+              />
+            }
+            {
+              <div></div>
+            }
+          </Route>
+        </Switch>
+      </Router>
+    )
+  }
 }

@@ -6,8 +6,10 @@ import {ACCENT_TEXT_COLOR} from "../components/consts";
 
 export const SpinnerPage = (
   {
+    theme,
     character
   }: {
+    theme: string
     character: Character
       // todo paramoy
       | typeof CHAR_TIMEPARAMOY
@@ -16,7 +18,7 @@ export const SpinnerPage = (
     <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(character)
+        getThemeBackgroundByChar(character, theme)
       }
       <div>
         <Container

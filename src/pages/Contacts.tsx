@@ -24,8 +24,10 @@ import {
 
 const Contacts = ({
                          character,
+                         theme,
                          onDashboardClick,
                        }: {
+  theme: string
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
@@ -34,9 +36,9 @@ const Contacts = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character)
+      getThemeBackgroundByChar(character, theme)
     }
-          <Container style={{padding: 0}}>
+          <Container style={{padding: 0, overflow: "hidden"}}>
 
             <Row style={{margin: "1em"}}>
 
@@ -53,14 +55,17 @@ const Contacts = ({
               </Col>
 
             </Row>
-            {contacts_data.map((contact) =>(
+            {
+              contacts_data.map((contact, index) =>(
               <ContactsCard
+                key={index}
                 site={contact.site}
                 text={contact.text}
                 tel={contact.tel}
                 mail={contact.mail}
               />
-            ))}
+            ))
+            }
                    
            <div style={{margin: "0 1.3em 1.3em 1.3em"}}>
             <Headline3 style={{marginBottom: "0.5em"}}>

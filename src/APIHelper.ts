@@ -77,6 +77,9 @@ export interface ITeacherInfo{
 
 export interface IScheduleByUserIdData {
   schedule: IScheduleApiData,
+  isActive: boolean, //отправка пушей
+  hour: number, //час отправки пушей
+  minute: number, //минута отправки пушей
   userId: string,
   filialId: string,
   groupId: string,
@@ -87,11 +90,16 @@ export interface IScheduleByUserIdData {
   teacher_info: ITeacherInfo
 }
 
+export interface IPushData{
+  sub: string,
+  hour: number,
+  minute: number
+}
+
 //
 
-const API_URL = "http://127.0.0.1:8000/";
-//const API_URL = "https://misis-hub.herokuapp.com/";
-
+//const API_URL = "http://127.0.0.1:8000/";
+const API_URL = "https://misis-hub.herokuapp.com/";
 
 export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleApiData> {
   const url = `${API_URL}schedule`;
@@ -146,6 +154,8 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
 
 
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {
+  console.log(`APIHelper: teacher_in`, teacher_in);
+
   const url = `${API_URL}teacher`;
   const config = {
     params: {
@@ -177,6 +187,22 @@ export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherAp
   const parsedTeacherData = JSON.parse(rawTeacherData) as ITeacherApiData;
   console.log(`APIHelper: getInTeacherFromDb: parsedTeacherData:`, parsedTeacherData);
   return parsedTeacherData;
+}
+
+export async function addUserToPushNotification( sub: string, hour: number, minute: number, isActive: boolean){
+  const url = `${API_URL}add_user_to_push_notification`;
+  const data = {
+    "sub": sub, 
+    "hour": hour, 
+    "minute": minute,
+    "isActive": isActive
+  };
+  console.log(`APIHelper: add_user_to_push_notification: url: "${url}", data:`, data);
+
+  const response = await axios.post(url, data);
+  console.log(`APIHelper: add_user_to_push_notification: response:`, response);
+
+  return response;
 }
 
 
@@ -317,6 +343,7 @@ export async function getGroupByName(groupName: string) {
   console.log(`APIHelper: getGroupByName: groupInfo:`, groupInfo);
   return groupInfo;
 }
+
 export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>{
   const url = `${API_URL}is_english_group_exist`;
   const config = {
@@ -329,7 +356,7 @@ export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>
   const response = await axios.get(url, config);
 
   const {data} = response;
-  console.log(`APIHelper: getGroupByName: response:`, data);
-
-  return data.status === '1' ;
+  console.log(`APIHelper: isEnglishGroupExist: response:`, data);
+  let jsonData= JSON.parse(data)
+  return jsonData.status === '1' ;
 }

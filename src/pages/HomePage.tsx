@@ -13,7 +13,7 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  NAVIGATOR_PAGE_NO,
+  // NAVIGATOR_PAGE_NO,
   DASHBOARD_PAGE_NO,
   SCHEDULE_PAGE_NO,
   Spacer100,
@@ -176,10 +176,10 @@ interface HomeViewProps {
   // disabled: boolean
   checked: boolean
   description: string
-
+  theme: string 
   onSetValue: (key: string, value: any) => void
   onValidateInput: () => void
-  onHandleTeacherChange: () => Promise<void>
+  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
 
@@ -240,9 +240,9 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         style={{padding: 0}}
       >
 
-        <HomeTitle
+        {/* <HomeTitle
           text={HOME_TITLE}
-        />
+        /> */}
 
         <TabSelectorRow
           tabs={USER_MODES}
@@ -291,10 +291,10 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     const teacherContent = (
       <Container style={{padding: 0}}>
 
-        <HomeTitle
+        {/* <HomeTitle
           text={HOME_TITLE}
           // todo: margin: '3%'
-        />
+        /> */}
 
         <TabSelectorRow
           tabs={USER_MODES}
@@ -322,7 +322,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onHandleTeacherChange()}
+          onClick={() => this.props.onHandleTeacherChange(this.props.teacher_checked)}
         />
 
       </Container>
@@ -332,7 +332,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     return <DeviceThemeProvider>
       <DocStyle/>
       {
-        getThemeBackgroundByChar(this.props.character)
+        getThemeBackgroundByChar(this.props.character, this.props.theme)
       }
       <div>
         {

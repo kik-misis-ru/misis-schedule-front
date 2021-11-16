@@ -1,4 +1,5 @@
 import React from 'react';
+import {MemoryRouter} from 'react-router';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 
 import ScheduleDay from '../../components/ScheduleDay';
@@ -27,7 +28,7 @@ export default {
       type: {name: 'boolean', required: false},
       defaultValue: true,
     },
-    isSunday: {
+    isDayOff: {
       type: {name: 'boolean', required: false},
       defaultValue: false,
     },
@@ -35,7 +36,9 @@ export default {
 } as ComponentMeta<typeof ScheduleDay>;
 
 const Template: ComponentStory<typeof ScheduleDay> = (args, context) => (
-  <ScheduleDay {...args} />
+  <MemoryRouter>
+    <ScheduleDay {...args} />
+  </MemoryRouter>
 );
 
 export const GroupView = Template.bind({});
@@ -53,7 +56,7 @@ TeacherView.args = {
 export const Sunday = Template.bind({});
 Sunday.args = {
   isReady: true,
-  isSunday: true,
+  isDayOff: true,
 };
 
 export const NotReady = Template.bind({});
