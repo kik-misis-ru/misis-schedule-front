@@ -1546,7 +1546,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   /**
    * заполнение данными расписания из бд
    */
-  showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
     this.setState({spinner: false});
@@ -1785,9 +1785,10 @@ export class App extends React.Component<IAppProps, IAppState> {
       String(engGroup),
       this.getFirstDayWeek(new Date())
     )
-      .then((response) => {
+      .then(async (response) => {
         this.showWeekSchedule(response, 0);
         console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
+        console.log("RESPONSE", response)
         this.setState({
           flag: true,
           isGroupError: false,
@@ -1796,7 +1797,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
   
   async Load_Schedule(): Promise<void> {
-    return this._loadSchedule({
+    return await this._loadSchedule({
       groupId: this.state.groupId,
       engGroup: String(this.state.engGroup),
   });
@@ -1843,7 +1844,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         const groupId = String(group.id);
         let isCorrect = correct_eng && correct_sub && correct
         if(isCorrect){
-          this.setState({groupId: groupId, bd: this.state.group, correct: true}, () => {
+          console.log("create_user")
+          this.setState({groupId: groupId, bd: this.state.group, correct: true, teacher: ""}, () => {
             createUser(
               this.state.userId,
               filial.id,

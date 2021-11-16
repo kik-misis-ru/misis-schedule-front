@@ -230,8 +230,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       if(this.props.student){
         let isCorrect = await this.CheckIsCorrect()
         if(isCorrect && this.props.student){
+          await this.Load_Schedule()
           this.setState({edit: false })
-          this.Load_Schedule()
          }
       }
       else{
@@ -240,7 +240,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             this.setState({edit: false })
           }
         })
-       
       }
   
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)
