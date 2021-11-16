@@ -44,6 +44,7 @@ import { threadId } from "worker_threads";
     isTeacher: boolean
     teacher_star: boolean
     star: boolean
+    theme: string
     PreviousWeek: () => void
     CurrentWeek: () => void
     NextWeek: () => void
@@ -137,7 +138,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
      return <DeviceThemeProvider>
         <DocStyle/>
         {
-          getThemeBackgroundByChar(this.props.character, 'dark')
+          getThemeBackgroundByChar(this.props.character, this.props.theme)
         }
         <div>
           <Container style={{padding: 0, overflow: "hidden"}}>

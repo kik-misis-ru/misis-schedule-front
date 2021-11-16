@@ -24,8 +24,10 @@ import {
 
 const Contacts = ({
                          character,
+                         theme,
                          onDashboardClick,
                        }: {
+  theme: string
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
@@ -34,7 +36,7 @@ const Contacts = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character, 'dark')
+      getThemeBackgroundByChar(character, theme)
     }
           <Container style={{padding: 0, overflow: "hidden"}}>
 

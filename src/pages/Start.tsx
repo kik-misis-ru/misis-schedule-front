@@ -39,8 +39,11 @@ const Start = ({
                          character,
                          isMobileDevice,
                          onDashboardClick,
+                         theme,
                        }: {
+  theme: string 
   character: Character
+  
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
   isMobileDevice: boolean
@@ -49,7 +52,7 @@ const Start = ({
   return <DeviceThemeProvider>
     <DocStyle/>
     {
-      getThemeBackgroundByChar(character, 'dark')
+      getThemeBackgroundByChar(character, theme)
     }
     {
       isMobileDevice

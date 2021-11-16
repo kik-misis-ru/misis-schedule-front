@@ -23,7 +23,7 @@ export const SocialListItem = ({
         </div>
       }
       content={
-        <a href={link} style={{color: "white", marginLeft: "1em"}}>{name}</a>
+        <a href={link} style={{color: 'var(--plasma-colors-button-primary)', marginLeft: "1em"}}>{name}</a>
       }
     />
   )
