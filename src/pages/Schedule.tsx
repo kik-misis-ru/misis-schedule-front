@@ -105,8 +105,9 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
     
 
       
-
+      
     render(){
+      console.log(this.props.groupName, "SCHEDULE GROUPNAME")
       let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
       let _timeparam = this.props.timeParam
       if (this.props.timeParam > 7) {

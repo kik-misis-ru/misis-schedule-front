@@ -473,6 +473,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                       });
                       console.log(this.state.group_id_bd, "GROUP_ID_BD");
                     } else {
+                      this.setState({userId: ""})
                       this.gotoPage(22);
                     }
                     this.showWeekSchedule(response.schedule, 0);
@@ -1009,6 +1010,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log("dispathcAction:", action)
     if (action) {
       switch (action.type) {
+        case 'settings':
+          console.log("PUSH");
+          break;
         case 'profile':
           console.log("profile");
           this.ChangePage()
@@ -1848,7 +1852,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         let isCorrect = correct_eng && correct_sub && correct
         if(isCorrect){
           console.log("create_user")
-          this.setState({groupId: groupId, bd: this.state.group, correct: true, teacher: ""}, () => {
+          this.setState({groupId: groupId, group: group.name, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
             createUser(
               this.state.userId,
               filial.id,
@@ -1909,9 +1913,9 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           await this.Load_Schedule()
           if (this.state.checked) {
             const groupId = String(group.id);
-
+          
             this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
-
+            
              createUser(
                 this.state.userId,
                 filial.id,
@@ -1949,6 +1953,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
   async Bd(): Promise<void> {
     if (this.state.teacher_bd != "") {
+      
       this.setState({student: false, spinner: false})
       await getScheduleTeacherFromDb(
         this.state.teacher_id_bd,
@@ -1958,11 +1963,11 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         this.showWeekSchedule(response, 0);
       });
     } else {
-      console.log('Bd: getScheduleTeacherFromDb: this.state.group_id_bd:', this.state.group_id_bd);
+      console.log('Bd: getScheduleFromDb: this.state.group_id_bd:', this.state.group_id_bd);
       this.setState({
         groupId: this.state.group_id_bd,
         group: this.state.bd,
-        student: false,
+        student: true,
         spinner: false,
         engGroup: this.state.eng_bd,
         subGroup: this.state.sub_bd
@@ -2090,6 +2095,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 return <Settings
                   userId={this.state.userId}
                   bd={this.state.bd}
+                  //sendData={this.sendData}
                   teacher_bd={this.state.teacher_bd}
                   onValidateInput={this.isCorrect}
                   onHandleTeacherChange={this.handleTeacherChange}
@@ -2147,6 +2153,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           />
           <Route path="*">
             {
+
               (page >= 1 && page <= 13) &&
               <Schedule
                 timeParam={page}
@@ -2207,7 +2214,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
               (page === DASHBOARD_PAGE_NO) &&
               (() => {
                 const now = new Date();
-
+                
                 let todayIndex = this.state.today - 1;
 
                 let currentLessonIdx = this.getCurrentLesson(now);
@@ -2222,12 +2229,14 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx-1];
                 let start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
                 let end = this.getEndLastLesson(DAY_TODAY);
+                
                 //console.log(nextLessonStartEnd, "todaysummary")
                 //console.log("this.state.teacherId", this.state.teacherId, this.state.groupId)
 
                 return <DashboardPage
                   character={this.state.character}
                   isTeacherAndValid={this.getIsCorrectTeacher()}
+                  
                   start={start}
                   end={end}
                   count={count}

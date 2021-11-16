@@ -121,6 +121,10 @@ interface AssistantActionShowNavigation {
   type: 'navigation'
 }
 
+interface AssistantActionSettings {
+  type: 'settings'
+}
+
 interface AssistantActionShowFAQ {
   type: 'faq'
 }
@@ -167,6 +171,7 @@ export type AssistantAction = AssistantActionProfile
   | AssistantActionShowNavigation
   | AssistantActionShowFAQ
   | AssistantActionShowContacts
+  | AssistantActionSettings
   |AssistantActionShowDashBoard;
 
 //

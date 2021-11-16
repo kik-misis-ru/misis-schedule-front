@@ -235,6 +235,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
          }
       }
       else{
+        console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
           if(response){
             this.setState({edit: false })
@@ -422,6 +423,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center"}}>
+          
           <Caption style={{textAlign: "center", margin: "0.5em 0.5em 0 0.5em", color: "grey"}}>Время, в которое будут приходить напоминания о завтрашних парах</Caption>
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
