@@ -103,6 +103,9 @@ export interface AssistantSendChangeGroup{
     IsStudent: boolean
   }
 }
+export interface AssistantSendHelloPhrase{
+  action_id: 'hello_phrase'
+}
 
 export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionTomorrowSchedule
@@ -115,6 +118,7 @@ export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionSay5
   | AssistantSendActionSay6
   |AssistantSendChangeGroup
+  |AssistantSendHelloPhrase
 
 
 //
