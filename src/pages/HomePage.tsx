@@ -77,63 +77,6 @@ const HomeDescription = ({
 
 )
 
-// export const GoToMenuButton = (props) => (
-//   <Button
-//     size="s"
-//     view="clear"
-//     onClick={props.onClick}
-//     pin="circle-circle"
-//     contentRight={
-//       <IconHouse size="s" color="inherit"/>
-//     }
-//   />
-// )
-//
-
-//class Main extends React.Component {
-//  constructor(props) {
-//    super(props);
-//    this.handleChange         = this.handleChange.bind(this)
-//    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
-//  }
-//
-//  handleChange(key, e) {
-//    this.props.setValue(key, e);
-//  }
-//
-//  convertIdInGroupName() {
-//    this.props.convertIdInGroupName();
-//  }
-//
-//
-//  render() {
-//    return (
-//      <Container style={{ padding: 0 }}>
-//
-//        <Row>
-//          <Col style={{ marginLeft: "auto" }}>
-//            <GoToMenuButton
-//              onClick={() => {
-//                this.handleChange("page", DASHBOARD_PAGE_NO)
-//              }}
-//            />
-//            <GoToScheduleButton
-//              onClick={() => {
-//                this.props.convertIdInGroupName();
-//                this.handleChange("page", SCHEDULE_PAGE_NO)
-//              }}
-//              disabled={this.props.disabled}
-//            />
-//          </Col>
-//        </Row>
-//        <Cell style={{ padding: 0 }}
-//              content={this.props.contentRight}>
-//        </Cell>
-//      </Container>
-//    )
-//  }
-//}
-
 
 const TextFieldForUserInfo = ({
                                 label,
@@ -148,6 +91,7 @@ const TextFieldForUserInfo = ({
   // fieldType: string
   onChange: (value: string) => void
 }) => {
+  
   return (
     <TextField
       // id="tf"

@@ -42,7 +42,7 @@ export const ContactsCard = ({
                       Ссылка
                     </Caption>
                     <Body1 style={{color: "var(--plasma-colors-button-primary)"}}>
-                      <a href={site} style={{color: "var(--plasma-colors-button-primary)"}}>
+                      <a  target="_blank" href={site} style={{color: "var(--plasma-colors-button-primary)"}}>
                         {site}
                       </a>
                     </Body1>
@@ -67,7 +67,7 @@ export const ContactsCard = ({
                   <Caption style={{color: "grey"}}>
                     Почта
                   </Caption>
-                  <a href={mail} style={{color: "var(--plasma-colors-button-primary)"}}>
+                  <a href={`mailto:`+mail} style={{color: "var(--plasma-colors-button-primary)"}}>
                     {mail}
                   </a>
                 </TextBox>

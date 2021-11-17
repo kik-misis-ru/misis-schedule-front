@@ -55,6 +55,7 @@ const FAQ = ({
       {
         faq?.map((faq, index) => (
           <FAQCard
+            
             key={index}
             questions={faq.questions}
             text={faq.text}

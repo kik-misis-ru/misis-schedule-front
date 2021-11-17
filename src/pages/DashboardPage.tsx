@@ -32,9 +32,10 @@ import {
   LineSkeleton,
   RectSkeleton,
   CellDisclosure,
+  ActionButton,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
-import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/plasma-icons";
+import {IconLocation, IconStarFill, IconSettings, IconApps, IconEvent, IconInfo, IconCall} from "@sberdevices/plasma-icons";
 //import {text, background, gradient} from "@sberdevices/plasma-tokens";
 import logo from "../images/logo.png";
 //import "../themes/App.css";
@@ -259,6 +260,9 @@ const DashboardCard = ({
                 {text}
               </CardHeadline3>
             </TextBox>
+            <Col >
+            
+            </Col>
           </CardContent>
         </CardBody>
       </Card>
