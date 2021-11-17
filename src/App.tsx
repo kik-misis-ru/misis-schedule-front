@@ -486,6 +486,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                 console.log("first time")
                 this.setState({isUser: true});
                 this.gotoPage(22);
+                this.sendData({
+                  action_id: "hello_phrase"
+                })
                 createUser(
                   this.state.userId,
                   this.state.filialId,
