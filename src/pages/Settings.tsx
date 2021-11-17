@@ -170,6 +170,8 @@ interface SettingsState {
     value: Date
   }
   theme: boolean
+  themeName: string
+  
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
@@ -193,6 +195,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       },
       edit: edit,
       theme: false,
+      themeName: this.props.theme,
     };
     this.onHandleChange("description", props.character === "joy"
       ? DESC_JOY
@@ -228,6 +231,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.onConvertIdInGroupName();
   }
   async Save() {
+      console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
@@ -238,6 +242,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           this.setState({edit: false })
          }
       }
+      
       else{
         console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
@@ -269,7 +274,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       justifyContent: "center"}} min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}}></TimePicker>
         </Row>
     )
-    console.log(this.props.isTeacherError, "ISTEACHERERROR")
+    console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
     console.log(this.state.timePush.value, this.props.theme);
     return (
       <DeviceThemeProvider>
@@ -352,7 +357,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           justifyContent: "center",
           alignItems: "center"}}>
       <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={ async ()=> await this.Save() }>Сохранить</Button>
-      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  }}>Отмена</Button>
+      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  if (this.state.themeName!=this.props.theme)
+      this.props.ChangeTheme();}}>Отмена</Button>
       </Col>
       </Row>) : (
         <Row style={{margin: "1em"}}>
@@ -414,7 +420,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   <TextBoxLabel >
                   Время отправки 
                  </TextBoxLabel>
-                 <Headline4>{this.state.timePush.hour}:{this.state.timePush.min}</Headline4>
+                 <Headline4>{this.state.timePush.value.getHours()< 10 ? `0${this.state.timePush.value.getHours()}` : this.state.timePush.value.getHours()}:{this.state.timePush.value.getMinutes()< 10 ? `0${this.state.timePush.value.getMinutes()}` : this.state.timePush.value.getMinutes()}</Headline4>
                   </TextBox>
                   :
                   <TextBox> 

@@ -473,14 +473,27 @@ export class App extends React.Component<IAppProps, IAppState> {
                       console.log(this.state.group_id_bd, "GROUP_ID_BD");
                     } else {
                       this.setState({isUser: true})
-                      this.gotoPage(22);
+                      
                     }
+                    if (this.state.teacherId != "" || this.state.group!= ""){
+ 
                     this.showWeekSchedule(response.schedule, 0);
                     this.showWeekSchedule(response.schedule, 1);
+                    }
                   })
 
               } else {
+                console.log("first time")
+                this.setState({isUser: true});
                 this.gotoPage(22);
+                createUser(
+                  this.state.userId,
+                  this.state.filialId,
+                  this.state.groupId,
+                  this.state.subGroup,
+                  this.state.engGroup,
+                  this.state.teacherId,
+                )
                 }
               })
           }
@@ -2199,6 +2212,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                     handleTeacherChange={this.handleTeacherChange}
+                   
                   />
                 )
               }
@@ -2219,6 +2233,8 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 teacher_star={this.state.teacher_star}
                 star={this.state.star}
                 Bd={this.Bd}
+                bd={this.state.bd}
+                teacher_bd={this.state.teacher_bd}
                 //Load_Schedule={this.Load_Schedule}
                 PreviousWeek={this.PreviousWeek}
                 CurrentWeek={this.CurrentWeek}
