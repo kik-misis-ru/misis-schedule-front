@@ -1451,6 +1451,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
           break;
 
+        case 'show_settings':
+          history.push("/settings")
+          break;
+
         case 'navigation':
           console.log("показать навигацию");
           this.ChangePage();

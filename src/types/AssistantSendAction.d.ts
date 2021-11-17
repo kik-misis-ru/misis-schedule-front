@@ -107,6 +107,10 @@ export interface AssistantSendHelloPhrase{
   action_id: 'hello_phrase'
 }
 
+export interface AssistantSendPushOn{
+  action_id: 'push_on'
+}
+
 export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionTomorrowSchedule
   | AssistantSendActionSay
@@ -119,6 +123,7 @@ export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionSay6
   |AssistantSendChangeGroup
   |AssistantSendHelloPhrase
+  |AssistantSendPushOn;
 
 
 //

@@ -340,7 +340,18 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           </Col>
         }
           <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} 
-          onChange={(() => { this.setState({disabled: !this.state.disabled}); })}/>
+          onChange={(() => 
+          { 
+            this.setState({disabled: !this.state.disabled}, () =>{
+              console.log("DISABLED",this.state.disabled)
+              if(this.state.disabled){
+                this.props.sendData({
+                  action_id: 'push_on',
+                });
+              }
+            });  
+
+            })}/>
           {this.state.disabled ?
           <Col style={{display: "flex",
           flexDirection: "column",

@@ -163,6 +163,10 @@ interface AssistantActionSubgroup {
   note: string
 }
 
+interface AssistantActionShowSettings{
+  type: 'show_settings'
+}
+
 export type AssistantAction = AssistantActionProfile
   | AssistantActionForToday
   | AssistantActionForTomorrow
@@ -184,7 +188,8 @@ export type AssistantAction = AssistantActionProfile
   | AssistantActionSettings
   |AssistantActionShowDashBoard
   |IShowHomePage
-  |AssistantActionForSetEngGroup;
+  |AssistantActionForSetEngGroup
+  |AssistantActionShowSettings;
 
 //
 
