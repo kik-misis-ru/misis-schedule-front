@@ -7,6 +7,8 @@ import {
   Caption,
   Switch,
   TimePicker,
+  Tabs,
+  TabItem,
   TextBoxLabel,
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
@@ -56,7 +58,10 @@ export const USER_MODES = [
   'Студент',
   'Преподаватель',
 ];
-
+export const TODAY_TOMORROW = [
+  'Сегодня',
+  'Завтра',
+];
 
 const HomeTitle = ({
                      text,
@@ -156,6 +161,7 @@ interface SettingsProps {
   CheckIsCorrect: () => Promise<boolean>
   LoadSchedule: () => void
   student: boolean
+  dayPush: number
   teacher: string
   isTeacherError: boolean
   teacher_checked: boolean
@@ -171,6 +177,7 @@ interface SettingsState {
   }
   theme: boolean
   themeName: string
+  dayPush: number
   
 }
 
@@ -188,6 +195,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     let edit=false;
     this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
     this.state = {disabled: this.props.isActive,
+      dayPush: this.props.dayPush,
       timePush: {
         hour:  this.props.pushHour == -1 ? 1 : this.props.pushHour,
         min: this.props.pushMin == -1 ? 1 : this.props.pushMin,
@@ -254,7 +262,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)
       this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
-    addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
+    addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled, this.state.dayPush)
     if(this.state.disabled){
       this.props.sendData({
         action_id: 'settings',
@@ -339,15 +347,21 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         />
           </Col>
         }
-          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} 
+          <Switch style={{ margin: "1em 1em 0.5em 1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} 
           onChange={(() => { this.setState({disabled: !this.state.disabled}); })}/>
           {this.state.disabled ?
           <Col style={{display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center"}}>
+            <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о парах</Caption>
+            <TabSelectorRow
+          tabs={TODAY_TOMORROW}
+          selectedIndex={this.state.dayPush }
+          onSelect={(tabIndex) => this.setState({dayPush: tabIndex})}
+        />
+           
           
-          <Caption style={{textAlign: "center", margin: "0.5em 0.5em 0 0.5em", color: "grey"}}>Время, в которое будут приходить напоминания о завтрашних парах</Caption>
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}

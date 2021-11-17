@@ -287,6 +287,7 @@ export interface IAppState {
   date: number
   today: number
   theme: string
+  dayPush: number
   isGroupError: boolean
   isActive: boolean
   subGroup: string
@@ -378,7 +379,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       star: false,
       bd: "",
       student: true,
-
+      dayPush: 0,
       teacher: "",
       teacherId: "",
       teacher_checked: false,
@@ -435,10 +436,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"], teacherId: user["teacher_id"], filialId: user["filial_id"]})
                 getSchedulebyUserId(this.state.userId).then((response) => {
                   this.gotoPage(DASHBOARD_PAGE_NO)
-                  this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
-                  console.log("isActive:", response.isActive)
-                  console.log("hour:",response.hour)
-                  console.log("minute:",response.minute)
+                  this.setState({isActive: response.push.isActive, pushHour: response.push.hour, pushMin: response.push.minute, dayPush: response.push.day})
+
                   console.log("getScheduleByUserId", response)
                     if (response.teacher_id != "" && response.teacher_id!=null) {
                       console.log(`${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`);
@@ -2183,6 +2182,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   pushHour={this.state.pushHour}
                   pushMin={this.state.pushMin}
                   subGroup={this.state.subGroup}
+                  dayPush={this.state.dayPush}
                   isSubGroupError={this.state.isSubGroupError}
                   CheckIsCorrect={this.CheckIsCorrect}
                   engGroup={this.state.engGroup}

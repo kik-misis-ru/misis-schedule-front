@@ -35,7 +35,7 @@ import {
   ActionButton,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
-import {IconLocation, IconStarFill, IconSettings, IconApps, IconEvent, IconInfo, IconCall} from "@sberdevices/plasma-icons";
+import {IconLocation, IconStarFill, IconSettings, IconApps, IconEvent, IconHelp, IconCallCircle} from "@sberdevices/plasma-icons";
 //import {text, background, gradient} from "@sberdevices/plasma-tokens";
 import logo from "../images/logo.png";
 //import "../themes/App.css";
@@ -203,7 +203,7 @@ const TodaySummary = ({
       <TextBox
         // @ts-ignore
         style={{
-          marginLeft: "3em",
+          marginLeft: "2em",
           paddingTop: "0.5em",
         }}
       >
@@ -260,9 +260,31 @@ const DashboardCard = ({
                 {text}
               </CardHeadline3>
             </TextBox>
-            <Col >
-            
-            </Col>
+            {text=="Другое расписание" ? 
+            <Col style={{position: "relative",
+            top: "7vh"}}>
+            <IconEvent size="s"/>
+            </Col> : <div></div>
+            }
+            {text=="Карта" ? 
+            <Col style={{position: "relative",
+            top: "8vh"}}>
+            <IconLocation size="s"/>
+            </Col> : <div></div>
+            }
+            {text=="FAQ" ? 
+            <Col style={{position: "relative",
+            top: "6vh"}}>
+            <IconHelp size="s"/>
+            </Col> : <div></div>
+            }
+            {text=="Контакты" ? 
+            <Col style={{
+              position: "relative",
+            top: "8vh",}}>
+            <IconCallCircle size="s"/>
+            </Col> : <div></div>
+            }
           </CardContent>
         </CardBody>
       </Card>
