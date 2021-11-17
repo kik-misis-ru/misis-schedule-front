@@ -2,22 +2,13 @@ import React from "react";
 import {Container, Row, Col, DeviceThemeProvider, Caption, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Card,
-  CardBody,
-  CardContent,
-  CardMedia,
-  TextBox,
-  TextBoxSubTitle,
-  TextBoxTitle,
-  TextBoxLabel,
-  Badge,
-  CellListItem,
+  Button
 } from "@sberdevices/plasma-ui";
 import {
   StartEnd,
   LessonStartEnd,
 } from '../App';
-import {IconLocation} from "@sberdevices/plasma-icons";
+import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
 import karta from "../images/Karta.png";
 import LessonCard from "../components/LessonCard";
@@ -31,7 +22,9 @@ import {
   GoToHomeButton,
   GoToScheduleButton,
 } from '../components/TopMenu';
+import {createBrowserHistory} from 'history';
 
+export const history = createBrowserHistory();
 
 const Lesson = (props: {
   character: Character
@@ -67,8 +60,8 @@ const Lesson = (props: {
     <Container style={{padding: 0, overflow: "hidden"}}>
 
       <Row style={{margin: "1em"}}>
-
-        <HeaderLogoCol/>
+      <HeaderLogoCol/>
+      {/* <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {ChangePage(); history.back()}} /> */}
 
         <HeaderTitleCol2
           title="Карточка пары"

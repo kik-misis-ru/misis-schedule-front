@@ -231,7 +231,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.onConvertIdInGroupName();
   }
   async Save() {
-      
+      console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
@@ -274,7 +274,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       justifyContent: "center"}} min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}}></TimePicker>
         </Row>
     )
-    console.log(this.props.isTeacherError, "ISTEACHERERROR")
+    console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
     console.log(this.state.timePush.value, this.props.theme);
     return (
       <DeviceThemeProvider>
@@ -420,7 +420,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   <TextBoxLabel >
                   Время отправки 
                  </TextBoxLabel>
-                 <Headline4>{this.state.timePush.hour}:{this.state.timePush.min}</Headline4>
+                 <Headline4>{this.state.timePush.value.getHours()< 10 ? `0${this.state.timePush.value.getHours()}` : this.state.timePush.value.getHours()}:{this.state.timePush.value.getMinutes()< 10 ? `0${this.state.timePush.value.getMinutes()}` : this.state.timePush.value.getMinutes()}</Headline4>
                   </TextBox>
                   :
                   <TextBox> 

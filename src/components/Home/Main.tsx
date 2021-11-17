@@ -8,6 +8,8 @@ import {
   Spacer100,
 } from '../../App';
 import {
+    HeaderLogoCol,
+    HeaderTitleCol2,
   GoToDashboardButton,
   GoToScheduleButton,
 } from '../TopMenu';
@@ -28,31 +30,25 @@ const Main = ({
               }: MainProps) => {
 
   const TopMenuRow = () => (
-    <Row
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-      }}
-    >
-      <Col
-         style={{margin: "1em"}}
-      >
-        <GoToDashboardButton
+    <Row style={{margin: "1em"}}>
+
+              <HeaderLogoCol/>
+
+              <HeaderTitleCol2
+                title="Другое расписание"
+              />
+
+              <Col style={{margin: "0 0 0 auto"}}>
+              <GoToDashboardButton
           onClick={() => {
             // rewrite to gotoPage() or to history.push()
             setValue("page", DASHBOARD_PAGE_NO)
           }}
         />
-        {/* <GoToScheduleButton
-          onClick={() => {
-            convertIdInGroupName();
-            setValue("page", SCHEDULE_PAGE_NO)
-          }}
-          disabled={disabled}
-        /> */}
-      </Col>
-    </Row>
+              </Col>
+
+            </Row>
+   
 
   )
 

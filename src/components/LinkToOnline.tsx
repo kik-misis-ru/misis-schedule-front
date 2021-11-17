@@ -17,7 +17,7 @@ export const LinkToOnline = ({
     >{ text || LINK_TEXT }</a>
     )
     : (
-      <div></div>
+      <div style={{margin: "0"}}></div>
     )
 )
 

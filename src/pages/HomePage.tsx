@@ -334,6 +334,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       {
         getThemeBackgroundByChar(this.props.character, this.props.theme)
       }
+      
       <div>
         {
           this.props.student
@@ -346,30 +347,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
               />
             )
             : (
-              /*
-                            <Container style={{padding: 0}}>
-
-                              <Row>
-                                <Col style={{marginLeft: "auto"}}>
-                                  <GoToDashboardButton
-                                    onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
-                                  />
-                                  <GoToScheduleButton
-                                    onClick={() => {
-                                      this.props.convertIdInGroupName();
-                                      this.handleChange("page", SCHEDULE_PAGE_NO)
-                                    }}
-                                    disabled={this.state.disabled}
-                                    style={{marginTop: "1em", marginRight: "1em"}}
-                                  />
-                                </Col>
-                              </Row>
-
-                              <teacherContent/>
-
-                              <Spacer100/>
-                            </Container>
-              */
 
 
               <Main
