@@ -1016,8 +1016,19 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'profile':
           console.log("profile");
           this.ChangePage()
+          if(! action.IsStudent){
+            this.setState({student: false})
+          }
+          else{
+            this.setState({student: true})
+          }
           return this.gotoPage(HOME_PAGE_NO);
           break;
+        case 'set_eng_group':
+          if(this.state.page == HOME_PAGE_NO && action.group!=undefined){
+            this.setState({engGroup: String(action.group) })
+          }
+          break
 
         case 'for_today':
           if ((this.state.group !== "") || (this.state.teacher !== ""))
@@ -1385,10 +1396,43 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'show_schedule':
-          console.log("показать расписание");
-
-          await this.Load_Schedule();
-          this.gotoPage(SCHEDULE_PAGE_NO);
+          if(action.note!=undefined && action.note!=""){
+            let IsStudent = true
+            if (action.note.includes("препод")){
+              IsStudent = false
+            }
+            //this.gotoPage(HOME_PAGE_NO);
+            this.sendData({
+              action_id: "change_group",
+              parameters: {
+                IsStudent: IsStudent
+              }
+            })
+          }
+          else{
+            if(this.state.page == HOME_PAGE_NO){
+              if(this.state.student){
+                let isCorrect = await this.CheckIsCorrect()
+                if(isCorrect){
+                  await this.Load_Schedule()
+                  this.gotoPage(SCHEDULE_PAGE_NO);
+                 }
+              }
+              else{
+                this.handleTeacherChange(true).then(async(response)=>{
+                  if(response){
+                    await this.Load_Schedule()
+                    this.gotoPage(SCHEDULE_PAGE_NO);
+                  }
+                })
+              }
+            }
+            else{
+              await this.Load_Schedule();
+              this.gotoPage(SCHEDULE_PAGE_NO);
+            }
+           
+          }
           break;
 
         case 'navigation':
@@ -1430,6 +1474,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log('subgroup', action)
           this.ChangePage();
           this.setState({subGroup: action.note});
+          this.gotoPage(HOME_PAGE_NO);
+          break
+        case 'show_home_page':
           this.gotoPage(HOME_PAGE_NO);
           break
 
