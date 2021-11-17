@@ -35,7 +35,7 @@ export const WeekCarousel = ({
           detectThreshold={0.5}
           onIndexChange={(i) => setIndex(i)}
           paddingStart="5%"
-          paddingEnd="50%"
+          paddingEnd="5%"
         >
           {
             cols.map((text, i) => {

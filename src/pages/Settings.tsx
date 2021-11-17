@@ -351,7 +351,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}
-       <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/>
+       {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/> */}
       <Col size={4} style={{display: "flex",
           flexDirection: "row",
           justifyContent: "center",
