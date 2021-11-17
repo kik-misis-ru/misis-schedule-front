@@ -534,7 +534,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.setState({teacher: value});
         break;
       case "page":
-
         this.gotoPage(value);
         break;
       case "student":
@@ -1450,6 +1449,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
           break;
 
+        case 'show_settings':
+          history.push("/settings")
+          break;
+
         case 'navigation':
           console.log("показать навигацию");
           this.ChangePage();
@@ -2016,6 +2019,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
   }
 
   async Bd(): Promise<void> {
+    console.log("BD")
     if (this.state.teacher_bd != "") {
       
       this.setState({student: false, spinner: false})
@@ -2325,7 +2329,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   groupId={this.state.group_id_bd}
                   teacherId={this.state.teacher_id_bd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
-                  Bd={()=>this.Bd()}
                   handleTeacherChange={this.handleTeacherChange}
                   getCurrentLesson={(date) => this.getCurrentLesson(date)}
                   getTimeFirstLesson={(daynum: number) => this.getTimeFirstLesson(daynum)}

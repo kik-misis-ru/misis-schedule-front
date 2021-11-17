@@ -437,7 +437,6 @@ const DashboardPage = ({
                          nextLessonStartEnd,
                          spinner,
                          onGoToPage,
-                         Bd,
                          theme,
                          handleTeacherChange,
                          isUser,
@@ -465,7 +464,6 @@ const DashboardPage = ({
   userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
-  Bd: () => Promise<void>
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
   getCurrentLesson // : (date: Date) => string | undefined
@@ -515,7 +513,6 @@ const DashboardPage = ({
                         marginRight: "2.5em"
                       }}
                             onClick={async () => {
-                              await Bd();
                               onGoToPage(SCHEDULE_PAGE_NO)
                             }}
                       >

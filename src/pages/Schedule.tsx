@@ -11,7 +11,8 @@ import {IScheduleDays,
     Spacer200, 
     HOME_PAGE_NO,
     DASHBOARD_PAGE_NO,
-    SCHEDULE_PAGE_NO
+    SCHEDULE_PAGE_NO,
+    history
 } from '../App'
 
 import {DocStyle, getThemeBackgroundByChar} from "../themes/tools";
@@ -160,11 +161,16 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               }}
               onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
               onDashboardClick={async () => {
-                if (!this.props.isTeacher&&this.props.groupName!=this.props.bd||this.props.isTeacher&&this.props.teacher!=this.props.teacher_bd)
-                await this.Bd();
+
+                if ((!this.props.isTeacher&&this.props.groupName!=this.props.bd)|| (this.props.isTeacher&&this.props.teacher!=this.props.teacher_bd )){
+                  await this.Bd();
+                  console.log("AAAAAAAAAAAAAa")
+                }
+               
+                
                 this.onHandleChange("page", DASHBOARD_PAGE_NO);
               }}
-              Bd={()=> this.Bd()}
+              Bd={this.Bd}
               //Load_Schedule={()=> this.Load_Schedule()}
               // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />
