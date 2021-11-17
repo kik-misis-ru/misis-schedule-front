@@ -215,26 +215,12 @@ export const TopMenu = ({
       />
 
       <Col style={{margin: "0 0 0 auto"}}>
-        {/*
-        <GoToNavigatorButton
-          onClick={() => onNavigatorClick()}
-        />
-*/}
-        {/* <StarButtonView
-          starred={starred}
-          onClick={() => onStarClick()}
-        /> */}
-        
-        {/* <GoToHomeButton
-          onClick={() => onHomeClick()}
-        /> */}
+
         <GoToDashboardButton
                   onClick={async () => {
-                    await Bd();
                     onDashboardClick();
                   }}
                 />
-        {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>
     </Row>
   )
