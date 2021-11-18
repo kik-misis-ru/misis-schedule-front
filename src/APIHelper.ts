@@ -76,12 +76,10 @@ export interface ITeacherInfo{
 }
 
 export interface IScheduleByUserIdData {
-  schedule: IScheduleApiData,
-  push: 
-  {isActive: boolean, //отправка пушей
+  schedule: IScheduleApiData, 
+  isActive: boolean, //отправка пушей
   hour: number, //час отправки пушей
   minute: number, //минута отправки пушей
-  day: number},
   userId: string,
   filialId: string,
   groupId: string,
@@ -191,14 +189,14 @@ export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherAp
   return parsedTeacherData;
 }
 
-export async function addUserToPushNotification( sub: string, hour: number, minute: number, isActive: boolean, day: number){
+export async function addUserToPushNotification( sub: string, hour: number, minute: number, isActive: boolean){
   const url = `${API_URL}add_user_to_push_notification`;
   const data = {
     "sub": sub, 
     "hour": hour, 
     "minute": minute,
     "isActive": isActive,
-    "day": day
+    // "day": day
   };
   console.log(`APIHelper: add_user_to_push_notification: url: "${url}", data:`, data);
 

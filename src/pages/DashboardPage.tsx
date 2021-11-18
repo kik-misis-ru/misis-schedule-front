@@ -248,10 +248,11 @@ const DashboardCard = ({
           height: "20vh",
           marginTop: "0.5em",
           cursor: !!onClick ? 'pointer' : 'default',
+          display: "flex", flexDirection: "column"
         }}
         onClick={(event) => !!onClick ? onClick(event) : undefined}>
-        <CardBody>
-          <CardContent>
+        <CardBody >
+          <CardContent style={{height: "20vh"}}>
             <TextBox>
               <Caption style={{color: "grey"}}>
                 {sub}
@@ -261,27 +262,22 @@ const DashboardCard = ({
               </CardHeadline3>
             </TextBox>
             {text=="Другое расписание" ? 
-            <Col style={{position: "relative",
-            top: "7vh"}}>
+            <Col style={{margin: "auto 0 0 0"}}>
             <IconEvent size="s"/>
             </Col> : <div></div>
             }
             {text=="Карта" ? 
-            <Col style={{position: "relative",
-            top: "8vh"}}>
+            <Col style={{margin: "auto 0 0 0"}}>
             <IconLocation size="s"/>
             </Col> : <div></div>
             }
             {text=="FAQ" ? 
-            <Col style={{position: "relative",
-            top: "6vh"}}>
+            <Col style={{margin: "auto 0 0 0"}}>
             <IconHelp size="s"/>
             </Col> : <div></div>
             }
             {text=="Контакты" ? 
-            <Col style={{
-              position: "relative",
-            top: "8vh",}}>
+            <Col style={{margin: "auto 0 0 0"}}>
             <IconCallCircle size="s"/>
             </Col> : <div></div>
             }

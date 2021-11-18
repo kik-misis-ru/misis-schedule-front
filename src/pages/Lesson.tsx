@@ -35,6 +35,7 @@ const Lesson = (props: {
   spinner: Boolean,
   currentLessonStartEnd: StartEnd,
   theme: string 
+  pageNo: number
   onDashboardClick: () => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
   onGoToPage: (page: number) => void
@@ -46,6 +47,7 @@ const Lesson = (props: {
     currentLesson,
     isTeacherAndValid,
     currentLessonStartEnd,
+    pageNo,
     onDashboardClick,
     handleTeacherChange,
     onGoToPage
@@ -60,8 +62,8 @@ const Lesson = (props: {
     <Container style={{padding: 0, overflow: "hidden"}}>
 
       <Row style={{margin: "1em"}}>
-      <HeaderLogoCol/>
-      {/* <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {ChangePage(); history.back()}} /> */}
+      {/* <HeaderLogoCol/> */}
+      <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {onGoToPage(pageNo)}} />
 
         <HeaderTitleCol2
           title="Карточка пары"

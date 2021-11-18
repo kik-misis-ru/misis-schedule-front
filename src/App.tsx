@@ -436,7 +436,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 this.setState({groupId: user["group_id"], subGroup: user["subgroup_name"], engGroup: user["eng_group"], teacherId: user["teacher_id"], filialId: user["filial_id"]})
                 getSchedulebyUserId(this.state.userId).then((response) => {
                   this.gotoPage(DASHBOARD_PAGE_NO)
-                  this.setState({isActive: response.push.isActive, pushHour: response.push.hour, pushMin: response.push.minute, dayPush: response.push.day})
+                  this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
 
                   console.log("getScheduleByUserId", response)
                     if (response.teacher_id != "" && response.teacher_id!=null) {
@@ -2217,6 +2217,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                     currentLesson={this.state.days[this.state.page-1]?.[match.params.lessonIndex-1]?.[THIS_WEEK]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
+                    pageNo={this.state.page}
                     onDashboardClick={() => this.gotoPage(DASHBOARD_PAGE_NO)}
                     handleTeacherChange={this.handleTeacherChange}
                    

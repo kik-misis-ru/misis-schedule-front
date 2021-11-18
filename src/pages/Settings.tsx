@@ -262,7 +262,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)
       this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
-    addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled, this.state.dayPush)
+    addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
     if(this.state.disabled){
       this.props.sendData({
         action_id: 'settings',
@@ -365,12 +365,12 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center"}}>
-            <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о парах</Caption>
-            <TabSelectorRow
+            <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о завтрашних парах</Caption>
+            {/* <TabSelectorRow
           tabs={TODAY_TOMORROW}
           selectedIndex={this.state.dayPush }
           onSelect={(tabIndex) => this.setState({dayPush: tabIndex})}
-        />
+        /> */}
            
           
           <TimePicker style={{margin:"0.5em"}}
