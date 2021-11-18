@@ -203,7 +203,7 @@ const TodaySummary = ({
       <TextBox
         // @ts-ignore
         style={{
-          marginLeft: "2em",
+          marginLeft: "2.5em",
           paddingTop: "0.5em",
         }}
       >
@@ -417,13 +417,11 @@ const NoLesson = () => (
 
 
 const DashboardPage = ({
-                         // state,
                          character,
                          isTeacherAndValid,
                          start,
                          end,
                          count,
-                         filialId,
                          userId,
                          currentLesson,
                          currentLessonStartEnd,
@@ -436,12 +434,7 @@ const DashboardPage = ({
                          theme,
                          handleTeacherChange,
                          isUser,
-                         getCurrentLesson,
-                         getTimeFirstLesson,
-                         getEndLastLesson,
-                         whatLesson,
                        }: {
-  // state: IAppState
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
@@ -462,19 +455,7 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
-  getCurrentLesson // : (date: Date) => string | undefined
-  getTimeFirstLesson: (daynum: number) => [string, string]
-  getEndLastLesson//: (todayOrTomorrow: TodayOrTomorrow) => string | undefined
-  whatLesson
-  // whatLesson: (
-  //   date: Date,
-  //   when: NowOrWill,
-  // ) => {
-  //   lesson: string | undefined,
-  //   type: NowOrWill | 'next',
-  //   num: number | undefined,
-  // }
-
+  
 }) => {
   console.log(groupId, teacherId, userId, "DASHBOARD")
   return (

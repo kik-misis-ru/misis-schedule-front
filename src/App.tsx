@@ -301,18 +301,14 @@ export interface IAppState {
   engGroup: string
   isEngGroupError: boolean
   isUser: boolean
-
-
   character: Character
     // todo paramoy
     | typeof CHAR_TIMEPARAMOY
-  star: boolean
   bd: string
   student: boolean
   teacher: string
   teacherId: string
   teacher_checked: boolean
-  teacher_star: boolean
   teacher_bd: string
   teacher_correct: boolean
   isTeacherError: boolean
@@ -338,6 +334,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
     this.Bd = this.Bd.bind(this);
     this.sendData = this.sendData.bind(this);
+    this.ChangeTheme=this.ChangeTheme.bind(this);
+    this.ChangePush=this.ChangePush.bind(this);
+    this.Load_Schedule=this.Load_Schedule.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
@@ -356,7 +355,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       filialId: "",
       subGroup: "",
       engGroup: "",
-      teacher_id_bd: "",
+      bd: "",
       group_id_bd: "",
       eng_bd: "",
       sub_bd: "",
@@ -376,26 +375,18 @@ export class App extends React.Component<IAppProps, IAppState> {
       pushMin: 0,
       character: CHAR_SBER,
       isUser: false,
-      star: false,
-      bd: "",
       student: true,
       dayPush: 0,
       teacher: "",
       teacherId: "",
       teacher_checked: false,
-      teacher_star: false,
       teacher_bd: "",
+      teacher_id_bd: "",
       teacher_correct: false,
 
       // building: building,
     }
-    // this.Home                 = Home.bind(this);
-    // this.Navigator            = Navigator.bind(this);
-    //this.Raspisanie = this.Raspisanie.bind(this);
-    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
-    this.ChangeTheme=this.ChangeTheme.bind(this);
-    this.ChangePush=this.ChangePush.bind(this);
-    this.Load_Schedule=this.Load_Schedule.bind(this);
+    
 
   }
 
@@ -459,7 +450,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                         group: response.groupName,
                         flag: true,
                         checked: true,
-                        star: true,
                         bd: response.groupName,
                         group_id_bd: this.state.groupId,
                         eng_bd: this.state.engGroup,
@@ -748,30 +738,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     }
     return [lessonsStart, lessonNumber];
-  }
-
-
-  getTimeFirstLesson2(dayNumber: number): { startEnd: StartEnd, startHhMm: string, number: string } | undefined {
-    let week: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    if (dayNumber < this.state.today) {
-      week = OTHER_WEEK;
-    }
-    const dayLessons = this.state.days[dayNumber - 1];
-
-    for (let strLessonIdx in dayLessons) {
-      const lesson = dayLessons[strLessonIdx][week]
-
-      if (lesson.lessonName !== "") {
-        const lessonStartEnd = LessonStartEnd[Number(strLessonIdx)];
-
-        return {
-          startEnd: lessonStartEnd,
-          startHhMm: lessonStartEnd.start.slice(0, 5),
-          number: lesson.lessonNumber,
-        }
-      }
-    }
-    return undefined;
   }
 
 
@@ -1535,16 +1501,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({group: group.name})
   }
 
-  convertGroupNameInId() {
-    getGroupByName(this.state.group)
-      .then((response) => {
-        console.log("convertNameInId", response)
-        const groupId = String(response.id); // convert to string
-        this.setState({groupId: groupId})
-      })
-
-  }
-
   protected isTeacher() {
     return !this.state.student && this.state.teacher_correct
   }
@@ -1745,30 +1701,11 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
       weekParam = OTHER_WEEK
       timeParam -= 7
     }
-    this.setState({star: false});
     if (weekParam === OTHER_WEEK) {
       console.log("OTHER WEEK")
       this.setState({flag: false});
     } else {
       this.setState({flag: true});
-    }
-    if (this.state.checked) {
-      this.setState({star: true});
-    } else {
-      if (this.state.groupId == this.state.bd) {
-        this.setState({star: true});
-      } else {
-        this.setState({star: false});
-      }
-    }
-    if (this.state.teacher_checked) {
-      this.setState({teacher_star: true});
-    } else {
-      if (this.state.teacherId == this.state.teacher_bd) {
-        this.setState({teacher_star: true});
-      } else {
-        this.setState({teacher_star: false});
-      }
     }
   }
 
@@ -1903,7 +1840,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")
           this.setState({group: group.name, groupId: group.id})
-          //this.convertGroupNameInId();
           correct = true;
         }
         console.log(this.state.groupId, "group Id");
@@ -1962,7 +1898,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")
           this.setState({group: group.name, groupId: group.id})
-          //this.convertGroupNameInId();
           correct = true;
         }
         console.log(this.state.groupId, "group Id");
@@ -2006,13 +1941,13 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           console.log("subGroup", this.state.subGroup)
           this.setState({isSubGroupError: true})
         } else {
-          this.setState({isSubGroupError: false, star: false});
+          this.setState({isSubGroupError: false});
         }
 
         if (!correct_eng) {
           this.setState({isEngGroupError: true})
         } else {
-          this.setState({isEngGroupError: false, star: false});
+          this.setState({isEngGroupError: false});
         }
       })
 
@@ -2069,24 +2004,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
           // переходим на другую страницу
           this.gotoPage(pageNo);
-
-          // if (this.state.today === 0) {
-          //    console.log("this.state.flag", this.state.flag)
-          //    if (this.state.flag) {
-          //      console.log('Spinner: page:', 7)
-          //      this.setState({page: 7})
-          //    } else {
-          //      console.log('Spinner: page:', 8)
-          //      this.setState({page: 8})
-          //    }
-          //  } else if (this.state.flag) {
-          //   console.log("this.state.flag", this.state.flag)
-          //    console.log('Spinner: page: today:', this.state.today)
-          //    this.setState({page: this.state.today});
-          //  } else {
-          //    console.log('Spinner: page:', 8)
-          //    this.setState({page: 8});
-          //  }
         }, REDIRECT_DELAY);
         clearInterval(checkInterval)
       }
@@ -2238,12 +2155,9 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 character={this.state.character}
                 theme={this.state.theme}
                 isTeacher={!this.state.student}
-                teacher_star={this.state.teacher_star}
-                star={this.state.star}
                 Bd={this.Bd}
                 bd={this.state.bd}
                 teacher_bd={this.state.teacher_bd}
-                //Load_Schedule={this.Load_Schedule}
                 PreviousWeek={this.PreviousWeek}
                 CurrentWeek={this.CurrentWeek}
                 NextWeek={this.NextWeek}
@@ -2331,10 +2245,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   teacherId={this.state.teacher_id_bd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                   handleTeacherChange={this.handleTeacherChange}
-                  getCurrentLesson={(date) => this.getCurrentLesson(date)}
-                  getTimeFirstLesson={(daynum: number) => this.getTimeFirstLesson(daynum)}
-                  getEndLastLesson={(todayOrTomorrow: TodayOrTomorrow) => this.getEndLastLesson(todayOrTomorrow)}
-                  whatLesson={(date, when) => this.whatLesson(date, when)}
+                  
                 />
               })()
             }

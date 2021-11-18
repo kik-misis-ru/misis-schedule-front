@@ -298,11 +298,11 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
 <HeaderTitleCol2
   title="Настройки"
 />
-
+{!this.state.edit ? (
 <Col style={{margin: "0 0 0 auto"}}>
   <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
-</Col>
-
+</Col>) : (<div></div>)
+  }
 </Row > 
 
           { this.state.edit ? (

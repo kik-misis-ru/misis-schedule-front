@@ -43,10 +43,8 @@ import { threadId } from "worker_threads";
     groupName: string
     character: Character  | typeof CHAR_TIMEPARAMOY
     isTeacher: boolean
-    teacher_star: boolean
     bd: string
     teacher_bd: string
-    star: boolean
     theme: string
     PreviousWeek: () => void
     CurrentWeek: () => void
@@ -152,19 +150,11 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                   ? this.props.teacher
                   : this.props.groupName
               }
-              starred={
-                this.props.isTeacher
-                  ? this.props.teacher_star
-                  : this.props.star
-              }
-              onStarClick={() => {
-              }}
               onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
               onDashboardClick={async () => {
 
                 if ((!this.props.isTeacher&&this.props.groupName!=this.props.bd)|| (this.props.isTeacher&&this.props.teacher!=this.props.teacher_bd )){
                   await this.Bd();
-                  console.log("AAAAAAAAAAAAAa")
                 }
                
                 
