@@ -398,10 +398,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log('_assistant.on("data") event:', event);
 
       switch (event?.type) {
-
-        // case "push":
-
-
         case "character":
           console.log('componentDidMount: character:', event.character.id);
           this.setState({character: event.character.id});
@@ -1928,8 +1924,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
             })
           }
-
-
         } else if (correct) {
           this.setState({isGroupError: false});
 
