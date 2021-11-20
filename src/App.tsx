@@ -986,12 +986,12 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
         case 'profile':
           console.log("profile");
-          if(! action.IsStudent){
-            this.setState({student: false})
-          }
-          else{
-            this.setState({student: true})
-          }
+          // if(! action.IsStudent){
+          //   this.setState({student: false})
+          // }
+          // else{
+          //   this.setState({student: true})
+          // }
           return history.push("/home")
           break;
         case 'set_eng_group':
