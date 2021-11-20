@@ -986,7 +986,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
         case 'profile':
           console.log("profile");
-          this.ChangePage()
           if(! action.IsStudent){
             this.setState({student: false})
           }
@@ -1012,18 +1011,14 @@ export class App extends React.Component<IAppProps, IAppState> {
                   day: DAY_SUNDAY
                 },
               })
-
-              this.ChangePage()
-              return this.gotoPage(7);
+              return this.ChangeDay(7);
 
             } else {
               this.sendData({
                 action_id: "todaySchedule",
                 parameters: {day: DAY_NOT_SUNDAY},
               })
-
-              this.ChangePage()
-              return this.gotoPage(this.state.today);
+              return this.ChangeDay(this.state.today);
             }
           break;
 
@@ -1034,34 +1029,30 @@ export class App extends React.Component<IAppProps, IAppState> {
                 action_id: "tomorrowSchedule",
                 parameters: {day: DAY_SUNDAY},
               })
-              this.ChangePage()
-              return this.gotoPage(7);
+              return this.ChangeDay(7);
             } else {
               this.sendData({
                 action_id: "tomorrowSchedule",
                 parameters: {day: DAY_NOT_SUNDAY},
               })
-              this.ChangePage()
-              return this.gotoPage(this.state.today + 1);
+              return this.ChangeDay(this.state.today + 1);
             }
           break;
 
         case 'for_next_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             this.NextWeek();
-            this.ChangePage()
-            return this.gotoPage(FIRST_DAY_OTHER_WEEK);
+            return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
           }
           break;
 
         case 'for_this_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            this.ChangePage()
             this.setState({
               date: Date.now(),
               flag: true,
             });
-            this.gotoPage(SCHEDULE_PAGE_NO);
+            this.ChangeDay(SCHEDULE_PAGE_NO);
             return
           }
           break;
@@ -1096,14 +1087,11 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
 
             if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
-              this.ChangePage()
-              return this.gotoPage(this.state.today);
+              return this.ChangeDay(this.state.today);
             } else if (this.state.today + 1 === 7) {
-              this.ChangePage();
-              return this.gotoPage(7);
+              return this.ChangeDay(7);
             } else {
-              this.ChangePage();
-              this.gotoPage(this.state.today + 1);
+              this.ChangeDay(this.state.today + 1);
             }
           }
           break
@@ -1157,8 +1145,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               if (dayOfWeekIndex < this.state.today) {
                 page = 7;
               }
-              this.ChangePage();
-              this.gotoPage(dayOfWeekIndex + page)
+              this.ChangeDay(dayOfWeekIndex + page)
             }
 
             this.sendData({
@@ -1209,11 +1196,10 @@ export class App extends React.Component<IAppProps, IAppState> {
               action_id: "say3",
               parameters: whereLessonParams,
             })
-            this.ChangePage();
             if (whereLessonParams.exist === DAY_SUNDAY) {
               //this.setState({ page: 8 })
             } else {
-              this.gotoPage(this.state.today);
+              this.ChangeDay(this.state.today);
             }
           }
           break
@@ -1232,11 +1218,10 @@ export class App extends React.Component<IAppProps, IAppState> {
               action_id: "say4",
               parameters: whatlesson,
             })
-            this.ChangePage();
             if (this.state.today === 0) {
-              this.gotoPage(7)
+              this.ChangeDay(7)
             } else {
-              this.gotoPage(this.state.today);
+              this.ChangeDay(this.state.today);
             }
           }
           break
@@ -1273,14 +1258,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             let whichFirst: AssistantSendActionSay5['parameters'] = {
               day1: DAY_SUNDAY,
             }
-            if (/*this.state.group !== "" && */firstLessonNumStr !== undefined) {
-              // if (number === undefined) {
-              //   whichFirst = {
-              //     day1: DAY_SUNDAY,
-              //   }
-              //   // this.ChangePage();
-              //   // this.setState({ page: 8 })
-              // } else {
+            if (firstLessonNumStr !== undefined) {
               const {dayOfWeek: strDayOfWeek} = action.note;
               const dayOfWeekIdx = parseInt(strDayOfWeek) - 1
               const dayOfWeekShortName = daysOfWeekShort[dayOfWeekIdx];
@@ -1298,10 +1276,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
 
               const newPage = dayOfWeekIdx1 + page1;
-              this.ChangePage();
-              this.setState({
-                page: newPage,
-              })
+              this.gotoPage(newPage)
             }
             this.sendData({
               action_id: "say5",
@@ -1348,10 +1323,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             }
 
             const newPage = dayOfWeekIdx1 + page2;
-            this.ChangePage();
-            this.setState({
-              page: newPage,
-            })
+            this.gotoPage(newPage)
             // }
             this.sendData({
               action_id: "say6",
@@ -1406,18 +1378,12 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'navigation':
           console.log("показать навигацию");
-          this.ChangePage();
-          // this.gotoPage(NAVIGATOR_PAGE_NO);
           history.push('/navigation')
           break;
         case 'faq':
-          this.ChangePage();
-          // this.gotoPage(FAQ_PAGE_NO);
           history.push('/faq')
           return;
         case 'contacts':
-          this.ChangePage();
-          // this.setState({page: CONTACTS_PAGE_NO});
           history.push('/contacts')
           return;
         case 'group':
@@ -1440,8 +1406,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
 
         case 'subgroup':
-          console.log('subgroup', action)
-          this.ChangePage();
           this.setState({subGroup: action.note});
          history.push('/home')
           break
@@ -1670,6 +1634,10 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     this.setState({spinner: true});
     this.setState({days: days});
     console.log("Days", days, "Day", this.state.day)
+  }
+  ChangeDay(day: number): void{
+    this.ChangePage();
+    this.gotoPage(day);
   }
 
 
@@ -2067,10 +2035,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx-1];
                 let start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
                 let end = this.getEndLastLesson(DAY_TODAY);
-                
-                //console.log(nextLessonStartEnd, "todaysummary")
-                //console.log("this.state.teacherId", this.state.teacherId, this.state.groupId)
-
                 return <DashboardPage
                   character={this.state.character}
                   theme={this.state.theme}
