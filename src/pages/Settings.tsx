@@ -142,7 +142,6 @@ interface SettingsProps {
   sendData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
-  onValidateInput: () => void
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
@@ -216,11 +215,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   }
   async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
     return await this.props.onHandleTeacherChange(isSave);
-  }
-
-  async isCorrect() {
-      console.log(this.props.student, "PROPS.STUDENT");
-     this.props.student ? await this.props.onValidateInput() : this.onHandleTeacherChange(true)
   }
   async CheckIsCorrect(){
     return await this.props.CheckIsCorrect();

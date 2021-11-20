@@ -122,10 +122,12 @@ interface HomeViewProps {
   description: string
   theme: string 
   onSetValue: (key: string, value: any) => void
-  onValidateInput: () => void
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
+  CheckIsCorrect: () => Promise<boolean>
+  LoadSchedule: () => void
+  onShowScheduleClick: () => void
 
   group: string
   isGroupError: boolean
@@ -151,7 +153,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   constructor(props: HomeViewProps) {
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
-    // this.handleTeacherChange = this.handleTeacherChange.bind(this);
+    this.Load_Schedule = this.Load_Schedule.bind(this)
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     let disabled = true;
     if (props.groupId !== "") disabled = false;
@@ -165,8 +167,11 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     this.props.onSetValue(key, value);
   }
 
-  async isCorrect() {
-    await this.props.onValidateInput();
+  async CheckIsCorrect(){
+    return await this.props.CheckIsCorrect();
+  }
+  Load_Schedule(){
+    this.props.LoadSchedule()
   }
 
   // handleTeacherChange() {
@@ -226,7 +231,15 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onValidateInput()}
+          onClick={async()=>{
+            let isCorrect = await this.CheckIsCorrect()
+            if(isCorrect){
+              await this.Load_Schedule()
+              this.props.onShowScheduleClick()
+          }
+            
+         }
+          }
         />
 
       </Container>

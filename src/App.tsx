@@ -323,7 +323,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     super(props);
     this.setValue = this.setValue.bind(this)
     this.Load_Schedule =  this.Load_Schedule.bind(this)
-    this.isCorrect = this.isCorrect.bind(this)
     this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
     this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
@@ -1810,6 +1809,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
   });
   }
 
+  //Проверяет правильность ввода данных студента
   async CheckIsCorrect() : Promise<boolean>{
     console.log('App: isCorrect')
     this.setState({correct: false, date: Date.now(), flag: true});
@@ -1865,85 +1865,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
       })
 
-
-  }
-
-  async isCorrect(): Promise<void> {
-    console.log('App: isCorrect')
-    this.setState({correct: false, date: Date.now(), flag: true});
-    let correct_sub = false;
-    let correct_eng = false;
-    let correct = false;
-    console.log("this.state.engGroup", this.state.engGroup)
-
-    let promiseGroupName = getGroupByName(this.state.group);
-    let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
-
-    return Promise.all([
-      promiseGroupName,
-      promiseEnglishGroup,
-    ])
-      .then(async (responses) => {
-        console.log("App: isCorrect: response", responses)
-        const [
-          group_response,
-          english_response,
-        ] = responses;
-        const group = JSON.parse(group_response);
-        console.log("App: isCorrect: response: english", english_response);
-        if (group.status == 1) {
-          console.log(group.name, group.id, "GROUP RESPONSE")
-          this.setState({group: group.name, groupId: group.id})
-          correct = true;
-        }
-        console.log(this.state.groupId, "group Id");
-        if (english_response || this.state.engGroup == "") {
-          correct_eng = true;
-          console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
-        }
-        if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) {
-          correct_sub = true;
-        }
-        if (correct && correct_sub && correct_eng) {
-          if (this.state.page==HOME_PAGE_NO){
-          this.gotoPage(SCHEDULE_PAGE_NO)
-          }
-          await this.Load_Schedule()
-          if (this.state.checked) {
-            const groupId = String(group.id);
-          
-            this.setState({groupId: groupId, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
-            
-             createUser(
-                this.state.userId,
-                filial.id,
-                group.id,
-                this.state.subGroup,
-                this.state.engGroup,
-                "")
-
-            })
-          }
-        } else if (correct) {
-          this.setState({isGroupError: false});
-
-        } else {
-          this.setState({isGroupError: true})
-        }
-
-        if (!correct_sub) {
-          console.log("subGroup", this.state.subGroup)
-          this.setState({isSubGroupError: true})
-        } else {
-          this.setState({isSubGroupError: false});
-        }
-
-        if (!correct_eng) {
-          this.setState({isEngGroupError: true})
-        } else {
-          this.setState({isEngGroupError: false});
-        }
-      })
 
   }
 
@@ -2079,7 +2000,6 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   bd={this.state.bd}
                   sendData={this.sendData}
                   teacher_bd={this.state.teacher_bd}
-                  onValidateInput={this.isCorrect}
                   onHandleTeacherChange={this.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
                   onSetValue={this.setValue}
@@ -2171,7 +2091,8 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
               (page === HOME_PAGE_NO) &&
               <HomePage
                 // state={this.state}
-                onValidateInput={this.isCorrect}
+                CheckIsCorrect={this.CheckIsCorrect}
+                LoadSchedule = { this.Load_Schedule}
                 onHandleTeacherChange={this.handleTeacherChange}
                 onConvertIdInGroupName={this.convertIdInGroupName}
                 onSetValue={this.setValue}
@@ -2179,7 +2100,7 @@ showWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 character={this.state.character}
                 theme={this.state.theme}
                 checked={this.state.checked}
-
+                onShowScheduleClick={()=>this.gotoPage(SCHEDULE_PAGE_NO)}
                 groupId={this.state.groupId}
                 group={this.state.group}
                 isGroupError={this.state.isGroupError}
