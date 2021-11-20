@@ -78,7 +78,7 @@ import {
 import Lesson from "./pages/Lesson";
 
 export const NON_EXISTING_PAGE_NO = -1;
-export const HOME_PAGE_NO = 0;
+//export const HOME_PAGE_NO = 0;
 //export const NAVIGATOR_PAGE_NO = 15;
 //export const DASHBOARD_PAGE_NO = 16;
 export const SCHEDULE_PAGE_NO = 17;
@@ -86,6 +86,8 @@ export const CONTACTS_PAGE_NO = 18;
 // export const FAQ_PAGE_NO = 19;
 // export const SETTING_PAGE_NO = 20;
 export const LESSON_PAGE_NO = 21;
+
+export const HOME_PAGE_ROUTE = "home";
 
 const INITIAL_PAGE = 16;
 
@@ -255,6 +257,9 @@ export type DayBells = ThisOtherWeekBells[]
 export type IScheduleDays = DayBells[]
 
 export const history = createBrowserHistory();
+
+
+
 
 //
 
@@ -509,9 +514,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       case "teacher":
         this.setState({teacher: value});
         break;
-      // case "page":
-      //   this.gotoPage(value);
-      //   break;
+      case "page":
+        this.gotoPage(value);
+        break;
       case "student":
         this.setState({student: value});
         break;
@@ -988,10 +993,11 @@ export class App extends React.Component<IAppProps, IAppState> {
           else{
             this.setState({student: true})
           }
-          return this.gotoPage(HOME_PAGE_NO);
+          return history.push("/home")
           break;
         case 'set_eng_group':
-          if(this.state.page == HOME_PAGE_NO && action.group!=undefined){
+          console.log("Pathname:",history.pathname)
+          if(history.location==HOME_PAGE_ROUTE && action.group!=undefined){
             this.setState({engGroup: String(action.group) })
           }
           break
@@ -1369,7 +1375,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             })
           }
           else{
-            if(this.state.page == HOME_PAGE_NO){
+            if(history.location == HOME_PAGE_ROUTE){
               if(this.state.student){
                 let isCorrect = await this.CheckIsCorrect()
                 if(isCorrect){
@@ -1420,13 +1426,13 @@ export class App extends React.Component<IAppProps, IAppState> {
             this.setState({
               group: action.note[1].data.groupName[0].toUpperCase(),
             });
-            this.gotoPage(HOME_PAGE_NO);
+            history.push('/home')
           } else {
             console.log(action.note[1].data.groupName[1])
             this.setState({
               group: action.note[1].data.groupName[1].toUpperCase(),
             })
-            this.gotoPage(HOME_PAGE_NO);
+            history.push("/home")
           }
           break
         case 'dashboard':
@@ -1437,10 +1443,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           console.log('subgroup', action)
           this.ChangePage();
           this.setState({subGroup: action.note});
-          this.gotoPage(HOME_PAGE_NO);
+         history.push('/home')
           break
         case 'show_home_page':
-          this.gotoPage(HOME_PAGE_NO);
+          history.push('/home')
           break
 
         default:
@@ -1968,7 +1974,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   theme={this.state.theme}
                   isMobileDevice={detectDevice() === "mobile"}
                   onDashboardClick={()=>{history.push("/dashboard")}}
-                  onHomeClick={() => this.gotoPage(HOME_PAGE_NO)}
+                  onHomeClick={() => {history.push("/home")}}
                   onScheduleClick={() => this.gotoPage(SCHEDULE_PAGE_NO)}
                 />
               }
@@ -2088,6 +2094,40 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 />
               }
             }/>
+          <Route 
+          path="/home"
+          render={
+            ({match}) =>{
+              return <HomePage
+                // state={this.state}
+                CheckIsCorrect={this.CheckIsCorrect}
+                LoadSchedule = { this.Load_Schedule}
+                onHandleTeacherChange={this.handleTeacherChange}
+                onConvertIdInGroupName={this.convertIdInGroupName}
+                onSetValue={this.setValue}
+                description={this.state.description}
+                character={this.state.character}
+                theme={this.state.theme}
+                checked={this.state.checked}
+                onShowScheduleClick={()=>this.gotoPage(SCHEDULE_PAGE_NO)}
+                groupId={this.state.groupId}
+                group={this.state.group}
+                isGroupError={this.state.isGroupError}
+                subGroup={this.state.subGroup}
+                isSubGroupError={this.state.isSubGroupError}
+
+                engGroup={this.state.engGroup}
+                isEngGroupError={this.state.isEngGroupError}
+
+                student={this.state.student}
+                teacher={this.state.teacher}
+                isTeacherError={this.state.isTeacherError}
+                // handleTeacherChange={this.handleTeacherChange}
+                teacher_checked={this.state.teacher_checked}
+              />
+            }
+          }
+          />
           <Route path="*">
             {
 
@@ -2116,36 +2156,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 group={this.state.group}
                 subGroup={this.state.subGroup}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
-              />
-            }
-            {
-              (page === HOME_PAGE_NO) &&
-              <HomePage
-                // state={this.state}
-                CheckIsCorrect={this.CheckIsCorrect}
-                LoadSchedule = { this.Load_Schedule}
-                onHandleTeacherChange={this.handleTeacherChange}
-                onConvertIdInGroupName={this.convertIdInGroupName}
-                onSetValue={this.setValue}
-                description={this.state.description}
-                character={this.state.character}
-                theme={this.state.theme}
-                checked={this.state.checked}
-                onShowScheduleClick={()=>this.gotoPage(SCHEDULE_PAGE_NO)}
-                groupId={this.state.groupId}
-                group={this.state.group}
-                isGroupError={this.state.isGroupError}
-                subGroup={this.state.subGroup}
-                isSubGroupError={this.state.isSubGroupError}
-
-                engGroup={this.state.engGroup}
-                isEngGroupError={this.state.isEngGroupError}
-
-                student={this.state.student}
-                teacher={this.state.teacher}
-                isTeacherError={this.state.isTeacherError}
-                // handleTeacherChange={this.handleTeacherChange}
-                teacher_checked={this.state.teacher_checked}
               />
             }
             {

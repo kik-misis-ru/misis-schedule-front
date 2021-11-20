@@ -19,30 +19,15 @@ import {
   //CardMedia,
   CardParagraph1,
   CardParagraph2,
-  TextBoxBigTitle,
   TextBox,
-  TextBoxLabel,
-  TextBoxSubTitle,
-  TextBoxTitle,
-  Badge,
   CellListItem,
   CardHeadline3,
-  CardHeadline2,
-  Image,
   LineSkeleton,
   RectSkeleton,
   CellDisclosure,
-  ActionButton,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
-import {IconLocation, IconStarFill, IconSettings, IconApps, IconEvent, IconHelp, IconCallCircle} from "@sberdevices/plasma-icons";
-//import {text, background, gradient} from "@sberdevices/plasma-tokens";
-import logo from "../images/logo.png";
-//import "../themes/App.css";
-import {
-  DEFAULT_TEXT_COLOR,
-  ACCENT_TEXT_COLOR, COLOR_BLACK,
-} from '../components/consts';
+import {IconLocation, IconStarFill, IconApps, IconEvent, IconHelp, IconCallCircle} from "@sberdevices/plasma-icons";
 import {
   DocStyle,
   getThemeBackgroundByChar,
@@ -52,30 +37,21 @@ import {
   formatTimeHhMm,
 } from '../utils';
 import {
-  HOME_PAGE_NO,
   StartEnd,
-  LessonStartEnd,
-  // NAVIGATOR_PAGE_NO,
   SCHEDULE_PAGE_NO,
-  // CONTACTS_PAGE_NO,
-  // SETTING_PAGE_NO,
-  // FAQ_PAGE_NO,
 } from '../App';
-import LinkToOnline from '../components/LinkToOnline';
-import {NowOrWill} from "../types/AssistantReceiveAction";
 import {Bell} from '../types/ScheduleStructure'
-import {CHAR_TIMEPARAMOY, Character, DAY_TODAY, THIS_WEEK, TodayOrTomorrow} from "../types/base.d";
-import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
+import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
+import {pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
-import {history, IAppState} from "../App";
+import {history} from "../App";
 
 
 import {DAY_OFF_TEXT} from '../components/ScheduleDayOff'
 import moment from 'moment';
 import 'moment/locale/ru';
 
-// const DAY_OFF_TEXT = 'Выходной😋';
 const NO_LESSONS_TODAY_TEXT = 'Сегодня пар нет';
 
 moment.locale('ru');
@@ -361,14 +337,14 @@ const CatalogueItems = ({
       <DashboardCard
               text="Другое расписание"
               sub=""
-              onClick={() => onGoToPage(HOME_PAGE_NO)}
+              onClick={() => history.push('/home')}
             />
 
       <DashboardCard
         text="FAQ"
         sub="Часто задаваемые вопросы"
         // onClick={() => onGoToPage(FAQ_PAGE_NO)}
-        onClick={() => history.replace('/faq')}
+        onClick={() => history.push('/faq')}
       />
 
       <DashboardCard

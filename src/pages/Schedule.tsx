@@ -1,6 +1,5 @@
 import React from "react";
 import 'react-toastify/dist/ReactToastify.css';
-import styled from "styled-components";
 import {Container, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import ScheduleDay from "../components/ScheduleDay";
 import TopMenu from '../components/TopMenu';
@@ -8,8 +7,7 @@ import WeekCarousel from "../components/WeekCarousel";
 import WeekSelect from "../components/WeekSelect";
 
 import {IScheduleDays, 
-    Spacer200, 
-    HOME_PAGE_NO,
+    Spacer200,
     SCHEDULE_PAGE_NO,
     history
 } from '../App'
@@ -149,7 +147,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                   ? this.props.teacher
                   : this.props.groupName
               }
-              onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
+              onHomeClick={() => history.push('/home')}
               onDashboardClick={async () => {
 
                 if ((!this.props.isTeacher&&this.props.groupName!=this.props.bd)|| (this.props.isTeacher&&this.props.teacher!=this.props.teacher_bd )){
