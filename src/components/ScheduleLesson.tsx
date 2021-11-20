@@ -9,6 +9,7 @@ import {
   TextBoxSubTitle,
   TextBoxTitle,
   Badge,
+  Col,
   CellListItem,
 } from "@sberdevices/plasma-ui";
 import {
@@ -187,8 +188,9 @@ const MainContent = (
           onClick={() => onTeacherClick(teacher)}
         /> : <div></div>
       }
-      &nbsp;
+      <Col size={12} style={{paddingLeft: "0"}}>
       <LinkToOnline url={url}/>
+      </Col>
 
     </TextBox>
   )

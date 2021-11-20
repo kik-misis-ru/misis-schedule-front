@@ -28,6 +28,7 @@ interface AssistantEventCharacter extends AssistantEventGeneric {
 
 interface AssistantActionProfile {
   type: 'profile'
+  IsStudent: boolean
 }
 
 interface AssistantActionForToday {
@@ -44,6 +45,10 @@ interface AssistantActionForNextWeek {
 
 interface AssistantActionForThisWeek {
   type: 'for_this_week'
+}
+interface AssistantActionForSetEngGroup{
+  type: 'set_eng_group'
+  group: number
 }
 
 interface AssistantActionWhenLesson {
@@ -114,6 +119,7 @@ interface AssistantActionDaySchedule {
 
 interface AssistantActionShowSchedule {
   type: 'show_schedule'
+  note: string
   
 }
 
@@ -135,6 +141,10 @@ interface AssistantActionShowContacts {
 interface AssistantActionShowDashBoard{
   type: 'dashboard'
 }
+interface IShowHomePage{
+  type: 'show_home_page'
+  note: string
+}
 
 interface AssistantActionGroup {
   type: 'group'
@@ -151,6 +161,10 @@ interface AssistantActionGroup {
 interface AssistantActionSubgroup {
   type: 'subgroup'
   note: string
+}
+
+interface AssistantActionShowSettings{
+  type: 'show_settings'
 }
 
 export type AssistantAction = AssistantActionProfile
@@ -172,7 +186,10 @@ export type AssistantAction = AssistantActionProfile
   | AssistantActionShowFAQ
   | AssistantActionShowContacts
   | AssistantActionSettings
-  |AssistantActionShowDashBoard;
+  |AssistantActionShowDashBoard
+  |IShowHomePage
+  |AssistantActionForSetEngGroup
+  |AssistantActionShowSettings;
 
 //
 

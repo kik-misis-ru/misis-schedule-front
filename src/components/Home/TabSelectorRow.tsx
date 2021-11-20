@@ -10,6 +10,7 @@ export const TabSelectorRow = ({
   selectedIndex: number,
   onSelect: (tabIndex: number) => void
 }) => {
+  console.log(selectedIndex, "selectedIndex");
   return (
     <Row style={{
       display: "flex",

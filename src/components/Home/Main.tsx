@@ -3,11 +3,12 @@ import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  DASHBOARD_PAGE_NO,
-  SCHEDULE_PAGE_NO,
+  history,
   Spacer100,
 } from '../../App';
 import {
+    HeaderLogoCol,
+    HeaderTitleCol2,
   GoToDashboardButton,
   GoToScheduleButton,
 } from '../TopMenu';
@@ -28,31 +29,24 @@ const Main = ({
               }: MainProps) => {
 
   const TopMenuRow = () => (
-    <Row
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-      }}
-    >
-      <Col
-         style={{margin: "1em"}}
-      >
-        <GoToDashboardButton
+    <Row style={{margin: "1em"}}>
+
+              <HeaderLogoCol/>
+
+              <HeaderTitleCol2
+                title="Другое расписание"
+              />
+
+              <Col style={{margin: "0 0 0 auto"}}>
+              <GoToDashboardButton
           onClick={() => {
-            // rewrite to gotoPage() or to history.push()
-            setValue("page", DASHBOARD_PAGE_NO)
+            history.push('/dashboard')
           }}
         />
-        {/* <GoToScheduleButton
-          onClick={() => {
-            convertIdInGroupName();
-            setValue("page", SCHEDULE_PAGE_NO)
-          }}
-          disabled={disabled}
-        /> */}
-      </Col>
-    </Row>
+              </Col>
+
+            </Row>
+   
 
   )
 

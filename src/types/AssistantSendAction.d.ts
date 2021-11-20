@@ -97,6 +97,20 @@ export interface AssistantSendSettings{
   action_id: 'settings'
 }
 
+export interface AssistantSendChangeGroup{
+  action_id: 'change_group'
+  parameters: {
+    IsStudent: boolean
+  }
+}
+export interface AssistantSendHelloPhrase{
+  action_id: 'hello_phrase'
+}
+
+export interface AssistantSendPushOn{
+  action_id: 'push_on'
+}
+
 export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionTomorrowSchedule
   | AssistantSendActionSay
@@ -107,6 +121,9 @@ export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionSay4
   | AssistantSendActionSay5
   | AssistantSendActionSay6
+  |AssistantSendChangeGroup
+  |AssistantSendHelloPhrase
+  |AssistantSendPushOn;
 
 
 //

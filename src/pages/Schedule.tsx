@@ -1,6 +1,5 @@
 import React from "react";
 import 'react-toastify/dist/ReactToastify.css';
-import styled from "styled-components";
 import {Container, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import ScheduleDay from "../components/ScheduleDay";
 import TopMenu from '../components/TopMenu';
@@ -8,10 +7,8 @@ import WeekCarousel from "../components/WeekCarousel";
 import WeekSelect from "../components/WeekSelect";
 
 import {IScheduleDays, 
-    Spacer200, 
-    HOME_PAGE_NO,
-    DASHBOARD_PAGE_NO,
-    SCHEDULE_PAGE_NO
+    Spacer200,
+    history
 } from '../App'
 
 import {DocStyle, getThemeBackgroundByChar} from "../themes/tools";
@@ -42,8 +39,8 @@ import { threadId } from "worker_threads";
     groupName: string
     character: Character  | typeof CHAR_TIMEPARAMOY
     isTeacher: boolean
-    teacher_star: boolean
-    star: boolean
+    bd: string
+    teacher_bd: string
     theme: string
     PreviousWeek: () => void
     CurrentWeek: () => void
@@ -149,19 +146,17 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                   ? this.props.teacher
                   : this.props.groupName
               }
-              starred={
-                this.props.isTeacher
-                  ? this.props.teacher_star
-                  : this.props.star
-              }
-              onStarClick={() => {
-              }}
-              onHomeClick={() => this.onHandleChange("page", HOME_PAGE_NO)}
+              onHomeClick={() => history.push('/home')}
               onDashboardClick={async () => {
-                await this.Bd();
-                this.onHandleChange("page", DASHBOARD_PAGE_NO);
+
+                if ((!this.props.isTeacher&&this.props.groupName!=this.props.bd)|| (this.props.isTeacher&&this.props.teacher!=this.props.teacher_bd )){
+                  await this.Bd();
+                }
+               
+                
+                history.push("/dashboard")
               }}
-              Bd={()=> this.Bd()}
+              Bd={this.Bd}
               //Load_Schedule={()=> this.Load_Schedule()}
               // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />
@@ -176,7 +171,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
              onThisWeekClick={() => {
                this.CurrentWeek();
                this.onHandleChange("flag", true)
-               this.onHandleChange("page", SCHEDULE_PAGE_NO)
+               history.push('/spinner')
              }}
              onNextWeekClick={() => {
                this.onHandleChange("spinner", false);

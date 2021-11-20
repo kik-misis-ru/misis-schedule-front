@@ -26,7 +26,7 @@ export const FAQCard = ({
                         }: {
   questions: string
   text: string
-  answers: string[],
+  answers: string[]
 }) => {
   const [flag, setFlag] = useState(false);
   const Click = () => {

@@ -76,7 +76,7 @@ export interface ITeacherInfo{
 }
 
 export interface IScheduleByUserIdData {
-  schedule: IScheduleApiData,
+  schedule: IScheduleApiData, 
   isActive: boolean, //отправка пушей
   hour: number, //час отправки пушей
   minute: number, //минута отправки пушей
@@ -195,7 +195,8 @@ export async function addUserToPushNotification( sub: string, hour: number, minu
     "sub": sub, 
     "hour": hour, 
     "minute": minute,
-    "isActive": isActive
+    "isActive": isActive,
+    // "day": day
   };
   console.log(`APIHelper: add_user_to_push_notification: url: "${url}", data:`, data);
 

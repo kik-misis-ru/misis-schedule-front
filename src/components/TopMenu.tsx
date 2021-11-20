@@ -33,7 +33,7 @@ export const HeaderTitleCol = ({
                      }: {
   title: string
 }) => (
-  <Col style={{marginLeft: "0.5em", paddingTop: "0.6em"}}>
+  <Col style={{marginLeft: "0.5em", paddingTop: "0.5em"}}>
     <TextBox>
       <CardHeadline2>{title}</CardHeadline2>
     </TextBox>
@@ -87,26 +87,6 @@ export const GoToNavigatorButton = ({
   />
 )
 
-
-export const StarButtonView = ({
-                          starred,
-                          onClick,
-                        }: {
-  starred: boolean
-  onClick: React.MouseEventHandler<HTMLElement>
-}) => {
-  return <Button
-    size="s"
-    view="clear"
-    pin="circle-circle"
-    onClick={(event) => onClick(event)}
-    contentRight={
-      starred
-        ? <IconStarFill size="s" color="inherit"/>
-        : <IconStar size="s" color="inherit"/>
-    }
-  />
-}
 
 
 export const GoToDashboardButton = ({
@@ -186,9 +166,6 @@ export const GoToScheduleButton = ({
 export const TopMenu = ({
                    label,
                    subLabel,
-                   starred,
-                   // onNavigatorClick,
-                   onStarClick,
                    onDashboardClick,
                    onHomeClick,
                    Bd,
@@ -196,9 +173,7 @@ export const TopMenu = ({
                  }: {
   label?: string
   subLabel: string
-  starred: boolean
   // onNavigatorClick: () => void
-  onStarClick: () => void
   onDashboardClick: () => void
   onHomeClick: () => void
   Bd: () => Promise<void>
@@ -215,26 +190,12 @@ export const TopMenu = ({
       />
 
       <Col style={{margin: "0 0 0 auto"}}>
-        {/*
-        <GoToNavigatorButton
-          onClick={() => onNavigatorClick()}
-        />
-*/}
-        {/* <StarButtonView
-          starred={starred}
-          onClick={() => onStarClick()}
-        /> */}
-        
-        {/* <GoToHomeButton
-          onClick={() => onHomeClick()}
-        /> */}
+
         <GoToDashboardButton
                   onClick={async () => {
-                    await Bd();
                     onDashboardClick();
                   }}
                 />
-        {/* <Button size="s" view="clear" pin="circle-circle" onClick={()=>this.setState({ page: 16 })}  contentRight={<IconHouse size="s" color="inherit"/>} /> */}
       </Col>
     </Row>
   )

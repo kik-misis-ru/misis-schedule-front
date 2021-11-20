@@ -13,10 +13,7 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  // NAVIGATOR_PAGE_NO,
-  DASHBOARD_PAGE_NO,
-  SCHEDULE_PAGE_NO,
-  Spacer100,
+  history
 } from '../App';
 import {DocStyle} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character} from "../types/base";
@@ -77,63 +74,6 @@ const HomeDescription = ({
 
 )
 
-// export const GoToMenuButton = (props) => (
-//   <Button
-//     size="s"
-//     view="clear"
-//     onClick={props.onClick}
-//     pin="circle-circle"
-//     contentRight={
-//       <IconHouse size="s" color="inherit"/>
-//     }
-//   />
-// )
-//
-
-//class Main extends React.Component {
-//  constructor(props) {
-//    super(props);
-//    this.handleChange         = this.handleChange.bind(this)
-//    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
-//  }
-//
-//  handleChange(key, e) {
-//    this.props.setValue(key, e);
-//  }
-//
-//  convertIdInGroupName() {
-//    this.props.convertIdInGroupName();
-//  }
-//
-//
-//  render() {
-//    return (
-//      <Container style={{ padding: 0 }}>
-//
-//        <Row>
-//          <Col style={{ marginLeft: "auto" }}>
-//            <GoToMenuButton
-//              onClick={() => {
-//                this.handleChange("page", DASHBOARD_PAGE_NO)
-//              }}
-//            />
-//            <GoToScheduleButton
-//              onClick={() => {
-//                this.props.convertIdInGroupName();
-//                this.handleChange("page", SCHEDULE_PAGE_NO)
-//              }}
-//              disabled={this.props.disabled}
-//            />
-//          </Col>
-//        </Row>
-//        <Cell style={{ padding: 0 }}
-//              content={this.props.contentRight}>
-//        </Cell>
-//      </Container>
-//    )
-//  }
-//}
-
 
 const TextFieldForUserInfo = ({
                                 label,
@@ -148,6 +88,7 @@ const TextFieldForUserInfo = ({
   // fieldType: string
   onChange: (value: string) => void
 }) => {
+  
   return (
     <TextField
       // id="tf"
@@ -178,10 +119,12 @@ interface HomeViewProps {
   description: string
   theme: string 
   onSetValue: (key: string, value: any) => void
-  onValidateInput: () => void
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
+  CheckIsCorrect: () => Promise<boolean>
+  LoadSchedule: () => void
+  onShowScheduleClick: () => void
 
   group: string
   isGroupError: boolean
@@ -207,7 +150,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   constructor(props: HomeViewProps) {
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
-    // this.handleTeacherChange = this.handleTeacherChange.bind(this);
+    this.Load_Schedule = this.Load_Schedule.bind(this)
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     let disabled = true;
     if (props.groupId !== "") disabled = false;
@@ -221,8 +164,11 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     this.props.onSetValue(key, value);
   }
 
-  async isCorrect() {
-    await this.props.onValidateInput();
+  async CheckIsCorrect(){
+    return await this.props.CheckIsCorrect();
+  }
+  Load_Schedule(){
+    this.props.LoadSchedule()
   }
 
   // handleTeacherChange() {
@@ -282,7 +228,15 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onValidateInput()}
+          onClick={async()=>{
+            let isCorrect = await this.CheckIsCorrect()
+            if(isCorrect){
+              await this.Load_Schedule()
+              this.props.onShowScheduleClick()
+          }
+            
+         }
+          }
         />
 
       </Container>
@@ -334,6 +288,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       {
         getThemeBackgroundByChar(this.props.character, this.props.theme)
       }
+      
       <div>
         {
           this.props.student
@@ -346,30 +301,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
               />
             )
             : (
-              /*
-                            <Container style={{padding: 0}}>
-
-                              <Row>
-                                <Col style={{marginLeft: "auto"}}>
-                                  <GoToDashboardButton
-                                    onClick={() => this.handleChange("page", NAVIGATOR_PAGE_NO)}
-                                  />
-                                  <GoToScheduleButton
-                                    onClick={() => {
-                                      this.props.convertIdInGroupName();
-                                      this.handleChange("page", SCHEDULE_PAGE_NO)
-                                    }}
-                                    disabled={this.state.disabled}
-                                    style={{marginTop: "1em", marginRight: "1em"}}
-                                  />
-                                </Col>
-                              </Row>
-
-                              <teacherContent/>
-
-                              <Spacer100/>
-                            </Container>
-              */
 
 
               <Main

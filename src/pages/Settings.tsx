@@ -7,6 +7,8 @@ import {
   Caption,
   Switch,
   TimePicker,
+  Tabs,
+  TabItem,
   TextBoxLabel,
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
@@ -21,23 +23,15 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  // NAVIGATOR_PAGE_NO,
-  DASHBOARD_PAGE_NO,
-  SCHEDULE_PAGE_NO,
   Spacer100,
 } from '../App';
 import {DocStyle} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character} from "../types/base";
-import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
-import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
-import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
-import {GoToDashboardButton, GoToScheduleButton} from "../components/TopMenu";
 import {
   HeaderLogoCol,
   HeaderTitleCol2,
 } from '../components/TopMenu';
-import { connected } from "process";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -56,7 +50,10 @@ export const USER_MODES = [
   'Студент',
   'Преподаватель',
 ];
-
+export const TODAY_TOMORROW = [
+  'Сегодня',
+  'Завтра',
+];
 
 const HomeTitle = ({
                      text,
@@ -137,7 +134,6 @@ interface SettingsProps {
   sendData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
-  onValidateInput: () => void
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
@@ -156,6 +152,7 @@ interface SettingsProps {
   CheckIsCorrect: () => Promise<boolean>
   LoadSchedule: () => void
   student: boolean
+  dayPush: number
   teacher: string
   isTeacherError: boolean
   teacher_checked: boolean
@@ -170,6 +167,9 @@ interface SettingsState {
     value: Date
   }
   theme: boolean
+  themeName: string
+  dayPush: number
+  
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
@@ -186,6 +186,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     let edit=false;
     this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
     this.state = {disabled: this.props.isActive,
+      dayPush: this.props.dayPush,
       timePush: {
         hour:  this.props.pushHour == -1 ? 1 : this.props.pushHour,
         min: this.props.pushMin == -1 ? 1 : this.props.pushMin,
@@ -193,6 +194,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       },
       edit: edit,
       theme: false,
+      themeName: this.props.theme,
     };
     this.onHandleChange("description", props.character === "joy"
       ? DESC_JOY
@@ -205,11 +207,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   }
   async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
     return await this.props.onHandleTeacherChange(isSave);
-  }
-
-  async isCorrect() {
-      console.log(this.props.student, "PROPS.STUDENT");
-     this.props.student ? await this.props.onValidateInput() : this.onHandleTeacherChange(true)
   }
   async CheckIsCorrect(){
     return await this.props.CheckIsCorrect();
@@ -228,6 +225,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.onConvertIdInGroupName();
   }
   async Save() {
+      console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
@@ -238,6 +236,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           this.setState({edit: false })
          }
       }
+      
       else{
         console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
@@ -269,7 +268,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       justifyContent: "center"}} min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}}></TimePicker>
         </Row>
     )
-    console.log(this.props.isTeacherError, "ISTEACHERERROR")
+    console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
     console.log(this.state.timePush.value, this.props.theme);
     return (
       <DeviceThemeProvider>
@@ -285,11 +284,11 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
 <HeaderTitleCol2
   title="Настройки"
 />
-
+{!this.state.edit ? (
 <Col style={{margin: "0 0 0 auto"}}>
   <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
-</Col>
-
+</Col>) : (<div></div>)
+  }
 </Row > 
 
           { this.state.edit ? (
@@ -335,24 +334,42 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           </Col>
         }
           <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} 
-          onChange={(() => { this.setState({disabled: !this.state.disabled}); })}/>
+          onChange={(() => 
+          { 
+            this.setState({disabled: !this.state.disabled}, () =>{
+              console.log("DISABLED",this.state.disabled)
+              if(this.state.disabled){
+                this.props.sendData({
+                  action_id: 'push_on',
+                });
+              }
+            });  
+
+            })}/>
           {this.state.disabled ?
           <Col style={{display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center"}}>
+            <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о завтрашних парах</Caption>
+            {/* <TabSelectorRow
+          tabs={TODAY_TOMORROW}
+          selectedIndex={this.state.dayPush }
+          onSelect={(tabIndex) => this.setState({dayPush: tabIndex})}
+        /> */}
+           
           
-          <Caption style={{textAlign: "center", margin: "0.5em 0.5em 0 0.5em", color: "grey"}}>Время, в которое будут приходить напоминания о завтрашних парах</Caption>
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}
-       <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/>
+       {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/> */}
       <Col size={4} style={{display: "flex",
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center"}}>
       <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={ async ()=> await this.Save() }>Сохранить</Button>
-      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  }}>Отмена</Button>
+      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  if (this.state.themeName!=this.props.theme)
+      this.props.ChangeTheme();}}>Отмена</Button>
       </Col>
       </Row>) : (
         <Row style={{margin: "1em"}}>
@@ -414,7 +431,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   <TextBoxLabel >
                   Время отправки 
                  </TextBoxLabel>
-                 <Headline4>{this.state.timePush.hour}:{this.state.timePush.min}</Headline4>
+                 <Headline4>{this.state.timePush.value.getHours()< 10 ? `0${this.state.timePush.value.getHours()}` : this.state.timePush.value.getHours()}:{this.state.timePush.value.getMinutes()< 10 ? `0${this.state.timePush.value.getMinutes()}` : this.state.timePush.value.getMinutes()}</Headline4>
                   </TextBox>
                   :
                   <TextBox> 

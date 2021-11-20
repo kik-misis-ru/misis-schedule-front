@@ -19,29 +19,22 @@ import {
   //CardMedia,
   CardParagraph1,
   CardParagraph2,
-  TextBoxBigTitle,
   TextBox,
-  TextBoxLabel,
-  TextBoxSubTitle,
-  TextBoxTitle,
-  Badge,
   CellListItem,
   CardHeadline3,
-  CardHeadline2,
-  Image,
   LineSkeleton,
   RectSkeleton,
   CellDisclosure,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
-import {IconLocation, IconStarFill, IconSettings, IconApps} from "@sberdevices/plasma-icons";
-//import {text, background, gradient} from "@sberdevices/plasma-tokens";
-import logo from "../images/logo.png";
-//import "../themes/App.css";
 import {
-  DEFAULT_TEXT_COLOR,
-  ACCENT_TEXT_COLOR, COLOR_BLACK,
-} from '../components/consts';
+  IconLocation, 
+  IconStarFill, 
+  IconApps,
+  IconEvent, 
+  IconHelp, 
+  IconCallCircle} 
+  from "@sberdevices/plasma-icons";
 import {
   DocStyle,
   getThemeBackgroundByChar,
@@ -51,30 +44,20 @@ import {
   formatTimeHhMm,
 } from '../utils';
 import {
-  HOME_PAGE_NO,
   StartEnd,
-  LessonStartEnd,
-  // NAVIGATOR_PAGE_NO,
-  SCHEDULE_PAGE_NO,
-  // CONTACTS_PAGE_NO,
-  // SETTING_PAGE_NO,
-  // FAQ_PAGE_NO,
 } from '../App';
-import LinkToOnline from '../components/LinkToOnline';
-import {NowOrWill} from "../types/AssistantReceiveAction";
 import {Bell} from '../types/ScheduleStructure'
-import {CHAR_TIMEPARAMOY, Character, DAY_TODAY, THIS_WEEK, TodayOrTomorrow} from "../types/base.d";
-import {lessonTypeAdjToNoun, pairNumberToPairNumText} from '../utils'
+import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
+import {pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
-import {history, IAppState} from "../App";
+import {history} from "../App";
 
 
 import {DAY_OFF_TEXT} from '../components/ScheduleDayOff'
 import moment from 'moment';
 import 'moment/locale/ru';
 
-// const DAY_OFF_TEXT = 'Выходной😋';
 const NO_LESSONS_TODAY_TEXT = 'Сегодня пар нет';
 
 moment.locale('ru');
@@ -202,7 +185,7 @@ const TodaySummary = ({
       <TextBox
         // @ts-ignore
         style={{
-          marginLeft: "3em",
+          marginLeft: "2.5em",
           paddingTop: "0.5em",
         }}
       >
@@ -247,10 +230,11 @@ const DashboardCard = ({
           height: "20vh",
           marginTop: "0.5em",
           cursor: !!onClick ? 'pointer' : 'default',
+          display: "flex", flexDirection: "column"
         }}
         onClick={(event) => !!onClick ? onClick(event) : undefined}>
-        <CardBody>
-          <CardContent>
+        <CardBody >
+          <CardContent style={{height: "20vh"}}>
             <TextBox>
               <Caption style={{color: "grey"}}>
                 {sub}
@@ -259,6 +243,26 @@ const DashboardCard = ({
                 {text}
               </CardHeadline3>
             </TextBox>
+            {text=="Другое расписание" ? 
+            <Col style={{margin: "auto 0 0 0"}}>
+            <IconEvent size="s"/>
+            </Col> : <div></div>
+            }
+            {text=="Карта" ? 
+            <Col style={{margin: "auto 0 0 0"}}>
+            <IconLocation size="s"/>
+            </Col> : <div></div>
+            }
+            {text=="FAQ" ? 
+            <Col style={{margin: "auto 0 0 0"}}>
+            <IconHelp size="s"/>
+            </Col> : <div></div>
+            }
+            {text=="Контакты" ? 
+            <Col style={{margin: "auto 0 0 0"}}>
+            <IconCallCircle size="s"/>
+            </Col> : <div></div>
+            }
           </CardContent>
         </CardBody>
       </Card>
@@ -335,11 +339,11 @@ const CatalogueItems = ({
         // onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
         onClick={() => history.push('/navigation')}
       />
-
+      
       <DashboardCard
               text="Другое расписание"
               sub=""
-              onClick={() => onGoToPage(HOME_PAGE_NO)}
+              onClick={() => history.push('/home')}
             />
 
       <DashboardCard
@@ -361,7 +365,6 @@ const CatalogueItems = ({
   )
 }
 
-
 const ScheduleLessonTitle = ({text}: { text: string }) => (
   <TextBox
     // @ts-ignore
@@ -380,28 +383,12 @@ const NoLesson = () => (
   </CardBody2>
 )
 
-
-// const NoLessonsNow = () => (
-//   <CardBody>
-//     <CardContent>
-//
-//       <ScheduleLessonTitle text="Сейчас"/>
-//
-//       <NoLesson/>
-//
-//     </CardContent>
-//   </CardBody>
-// )
-
-
 const DashboardPage = ({
-                         // state,
                          character,
                          isTeacherAndValid,
                          start,
                          end,
                          count,
-                         filialId,
                          userId,
                          currentLesson,
                          currentLessonStartEnd,
@@ -411,16 +398,10 @@ const DashboardPage = ({
                          nextLessonStartEnd,
                          spinner,
                          onGoToPage,
-                         Bd,
                          theme,
                          handleTeacherChange,
                          isUser,
-                         getCurrentLesson,
-                         getTimeFirstLesson,
-                         getEndLastLesson,
-                         whatLesson,
                        }: {
-  // state: IAppState
   character: Character
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
@@ -439,22 +420,9 @@ const DashboardPage = ({
   userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
-  Bd: () => Promise<void>
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
-  getCurrentLesson // : (date: Date) => string | undefined
-  getTimeFirstLesson: (daynum: number) => [string, string]
-  getEndLastLesson//: (todayOrTomorrow: TodayOrTomorrow) => string | undefined
-  whatLesson
-  // whatLesson: (
-  //   date: Date,
-  //   when: NowOrWill,
-  // ) => {
-  //   lesson: string | undefined,
-  //   type: NowOrWill | 'next',
-  //   num: number | undefined,
-  // }
-
+  
 }) => {
   console.log(groupId, teacherId, userId, "DASHBOARD")
   return (
@@ -488,9 +456,8 @@ const DashboardPage = ({
                         marginTop: "0.5em",
                         marginRight: "2.5em"
                       }}
-                            onClick={async () => {
-                              await Bd();
-                              onGoToPage(SCHEDULE_PAGE_NO)
+                            onClick={ () => {
+                              history.push('/spinner')
                             }}
                       >
 
@@ -543,7 +510,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
+                                    onTeacherClick={() => handleTeacherChange(false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>
