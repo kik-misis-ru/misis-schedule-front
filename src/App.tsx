@@ -465,7 +465,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               } else {
                 console.log("first time")
                 this.setState({isUser: true});
-                this.gotoPage(22);
+                history.push('/start')
                 this.sendData({
                   action_id: "hello_phrase"
                 })
@@ -2128,6 +2128,19 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
             }
           }
           />
+          <Route 
+          path="/start"
+          render ={
+            ({match}) =>{
+              <Start
+                character={this.state.character}
+                theme={this.state.theme}
+                isMobileDevice={detectDevice() === "mobile"}
+                onDashboardClick={() => history.push("/dashboard")}
+              />
+            }
+          }
+          />
           <Route path="*">
             {
 
@@ -2161,15 +2174,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
             {
               (page === SCHEDULE_PAGE_NO) &&
               this.Spinner()
-            }
-            {
-              (page === 22) && <Start
-                
-                character={this.state.character}
-                theme={this.state.theme}
-                isMobileDevice={detectDevice() === "mobile"}
-                onDashboardClick={() => history.push("/dashboard")}
-              />
             }
             {
               <div></div>
