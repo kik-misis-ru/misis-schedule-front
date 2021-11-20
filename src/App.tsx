@@ -436,7 +436,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                       this.setState({
                         group: response.groupName,
                         flag: true,
-                        checked: true,
                         bd: response.groupName,
                         group_id_bd: this.state.groupId,
                         eng_bd: this.state.engGroup,
@@ -1812,8 +1811,8 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
         this.setState({isEngGroupError: !correct_eng, isSubGroupError:!correct_sub, isGroupError: !correct})
         const groupId = String(group.id);
         let isCorrect = correct_eng && correct_sub && correct
-        if(isCorrect){
-          console.log("create_user")
+        if ((isCorrect&&this.state.checked)||(history.location.pathname!='/home')){
+          console.log("create_user", history.location.pathname)
           this.setState({groupId: groupId, group: group.name, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
             createUser(
               this.state.userId,
