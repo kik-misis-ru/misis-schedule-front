@@ -345,7 +345,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       page: INITIAL_PAGE,
       // logo: null,
       flag: true,
-      checked: true,
+      checked: false,
       description: "",
       group: "",
       groupId: "",
