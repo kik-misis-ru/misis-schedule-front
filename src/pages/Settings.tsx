@@ -23,23 +23,15 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  // NAVIGATOR_PAGE_NO,
-  DASHBOARD_PAGE_NO,
-  SCHEDULE_PAGE_NO,
   Spacer100,
 } from '../App';
 import {DocStyle} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character} from "../types/base";
-import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
-import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
-import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
-import {GoToDashboardButton, GoToScheduleButton} from "../components/TopMenu";
 import {
   HeaderLogoCol,
   HeaderTitleCol2,
 } from '../components/TopMenu';
-import { connected } from "process";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";

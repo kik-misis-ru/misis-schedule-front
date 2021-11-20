@@ -357,7 +357,7 @@ const CatalogueItems = ({
         // onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
         onClick={() => history.push('/navigation')}
       />
-
+      
       <DashboardCard
               text="Другое расписание"
               sub=""
@@ -368,7 +368,7 @@ const CatalogueItems = ({
         text="FAQ"
         sub="Часто задаваемые вопросы"
         // onClick={() => onGoToPage(FAQ_PAGE_NO)}
-        onClick={() => history.push('/faq')}
+        onClick={() => history.replace('/faq')}
       />
 
       <DashboardCard

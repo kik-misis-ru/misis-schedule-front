@@ -10,7 +10,6 @@ import WeekSelect from "../components/WeekSelect";
 import {IScheduleDays, 
     Spacer200, 
     HOME_PAGE_NO,
-    DASHBOARD_PAGE_NO,
     SCHEDULE_PAGE_NO,
     history
 } from '../App'
@@ -158,7 +157,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                 }
                
                 
-                this.onHandleChange("page", DASHBOARD_PAGE_NO);
+                history.push("/dashboard")
               }}
               Bd={this.Bd}
               //Load_Schedule={()=> this.Load_Schedule()}

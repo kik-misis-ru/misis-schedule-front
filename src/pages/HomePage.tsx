@@ -13,10 +13,7 @@ import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
-  // NAVIGATOR_PAGE_NO,
-  DASHBOARD_PAGE_NO,
-  SCHEDULE_PAGE_NO,
-  Spacer100,
+  history
 } from '../App';
 import {DocStyle} from '../themes/tools';
 import {CHAR_TIMEPARAMOY, Character} from "../types/base";

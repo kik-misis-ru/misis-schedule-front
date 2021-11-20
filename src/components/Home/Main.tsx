@@ -3,8 +3,7 @@ import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  DASHBOARD_PAGE_NO,
-  SCHEDULE_PAGE_NO,
+  history,
   Spacer100,
 } from '../../App';
 import {
@@ -41,8 +40,7 @@ const Main = ({
               <Col style={{margin: "0 0 0 auto"}}>
               <GoToDashboardButton
           onClick={() => {
-            // rewrite to gotoPage() or to history.push()
-            setValue("page", DASHBOARD_PAGE_NO)
+            history.push('/dashboard')
           }}
         />
               </Col>
