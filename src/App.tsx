@@ -1470,7 +1470,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   //Загружает расписание с бекенда
   async getScheduleFromDb(date: number) {
     const firstDayWeek = this.getFirstDayWeek(new Date(date));
-    if (!this.state.student && this.state.teacher_correct) {
+    if (this.isTeacher()) {
       await getScheduleTeacherFromDb(
         this.state.teacherId,
         firstDayWeek
