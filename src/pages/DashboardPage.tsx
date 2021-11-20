@@ -27,7 +27,14 @@ import {
   CellDisclosure,
 } from "@sberdevices/plasma-ui";
 //import {createGlobalStyle} from "styled-components";
-import {IconLocation, IconStarFill, IconApps, IconEvent, IconHelp, IconCallCircle} from "@sberdevices/plasma-icons";
+import {
+  IconLocation, 
+  IconStarFill, 
+  IconApps,
+  IconEvent, 
+  IconHelp, 
+  IconCallCircle} 
+  from "@sberdevices/plasma-icons";
 import {
   DocStyle,
   getThemeBackgroundByChar,
@@ -38,7 +45,6 @@ import {
 } from '../utils';
 import {
   StartEnd,
-  SCHEDULE_PAGE_NO,
 } from '../App';
 import {Bell} from '../types/ScheduleStructure'
 import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
@@ -359,7 +365,6 @@ const CatalogueItems = ({
   )
 }
 
-
 const ScheduleLessonTitle = ({text}: { text: string }) => (
   <TextBox
     // @ts-ignore
@@ -377,20 +382,6 @@ const NoLesson = () => (
     Пары нет🎊
   </CardBody2>
 )
-
-
-// const NoLessonsNow = () => (
-//   <CardBody>
-//     <CardContent>
-//
-//       <ScheduleLessonTitle text="Сейчас"/>
-//
-//       <NoLesson/>
-//
-//     </CardContent>
-//   </CardBody>
-// )
-
 
 const DashboardPage = ({
                          character,
@@ -465,8 +456,8 @@ const DashboardPage = ({
                         marginTop: "0.5em",
                         marginRight: "2.5em"
                       }}
-                            onClick={async () => {
-                              onGoToPage(SCHEDULE_PAGE_NO)
+                            onClick={ () => {
+                              history.push('/spinner')
                             }}
                       >
 
@@ -519,7 +510,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
+                                    onTeacherClick={() => handleTeacherChange(false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>

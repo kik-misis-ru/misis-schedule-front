@@ -81,7 +81,7 @@ export const NON_EXISTING_PAGE_NO = -1;
 //export const HOME_PAGE_NO = 0;
 //export const NAVIGATOR_PAGE_NO = 15;
 //export const DASHBOARD_PAGE_NO = 16;
-export const SCHEDULE_PAGE_NO = 17;
+// export const SCHEDULE_PAGE_NO = 17;
 export const CONTACTS_PAGE_NO = 18;
 // export const FAQ_PAGE_NO = 19;
 // export const SETTING_PAGE_NO = 20;
@@ -1052,7 +1052,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               date: Date.now(),
               flag: true,
             });
-            this.ChangeDay(SCHEDULE_PAGE_NO);
+            history.push('/spinner')
             return
           }
           break;
@@ -1352,21 +1352,21 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let isCorrect = await this.CheckIsCorrect()
                 if(isCorrect){
                   await this.Load_Schedule()
-                  this.gotoPage(SCHEDULE_PAGE_NO);
+                  history.push('/spinner')
                  }
               }
               else{
                 this.handleTeacherChange(true).then(async(response)=>{
                   if(response){
                     await this.Load_Schedule()
-                    this.gotoPage(SCHEDULE_PAGE_NO);
+                    history.push('/spinner')
                   }
                 })
               }
             }
             else{
               await this.Load_Schedule();
-              this.gotoPage(SCHEDULE_PAGE_NO);
+              history.push('/spinner')
             }
            
           }
@@ -1435,14 +1435,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log('getStateForAssistant: state:', state)
     return state;
   }
-
-  // assistant_global_event(phrase) {
-  //   this._assistant.sendData({
-  //     action: {
-  //       action_id: phrase
-  //     }
-  //   })
-  // }
 
   async convertIdInGroupName(): Promise<void> {
     console.log(this.state.groupId);
@@ -1586,7 +1578,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
             lesson_info_state.lessonType = lesson_info.type;
-            // lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
             countLessons++;
@@ -1609,7 +1600,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
             lesson_info_state.teacher = lesson_info.teachers[0].name;
             lesson_info_state.room = lesson_info.room_name;
             lesson_info_state.lessonType = lesson_info.type;
-            // lesson_info_state.lessonNumber = `${bell.slice(5, 6)}. `;
             lesson_info_state.lessonNumber = bell.slice(5, 6);
             lesson_info_state.url = lesson_info.other;
 
@@ -1635,6 +1625,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     this.setState({days: days});
     console.log("Days", days, "Day", this.state.day)
   }
+
   ChangeDay(day: number): void{
     this.ChangePage();
     this.gotoPage(day);
@@ -1643,8 +1634,9 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
   ChangePage() {
 
+    console.log("LOCATION:",history.location)
     let timeParam = this.state.page;
-    if (timeParam == SCHEDULE_PAGE_NO) {
+    if ('/spinner'== history.location) {
       return
     }
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
@@ -1719,9 +1711,9 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           date: Date.now(),
           flag: true,
           student: false,
-          page: SCHEDULE_PAGE_NO,
           isTeacherError: false,
         });
+        history.push('/spinner')
 
       if (isSave) {
         this.setState({teacher_bd: this.state.teacher, teacher_id_bd: this.state.teacherId})
@@ -1943,7 +1935,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   isMobileDevice={detectDevice() === "mobile"}
                   onDashboardClick={()=>{history.push("/dashboard")}}
                   onHomeClick={() => {history.push("/home")}}
-                  onScheduleClick={() => this.gotoPage(SCHEDULE_PAGE_NO)}
+                  onScheduleClick={() => { history.push('/spinner')}}
                 />
               }
             }
@@ -2073,7 +2065,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 character={this.state.character}
                 theme={this.state.theme}
                 checked={this.state.checked}
-                onShowScheduleClick={()=>this.gotoPage(SCHEDULE_PAGE_NO)}
+                onShowScheduleClick={()=>{ history.push('/spinner')}}
                 groupId={this.state.groupId}
                 group={this.state.group}
                 isGroupError={this.state.isGroupError}
@@ -2102,6 +2094,14 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 isMobileDevice={detectDevice() === "mobile"}
                 onDashboardClick={() => history.push("/dashboard")}
               />
+            }
+          }
+          />
+          <Route
+          path="/spinner"
+          render ={
+            ({match}) =>{
+              this.Spinner()
             }
           }
           />
@@ -2134,10 +2134,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 subGroup={this.state.subGroup}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
-            }
-            {
-              (page === SCHEDULE_PAGE_NO) &&
-              this.Spinner()
             }
             {
               <div></div>

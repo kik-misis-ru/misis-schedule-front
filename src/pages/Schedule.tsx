@@ -8,7 +8,6 @@ import WeekSelect from "../components/WeekSelect";
 
 import {IScheduleDays, 
     Spacer200,
-    SCHEDULE_PAGE_NO,
     history
 } from '../App'
 
@@ -172,7 +171,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
              onThisWeekClick={() => {
                this.CurrentWeek();
                this.onHandleChange("flag", true)
-               this.onHandleChange("page", SCHEDULE_PAGE_NO)
+               history.push('/spinner')
              }}
              onNextWeekClick={() => {
                this.onHandleChange("spinner", false);
