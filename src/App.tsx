@@ -84,7 +84,7 @@ export const NON_EXISTING_PAGE_NO = -1;
 // export const SCHEDULE_PAGE_NO = 17;
 export const CONTACTS_PAGE_NO = 18;
 // export const FAQ_PAGE_NO = 19;
-// export const SETTING_PAGE_NO = 20;
+export const SETTING_PAGE_NO = 20;
 export const LESSON_PAGE_NO = 21;
 
 export const HOME_PAGE_ROUTE = "home";
@@ -996,7 +996,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
         case 'set_eng_group':
           console.log("Pathname:",history.pathname)
-          if(history.location==HOME_PAGE_ROUTE && action.group!=undefined){
+          if( action.group!=undefined){
             this.setState({engGroup: String(action.group) })
           }
           break
@@ -1333,6 +1333,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'show_schedule':
+          console.log("show schedule");
           if(action.note!=undefined && action.note!=""){
             let IsStudent = true
             if (action.note.includes("препод")){
@@ -1387,18 +1388,19 @@ export class App extends React.Component<IAppProps, IAppState> {
           history.push('/contacts')
           return;
         case 'group':
+          console.log("Assistant: group")
           if (action.note[0] === 0) {
             console.log(action.note[1].data.groupName[0]);
             this.setState({
               group: action.note[1].data.groupName[0].toUpperCase(),
             });
-            history.push('/home')
+            //history.push('/home')
           } else {
             console.log(action.note[1].data.groupName[1])
             this.setState({
               group: action.note[1].data.groupName[1].toUpperCase(),
             })
-            history.push("/home")
+            //history.push("/home")
           }
           break
         case 'dashboard':
@@ -1407,7 +1409,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'subgroup':
           this.setState({subGroup: action.note});
-         history.push('/home')
+         //history.push('/home')
           break
         case 'show_home_page':
           history.push('/home')
