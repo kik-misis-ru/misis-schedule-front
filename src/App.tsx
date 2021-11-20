@@ -1,10 +1,4 @@
 import React from "react";
-// import {
-//   BrowserRouter as Router,
-//   Switch,
-//   Route,
-//   Link
-// } from "react-router-dom";
 import {Router, Route, Switch} from 'react-router';
 import {createBrowserHistory} from 'history';
 import 'react-toastify/dist/ReactToastify.css';
@@ -130,7 +124,7 @@ const breaks = {
   '7': '19:45'
 }
 
-const daysOfWeekShort = [
+const saved_scheduleOfWeekShort = [
   "Вс",
   "Пн",
   "Вт",
@@ -221,8 +215,6 @@ const TODAY_TOMORROW_DICT = {
 
 export const NO_LESSONS_NAME = "Пар нет 🎉"
 
-const DAYS_OF_WEEK_SHORT_RU = []
-
 const DEFAULT_STATE_DAY: IDayHeader[] = [
   {
     title: 'Пн',
@@ -279,7 +271,8 @@ export interface IAppState {
   filialId: string
   correct: boolean
   day: IDayHeader[]
-  days: IScheduleDays
+  saved_schedule: IScheduleDays
+  other_schedule: IScheduleDays
   spinner: boolean
   date: number
   today: number
@@ -309,6 +302,7 @@ export interface IAppState {
   teacher_bd: string
   teacher_correct: boolean
   isTeacherError: boolean
+  isSavedSchedule: boolean
 
   // building: IBuilding[]
 }
@@ -358,7 +352,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       sub_bd: "",
       correct: false,
       day: DEFAULT_STATE_DAY,
-      days: [],
+      saved_schedule: [],
+      other_schedule: [],
       spinner: false,
       date: Date.now(),
       today: 0,
@@ -380,11 +375,11 @@ export class App extends React.Component<IAppProps, IAppState> {
       teacher_bd: "",
       teacher_id_bd: "",
       teacher_correct: false,
+      isSavedSchedule: true
 
       // building: building,
     }
-    
-
+  
   }
 
   componentDidMount() {
@@ -457,8 +452,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                     if (this.state.teacherId != "" || this.state.group!= ""){
  
                     //Зачем два вызова?
-                    this.SetWeekSchedule(response.schedule, 0);
-                    this.SetWeekSchedule(response.schedule, 1);
+                    this.SetWeekSchedule(response.schedule, 0, true);
+                    this.SetWeekSchedule(response.schedule, 1, true);
                     }
                   })
 
@@ -541,6 +536,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       case "flag":
         this.setState({flag: value})
         break;
+      case "isSavedSchedule":
+        this.setState({isSavedSchedule: value})
+        break;
       default:
         break;
     }
@@ -556,8 +554,8 @@ export class App extends React.Component<IAppProps, IAppState> {
   getStartFirstLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const weekDayIndex = this.state.today - dayShift;
-    for (let bell in this.state.days[weekDayIndex]) {
-      const lessonName = this.state.days[weekDayIndex][bell][THIS_WEEK].lessonName
+    for (let bell in this.state.saved_schedule[weekDayIndex]) {
+      const lessonName = this.state.saved_schedule[weekDayIndex][bell][THIS_WEEK].lessonName
       if (lessonName !== "") {
         return LessonStartEnd[Number(bell)].start
       }
@@ -570,8 +568,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     const dayNumber = this.state.today - dayShift;
     console.log(`getEndLastLesson: todayOrTomorrow: ${todayOrTomorrow}, dayShift: ${dayShift}, dayNumber: ${dayNumber}`);
     let lessonEnd = '';
-    for (let lessonIdx in this.state.days[dayNumber]) {
-      if (this.state.days[dayNumber][lessonIdx][THIS_WEEK].lessonName !== "") {
+    for (let lessonIdx in this.state.saved_schedule[dayNumber]) {
+      if (this.state.saved_schedule[dayNumber][lessonIdx][THIS_WEEK].lessonName !== "") {
         lessonEnd = LessonStartEnd[lessonIdx].end;
       }
     }
@@ -582,7 +580,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum: number): string | undefined {
     const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
     const dayNumber = this.state.today - dayShift;
-    const lessonName = this.state.days[dayNumber][lessonNum - 1][THIS_WEEK].lessonName;
+    const lessonName = this.state.saved_schedule[dayNumber][lessonNum - 1][THIS_WEEK].lessonName;
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
@@ -667,7 +665,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   getCurrentLesson(date: Date): string {
     if (this.state.today !== 0) {
       const todayIndex = this.state.today - 1
-      const day = this.state.days[todayIndex]
+      const day = this.state.saved_schedule[todayIndex]
       for (let bellIdx in day) {
         // console.log(`getCurrentLesson: bellIdx: ${bellIdx}, typeof bellIdx: ${typeof bellIdx}`);
         const lesson = day[bellIdx][THIS_WEEK];
@@ -693,7 +691,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   getAmountOfRemainingLessons(date: Date): number {
     let countRemainingLessons = 0
     if ((this.state.today !== 0) && (this.state.today + 1 !== 7))
-      for (let bell in this.state.days[this.state.today - 1]) {
+      for (let bell in this.state.saved_schedule[this.state.today - 1]) {
         if (
           formatTimeHhMm(date) < LessonStartEnd[Number(bell)].start &&
           LessonStartEnd[Number(bell)].start !== ""
@@ -719,8 +717,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     if (dayNumber < this.state.today) {
       week = OTHER_WEEK;
     }
-    for (let lessonIdx in this.state.days[dayNumber - 1]) {
-      const lesson = this.state.days[dayNumber - 1][lessonIdx][week]
+    for (let lessonIdx in this.state.saved_schedule[dayNumber - 1]) {
+      const lesson = this.state.saved_schedule[dayNumber - 1][lessonIdx][week]
       if (lesson.lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
         console.log(lessonIdx, "'lesson.lessonNumber'")
@@ -747,7 +745,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     const isSunday = (this.state.today === 0)
     const todayWorkDayIndex = this.state.today - 1;
     const todayBells = this.state.day[todayWorkDayIndex]
-    const todayLessons = this.state.days[todayWorkDayIndex]
+    const todayLessons = this.state.saved_schedule[todayWorkDayIndex]
 
     if (isSunday) {
       const result = {
@@ -903,21 +901,21 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       }
       if (numberNearestLesson !== undefined) {
-        for (let bell in this.state.days[this.state.today - 1]) {
+        for (let bell in this.state.saved_schedule[this.state.today - 1]) {
           // если пара с таким номером есть в расписании
-          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === numberNearestLesson) {
+          if (this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].lessonNumber === numberNearestLesson) {
             return {
-              audience: this.state.days[this.state.today - 1][bell][THIS_WEEK].room,
+              audience: this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].room,
               type: "nearest",
               exist: "inSchedule",
             }
           } else {
             // сообщаем, что такой пары нет
             console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
-            for (let bell in this.state.days[this.state.today - 1]) {
-              if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber !== numberNearestLesson) {
+            for (let bell in this.state.saved_schedule[this.state.today - 1]) {
+              if (this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].lessonNumber !== numberNearestLesson) {
                 return {
-                  audience: this.state.days[this.state.today - 1][bell][THIS_WEEK].room,
+                  audience: this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].room,
                   type: "nearest",
                   exist: "notInSchedule",
                 }
@@ -929,9 +927,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (numberNearestLesson === undefined && will === "now") {
         // вернуть номер текущей пары
         let whereCurrentLesson
-        for (let bell in this.state.days[this.state.today - 1]) {
-          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === this.getCurrentLesson(date)) {
-            whereCurrentLesson = this.state.days[this.state.today - 1][bell][THIS_WEEK].room
+        for (let bell in this.state.saved_schedule[this.state.today - 1]) {
+          if (this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].lessonNumber === this.getCurrentLesson(date)) {
+            whereCurrentLesson = this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].room
           }
         }
         if (whereCurrentLesson === "") {
@@ -946,9 +944,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       }
       if (numberNearestLesson === undefined && will === "will") {
-        for (let bell in this.state.days[this.state.today - 1]) {
-          if (this.state.days[this.state.today - 1][bell][THIS_WEEK].lessonNumber === String(Number(this.getCurrentLesson(date)) + 1)) {
-            nextLessonRoom = this.state.days[this.state.today - 1][bell][THIS_WEEK].room
+        for (let bell in this.state.saved_schedule[this.state.today - 1]) {
+          if (this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].lessonNumber === String(Number(this.getCurrentLesson(date)) + 1)) {
+            nextLessonRoom = this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].room
           }
         }
         if (nextLessonRoom !== "") {
@@ -1041,7 +1039,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'for_next_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            this.NextWeek();
+            this.NextWeek(this.state.isSavedSchedule);
             return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
           }
           break;
@@ -1261,7 +1259,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (firstLessonNumStr !== undefined) {
               const {dayOfWeek: strDayOfWeek} = action.note;
               const dayOfWeekIdx = parseInt(strDayOfWeek) - 1
-              const dayOfWeekShortName = daysOfWeekShort[dayOfWeekIdx];
+              const dayOfWeekShortName = saved_scheduleOfWeekShort[dayOfWeekIdx];
 
               const [inDayOfWeek, dayOfWeekIdx1] = dayNameDict[dayOfWeekShortName];
 
@@ -1351,21 +1349,21 @@ export class App extends React.Component<IAppProps, IAppState> {
               if(this.state.student){
                 let isCorrect = await this.CheckIsCorrect()
                 if(isCorrect){
-                  await this.Load_Schedule()
+                  await this.Load_Schedule(this.state.isSavedSchedule)
                   history.push('/spinner')
                  }
               }
               else{
                 this.handleTeacherChange(true).then(async(response)=>{
                   if(response){
-                    await this.Load_Schedule()
+                    await this.Load_Schedule(this.state.isSavedSchedule)
                     history.push('/spinner')
                   }
                 })
               }
             }
             else{
-              await this.Load_Schedule();
+              await this.Load_Schedule(this.state.isSavedSchedule);
               history.push('/spinner')
             }
            
@@ -1468,14 +1466,14 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   //Загружает расписание с бекенда
-  async getScheduleFromDb(date: number) {
+  async getScheduleFromDb(date: number, isSave: boolean) {
     const firstDayWeek = this.getFirstDayWeek(new Date(date));
     if (!this.state.student && this.state.teacher_correct) {
       await getScheduleTeacherFromDb(
         this.state.teacherId,
         firstDayWeek
       ).then((response) => {
-        this.SetWeekSchedule(response, 1);
+        this.SetWeekSchedule(response, 1, isSave);
       })
     } else {
       await getScheduleFromDb(
@@ -1483,7 +1481,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.state.engGroup,
         firstDayWeek
       ).then((response) => {
-        this.SetWeekSchedule(response, 1);
+        this.SetWeekSchedule(response, 1, isSave);
       })
     }
     this.setState({date: date, flag: true});
@@ -1492,58 +1490,64 @@ export class App extends React.Component<IAppProps, IAppState> {
   /**
    * Заполнение расписанием на следующую неделю
    */
-  async NextWeek() {
+  async NextWeek(isSave: boolean) {
     this.setState({spinner: false});
     const datePlusWeek = this.state.date + SEVEN_DAYS;
-    return this.getScheduleFromDb(datePlusWeek);
+    return this.getScheduleFromDb(datePlusWeek, isSave);
   }
 
-  async CurrentWeek() {
-    return this.getScheduleFromDb(Date.now());
+  async CurrentWeek(isSave: boolean) {
+    return this.getScheduleFromDb(Date.now(), isSave);
   }
 
   /**
    * Заполнение расписанием на предыдущую неделю
    */
-  async PreviousWeek() {
+  async PreviousWeek(isSave: boolean) {
     this.setState({spinner: false});
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
-    return this.getScheduleFromDb(dateMinusWeek);
+    return this.getScheduleFromDb(dateMinusWeek, isSave);
   }
 
   /**
    * заполнение данными расписания из бд
    */
-SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
+SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   console.log("ParsedSchedule", parsedSchedule)
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
     this.setState({spinner: false});
 
-    let days;
+    let schedule;
     /*
-    При первой загрузке this.state.days равен [] 
+    При первой загрузке this.state.saved_schedule равен [] 
     и его надо инициализировать
     */
-    if (this.state.days.length == 0) {
-      days = new Array(7).fill([]);
-      for (let day in days) {
-        days[day] = Array(7).fill([])
-        for (let bell in days[day]) {
-          days[day][bell] = [new Bell(), new Bell()];
+    if ((isSavedSchedule && this.state.saved_schedule.length == 0) || (!isSavedSchedule && this.state.other_schedule.length == 0)) {
+      schedule = new Array(7).fill([]);
+      for (let day in schedule) {
+        schedule[day] = Array(7).fill([])
+        for (let bell in schedule[day]) {
+          schedule[day][bell] = [new Bell(), new Bell()];
         }
       }
     } else {
-      days = this.state.days
-      for (let day in days) {
-        for (let bell in days[day]) {
-          days[day][bell][i].lessonName = "";
-          days[day][bell][i].teacher = "";
-          days[day][bell][i].room = "";
-          days[day][bell][i].lessonType = "";
-          days[day][bell][i].lessonNumber = "";
-          days[day][bell][i].url = "";
-          days[day][bell][i].groupNumber = "";
+     if(isSavedSchedule){
+      schedule = this.state.saved_schedule
+     }
+     else{
+      schedule = this.state.other_schedule
+     }
+     console.log("SCHEDULE",schedule)
+      for (let day in schedule) {
+        for (let bell in schedule[day]) {
+          schedule[day][bell][i].lessonName = "";
+          schedule[day][bell][i].teacher = "";
+          schedule[day][bell][i].room = "";
+          schedule[day][bell][i].lessonType = "";
+          schedule[day][bell][i].lessonNumber = "";
+          schedule[day][bell][i].url = "";
+          schedule[day][bell][i].groupNumber = "";
         }
       }
     }
@@ -1559,7 +1563,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
         for (let bell in parsedSchedule.schedule) { //проверка
           let bell_num = Number(bell.slice(-1)) - 1
           let lesson_info: IScheduleLessonInfo = parsedSchedule.schedule[bell][`day_${day_num}`].lessons[0]
-          let lesson_info_state: Bell = days[day_num - 1][bell_num][i]
+          let lesson_info_state: Bell = schedule[day_num - 1][bell_num][i]
 
           const subgroup_name = lesson_info?.groups?.[0]?.subgroup_name;
 
@@ -1614,16 +1618,21 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           }
         }
         if (this.state.day[day_num - 1].count[i] === 0)
-          days[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
+          schedule[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
 
       } else {
-        days[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
+        schedule[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
       }
 
     }
     this.setState({spinner: true});
-    this.setState({days: days});
-    console.log("Days", days, "Day", this.state.day)
+    if(isSavedSchedule){
+      this.setState({saved_schedule: schedule});
+    }
+    else{
+      this.setState({other_schedule: schedule})
+    }
+    console.log("Days", schedule, "Day", this.state.day)
   }
 
   ChangeDay(day: number): void{
@@ -1690,7 +1699,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
           this.getFirstDayWeek(new Date())
         ).then((response) => {
           console.log("Teahcer Shcedule", response)
-          this.SetWeekSchedule(response, 0);
+          this.SetWeekSchedule(response, 0, isSave);
         });
 
         const formatTeacherName = (teacherData: ITeacherApiData) => (
@@ -1732,7 +1741,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
   }
 
 
-  async _loadSchedule({ groupId, engGroup }: { groupId: string, engGroup: string }): Promise<void> {
+  async _loadSchedule({ groupId, engGroup, isSave}: { groupId: string, engGroup: string, isSave:boolean }): Promise<void> {
     console.log('LOAD_SCHEDULE:', groupId, engGroup)
     await getScheduleFromDb(
       groupId,
@@ -1741,7 +1750,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
     )
       .then((response) => {
         console.log("LOAD_SCHEDULE_THEN")
-        this.SetWeekSchedule(response, 0);
+        this.SetWeekSchedule(response, 0, isSave);
         console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
         console.log("RESPONSE", response)
         this.setState({
@@ -1752,10 +1761,12 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
       })
   }
   
-  async Load_Schedule(): Promise<void> {
+  async Load_Schedule(isSave: boolean): Promise<void> {
+    console.log("Load_Schedule. IsSave:",isSave)
     return await this._loadSchedule({
       groupId: this.state.groupId,
       engGroup: String(this.state.engGroup),
+      isSave
   });
   }
 
@@ -1818,17 +1829,18 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
 
   }
 
+  //todo убрать
   async Bd(): Promise<void> {
     console.log("BD")
     if (this.state.teacher_bd != "") {
       
-      this.setState({student: false, spinner: false})
+      this.setState({student: false, spinner: true})
       await getScheduleTeacherFromDb(
         this.state.teacher_id_bd,
         this.getFirstDayWeek(new Date())
       ).then((response) => {
         console.log('Bd: getScheduleTeacherFromDb: response:', response)
-        this.SetWeekSchedule(response, 0);
+        this.SetWeekSchedule(response, 0, true);
       });
     } else {
       console.log('Bd: getScheduleFromDb: this.state.group_id_bd:', this.state.group_id_bd);
@@ -1843,6 +1855,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
       await this._loadSchedule({
         groupId: this.state.group_id_bd,
         engGroup: this.state.eng_bd,
+        isSave:true
       });
     }
   }
@@ -1972,7 +1985,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                   CheckIsCorrect={this.CheckIsCorrect}
                   engGroup={this.state.engGroup}
                   isEngGroupError={this.state.isEngGroupError}
-                  LoadSchedule = { this.Load_Schedule}
+                  LoadSchedule = {() => this.Load_Schedule(true)}
                   student={this.state.student}
                   teacher={this.state.teacher}
                   isTeacherError={this.state.isTeacherError}
@@ -1995,7 +2008,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                     isTeacherAndValid={this.getIsCorrectTeacher()}
                     spinner={this.state.spinner}
                     theme={this.state.theme}
-                    currentLesson={this.state.days[this.state.page-1]?.[match.params.lessonIndex-1]?.[THIS_WEEK]}
+                    currentLesson={this.state.saved_schedule[this.state.page-1]?.[match.params.lessonIndex-1]?.[THIS_WEEK]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
@@ -2011,16 +2024,15 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
             path="/dashboard"
             render={
               ({match}) =>{
+                console.log("DASHBOARD; IsSave:",this.state.isSavedSchedule)
                 const now = new Date();
-                
                 let todayIndex = this.state.today - 1;
-
                 let currentLessonIdx = this.getCurrentLesson(now);
-                let currentLesson = this.state.days[todayIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
+                let currentLesson = this.state.saved_schedule[todayIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
                 let currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx) - 1]
 
                 let nextLessonIdx = this.whatLesson(now, "will").num;
-                let nextLesson = this.state.days[todayIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
+                let nextLesson = this.state.saved_schedule[todayIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
                 //console.log(this.whatLesson(now, "will").num, "next")
                 let count = this.state.day[this.state.today - 1]?.count[0]
                 //console.log("COUNT", this.state.today)
@@ -2120,16 +2132,16 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i) {
                 Bd={this.Bd}
                 bd={this.state.bd}
                 teacher_bd={this.state.teacher_bd}
-                PreviousWeek={this.PreviousWeek}
-                CurrentWeek={this.CurrentWeek}
-                NextWeek={this.NextWeek}
+                PreviousWeek={()=>this.PreviousWeek(this.state.isSavedSchedule)}
+                CurrentWeek={()=>this.CurrentWeek(this.state.isSavedSchedule)}
+                NextWeek={()=>{this.NextWeek(this.state.isSavedSchedule)}}
                 getCurrentLesson={this.getCurrentLesson}
                 doSetTeacher={(teacherName: string) => this.doSetTeacher(teacherName)}
                 weekParam={page > 7 ? 1 : 0}
                 day={this.state.day}
                 spinner={this.state.spinner}
                 today={this.state.today}
-                days={this.state.days}
+                schedule={this.state.isSavedSchedule ? this.state.saved_schedule : this.state.other_schedule}
                 group={this.state.group}
                 subGroup={this.state.subGroup}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}

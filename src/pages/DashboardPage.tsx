@@ -400,7 +400,7 @@ const DashboardPage = ({
                          onGoToPage,
                          theme,
                          handleTeacherChange,
-                         isUser,
+                         isUser
                        }: {
   character: Character
     // todo: что такое 'timeParamoy' ???
@@ -422,7 +422,7 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
-  
+
 }) => {
   console.log(groupId, teacherId, userId, "DASHBOARD")
   return (

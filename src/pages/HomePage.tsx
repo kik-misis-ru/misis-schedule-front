@@ -123,7 +123,7 @@ interface HomeViewProps {
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   CheckIsCorrect: () => Promise<boolean>
-  LoadSchedule: () => void
+  LoadSchedule: (isSave:boolean) => void
   onShowScheduleClick: () => void
 
   group: string
@@ -167,8 +167,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   async CheckIsCorrect(){
     return await this.props.CheckIsCorrect();
   }
-  Load_Schedule(){
-    this.props.LoadSchedule()
+  Load_Schedule(isSave: boolean){
+    this.props.LoadSchedule(isSave)
   }
 
   // handleTeacherChange() {
@@ -231,7 +231,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           onClick={async()=>{
             let isCorrect = await this.CheckIsCorrect()
             if(isCorrect){
-              await this.Load_Schedule()
+              await this.Load_Schedule(this.props.checked)
               this.props.onShowScheduleClick()
           }
             
