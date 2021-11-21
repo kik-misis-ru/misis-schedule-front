@@ -1790,7 +1790,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           correct_eng = true;
           console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
         }
-        if ((this.state.subGroup === "") || (this.state.subGroup === "1") || (this.state.subGroup === "2")) {
+        if ((this.state.subGroup === "") || (this.state.subGroup.replace(/[\s-_.]/g, '') === "1") || (this.state.subGroup.replace(/[\s-_.]/g, '') === "2")) {
           correct_sub = true;
         }
         this.setState({isEngGroupError: !correct_eng, isSubGroupError:!correct_sub, isGroupError: !correct})
