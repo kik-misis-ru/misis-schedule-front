@@ -32,6 +32,7 @@ import {
   HeaderLogoCol,
   HeaderTitleCol2,
 } from '../components/TopMenu';
+import internal from "stream";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -44,7 +45,8 @@ const LABEL_REMEMBER_FIO = "Запомнить ФИО, если Вы препо�
 const LABEL_TO_VIEW_SCHEDULE = "Чтобы посмотреть расписание, укажите фамилию и инициалы через пробел и точку";
 const LABEL_REMEMBER_GROUP = "Запомнить эту группу ";
 
-
+const LABEL_TEACHER_NOT_FOUND_ERROR ="Такого преподавател нет"
+const LABEL_TEACHER_INCORRECT_DATA ="Фамилия И. О."
 
 export const USER_MODES = [
   'Студент',
