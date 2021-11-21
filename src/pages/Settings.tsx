@@ -133,7 +133,7 @@ interface SettingsProps {
   teacher_bd: string
   checked: boolean
   description: string
-  sendData: (action: AssistantSendAction) => void
+  sendAssistantData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
@@ -252,7 +252,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
     addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
     if(this.state.disabled){
-      this.props.sendData({
+      this.props.sendAssistantData({
         action_id: 'settings',
       });
     }
@@ -345,7 +345,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             this.setState({disabled: !this.state.disabled}, () =>{
               console.log("DISABLED",this.state.disabled)
               if(this.state.disabled){
-                this.props.sendData({
+                this.props.sendAssistantData({
                   action_id: 'push_on',
                 });
               }
