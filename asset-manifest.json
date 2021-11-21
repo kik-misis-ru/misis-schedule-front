@@ -1,28 +1,28 @@
 {
   "files": {
     "main.css": "/misis-schedule-front/static/css/main.5e013713.chunk.css",
-    "main.js": "/misis-schedule-front/static/js/main.4bb8492e.chunk.js",
-    "main.js.map": "/misis-schedule-front/static/js/main.4bb8492e.chunk.js.map",
-    "runtime-main.js": "/misis-schedule-front/static/js/runtime-main.9915d0a6.js",
-    "runtime-main.js.map": "/misis-schedule-front/static/js/runtime-main.9915d0a6.js.map",
+    "main.js": "/misis-schedule-front/static/js/main.ba45c9cf.chunk.js",
+    "main.js.map": "/misis-schedule-front/static/js/main.ba45c9cf.chunk.js.map",
+    "runtime-main.js": "/misis-schedule-front/static/js/runtime-main.183fe59e.js",
+    "runtime-main.js.map": "/misis-schedule-front/static/js/runtime-main.183fe59e.js.map",
     "static/css/2.68b64559.chunk.css": "/misis-schedule-front/static/css/2.68b64559.chunk.css",
-    "static/js/2.cba8a018.chunk.js": "/misis-schedule-front/static/js/2.cba8a018.chunk.js",
-    "static/js/2.cba8a018.chunk.js.map": "/misis-schedule-front/static/js/2.cba8a018.chunk.js.map",
-    "static/js/3.dd77ae29.chunk.js": "/misis-schedule-front/static/js/3.dd77ae29.chunk.js",
-    "static/js/3.dd77ae29.chunk.js.map": "/misis-schedule-front/static/js/3.dd77ae29.chunk.js.map",
+    "static/js/2.1d052f32.chunk.js": "/misis-schedule-front/static/js/2.1d052f32.chunk.js",
+    "static/js/2.1d052f32.chunk.js.map": "/misis-schedule-front/static/js/2.1d052f32.chunk.js.map",
+    "static/js/3.ec3ec7d3.chunk.js": "/misis-schedule-front/static/js/3.ec3ec7d3.chunk.js",
+    "static/js/3.ec3ec7d3.chunk.js.map": "/misis-schedule-front/static/js/3.ec3ec7d3.chunk.js.map",
     "index.html": "/misis-schedule-front/index.html",
     "static/css/2.68b64559.chunk.css.map": "/misis-schedule-front/static/css/2.68b64559.chunk.css.map",
     "static/css/main.5e013713.chunk.css.map": "/misis-schedule-front/static/css/main.5e013713.chunk.css.map",
-    "static/js/2.cba8a018.chunk.js.LICENSE.txt": "/misis-schedule-front/static/js/2.cba8a018.chunk.js.LICENSE.txt",
+    "static/js/2.1d052f32.chunk.js.LICENSE.txt": "/misis-schedule-front/static/js/2.1d052f32.chunk.js.LICENSE.txt",
     "static/media/Karta.e347edc6.png": "/misis-schedule-front/static/media/Karta.e347edc6.png",
     "static/media/Star-1.29be49e3.png": "/misis-schedule-front/static/media/Star-1.29be49e3.png",
     "static/media/lib.268889e0.jpeg": "/misis-schedule-front/static/media/lib.268889e0.jpeg"
   },
   "entrypoints": [
-    "static/js/runtime-main.9915d0a6.js",
+    "static/js/runtime-main.183fe59e.js",
     "static/css/2.68b64559.chunk.css",
-    "static/js/2.cba8a018.chunk.js",
+    "static/js/2.1d052f32.chunk.js",
     "static/css/main.5e013713.chunk.css",
-    "static/js/main.4bb8492e.chunk.js"
+    "static/js/main.ba45c9cf.chunk.js"
   ]
 }
