@@ -1661,7 +1661,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   }
 
   // todo исправить асинхронную работу
-  async handleTeacherChange(isSave: boolean): Promise<Number> {
+  async handleTeacherChange(isSave: boolean): Promise<boolean> {
     console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
 
     let result = 1;
@@ -1720,9 +1720,9 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           this.state.teacherId,
         );
       }
-      return result
+      return true
     })
-    return result
+    return false
   }
 
 

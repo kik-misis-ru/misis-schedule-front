@@ -136,7 +136,7 @@ interface SettingsProps {
   sendData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
-  onHandleTeacherChange: (isSave: boolean) => Promise<Number>
+  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   group: string
@@ -207,7 +207,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
-  async onHandleTeacherChange(isSave: boolean) : Promise<Number>{
+  async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
     return await this.props.onHandleTeacherChange(isSave);
   }
   async CheckIsCorrect(){
