@@ -1691,7 +1691,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
         const formatTeacherName = (teacherData: ITeacherApiData) => (
           `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
         )
-
+          console.log( formatTeacherName(teacherData), "teacher name")
         getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
           this.setState({
             teacher: formatTeacherName(teacherData)
@@ -1708,6 +1708,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           student: false,
           isTeacherError: false,
         });
+        if (history.location.pathname=='/home')
         history.push('/spinner')
 
       if (isSave) {
@@ -1742,7 +1743,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
         this.setState({
           flag: true,
           isGroupError: false,
-          teacher_bd: ""
+          //teacher_bd: ""
         });
       })
   }
@@ -1823,13 +1824,20 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
     console.log("Teacher", this.state.teacherId)
     console.log("Group",this.state.groupId)
 
-    console.log("Saved Teacher", this.state.teacher_id_bd)
+    console.log("Saved Teacher", this.state.teacher_id_bd, this.state.teacher_bd)
     console.log("Saved Group",this.state.group_id_bd)
     
     if(isSave){
       teacher_id = this.state.teacher_id_bd;
       group_id = this.state.group_id_bd;
       eng = this.state.eng_bd
+      if (this.isSavedTeacher()){
+      console.log(this.state.student)
+      //this.state.student=false;
+      this.setState({student: false, teacher: this.state.teacher_bd})
+     
+    }
+      else this.setState({group: this.state.bd, student: true})
     }
     else{
       teacher_id = this.state.teacherId;
@@ -1845,6 +1853,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
       ).then((response) => {
         this.SetWeekSchedule(response, week, isSave);
       })
+      this.setState({student: false})
     } else {
       await getScheduleFromDb(
         group_id,
@@ -1853,8 +1862,10 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
       ).then((response) => {
         this.SetWeekSchedule(response, week, isSave);
       })
+      this.setState({student: true})
     }
     this.setState({date: date, flag: true});
+     console.log(this.state.student)
   }
 
   Spinner() {

@@ -245,7 +245,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           }
         })
       }
-  
+      if (!this.props.isTeacherError && !this.props.student) this.setState({edit: false })
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)
       this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
     addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
@@ -268,8 +268,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       justifyContent: "center"}} min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}}></TimePicker>
         </Row>
     )
-    console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
-    console.log(this.state.timePush.value, this.props.theme);
+    
     return (
       <DeviceThemeProvider>
         <DocStyle/>
