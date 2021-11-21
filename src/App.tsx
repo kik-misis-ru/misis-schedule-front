@@ -271,7 +271,9 @@ export interface IAppState {
   filialId: string
   correct: boolean
   day: IDayHeader[]
+  //Расписание для сохраненных данных
   saved_schedule: IScheduleDays
+  //Расписание для несохраненных данных
   other_schedule: IScheduleDays
   spinner: boolean
   date: number
@@ -330,7 +332,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     // this.tfRef                = React.createRef();
     console.log('constructor');
     history.push("/dashboard")
-    // const bell = Array.from({length: 2}, (v, i) => Array.from({length: 8}, (v, i) => ""))
     this.state = {
       notes: [],
       //
