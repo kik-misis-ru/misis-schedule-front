@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/misis-schedule-front/static/css/main.b0ad9354.chunk.css",
-    "main.js": "/misis-schedule-front/static/js/main.64383571.chunk.js",
-    "main.js.map": "/misis-schedule-front/static/js/main.64383571.chunk.js.map",
+    "main.js": "/misis-schedule-front/static/js/main.ee468cd7.chunk.js",
+    "main.js.map": "/misis-schedule-front/static/js/main.ee468cd7.chunk.js.map",
     "runtime-main.js": "/misis-schedule-front/static/js/runtime-main.9915d0a6.js",
     "runtime-main.js.map": "/misis-schedule-front/static/js/runtime-main.9915d0a6.js.map",
     "static/css/2.68b64559.chunk.css": "/misis-schedule-front/static/css/2.68b64559.chunk.css",
@@ -23,6 +23,6 @@
     "static/css/2.68b64559.chunk.css",
     "static/js/2.d77eccd7.chunk.js",
     "static/css/main.b0ad9354.chunk.css",
-    "static/js/main.64383571.chunk.js"
+    "static/js/main.ee468cd7.chunk.js"
   ]
 }
