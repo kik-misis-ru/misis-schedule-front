@@ -55,7 +55,8 @@ import { threadId } from "worker_threads";
     group: string
     subGroup: string
     getIsCorrectTeacher: () => boolean
-    Bd: () => void
+    // Bd: () => void
+    getScheduleFromDb: (date: number, isSave: boolean, isCurrentWeek: boolean) => void
     //Load_Schedule: () => void
 
   }
@@ -80,12 +81,12 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
         this.PreviousWeek = this.PreviousWeek.bind(this)
         this.NextWeek = this.NextWeek.bind(this);
         this.CurrentWeek = this.CurrentWeek.bind(this);
-        this.Bd = this.Bd.bind(this);
+        this.getScheduleFromDb = this.getScheduleFromDb.bind(this);
         //this.Load_Schedule = this.Load_Schedule.bind(this)
         // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
     }
-     async Bd(){
-      await this.props.Bd()
+     async getScheduleFromDb(){
+      await this.props.getScheduleFromDb(Date.now(), true, true)
     }
     PreviousWeek(){
         this.props.PreviousWeek()
@@ -150,12 +151,12 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               onDashboardClick={async () => {
 
                 if ((!this.props.isTeacher&&this.props.groupName!=this.props.bd)|| (this.props.isTeacher&&this.props.teacher!=this.props.teacher_bd )){
-                  await this.Bd();
+                  await this.getScheduleFromDb();
                 }
                 this.onHandleChange("isSavedSchedule",true)
                 history.push("/dashboard")
               }}
-              Bd={this.Bd}
+              Bd={this.getScheduleFromDb}
               //Load_Schedule={()=> this.Load_Schedule()}
               // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
             />

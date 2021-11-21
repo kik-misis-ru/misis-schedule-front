@@ -70,6 +70,7 @@ import {
   pairNumberToPairText
 } from './utils';
 import Lesson from "./pages/Lesson";
+import { DH_CHECK_P_NOT_SAFE_PRIME } from "constants";
 
 export const NON_EXISTING_PAGE_NO = -1;
 //export const HOME_PAGE_NO = 0;
@@ -324,11 +325,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
-    this.Bd = this.Bd.bind(this);
+    // this.Bd = this.Bd.bind(this);
     this.sendData = this.sendData.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
     this.Load_Schedule=this.Load_Schedule.bind(this);
+    this.getScheduleFromDb = this.getScheduleFromDb.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     history.push("/dashboard")
@@ -1445,6 +1447,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   protected isTeacher() {
     return !this.state.student && this.state.teacher_correct
   }
+  protected isSavedTeacher(){
+    return this.state.teacher_id_bd!=""
+  }
 
   // получить дату первого дня недели
   getFirstDayWeek(date: Date): string {
@@ -1467,27 +1472,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     return formatDateWithDashes(new Date(firstDay))
   }
 
-  //Загружает расписание с бекенда
-  async getScheduleFromDb(date: number, isSave: boolean) {
-    const firstDayWeek = this.getFirstDayWeek(new Date(date));
-    if (this.isTeacher()) {
-      await getScheduleTeacherFromDb(
-        this.state.teacherId,
-        firstDayWeek
-      ).then((response) => {
-        this.SetWeekSchedule(response, 1, isSave);
-      })
-    } else {
-      await getScheduleFromDb(
-        this.state.groupId,
-        this.state.engGroup,
-        firstDayWeek
-      ).then((response) => {
-        this.SetWeekSchedule(response, 1, isSave);
-      })
-    }
-    this.setState({date: date, flag: true});
-  }
 
   /**
    * Заполнение расписанием на следующую неделю
@@ -1495,11 +1479,11 @@ export class App extends React.Component<IAppProps, IAppState> {
   async NextWeek(isSave: boolean) {
     this.setState({spinner: false});
     const datePlusWeek = this.state.date + SEVEN_DAYS;
-    return this.getScheduleFromDb(datePlusWeek, isSave);
+    return this.getScheduleFromDb(datePlusWeek, isSave, false);
   }
 
   async CurrentWeek(isSave: boolean) {
-    return this.getScheduleFromDb(Date.now(), isSave);
+    return this.getScheduleFromDb(Date.now(), isSave, true);
   }
 
   /**
@@ -1508,7 +1492,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async PreviousWeek(isSave: boolean) {
     this.setState({spinner: false});
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
-    return this.getScheduleFromDb(dateMinusWeek, isSave);
+    return this.getScheduleFromDb(dateMinusWeek, isSave, false);
   }
 
   /**
@@ -1828,38 +1812,49 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
 
       })
 
-
   }
 
-  //todo убрать
-  async Bd(): Promise<void> {
-    console.log("BD")
-    if (this.state.teacher_bd != "") {
-      
-      this.setState({student: false, spinner: true})
-      await getScheduleTeacherFromDb(
-        this.state.teacher_id_bd,
-        this.getFirstDayWeek(new Date())
-      ).then((response) => {
-        console.log('Bd: getScheduleTeacherFromDb: response:', response)
-        this.SetWeekSchedule(response, 0, true);
-      });
-    } else {
-      console.log('Bd: getScheduleFromDb: this.state.group_id_bd:', this.state.group_id_bd);
-      this.setState({
-        groupId: this.state.group_id_bd,
-        group: this.state.bd,
-        student: true,
-        spinner: false,
-        engGroup: this.state.eng_bd,
-        subGroup: this.state.sub_bd
-      });
-      await this._loadSchedule({
-        groupId: this.state.group_id_bd,
-        engGroup: this.state.eng_bd,
-        isSave:true
-      });
+  //Загружает расписание с бекенда
+  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: boolean) {
+    let teacher_id;
+    let group_id;
+    let eng;
+    console.log("IsSave:",isSave)
+    console.log("Teacher", this.state.teacherId)
+    console.log("Group",this.state.groupId)
+
+    console.log("Saved Teacher", this.state.teacher_id_bd)
+    console.log("Saved Group",this.state.group_id_bd)
+    
+    if(isSave){
+      teacher_id = this.state.teacher_id_bd;
+      group_id = this.state.group_id_bd;
+      eng = this.state.eng_bd
     }
+    else{
+      teacher_id = this.state.teacherId;
+      group_id = this.state.groupId;
+      eng = this.state.engGroup;
+    }
+    const firstDayWeek = this.getFirstDayWeek(new Date(date));
+    let week = isCurrentWeek ? 0 : 1
+    if (this.isSavedTeacher()) {
+      await getScheduleTeacherFromDb(
+        teacher_id,
+        firstDayWeek
+      ).then((response) => {
+        this.SetWeekSchedule(response, week, isSave);
+      })
+    } else {
+      await getScheduleFromDb(
+        group_id,
+        eng,
+        firstDayWeek
+      ).then((response) => {
+        this.SetWeekSchedule(response, week, isSave);
+      })
+    }
+    this.setState({date: date, flag: true});
   }
 
   Spinner() {
@@ -2131,7 +2126,8 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
                 character={this.state.character}
                 theme={this.state.theme}
                 isTeacher={!this.state.student}
-                Bd={this.Bd}
+                // Bd={this.Bd}
+                getScheduleFromDb={this.getScheduleFromDb}
                 bd={this.state.bd}
                 teacher_bd={this.state.teacher_bd}
                 PreviousWeek={()=>this.PreviousWeek(this.state.isSavedSchedule)}
