@@ -2108,7 +2108,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           path="/spinner"
           render ={
             ({match}) =>{
-              this.Spinner()
+              return this.Spinner()
             }
           }
           />
