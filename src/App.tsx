@@ -2096,11 +2096,10 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           path="/start"
           render ={
             ({match}) =>{
-              <Start
+             return <Start
                 character={this.state.character}
                 theme={this.state.theme}
                 isMobileDevice={detectDevice() === "mobile"}
-                onDashboardClick={() => history.push("/dashboard")}
               />
             }
           }

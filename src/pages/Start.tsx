@@ -31,6 +31,10 @@ import {
   GoToHomeButton,
   GoToScheduleButton,
 } from '../components/TopMenu';
+
+import {
+  history
+} from '../App'
 //import { Button } from "@sberdevices/plasma-ui/node_modules/@sberdevices/plasma-core";
 //import { ParagraphText1 } from "@sberdevices/plasma-core";
 
@@ -38,7 +42,6 @@ import {
 const Start = ({
                          character,
                          isMobileDevice,
-                         onDashboardClick,
                          theme,
                        }: {
   theme: string 
@@ -47,7 +50,6 @@ const Start = ({
     // todo: что такое 'timeParamoy' ???
     | typeof CHAR_TIMEPARAMOY
   isMobileDevice: boolean
-  onDashboardClick: () => void
 }) => {
   return <DeviceThemeProvider>
     <DocStyle/>
@@ -94,7 +96,7 @@ const Start = ({
     не отвлекаясь на рутину
     </ParagraphText1>
   </TextBox>
-  <Button onClick={()=>{onDashboardClick()}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
+  <Button onClick={()=>{ history.push("/dashboard")}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
   
   </Row>
   <Image src={star} style={{margin:"0 0 auto 0", overflow: "hidden"}}/>
@@ -148,7 +150,7 @@ const Start = ({
     не отвлекаясь на рутину
     </ParagraphText1>
   </TextBox>
-  <Button onClick={()=>{onDashboardClick()}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
+  <Button onClick={()=>{ history.push("/dashboard")}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
   </Col>
   </Row>
 
