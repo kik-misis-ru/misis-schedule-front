@@ -1502,7 +1502,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   console.log("ParsedSchedule", parsedSchedule)
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
-    this.setState({spinner: false, isSavedSchedule: isSavedSchedule});
+    this.setState({spinner: false});
 
     let schedule;
     /*
@@ -1613,10 +1613,10 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
     }
     this.setState({spinner: true});
     if(isSavedSchedule){
-      this.setState({saved_schedule: schedule});
+      this.setState({saved_schedule: schedule,isSavedSchedule: isSavedSchedule});
     }
     else{
-      this.setState({other_schedule: schedule})
+      this.setState({other_schedule: schedule, isSavedSchedule: isSavedSchedule})
     }
     console.log("Days", schedule, "Day", this.state.day)
   }
@@ -1655,6 +1655,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   }
 
   doSetTeacher(teacherName: string): void {
+    console.log("DoSetTeacher")
     this.setState({teacher: teacherName}, async () => {
       await this.handleTeacherChange(false);
     });
@@ -1707,7 +1708,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           isTeacherError: false,
         });
         if (history.location.pathname=='/home')
-        history.push('/spinner')
+          history.push('/spinner')
 
       if (isSave) {
         this.setState({teacher_bd: this.state.teacher, teacher_id_bd: this.state.teacherId})
@@ -2115,8 +2116,8 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           <Route path="*">
             {
 
-              (page >= 1 && page <= 13) &&
-              <Schedule
+               (page >= 1 && page <= 13) &&
+               <Schedule
                 timeParam={page}
                 onSetValue={this.setValue}
                 teacher={this.state.teacher}

@@ -35,6 +35,7 @@ export const ScheduleDayLessons = ({
   isToday: boolean,
   onTeacherClick: (teacherName: string) => void
 }) => {
+  console.log("DAY LESSONS",dayLessons)
   return (
     <React.Fragment>
       {
