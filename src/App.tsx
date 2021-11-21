@@ -1817,16 +1817,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
 
   //Загружает расписание с бекенда
   async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: boolean) {
-    let teacher_id;
-    let group_id;
-    let eng;
-    console.log("IsSave:",isSave)
-    console.log("Teacher", this.state.teacherId)
-    console.log("Group",this.state.groupId)
-
-    console.log("Saved Teacher", this.state.teacher_id_bd, this.state.teacher_bd)
-    console.log("Saved Group",this.state.group_id_bd)
-    
+    let teacher_id, group_id, eng;
     if(isSave){
       teacher_id = this.state.teacher_id_bd;
       group_id = this.state.group_id_bd;
