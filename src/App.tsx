@@ -1517,7 +1517,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   console.log("ParsedSchedule", parsedSchedule)
     console.log("scheduleData", parsedSchedule)
     console.log('showWeekSchedule')
-    this.setState({spinner: false});
+    this.setState({spinner: false, isSavedSchedule: isSavedSchedule});
 
     let schedule;
     /*
