@@ -103,12 +103,20 @@ const initializeAssistant = (getState) => {
 
 export const Spacer100 = styled.div`
   width: 100px;
+  min-height: 100px;
   height: 100px;
 `;
 
 export const Spacer200 = styled.div`
   width: 200px;
+  min-height: 200px;
   height: 200px;
+`;
+
+export const Spacer300 = styled.div`
+  width: 200px;
+  min-height: 300px;
+  height: 300px;
 `;
 
 // const PAIR_NAME_IDX = 0;
@@ -2143,9 +2151,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
                 subGroup={this.state.subGroup}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
-            }
-            {
-              <div></div>
             }
           </Route>
         </Switch>

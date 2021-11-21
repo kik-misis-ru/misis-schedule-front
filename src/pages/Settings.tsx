@@ -141,7 +141,7 @@ interface SettingsProps {
   onConvertIdInGroupName: () => void
   group: string
   isGroupError: boolean
-  theme: string 
+  theme: string
   ChangeTheme: () => void
   ChangePush: (hour: number, min: number, isActive: boolean) => void
   subGroup: string
@@ -171,14 +171,14 @@ interface SettingsState {
   theme: boolean
   themeName: string
   dayPush: number
-  
+
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
 
   constructor(props: SettingsProps) {
     super(props);
-    
+
     this.onHandleChange = this.onHandleChange.bind(this);
     this.Save = this.Save.bind(this);
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
@@ -202,7 +202,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       ? DESC_JOY
       : DESC_OTHERS)
   }
-  
+
 
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
@@ -217,7 +217,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.LoadSchedule()
   }
 
-  
+
 
   // handleTeacherChange() {
   //   this.props.handleTeacherChange();
@@ -238,7 +238,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           this.setState({edit: false })
          }
       }
-      
+
       else{
         console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
@@ -270,14 +270,19 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       justifyContent: "center"}} min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}}></TimePicker>
         </Row>
     )
-    
+
     return (
       <DeviceThemeProvider>
         <DocStyle/>
         {
           getThemeBackgroundByChar(this.props.character, this.props.theme)
         }
-        <Container style={{padding: "0", overflow: "hidden"}}>
+        <Container style={{
+          padding: 0,
+          // overflow: "hidden",
+          height: '100%',
+          overflow: 'auto',
+        }}>
         <Row style={{margin: "1em"}}>
 
 <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => this.props.onDashboardClick()} />
@@ -290,7 +295,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
 </Col>) : (<div></div>)
   }
-</Row > 
+</Row >
 
           { this.state.edit ? (
             <Row style={{display: "flex",
@@ -302,7 +307,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           selectedIndex={this.props.student ? 0 : 1}
           onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
         />
-        { this.props.student ? 
+        { this.props.student ?
           <Col size={4} style={{marginTop: "1em"}}>
            <TextFieldForUserInfo
           label={LABEL_GROUP}
@@ -325,7 +330,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           onChange={(value) => this.onHandleChange('engGroup', value)}
         />
           </Col> :
-          <Col size={4}> 
+          <Col size={4}>
            <TextFieldForUserInfo
           label={LABEL_TEACHER}
           value={this.props.teacher}
@@ -334,9 +339,9 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         />
           </Col>
         }
-          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled} 
-          onChange={(() => 
-          { 
+          <Switch style={{ margin: "1em" }} label="Включить пуш-уведомления " description="Напоминания о парах" checked={this.state.disabled}
+          onChange={(() =>
+          {
             this.setState({disabled: !this.state.disabled}, () =>{
               console.log("DISABLED",this.state.disabled)
               if(this.state.disabled){
@@ -344,7 +349,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   action_id: 'push_on',
                 });
               }
-            });  
+            });
 
             })}/>
           {this.state.disabled ?
@@ -358,8 +363,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           selectedIndex={this.state.dayPush }
           onSelect={(tabIndex) => this.setState({dayPush: tabIndex})}
         /> */}
-           
-          
+
+
           <TimePicker style={{margin:"0.5em"}}
           visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}
@@ -381,7 +386,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             this.props.student && this.props.bd!=""
 
               ? (<Col size={10}>
-             
+
                 {this.props.bd != "" ?
                  <TextBox>
                   <TextBoxLabel >
@@ -403,12 +408,12 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   </TextBoxLabel>
                   <Headline4>{this.props.engGroup} </Headline4>
                 </TextBox> : <div></div> }
-                  
+
                   </Col>
               )
               : (<Col size={10}>
                 {this.props.teacher_bd != "" ?
-                <TextBox> 
+                <TextBox>
                   <TextBoxLabel>
                    ФИО
                   </TextBoxLabel>
@@ -416,8 +421,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   </TextBox>
                   : <div></div> }
                   </Col>
-              ) 
-              
+              )
+
           }
           <Col size={10}>
           <TextBox>
@@ -426,16 +431,16 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   </TextBoxLabel>
           </TextBox>
           {
-            this.state.disabled ? 
-            <TextBox> 
-                  <Headline4>Вкл. </Headline4>                
+            this.state.disabled ?
+            <TextBox>
+                  <Headline4>Вкл. </Headline4>
                   <TextBoxLabel >
-                  Время отправки 
+                  Время отправки
                  </TextBoxLabel>
                  <Headline4>{this.state.timePush.value.getHours()< 10 ? `0${this.state.timePush.value.getHours()}` : this.state.timePush.value.getHours()}:{this.state.timePush.value.getMinutes()< 10 ? `0${this.state.timePush.value.getMinutes()}` : this.state.timePush.value.getMinutes()}</Headline4>
                   </TextBox>
                   :
-                  <TextBox> 
+                  <TextBox>
                   <Headline4>Выкл.</Headline4>
                   </TextBox>
           }
@@ -443,8 +448,10 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           </Row>
       )
       }
-      <div style={{height: "100px", width: "100px"}}></div>
+
          <Spacer100/>
+         <Spacer100/>
+
          </Container>
       </DeviceThemeProvider>
     )

@@ -21,9 +21,12 @@ export const SpinnerPage = (
         getThemeBackgroundByChar(character, theme)
       }
       <div>
-        <Container
-          style={{padding: 0}}
-        >
+        <Container style={{
+          padding: 0,
+          // overflow: "hidden",
+          height: '100%',
+          overflow: 'auto',
+        }}>
           <Spinner
             color={ACCENT_TEXT_COLOR}
             style={{

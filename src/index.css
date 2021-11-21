@@ -9,6 +9,9 @@ html,
 body {
   margin: 0;
   padding: 0;
-  
 }
 
+html, body, #root {
+  overflow: hidden;
+  height: 100%;
+}

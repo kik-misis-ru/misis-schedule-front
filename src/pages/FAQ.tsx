@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Headline3,
 } from "@sberdevices/plasma-ui";
+import {Spacer300} from "../App";
 import faq from '../data/faq.json';
 import lib from '../data/libraries.json';
 
@@ -35,7 +36,12 @@ const FAQ = ({
     {
       getThemeBackgroundByChar(character, theme)
     }
-    <Container style={{padding: 0, overflow: "hidden"}}>
+    <Container style={{
+      padding: 0,
+      // overflow: "hidden",
+      height: '100%',
+      overflow: 'auto',
+    }}>
 
       <Row style={{margin: "1em"}}>
 
@@ -74,10 +80,9 @@ const FAQ = ({
           />
         ))
       }
-      <div style={{
-        width: '200px',
-        height: '300px',
-      }}></div>
+
+      <Spacer300/>
+
     </Container>
   </DeviceThemeProvider>
 }

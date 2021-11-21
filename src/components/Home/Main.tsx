@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   history,
   Spacer100,
+  Spacer200,
 } from '../../App';
 import {
     HeaderLogoCol,
@@ -66,9 +67,8 @@ const Main = ({
       >
       </Cell>
 
-      <Spacer100/>
-    <div
-    style={{height: "100px", width: "100px"}}></div>
+      <Spacer200/>
+
     </Container>
     
   )

@@ -182,9 +182,12 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   render() {
 
     const studentContent = (
-      <Container
-        style={{padding: 0}}
-      >
+      <Container style={{
+        padding: 0,
+        // overflow: "hidden",
+        height: '100%',
+        overflow: 'auto',
+      }}>
 
         {/* <HomeTitle
           text={HOME_TITLE}
