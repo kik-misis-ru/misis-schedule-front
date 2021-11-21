@@ -32,6 +32,7 @@ import {
   HeaderLogoCol,
   HeaderTitleCol2,
 } from '../components/TopMenu';
+import internal from "stream";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -44,7 +45,8 @@ const LABEL_REMEMBER_FIO = "Запомнить ФИО, если Вы препо�
 const LABEL_TO_VIEW_SCHEDULE = "Чтобы посмотреть расписание, укажите фамилию и инициалы через пробел и точку";
 const LABEL_REMEMBER_GROUP = "Запомнить эту группу ";
 
-
+const LABEL_TEACHER_NOT_FOUND_ERROR ="Такого преподавател нет"
+const LABEL_TEACHER_INCORRECT_DATA ="Фамилия И. О."
 
 export const USER_MODES = [
   'Студент',
@@ -134,7 +136,7 @@ interface SettingsProps {
   sendData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
   onSetValue: (key: string, value: any) => void
-  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
+  onHandleTeacherChange: (isSave: boolean) => Promise<Number>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   group: string
@@ -205,7 +207,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
-  async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
+  async onHandleTeacherChange(isSave: boolean) : Promise<Number>{
     return await this.props.onHandleTeacherChange(isSave);
   }
   async CheckIsCorrect(){
@@ -240,7 +242,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       else{
         console.log("TEACHER CHECK")
         this.onHandleTeacherChange(true).then((response)=>{
-          if(response){
+          if(response==1){
             this.setState({edit: false })
           }
         })

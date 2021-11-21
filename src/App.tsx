@@ -1628,8 +1628,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
 
 
   ChangePage() {
-
-    console.log("LOCATION:",history.location)
     let timeParam = this.state.page;
     if ('/spinner'== history.location) {
       return
@@ -1663,13 +1661,15 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   }
 
   // todo исправить асинхронную работу
-  async handleTeacherChange(isSave: boolean): Promise<boolean> {
+  async handleTeacherChange(isSave: boolean): Promise<Number> {
     console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
 
+    let result = 1;
     await getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
       console.log('handleTeacherChange:', teacherData);
       console.log('handleTeacherChange: status:', teacherData.status);
 
+      result = Number(teacherData.status)
       if (
         (teacherData.status == "-1") ||
         (teacherData.status == "-2")
@@ -1700,9 +1700,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
 
          this.setState({
           teacherId: teacherData.id,
-          //
           teacher_correct: true,
-
           date: Date.now(),
           flag: true,
           student: false,
@@ -1722,9 +1720,9 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
           this.state.teacherId,
         );
       }
-      return false
+      return result
     })
-    return false
+    return result
   }
 
 
@@ -1988,7 +1986,6 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
                   student={this.state.student}
                   teacher={this.state.teacher}
                   isTeacherError={this.state.isTeacherError}
-                  // handleTeacherChange={this.handleTeacherChange}
                   teacher_checked={this.state.teacher_checked}
                 />
               }
