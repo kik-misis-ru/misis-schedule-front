@@ -410,6 +410,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             console.log("Sub", event.sub);
             this.setState({userId: event.sub});
             const now = new Date();
+            console.log(new Date(Date.now()+2760000), "Date")
             this.setState({today: now.getDay()});
             getUser(this.state.userId).then((user)=> {
 
