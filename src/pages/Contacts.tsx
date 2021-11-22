@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Headline3,
 } from "@sberdevices/plasma-ui";
+import {Spacer300} from "../App";
 import contacts_data from '../data/contacts.json';
 import social_media from '../data/social_media.json';
 
@@ -38,7 +39,12 @@ const Contacts = ({
     {
       getThemeBackgroundByChar(character, theme)
     }
-          <Container style={{padding: 0, overflow: "hidden"}}>
+    <Container style={{
+      padding: 0,
+      // overflow: "hidden",
+      height: '100%',
+      overflow: 'auto',
+    }}>
 
             <Row style={{margin: "1em"}}>
 
@@ -73,10 +79,9 @@ const Contacts = ({
             </Headline3>
             <SocialList/>
             </div>
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
+
+            <Spacer300/>
+
           </Container>
   </DeviceThemeProvider>
 }
