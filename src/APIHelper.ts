@@ -107,7 +107,7 @@ export async function getScheduleFromDb(groupId: string, english_group_id: strin
     params: {
       group_id: groupId,
       english_group_id: english_group_id,
-      date: date,
+      date: date+1,
     },
   };
   console.log(`APIHelper: getScheduleFromDb: url: "${url}", config:`, config);
@@ -125,7 +125,7 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
   const config = {
     params: {
       teacher_id: teacherId,
-      date: date,
+      date: date+1,
     },
   };
   console.log(`APIHelper: getScheduleTeacherFromDb: url: "${url}", config:`, config);

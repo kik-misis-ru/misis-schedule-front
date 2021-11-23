@@ -358,7 +358,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       saved_schedule: [],
       other_schedule: [],
       spinner: false,
-      date: Date.now(),
+      date: Date.now()+1,
       today: 0,
       theme: "dark",
       isGroupError: false,
@@ -1906,6 +1906,7 @@ SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
   }
 
   render() {
+    window.scrollTo(0, 0)
     let {page} = this.state;
     // console.log("App: render, this.state:", this.state)
     return (
