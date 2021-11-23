@@ -139,7 +139,12 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
           getThemeBackgroundByChar(this.props.character, this.props.theme)
         }
         <div>
-          <Container style={{padding: 0, overflow: "hidden"}}>
+          <Container style={{
+            padding: 0,
+            // overflow: "hidden",
+            height: '100%',
+            overflow: 'auto',
+          }}>
 
             <TopMenu
               subLabel={

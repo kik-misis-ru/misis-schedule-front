@@ -6,7 +6,7 @@ import {
 } from "@sberdevices/plasma-ui";
 import {
   StartEnd,
-  LessonStartEnd,
+  LessonStartEnd, Spacer300,
 } from '../App';
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
@@ -59,7 +59,12 @@ const Lesson = (props: {
     {
       getThemeBackgroundByChar(character, theme)
     }
-    <Container style={{padding: 0, overflow: "hidden"}}>
+    <Container style={{
+      padding: 0,
+      // overflow: "hidden",
+      height: '100%',
+      overflow: 'auto',
+    }}>
 
       <Row style={{margin: "1em"}}>
       {/* <HeaderLogoCol/> */}
@@ -93,10 +98,9 @@ const Lesson = (props: {
       }
       </Col>
       </Row>
-      <div style={{
-        width: '200px',
-        height: '300px',
-      }}></div>
+
+      <Spacer300/>
+
     </Container>
 
   </DeviceThemeProvider>

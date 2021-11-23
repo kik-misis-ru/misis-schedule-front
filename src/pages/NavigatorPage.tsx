@@ -14,6 +14,7 @@ import {
   CellListItem,
 } from "@sberdevices/plasma-ui";
 import {IconLocation} from "@sberdevices/plasma-icons";
+import {Spacer300} from "../App";
 
 import karta from "../images/Karta.png";
 
@@ -111,7 +112,12 @@ const NavigatorPage = ({
     {
       isMobileDevice
         ? (
-          <Container style={{padding: 0, overflow: "hidden"}}>
+          <Container style={{
+            padding: 0,
+            // overflow: "hidden",
+            height: '100%',
+            overflow: 'auto',
+          }}>
 
             <Row style={{margin: "1em"}}>
 
@@ -143,10 +149,9 @@ const NavigatorPage = ({
               </CardBody>
 
             </Card>
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
+
+            <Spacer300/>
+
           </Container>
         )
         :
@@ -191,10 +196,7 @@ const NavigatorPage = ({
               </div>
             </Row>
 
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
+            <Spacer300/>
 
           </Container>
         )

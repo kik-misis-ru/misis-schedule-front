@@ -295,6 +295,7 @@ interface IUserData {
   subgroup_name,
   eng_group,
   teacher_id,
+  filial_id,
 }
 
 export async function getUser(userId: string): Promise<IUserData | "0"> {

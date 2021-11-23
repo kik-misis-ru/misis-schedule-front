@@ -44,6 +44,7 @@ import {
   formatTimeHhMm,
 } from '../utils';
 import {
+  Spacer300,
   StartEnd,
 } from '../App';
 import {Bell} from '../types/ScheduleStructure'
@@ -431,7 +432,12 @@ const DashboardPage = ({
       {
         getThemeBackgroundByChar(character, theme)
       }
-      <Container style={{padding: 0, overflow: "hidden"}}>
+      <Container style={{
+        padding: 0,
+        // overflow: "hidden",
+        height: '100%',
+        overflow: 'auto',
+      }}>
         <HeaderRow
           // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
           onHomeClick={() => history.push('/settings')}
@@ -552,11 +558,7 @@ const DashboardPage = ({
           onGoToPage={(pageNo) => onGoToPage(pageNo)}
         />
 
-
-        <div style={{
-          width: '200px',
-          height: '300px',
-        }}></div>
+        <Spacer300/>
 
       </Container>
     </DeviceThemeProvider>
