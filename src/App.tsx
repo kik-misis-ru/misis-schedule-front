@@ -1570,12 +1570,14 @@ export class App extends React.Component<IAppProps, IAppState> {
   /**
    * заполнение данными расписания из бд
    */
-SetWeekSchedule(scheduledata: IScheduleFormatData, i, isSavedSchedule: boolean) {
+SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
     console.log('showWeekSchedule', scheduledata)
+    console.log("IsSaveSchedule", isSavedSchedule)
+    console.log("IsCurrentWeek",i)
    
-    this.setState({spinner: true});
-    let saved_schedule = this.state.saved_schedule
+   
     if(isSavedSchedule){
+      let saved_schedule = this.state.saved_schedule
      if(i==0){
       saved_schedule.current_week = scheduledata.schedule
      }
@@ -1586,18 +1588,20 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i, isSavedSchedule: boolean) 
     }
     else{
       let other_schedule = this.state.other_schedule
-      if(isSavedSchedule){
        if(i==0){
+         console.log("Set other shcedule; current week")
         other_schedule.current_week = scheduledata.schedule
        }
        else{
+        console.log("Set other shcedule; other week")
         other_schedule.other_week = scheduledata.schedule
        }
        this.setState({other_schedule: other_schedule,isSavedSchedule: isSavedSchedule,  day: scheduledata.day});
     }
+    this.setState({spinner: true});
     console.log("Days", scheduledata, "Day", this.state.day)
   }
-}
+
 
   ChangeDay(day: number): void{
     this.ChangePage();

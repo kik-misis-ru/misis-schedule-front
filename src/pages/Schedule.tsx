@@ -27,6 +27,7 @@ import {
     getFullGroupName,
   } from '../utils';
 import { threadId } from "worker_threads";
+import schedule from "../schedule";
 
 
   const FIRST_DAY_OTHER_WEEK = 8;
@@ -135,6 +136,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
       }
 
       console.log(this.props.spinner, "SPINNER")
+      console.log("SHCEDULE", this.props.schedule)
       
      return <DeviceThemeProvider>
         <DocStyle/>
