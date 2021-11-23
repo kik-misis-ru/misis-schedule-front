@@ -143,7 +143,6 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
             padding: 0,
             // overflow: "hidden",
             height: '100%',
-            overflow: 'auto',
           }}>
 
             <TopMenu

@@ -186,7 +186,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         padding: 0,
         // overflow: "hidden",
         height: '100%',
-        overflow: 'auto',
       }}>
 
         {/* <HomeTitle
