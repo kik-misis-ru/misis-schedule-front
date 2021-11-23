@@ -349,7 +349,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
-    // this.Bd = this.Bd.bind(this);
     this.sendAssistantData = this.sendAssistantData.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
@@ -654,11 +653,11 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'when_lesson':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             let params: AssistantSendActionSay['parameters'];
-
+            let dayNum = 0;
             const [type, day, lessonNum] = action.note || [];
+            day == "today" ? dayNum = this.state.today-1 : dayNum = this.state.today;
 
-            let answer = this.getStartEndLesson(type, day, lessonNum)
-            // const [ type, day ] = this.getStartEndLesson(type, day, lessonNum)
+            let answer = this.getStartEndLesson(type, dayNum, lessonNum)
 
 
             console.log("answer", answer)
@@ -831,7 +830,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               const numDayOfWeek = parseInt(strDayOfWeek) - 1
               console.log('dispatchAssistantAction: first_lesson:', action.note)
               console.log('dispatchAssistantAction: first_lesson:', numDayOfWeek);
-              firstLessonNumStr = this.getTimeFirstLesson(numDayOfWeek)[1]
+              firstLessonNumStr = this.getStartFirstLesson(numDayOfWeek)[1]
               if (String(this.state.today + 1) === strDayOfWeek) {
                 day1 = DAY_TODAY;
                 page1 = 0
@@ -845,7 +844,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             } else {
               console.warn('dispatchAssistantAction: first_lesson: action.note is undefined');
               // todo: fix fallback
-              firstLessonNumStr = this.getTimeFirstLesson(0)[1];
+              firstLessonNumStr = this.getStartFirstLesson(0)[1];
               // day = DAY_TODAY
               day1 = undefined
             }
@@ -1106,27 +1105,39 @@ export class App extends React.Component<IAppProps, IAppState> {
     const isTeacherCorrect = this.state.teacher_correct;
     return !isStudent && isTeacherCorrect
   }
-
-  // определяет когда начинаются пары сегодня или завтра
-  getStartFirstLesson(todayOrTomorrow: TodayOrTomorrow): string | undefined {
-    const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
-    const weekDayIndex = this.state.today - dayShift;
-    for (let bell in this.state.saved_schedule[weekDayIndex]) {
-      const lessonName = this.state.saved_schedule[weekDayIndex][bell][THIS_WEEK].lessonName
-      if (lessonName !== "") {
-        return LessonStartEnd[Number(bell)].start
+  /**
+   *
+   * @param dayNumber
+   * @returns {[
+   *   string,   -- строка, содержащая начало пары
+   *   string,   -- порядковый номер пары (1 символ)
+   * ]}
+   */
+  getStartFirstLesson(dayNumber: number): [string, string] {
+    let lessonsStart = '';
+    let lessonNumber = '';
+    let week: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    if (dayNumber < this.state.today) {
+      week = OTHER_WEEK;
+    }
+    for (let lessonIdx in this.state.saved_schedule[dayNumber - 1]) {
+      const lesson = this.state.saved_schedule[dayNumber - 1][lessonIdx][week]
+      if (lesson.lessonName !== "") {
+        lessonsStart = LessonStartEnd[Number(lessonIdx)].start
+        console.log(lessonIdx, "'lesson.lessonNumber'")
+        lessonNumber = String(Number(lessonIdx)+1);
+        break
       }
     }
+    return [lessonsStart, lessonNumber];
   }
+  
 
   // определяет когда кончаются пары сегодня или завтра
-  getEndLastLesson(todayOrTomorrow: TodayOrTomorrow): string {
-    const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
-    const dayNumber = this.state.today - dayShift;
-    console.log(`getEndLastLesson: todayOrTomorrow: ${todayOrTomorrow}, dayShift: ${dayShift}, dayNumber: ${dayNumber}`);
+  getEndLastLesson(todayOrTomorrow: number): string {
     let lessonEnd = '';
-    for (let lessonIdx in this.state.saved_schedule[dayNumber]) {
-      if (this.state.saved_schedule[dayNumber][lessonIdx][THIS_WEEK].lessonName !== "") {
+    for (let lessonIdx in this.state.saved_schedule[todayOrTomorrow]) {
+      if (this.state.saved_schedule[todayOrTomorrow][lessonIdx][THIS_WEEK].lessonName !== "") {
         lessonEnd = LessonStartEnd[lessonIdx].end;
       }
     }
@@ -1134,10 +1145,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет начало или конец энной пары сегодня или завтра
-  getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: TodayOrTomorrow, lessonNum: number): string | undefined {
-    const dayShift = TODAY_TOMORROW_DICT[todayOrTomorrow]
-    const dayNumber = this.state.today - dayShift;
-    const lessonName = this.state.saved_schedule[dayNumber][lessonNum - 1][THIS_WEEK].lessonName;
+  getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: number, lessonNum: number): string | undefined {
+
+    const lessonName = this.state.saved_schedule[todayOrTomorrow][lessonNum - 1][THIS_WEEK].lessonName;
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
@@ -1150,32 +1160,32 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   getStartEndLesson(
     startOrEnd: StartOrEnd,
-    todayOrTomorrow: TodayOrTomorrow,
+    todayOrTomorrow: number,
     // todo: lessonNum строка или число ???
     lessonNum,
   ): string | [string, string] | undefined {
-    if (todayOrTomorrow === DAY_TODAY && this.state.today === 0) {
-      return [todayOrTomorrow, DAY_SUNDAY]
+    if (todayOrTomorrow === 0) {
+      return [String(todayOrTomorrow), DAY_SUNDAY]
 
-    } else if (todayOrTomorrow === DAY_TOMORROW && this.state.today === 6) {
-      return [todayOrTomorrow, DAY_SUNDAY]
+    } else if (todayOrTomorrow  === 7) {
+      return [String(todayOrTomorrow), DAY_SUNDAY]
 
     } else if (startOrEnd === "start") {
-      if (todayOrTomorrow === DAY_TODAY) {
+      if (todayOrTomorrow === this.state.today) {
         if (lessonNum === "0") {
-          return this.getStartFirstLesson(todayOrTomorrow)
+          return this.getStartFirstLesson(todayOrTomorrow)[0]
         } else {
           return this.getBordersRequestLesson(startOrEnd, todayOrTomorrow, lessonNum)
         }
       } else {
         if (lessonNum === "0") {
-          return this.getStartFirstLesson(todayOrTomorrow)
+          return this.getStartFirstLesson(todayOrTomorrow)[0]
         } else {
           return this.getBordersRequestLesson(startOrEnd, todayOrTomorrow, lessonNum)
         }
       }
     } else if (startOrEnd === "end") {
-      if (todayOrTomorrow === DAY_TODAY) {
+      if (todayOrTomorrow === this.state.today) {
         if (lessonNum === "0") {
           return this.getEndLastLesson(todayOrTomorrow)
         } else {
@@ -1259,32 +1269,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     return countRemainingLessons
   }
 
-  /**
-   *
-   * @param dayNumber
-   * @returns {[
-   *   string,   -- строка, содержащая начало пары
-   *   string,   -- порядковый номер пары (1 символ)
-   * ]}
-   */
-  getTimeFirstLesson(dayNumber: number): [string, string] {
-    let lessonsStart = '';
-    let lessonNumber = '';
-    let week: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    if (dayNumber < this.state.today) {
-      week = OTHER_WEEK;
-    }
-    for (let lessonIdx in this.state.saved_schedule[dayNumber - 1]) {
-      const lesson = this.state.saved_schedule[dayNumber - 1][lessonIdx][week]
-      if (lesson.lessonName !== "") {
-        lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        console.log(lessonIdx, "'lesson.lessonNumber'")
-        lessonNumber = String(Number(lessonIdx)+1);
-        break
-      }
-    }
-    return [lessonsStart, lessonNumber];
-  }
+
 
 
   whatLesson(
@@ -1315,11 +1300,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     } else {
       console.log('whatLesson: count:', todayBells.count[THIS_WEEK]);
-      const firstLessonTimeHhMm = this.getTimeFirstLesson(todayWorkDayIndex + 1)[0].slice(0, 5);
+      const firstLessonTimeHhMm = this.getStartFirstLesson(todayWorkDayIndex + 1)[0];
 
-      if (formatTimeHhMm(date) < firstLessonTimeHhMm) {
-        console.log('formatTimeHhMm(date) < firstLessonTimeHhMm: true')
-      }
+      // if (formatTimeHhMm(date) < firstLessonTimeHhMm) {
+      //   console.log('formatTimeHhMm(date) < firstLessonTimeHhMm: true')
+      // }
       console.log("whatLesson: что за пара", formatTimeHhMm(date), when, firstLessonTimeHhMm);
 
       // if (this.state.today !== 0) {
@@ -1367,10 +1352,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
       } else if (
-        (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) !== undefined) &&
-        (this.getTimeFirstLesson(this.state.today)[0].slice(0, 5) >= formatTimeHhMm(date))
+        (this.getStartFirstLesson(todayWorkDayIndex)[0] !== undefined) &&
+        (this.getStartFirstLesson(todayWorkDayIndex)[0] >= formatTimeHhMm(date))
       ) {
-        const firstLessonInfo = this.getTimeFirstLesson(this.state.today)
+        const firstLessonInfo = this.getStartFirstLesson(todayWorkDayIndex)
         console.log('whatLesson:', firstLessonInfo[1]);
 
         const lessonNumber = parseInt(firstLessonInfo[1]);
@@ -2028,8 +2013,8 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i, isSavedSchedule: boolean) 
                 let count = this.state.day[this.state.today - 1]?.count[0]
                 //console.log("COUNT", this.state.today)
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx-1];
-                let start = this.getTimeFirstLesson(todayIndex + 1)[0].slice(0, 5);
-                let end = this.getEndLastLesson(DAY_TODAY);
+                let start = this.getStartFirstLesson(todayIndex + 1)[0];
+                let end = this.getEndLastLesson(todayIndex);
                 return <DashboardPage
                   character={this.state.character}
                   theme={this.state.theme}
