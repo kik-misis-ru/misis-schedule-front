@@ -46,8 +46,8 @@ export type ThemeType = THEME_DARK | THEME_LIGHT
 
 export interface IDayHeader {
   title: string
-  date: [string, string]
-  count: [number, number]
+  date: string
+  count: number
 }
 
 

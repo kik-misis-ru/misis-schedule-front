@@ -51,7 +51,10 @@ import { threadId } from "worker_threads";
     day: IDayHeader[]
     spinner: boolean
     today: number
-    schedule: IScheduleDays
+    schedule: {
+      current_week : IScheduleDays
+      other_week:  IScheduleDays
+    }
     group: string
     subGroup: string
     getIsCorrectTeacher: () => boolean
@@ -193,7 +196,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
                 this.props.day.map(d => {
                   const {title, date} = d;
                   const weekDayShort = title;
-                  const dateDdDotMmDotYy = date[this.state.weekParam];
+                  const dateDdDotMmDotYy = date;
                   const dateDdDotMm = dateDdDotMmDotYy.slice(0, 5);
                   return dateDdDotMm
                     ? this.state.formatDate(weekDayShort, dateDdDotMm)
@@ -212,7 +215,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               // days={this.state.days}
               // day_num={day_num}
               dayLessons={
-                this.props.schedule[this.state.day_num]?.map(bellsThisOrOtherWeek => bellsThisOrOtherWeek[this.state.weekParam])
+                this.state.weekParam==0 ?  this.props.schedule.current_week[this.state.day_num] :  this.props.schedule.other_week[this.state.day_num]
               }
               currentLessonNumber={this.state.current}
               // weekParam={weekParam}

@@ -2,6 +2,11 @@ import axios, {AxiosResponse} from "axios";
 
 import filial from './data/filial.json';
 
+import {Bell} from './types/ScheduleStructure'
+import {IScheduleDays,DEFAULT_STATE_DAY, LessonStartEnd} from './App'
+
+import {IDayHeader} from './types/base.d'
+
 export interface ITeacherApiData {
   first_name: string
   mid_name: string
@@ -9,6 +14,8 @@ export interface ITeacherApiData {
   status: '-1' | '-2'
   id: string
 }
+
+export const NO_LESSONS_NAME = "Пар нет 🎉"
 
 //
 
@@ -28,6 +35,10 @@ export interface IScheduleLessonInfo {
   room_name: string
   type: string
   other: string
+}
+export interface IScheduleFormatData{
+  schedule: IScheduleDays
+  day: IDayHeader[]
 }
 
 interface IScheduleBellHeader {
@@ -77,6 +88,7 @@ export interface ITeacherInfo{
 
 export interface IScheduleByUserIdData {
   schedule: IScheduleApiData, 
+  formatScheduleData: IScheduleFormatData,
   isActive: boolean, //отправка пушей
   hour: number, //час отправки пушей
   minute: number, //минута отправки пушей
@@ -101,13 +113,13 @@ export interface IPushData{
 //const API_URL = "http://127.0.0.1:8000/";
 const API_URL = "https://misis-hub.herokuapp.com/";
 
-export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleApiData> {
+export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleFormatData> {
   const url = `${API_URL}schedule`;
   const config = {
     params: {
       group_id: groupId,
       english_group_id: english_group_id,
-      date: date+1,
+      date: date,
     },
   };
   console.log(`APIHelper: getScheduleFromDb: url: "${url}", config:`, config);
@@ -117,15 +129,16 @@ export async function getScheduleFromDb(groupId: string, english_group_id: strin
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
   console.log(`APIHelper: getScheduleFromDb: parsedSchedule:`, parsedSchedule);
-  return parsedSchedule;
+  let formatShcdeuleData : IScheduleFormatData = FormateSchedule(parsedSchedule, undefined)
+  return formatShcdeuleData;
 }
 
-export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleApiData> {
+export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleFormatData> {
   const url = `${API_URL}schedule_teacher`;
   const config = {
     params: {
       teacher_id: teacherId,
-      date: date+1,
+      date: date,
     },
   };
   console.log(`APIHelper: getScheduleTeacherFromDb: url: "${url}", config:`, config);
@@ -134,7 +147,8 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
   console.log(`APIHelper: getScheduleTeacherFromDb: parsedSchedule:`, parsedSchedule);
-  return parsedSchedule;
+  let formatSchedule:IScheduleFormatData = FormateSchedule(parsedSchedule, undefined);
+  return formatSchedule;
 }
 
 export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByUserIdData>{
@@ -149,6 +163,7 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleByUserIdData = JSON.parse(rawSchedule);
   console.log(`APIHelper: schedule_by_user_id: parsedSchedule:`, parsedSchedule);
+  parsedSchedule.formatScheduleData = FormateSchedule(parsedSchedule.schedule, parsedSchedule.subgroup_name )
   return parsedSchedule;
 }
 
@@ -295,7 +310,6 @@ interface IUserData {
   subgroup_name,
   eng_group,
   teacher_id,
-  filial_id,
 }
 
 export async function getUser(userId: string): Promise<IUserData | "0"> {
@@ -361,4 +375,103 @@ export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>
   console.log(`APIHelper: isEnglishGroupExist: response:`, data);
   let jsonData= JSON.parse(data)
   return jsonData.status === '1' ;
+}
+
+export function FormateSchedule(schedule_from_api: IScheduleApiData, subgroup) : IScheduleFormatData{
+  let schedule = new Array(7).fill([]);
+  let day: IDayHeader[] = DEFAULT_STATE_DAY;
+      for (let day in schedule) {
+        schedule[day] = Array(7).fill([])
+        for (let bell in schedule[day]) {
+          schedule[day][bell] = new Bell();
+        }
+      }
+      for (let day in schedule) {
+        for (let bell in schedule[day]) {
+          schedule[day][bell].lessonName = "";
+          schedule[day][bell].teacher = "";
+          schedule[day][bell].room = "";
+          schedule[day][bell].lessonType = "";
+          schedule[day][bell].lessonNumber = "";
+          schedule[day][bell].url = "";
+          schedule[day][bell].groupNumber = "";
+        }
+      }
+
+    for (let day_num = 1; day_num < 7; day_num++) {
+
+      // todo
+      let countLessons = 0;
+     
+      day[day_num - 1].count = 0;
+
+      if (schedule_from_api.schedule !== null) {
+        day[day_num - 1].date = schedule_from_api.schedule_header[`day_${day_num}`].date;
+        for (let bell in schedule_from_api.schedule) { //проверка
+          let bell_num = Number(bell.slice(-1)) - 1
+          let lesson_info: IScheduleLessonInfo = schedule_from_api.schedule[bell][`day_${day_num}`].lessons[0]
+          let lesson_info_state: Bell = schedule[day_num - 1][bell_num]
+
+          const subgroup_name = lesson_info?.groups?.[0]?.subgroup_name;
+
+          let header = schedule_from_api.schedule[bell]['header']
+          LessonStartEnd[bell_num] = {start: header['start_lesson'], end: header['end_lesson']}
+
+          if (
+            (schedule_from_api.schedule[bell_num] !== undefined) &&
+            (lesson_info !== undefined) &&
+            (subgroup_name !== undefined) &&
+            (subgroup_name === subgroup) &&
+            (subgroup !== "")
+          ) {
+
+            lesson_info_state.lessonName = lesson_info.subject_name;
+            lesson_info_state.teacher = lesson_info.teachers[0].name;
+            lesson_info_state.room = lesson_info.room_name;
+            lesson_info_state.lessonType = lesson_info.type;
+            lesson_info_state.lessonNumber = bell.slice(5, 6);
+            lesson_info_state.url = lesson_info.other;
+            countLessons++;
+            day[day_num - 1].count++;
+
+          } else if (
+            (schedule_from_api.schedule[bell] !== undefined) &&
+            (lesson_info !== undefined) &&
+            (subgroup_name !== undefined) &&
+            (subgroup_name !== subgroup) &&
+            (subgroup !== "")
+          ) {
+            lesson_info_state.reset()
+
+          } else if (
+            (schedule_from_api.schedule[bell] !== undefined) &&
+            (lesson_info !== undefined)
+          ) {
+            lesson_info_state.lessonName = lesson_info.subject_name;
+            lesson_info_state.teacher = lesson_info.teachers[0].name;
+            lesson_info_state.room = lesson_info.room_name;
+            lesson_info_state.lessonType = lesson_info.type;
+            lesson_info_state.lessonNumber = bell.slice(5, 6);
+            lesson_info_state.url = lesson_info.other;
+
+            for (let name in lesson_info.groups) {
+              lesson_info_state.groupNumber += `${lesson_info.groups[name].name} `;
+            }
+            countLessons++;
+            day[day_num - 1].count++;
+
+          } else {
+            lesson_info_state.reset();
+          }
+        }
+        if (day[day_num - 1].count === 0)
+          schedule[day_num - 1][0].lessonName = NO_LESSONS_NAME;
+
+      } else {
+        schedule[day_num - 1][0].lessonName = NO_LESSONS_NAME;
+      }
+
+    }
+  
+  return {schedule: schedule, day: day} as IScheduleFormatData
 }

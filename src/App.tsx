@@ -18,7 +18,9 @@ import {
   IsEnglishGroupExist,
   IScheduleApiData,
   IScheduleLessonInfo, ITeacherApiData,
+  IScheduleFormatData,
   getSchedulebyUserId,
+  FormateSchedule
 } from "./APIHelper";
 
 import DashboardPage from './pages/DashboardPage';
@@ -77,6 +79,7 @@ import {
 } from './utils';
 import Lesson from "./pages/Lesson";
 import { DH_CHECK_P_NOT_SAFE_PRIME } from "constants";
+import { title } from "process";
 
 export const NON_EXISTING_PAGE_NO = -1;
 //export const HOME_PAGE_NO = 0;
@@ -228,38 +231,39 @@ const TODAY_TOMORROW_DICT = {
 }
 
 
-export const NO_LESSONS_NAME = "Пар нет 🎉"
 
-const DEFAULT_STATE_DAY: IDayHeader[] = [
+
+export const DEFAULT_STATE_DAY: IDayHeader[] =
+[
   {
     title: 'Пн',
-    date: ["", ""],
-    count: [0, 0]
+    date: "",
+    count: 0
   }, {
     title: 'Вт',
-    date: ["", ""],
-    count: [0, 0]
+    date: "",
+    count: 0,
   }, {
     title: 'Ср',
-    date: ["", ""],
-    count: [0, 0]
+    date: "",
+    count: 0
   }, {
     title: 'Чт',
-    date: ["", ""],
-    count: [0, 0]
+    date:  "",
+    count: 0
   }, {
     title: 'Пт',
-    date: ["", ""],
-    count: [0, 0]
+    date: "",
+    count: 0
   }, {
     title: 'Сб',
-    date: ["", ""],
-    count: [0, 0]
+    date: "", 
+    count: 0
   }
 ]
 
 
-export type ThisOtherWeekBells = Bell[]
+export type ThisOtherWeekBells = Bell
 export type DayBells = ThisOtherWeekBells[]
 export type IScheduleDays = DayBells[]
 
@@ -287,9 +291,15 @@ export interface IAppState {
   correct: boolean
   day: IDayHeader[]
   //Расписание для сохраненных данных
-  saved_schedule: IScheduleDays
+  saved_schedule: {
+    current_week : IScheduleDays
+    other_week:  IScheduleDays
+  }
   //Расписание для несохраненных данных
-  other_schedule: IScheduleDays
+  other_schedule: {
+    current_week : IScheduleDays
+    other_week:  IScheduleDays
+  }
   spinner: boolean
   date: number
   today: number
@@ -369,8 +379,14 @@ export class App extends React.Component<IAppProps, IAppState> {
       sub_bd: "",
       correct: false,
       day: DEFAULT_STATE_DAY,
-      saved_schedule: [],
-      other_schedule: [],
+      saved_schedule: {
+        current_week: [],
+        other_week: []
+      },
+      other_schedule: {
+        current_week: [],
+        other_week: []
+      },
       spinner: false,
       date: Date.now()+1,
       today: 0,
@@ -486,8 +502,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           groupId: user.group_id,
           subGroup: user.subgroup_name,
           engGroup: user.eng_group,
-          teacherId: user.teacher_id,
-          filialId: user.filial_id,
+          teacherId: user.teacher_id
         })
 
         getSchedulebyUserId(this.state.userId).then((response) => {
@@ -528,8 +543,8 @@ export class App extends React.Component<IAppProps, IAppState> {
           if (this.state.teacherId != "" || this.state.group != "") {
 
             // todo: Зачем два вызова?
-            this.SetWeekSchedule(response.schedule, 0, true);
-            this.SetWeekSchedule(response.schedule, 1, true);
+            this.SetWeekSchedule(response.formatScheduleData, 0, true);
+            this.SetWeekSchedule(response.formatScheduleData, 1, true);
           }
         })
 
@@ -1570,128 +1585,34 @@ export class App extends React.Component<IAppProps, IAppState> {
   /**
    * заполнение данными расписания из бд
    */
-SetWeekSchedule(parsedSchedule: IScheduleApiData, i, isSavedSchedule: boolean) {
-  console.log("ParsedSchedule", parsedSchedule)
-    console.log("scheduleData", parsedSchedule)
-    console.log('showWeekSchedule')
-    this.setState({spinner: false});
-
-    let schedule;
-    /*
-    При первой загрузке this.state.saved_schedule равен [] 
-    и его надо инициализировать
-    */
-    if ((isSavedSchedule && this.state.saved_schedule.length == 0) || (!isSavedSchedule && this.state.other_schedule.length == 0)) {
-      schedule = new Array(7).fill([]);
-      for (let day in schedule) {
-        schedule[day] = Array(7).fill([])
-        for (let bell in schedule[day]) {
-          schedule[day][bell] = [new Bell(), new Bell()];
-        }
-      }
-    } else {
-     if(isSavedSchedule){
-      schedule = this.state.saved_schedule
+SetWeekSchedule(scheduledata: IScheduleFormatData, i, isSavedSchedule: boolean) {
+    console.log('showWeekSchedule', scheduledata)
+   
+    this.setState({spinner: true});
+    let saved_schedule = this.state.saved_schedule
+    if(isSavedSchedule){
+     if(i==0){
+      saved_schedule.current_week = scheduledata.schedule
      }
      else{
-      schedule = this.state.other_schedule
+      saved_schedule.other_week = scheduledata.schedule
      }
-     console.log("SCHEDULE",schedule)
-      for (let day in schedule) {
-        for (let bell in schedule[day]) {
-          schedule[day][bell][i].lessonName = "";
-          schedule[day][bell][i].teacher = "";
-          schedule[day][bell][i].room = "";
-          schedule[day][bell][i].lessonType = "";
-          schedule[day][bell][i].lessonNumber = "";
-          schedule[day][bell][i].url = "";
-          schedule[day][bell][i].groupNumber = "";
-        }
-      }
-    }
-
-    for (let day_num = 1; day_num < 7; day_num++) {
-
-      // todo
-      let countLessons = 0;
-      this.state.day[day_num - 1].count[i] = 0;
-
-      if (parsedSchedule.schedule !== null) {
-        this.state.day[day_num - 1].date[i] = parsedSchedule.schedule_header[`day_${day_num}`].date;
-        for (let bell in parsedSchedule.schedule) { //проверка
-          let bell_num = Number(bell.slice(-1)) - 1
-          let lesson_info: IScheduleLessonInfo = parsedSchedule.schedule[bell][`day_${day_num}`].lessons[0]
-          let lesson_info_state: Bell = schedule[day_num - 1][bell_num][i]
-
-          const subgroup_name = lesson_info?.groups?.[0]?.subgroup_name;
-
-          let header = parsedSchedule.schedule[bell]['header']
-          LessonStartEnd[bell_num] = {start: header['start_lesson'], end: header['end_lesson']}
-
-          if (
-            (parsedSchedule.schedule[bell_num] !== undefined) &&
-            (lesson_info !== undefined) &&
-            (subgroup_name !== undefined) &&
-            (subgroup_name === this.state.subGroup) &&
-            (this.state.subGroup !== "")
-          ) {
-
-            lesson_info_state.lessonName = lesson_info.subject_name;
-            lesson_info_state.teacher = lesson_info.teachers[0].name;
-            lesson_info_state.room = lesson_info.room_name;
-            lesson_info_state.lessonType = lesson_info.type;
-            lesson_info_state.lessonNumber = bell.slice(5, 6);
-            lesson_info_state.url = lesson_info.other;
-            countLessons++;
-            this.state.day[day_num - 1].count[i]++;
-
-          } else if (
-            (parsedSchedule.schedule[bell] !== undefined) &&
-            (lesson_info !== undefined) &&
-            (subgroup_name !== undefined) &&
-            (subgroup_name !== this.state.subGroup) &&
-            (this.state.subGroup !== "")
-          ) {
-            lesson_info_state.reset()
-
-          } else if (
-            (parsedSchedule.schedule[bell] !== undefined) &&
-            (lesson_info !== undefined)
-          ) {
-            lesson_info_state.lessonName = lesson_info.subject_name;
-            lesson_info_state.teacher = lesson_info.teachers[0].name;
-            lesson_info_state.room = lesson_info.room_name;
-            lesson_info_state.lessonType = lesson_info.type;
-            lesson_info_state.lessonNumber = bell.slice(5, 6);
-            lesson_info_state.url = lesson_info.other;
-
-            for (let name in lesson_info.groups) {
-              lesson_info_state.groupNumber += `${lesson_info.groups[name].name} `;
-            }
-            countLessons++;
-            this.state.day[day_num - 1].count[i]++;
-
-          } else {
-            lesson_info_state.reset();
-          }
-        }
-        if (this.state.day[day_num - 1].count[i] === 0)
-          schedule[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
-
-      } else {
-        schedule[day_num - 1][0][i].lessonName = NO_LESSONS_NAME;
-      }
-
-    }
-    this.setState({spinner: true});
-    if(isSavedSchedule){
-      this.setState({saved_schedule: schedule,isSavedSchedule: isSavedSchedule});
+     this.setState({saved_schedule: saved_schedule,isSavedSchedule: isSavedSchedule, day: scheduledata.day});
     }
     else{
-      this.setState({other_schedule: schedule, isSavedSchedule: isSavedSchedule})
+      let other_schedule = this.state.other_schedule
+      if(isSavedSchedule){
+       if(i==0){
+        other_schedule.current_week = scheduledata.schedule
+       }
+       else{
+        other_schedule.other_week = scheduledata.schedule
+       }
+       this.setState({other_schedule: other_schedule,isSavedSchedule: isSavedSchedule,  day: scheduledata.day});
     }
-    console.log("Days", schedule, "Day", this.state.day)
+    console.log("Days", scheduledata, "Day", this.state.day)
   }
+}
 
   ChangeDay(day: number): void{
     this.ChangePage();
