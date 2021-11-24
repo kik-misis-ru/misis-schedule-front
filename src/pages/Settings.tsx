@@ -356,15 +356,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           justifyContent: "center",
           alignItems: "center"}}>
             <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о завтрашних парах</Caption>
-            {/* <TabSelectorRow
-          tabs={TODAY_TOMORROW}
-          selectedIndex={this.state.dayPush }
-          onSelect={(tabIndex) => this.setState({dayPush: tabIndex})}
-        /> */}
-
-
-          <TimePicker style={{margin:"0.5em"}}
-          visibleItems={3}  min={new Date(1629996400000-68400000-2760000)} max={new Date(1630000000000+10800000+780000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
+      <TimePicker style={{margin:"0.5em"}}
+          visibleItems={3}  min={new Date(1629925240000)} max={new Date(1630011580000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
        </Col>: <div></div>}
        {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/> */}
       <Col size={4} style={{display: "flex",
