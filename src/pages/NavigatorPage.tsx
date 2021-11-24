@@ -19,7 +19,7 @@ import {Spacer300} from "../App";
 import karta from "../images/Karta.png";
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
 import {
   HeaderLogoCol,
@@ -94,9 +94,7 @@ const NavigatorPage = ({
                          onHomeClick,
                          onScheduleClick,
                        }: {
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   theme: string
   buildings: IBuilding[]
   isMobileDevice: boolean

@@ -12,7 +12,7 @@ import social_media from '../data/social_media.json';
 
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {SocialList} from '../components/SocialList'
 import {ContactsCard} from '../components/ContactsCard'
 import {
@@ -29,9 +29,7 @@ const Contacts = ({
                          onDashboardClick,
                        }: {
   theme: string
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   onDashboardClick: () => void
 }) => {
   return <DeviceThemeProvider>

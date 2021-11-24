@@ -22,7 +22,7 @@ import {IconLocation} from "@sberdevices/plasma-icons";
 
 import star from "../images/Star-1.png";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
 import {
   HeaderLogoCol,
@@ -45,10 +45,7 @@ const Start = ({
                          theme,
                        }: {
   theme: string 
-  character: Character
-  
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   isMobileDevice: boolean
 }) => {
   return <DeviceThemeProvider>
