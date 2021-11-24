@@ -12,6 +12,7 @@ import * as ApiHelper from "./ApiHelper";
 
 
 export class ApiModel {
+  // public userId: string | undefined
   public user: ApiHelper.IUserData | undefined
 
   constructor() {
