@@ -260,9 +260,12 @@ export type IScheduleDays = DayBells[]
 export const history = createBrowserHistory();
 
 
-function getTeacherStr(teacher_info: ITeacherInfo) {
-  return `${teacher_info.last_name} ${teacher_info.first_name}. ${teacher_info.mid_name}.`
-}
+// function getTeacherStr(teacher_info: ITeacherInfo) {
+//   return `${teacher_info.last_name} ${teacher_info.first_name}. ${teacher_info.mid_name}.`
+// }
+const formatTeacherName = (teacherData: ITeacherInfo) => (
+  `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
+)
 
 
 
@@ -297,12 +300,12 @@ export interface IAppState {
   spinner: boolean
   date: number
   today: number
+  character: CharacterId
   theme: string
   dayPush: number
   isGroupError: boolean
   isActive: boolean
   subGroup: string
-  teacher_id_bd: string
   group_id_bd: string
   eng_bd: string
   sub_bd: string
@@ -312,14 +315,16 @@ export interface IAppState {
   engGroup: string
   isEngGroupError: boolean
   isUser: boolean
-  character: CharacterId
   bd: string
   student: boolean
+
   teacher: string
   teacherId: string
   teacher_checked: boolean
   teacher_bd: string
+  teacher_id_bd: string
   teacher_correct: boolean
+
   isTeacherError: boolean
   isSavedSchedule: boolean
 
@@ -519,7 +524,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         if (userSchedule.teacher_id != "" && userSchedule.teacher_id != null) {
           console.log(`handleAssistantSub: ${userSchedule.teacher_info.last_name} ${userSchedule.teacher_info.first_name}. ${userSchedule.teacher_info.mid_name}.`);
 
-          const teacher = getTeacherStr(userSchedule.teacher_info);
+          const teacher = formatTeacherName(userSchedule.teacher_info);
           this.setState({
             student: false,
             teacher_bd: teacher,
@@ -1688,10 +1693,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
           this.SetWeekSchedule(response, 0, isSave);
         });
 
-        const formatTeacherName = (teacherData: ITeacherApiData) => (
-          `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
-        )
-          console.log( formatTeacherName(teacherData), "teacher name")
+        console.log( formatTeacherName(teacherData), "teacher name")
         getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
           this.setState({
             teacher: formatTeacherName(teacherData)
@@ -1706,6 +1708,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
           student: false,
           isTeacherError: false,
         });
+
         if (history.location.pathname=='/home')
           history.push('/spinner')
 
