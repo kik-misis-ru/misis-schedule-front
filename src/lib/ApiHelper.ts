@@ -87,19 +87,21 @@ export interface ITeacherInfo{
 }
 
 export interface IScheduleByUserIdData {
-  schedule: IScheduleApiData, 
+  day: number
   formatScheduleData: IScheduleFormatData,
-  isActive: boolean, //отправка пушей
-  hour: number, //час отправки пушей
-  minute: number, //минута отправки пушей
-  userId: string,
-  filialId: string,
-  groupId: string,
   groupName: string,
-  subgroup_name: string,
+  groupId: string,
+  hour: number, //час отправки пушей
+  isActive: boolean, //отправка пушей
+  minute: number, //минута отправки пушей
+  filialId: string,
   eng_group: string,
+  schedule: IScheduleApiData,
+  status: number,
+  subgroup_name: string,
   teacher_id: string,
   teacher_info: ITeacherInfo
+  userId: string,
 }
 
 export interface IPushData{
@@ -162,7 +164,7 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
 
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleByUserIdData = JSON.parse(rawSchedule);
-  console.log(`ApiHelper: schedule_by_user_id: parsedSchedule:`, parsedSchedule);
+  console.log(`ApiHelper: getSchedulebyUserId: parsedSchedule:`, parsedSchedule);
   parsedSchedule.formatScheduleData = FormateSchedule(parsedSchedule.schedule, parsedSchedule.subgroup_name )
   return parsedSchedule;
 }
@@ -305,14 +307,18 @@ export async function setTeacherStar(
 }
 
 
-interface IUserData {
-  group_id,
-  subgroup_name,
-  eng_group,
-  teacher_id,
+export interface IUserData {
+  eng_group: string
+  filial_id: string
+  group_id: string
+  subgroup_name: string
+  teacher_id: string
+  user_id: string
 }
 
-export async function getUser(userId: string): Promise<IUserData | "0"> {
+export type GetUserResult = IUserData | "0"
+
+export async function getUser(userId: string): Promise<GetUserResult> {
   const url = `${API_URL}users`;
   const config = {
     params: {

@@ -22,6 +22,7 @@ import {
   getSchedulebyUserId,
   FormateSchedule, ITeacherInfo
 } from "./lib/ApiHelper";
+import ApiModel from "./lib/ApiModel";
 
 import DashboardPage from './pages/DashboardPage';
 
@@ -344,9 +345,12 @@ export interface IAppState {
 
 export class App extends React.Component<IAppProps, IAppState> {
   assistant: AssistantWrapper
+  apiModel: ApiModel
 
   constructor(props: IAppProps) {
     super(props);
+    this.apiModel = new ApiModel();
+
     this.setValue = this.setValue.bind(this)
     this.Load_Schedule = this.Load_Schedule.bind(this)
     this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
@@ -402,9 +406,11 @@ export class App extends React.Component<IAppProps, IAppState> {
       isTeacherError: false,
       isSubGroupError: false,
       isEngGroupError: false,
+
       isActive: false,
       pushHour: 0,
       pushMin: 0,
+
       character: CHAR_SBER,
       isUser: false,
       student: true,
@@ -502,25 +508,34 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async handleAssistantSub(eventSub: string) {
     console.log("handleAssistantSub: eventSub", eventSub);
+    const userId = eventSub;
 
-    this.setState({ userId: eventSub });
+    this.setState({ userId });
 
     const now = new Date();
     this.setState({ today: now.getDay() });
 
-    const user = await getUser(this.state.userId)
-    console.log("handleAssistantSub: getUser", user)
-
-    if (user !== "0") {
+    // const user = await getUser(this.state.userId)
+    await this.apiModel.fetchUser(userId)
+    const user = this.apiModel.user;
+    // console.log("handleAssistantSub: getUser", user)
+    //
+    // if (user !== "0") {
+    if (!!user) {
       console.log('handleAssistantSub: user', user)
+      // const { groupId, subGroup, engGroup, teacherId } = user;
       this.setState({
+        // groupId,
+        // subGroup,
+        // engGroup,
+        // teacherId,
         groupId: user.group_id,
         subGroup: user.subgroup_name,
         engGroup: user.eng_group,
         teacherId: user.teacher_id
       })
 
-      const userSchedule = await getSchedulebyUserId(this.state.userId)
+      const userSchedule = await getSchedulebyUserId(userId)
       // .then((userSchedule) => {
       console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
 
@@ -582,7 +597,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       })
 
       await createUser(
-        this.state.userId,
+        userId,
         this.state.filialId,
         this.state.groupId,
         this.state.subGroup,
@@ -1926,7 +1941,11 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   ChangePush(hour: number, min: number, isActive: boolean) {
-    this.setState({ pushHour: hour, pushMin: min, isActive: isActive });
+    this.setState({
+      pushHour: hour,
+      pushMin: min,
+      isActive: isActive,
+    });
   }
 
   gotoPage(pageNo: number): void {
