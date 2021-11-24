@@ -18,7 +18,7 @@ import {
 } from '../types/AssistantSendAction.d'
 import {
   addUserToPushNotification,
-} from "../lib/APIHelper";
+} from "../lib/ApiHelper";
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';

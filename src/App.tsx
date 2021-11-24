@@ -21,7 +21,7 @@ import {
   IScheduleFormatData,
   getSchedulebyUserId,
   FormateSchedule, ITeacherInfo
-} from "./lib/APIHelper";
+} from "./lib/ApiHelper";
 
 import DashboardPage from './pages/DashboardPage';
 
@@ -31,7 +31,7 @@ import FAQ from './pages/FAQ';
 import Start from './pages/Start';
 import NavigatorPage from './pages/NavigatorPage';
 import SpinnerPage from "./pages/SpinnerPage";
-import Schedule from './pages/Schedule';
+import SchedulePage from './pages/SchedulePage';
 import Settings from './pages/Settings';
 
 import buildings from './data/buldings.json'
@@ -2149,7 +2149,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             {
 
               (page >= 1 && page <= 13) &&
-              <Schedule
+              <SchedulePage
                 timeParam={page}
                 onSetValue={this.setValue}
                 teacher={this.state.teacher}

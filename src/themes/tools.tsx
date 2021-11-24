@@ -17,6 +17,13 @@ const ThemeBackgroundSberLight = createGlobalStyle(lightSber);
 const ThemeBackgroundEvaLight = createGlobalStyle(lightEva);
 const ThemeBackgroundJoyLight = createGlobalStyle(lightJoy);
 
+
+export interface IThemingProps {
+  character: CharacterId
+  theme: string
+}
+
+
 export const getThemeBackgroundByChar = (
   character: CharacterId,
   themeType: ThemeType,
