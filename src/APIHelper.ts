@@ -3,7 +3,7 @@ import axios, {AxiosResponse} from "axios";
 import filial from './data/filial.json';
 
 import {Bell} from './types/ScheduleStructure'
-import {IScheduleDays,DEFAULT_STATE_DAY, LessonStartEnd} from './App'
+import {IScheduleDays,DEFAULT_STATE_WEEK_DAY, LessonStartEnd} from './App'
 
 import {IDayHeader} from './types/base.d'
 
@@ -379,7 +379,7 @@ export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>
 
 export function FormateSchedule(schedule_from_api: IScheduleApiData, subgroup) : IScheduleFormatData{
   let schedule = new Array(7).fill([]);
-  let day: IDayHeader[] = DEFAULT_STATE_DAY;
+  let day: IDayHeader[] = DEFAULT_STATE_WEEK_DAY;
       for (let day in schedule) {
         schedule[day] = Array(7).fill([])
         for (let bell in schedule[day]) {

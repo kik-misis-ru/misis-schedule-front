@@ -8,7 +8,7 @@ import WeekSelect from "../components/WeekSelect";
 
 import {IScheduleDays, 
     Spacer200,
-    history
+    history,
 } from '../App'
 
 import {DocStyle, getThemeBackgroundByChar} from "../themes/tools";
@@ -194,7 +194,7 @@ class  Schedule extends React.Component<ScheduleProps, ScheduleState>{
               selectedIndex={this.state.index - 1}
               markedIndex={this.state.weekParam === THIS_WEEK ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
               cols={
-                this.props.day.map(d => {
+                  this.props.day.map(d => {
                   const {title, date} = d;
                   const weekDayShort = title;
                   const dateDdDotMmDotYy = date;

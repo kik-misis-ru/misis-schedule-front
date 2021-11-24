@@ -216,6 +216,12 @@ export interface ICheckIsCorrect{
   correct: boolean
 }
 
+
+export interface IDay{
+  current_week: IDayHeader[]
+  other_week: IDayHeader[]
+}
+
 const MAX_BELL_COUNT = 8;
 
 const FIRST_DAY_OTHER_WEEK = 8;
@@ -230,10 +236,7 @@ const TODAY_TOMORROW_DICT = {
   [DAY_TOMORROW]: 0,
 }
 
-
-
-
-export const DEFAULT_STATE_DAY: IDayHeader[] =
+export const DEFAULT_STATE_WEEK_DAY =
 [
   {
     title: 'Пн',
@@ -263,6 +266,14 @@ export const DEFAULT_STATE_DAY: IDayHeader[] =
 ]
 
 
+export const DEFAULT_STATE_DAY= {
+  current_week:  DEFAULT_STATE_WEEK_DAY,
+  other_week: DEFAULT_STATE_WEEK_DAY
+}
+
+
+
+
 export type ThisOtherWeekBells = Bell
 export type DayBells = ThisOtherWeekBells[]
 export type IScheduleDays = DayBells[]
@@ -289,7 +300,7 @@ export interface IAppState {
   groupId: string
   filialId: string
   correct: boolean
-  day: IDayHeader[]
+  day: IDay
   //Расписание для сохраненных данных
   saved_schedule: {
     current_week : IScheduleDays
@@ -1211,14 +1222,14 @@ export class App extends React.Component<IAppProps, IAppState> {
    * @returns {string}
    */
   getAmountOfLessons(date: Date): [string, number] | undefined {
-    for (let day of this.state.day) {
-      for (let week = 0; week < 2; week++) {
-        console.log("this.getDateWithDots(date)", formatDateWithDots(date))
-        console.log("day.date[week]", day.date[week])
-        if (formatDateWithDots(date) === day.date[week]) {
-          return [day.title, day.count[week]]
+    for (let i = 0; i < 6; i++)  {
+        let day = this.state.day
+        if (formatDateWithDots(date) === day.current_week[i].date) {
+          return [day.current_week[i].title, day.current_week[i].count]
         }
-      }
+        if (formatDateWithDots(date) === day.other_week[i].date) {
+          return [day.current_week[i].title, day.other_week[i].count]
+        }
     }
     // if (res !== undefined) {return res}
     // else {return null}
@@ -1286,7 +1297,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     const isSunday = (this.state.today === 0)
     const todayWorkDayIndex = this.state.today - 1;
-    const todayBells = this.state.day[todayWorkDayIndex]
+    const todayBells = this.state.day.current_week[todayWorkDayIndex]
     const todayLessons = this.state.saved_schedule[todayWorkDayIndex]
 
     if (isSunday) {
@@ -1578,25 +1589,30 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
    
     if(isSavedSchedule){
       let saved_schedule = this.state.saved_schedule
+      let day = this.state.day
      if(i==0){
       saved_schedule.current_week = scheduledata.schedule
+      day.current_week = scheduledata.day
      }
      else{
       saved_schedule.other_week = scheduledata.schedule
+      day.other_week = scheduledata.day
      }
-     this.setState({saved_schedule: saved_schedule,isSavedSchedule: isSavedSchedule, day: scheduledata.day});
+     this.setState({saved_schedule: saved_schedule,isSavedSchedule: isSavedSchedule, day: day});
     }
     else{
       let other_schedule = this.state.other_schedule
+      let day = this.state.day
        if(i==0){
          console.log("Set other shcedule; current week")
         other_schedule.current_week = scheduledata.schedule
+        day.current_week = scheduledata.day
        }
        else{
         console.log("Set other shcedule; other week")
-        other_schedule.other_week = scheduledata.schedule
+        day.other_week = scheduledata.day
        }
-       this.setState({other_schedule: other_schedule,isSavedSchedule: isSavedSchedule,  day: scheduledata.day});
+       this.setState({other_schedule: other_schedule,isSavedSchedule: isSavedSchedule,  day: day});
     }
     this.setState({spinner: true});
     console.log("Days", scheduledata, "Day", this.state.day)
@@ -2118,7 +2134,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
                 getCurrentLesson={this.getCurrentLesson}
                 doSetTeacher={(teacherName: string) => this.doSetTeacher(teacherName)}
                 weekParam={page > 7 ? 1 : 0}
-                day={this.state.day}
+                day={page > 7 ? this.state.day.other_week : this.state.day.current_week}
                 spinner={this.state.spinner}
                 today={this.state.today}
                 schedule={this.state.isSavedSchedule ? this.state.saved_schedule : this.state.other_schedule}
