@@ -1628,15 +1628,11 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
         console.log("Set other shcedule; other week")
         day.other_week = scheduledata.day
        }
-<<<<<<< HEAD
-       this.setState({other_schedule: other_schedule,isSavedSchedule: isSavedSchedule,  day: day});
-=======
        this.setState({
          other_schedule: other_schedule,
          isSavedSchedule: isSavedSchedule,
          day: scheduledata.day,
        });
->>>>>>> f9c992cdbd15de4fcd0936f779742421e03d285a
     }
     this.setState({spinner: true});
     console.log("Days", scheduledata, "Day", this.state.day)
