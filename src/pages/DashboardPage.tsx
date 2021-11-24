@@ -48,7 +48,7 @@ import {
   StartEnd,
 } from '../App';
 import {Bell} from '../types/ScheduleStructure'
-import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
+import {CharacterId} from "../types/base.d";
 import {pairNumberToPairNumText} from '../utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
@@ -403,9 +403,7 @@ const DashboardPage = ({
                          handleTeacherChange,
                          isUser
                        }: {
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   isTeacherAndValid: boolean
   groupId: String
   teacherId: String

@@ -1,16 +1,16 @@
 import axios, {AxiosResponse} from "axios";
 
-import filial from './data/filial.json';
+import filial from '../data/filial.json';
 
-import {Bell} from './types/ScheduleStructure'
-import {IScheduleDays,DEFAULT_STATE_DAY, LessonStartEnd} from './App'
+import {Bell} from '../types/ScheduleStructure'
+import {IScheduleDays,DEFAULT_STATE_DAY, LessonStartEnd} from '../App'
 
-import {IDayHeader} from './types/base.d'
+import {IDayHeader} from '../types/base'
 
-export interface ITeacherApiData {
-  first_name: string
-  mid_name: string
-  last_name: string
+export interface ITeacherApiData extends ITeacherInfo {
+  // first_name: string
+  // mid_name: string
+  // last_name: string
   status: '-1' | '-2'
   id: string
 }

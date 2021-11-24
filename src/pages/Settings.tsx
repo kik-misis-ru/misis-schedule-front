@@ -18,7 +18,7 @@ import {
 } from '../types/AssistantSendAction.d'
 import {
   addUserToPushNotification,
-} from "../APIHelper";
+} from "../lib/APIHelper";
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
@@ -26,7 +26,7 @@ import {
   Spacer100,
 } from '../App';
 import {DocStyle} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character} from "../types/base";
+import {CharacterId} from "../types/base";
 import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {
   HeaderLogoCol,
@@ -126,9 +126,7 @@ const TextFieldForUserInfo = ({
 interface SettingsProps {
   userId: string
   groupId: string
-  character: Character
-    // todo paramoy
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   bd: string
   teacher_bd: string
   checked: boolean

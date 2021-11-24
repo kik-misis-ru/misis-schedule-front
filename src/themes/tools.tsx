@@ -4,7 +4,7 @@ import styled, {createGlobalStyle} from "styled-components";
 import {darkEva, darkJoy, darkSber, lightEva, lightJoy, lightSber} from "@sberdevices/plasma-tokens/themes";
 
 import {
-  CHAR_EVA, CHAR_JOY, CHAR_SBER, CHAR_TIMEPARAMOY, Character,
+  CHAR_EVA, CHAR_JOY, CHAR_SBER, CharacterId,
   THEME_DARK,
   THEME_LIGHT,
   ThemeType,
@@ -18,10 +18,8 @@ const ThemeBackgroundEvaLight = createGlobalStyle(lightEva);
 const ThemeBackgroundJoyLight = createGlobalStyle(lightJoy);
 
 export const getThemeBackgroundByChar = (
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY | string,
-  themeType: ThemeType
+  character: CharacterId,
+  themeType: ThemeType,
 ) => {
   const themeBackgroundByChar = {
     [CHAR_SBER + '_' + THEME_DARK]: <ThemeBackgroundSber/>,

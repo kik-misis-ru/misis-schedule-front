@@ -15,11 +15,10 @@ import {DocStyle, getThemeBackgroundByChar} from "../themes/tools";
 
 
 import {
-    Character,
+  CharacterId,
     IDayHeader,
     OTHER_WEEK,
     THIS_OR_OTHER_WEEK,
-    CHAR_TIMEPARAMOY,
     THIS_WEEK,
   } from '../types/base.d'
 
@@ -38,7 +37,7 @@ import schedule from "../schedule";
     onSetValue: (string, any) => void
     teacher: string
     groupName: string
-    character: Character  | typeof CHAR_TIMEPARAMOY
+    character: CharacterId
     isTeacher: boolean
     bd: string
     teacher_bd: string

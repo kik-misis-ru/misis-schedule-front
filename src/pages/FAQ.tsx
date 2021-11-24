@@ -10,7 +10,7 @@ import lib from '../data/libraries.json';
 
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {Libraries} from '../components/Libraries'
 import {FAQCard} from '../components/FAQCard'
 import {
@@ -26,9 +26,7 @@ const FAQ = ({
                onDashboardClick,
              }: {
   theme: string
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   onDashboardClick: () => void
 }) => {
   return <DeviceThemeProvider>

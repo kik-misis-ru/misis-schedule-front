@@ -16,7 +16,7 @@ import {
   history
 } from '../App';
 import {DocStyle} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character} from "../types/base";
+import {CharacterId} from "../types/base";
 import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
@@ -111,10 +111,7 @@ const TextFieldForUserInfo = ({
 
 interface HomeViewProps {
   groupId: string
-  character: Character
-    // todo paramoy
-    | typeof CHAR_TIMEPARAMOY
-  // disabled: boolean
+  character: CharacterId
   checked: boolean
   description: string
   theme: string 

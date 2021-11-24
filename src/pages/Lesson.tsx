@@ -13,7 +13,7 @@ import {Bell} from '../types/ScheduleStructure'
 import karta from "../images/Karta.png";
 import LessonCard from "../components/LessonCard";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
 import {
   HeaderLogoCol,
@@ -27,9 +27,7 @@ import {createBrowserHistory} from 'history';
 export const history = createBrowserHistory();
 
 const Lesson = (props: {
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   isTeacherAndValid: boolean,
   currentLesson: Bell,
   spinner: Boolean,

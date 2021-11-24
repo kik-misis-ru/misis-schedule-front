@@ -1,7 +1,7 @@
 import {Container, DeviceThemeProvider, Spinner} from "@sberdevices/plasma-ui";
 import React from "react";
 import {DocStyle, getThemeBackgroundByChar} from "../themes/tools";
-import {CHAR_TIMEPARAMOY, Character} from "../types/base";
+import {CharacterId} from "../types/base";
 import {ACCENT_TEXT_COLOR} from "../components/consts";
 
 export const SpinnerPage = (
@@ -10,9 +10,7 @@ export const SpinnerPage = (
     character
   }: {
     theme: string
-    character: Character
-      // todo paramoy
-      | typeof CHAR_TIMEPARAMOY
+    character: CharacterId
   }) => {
   return (
     <DeviceThemeProvider>

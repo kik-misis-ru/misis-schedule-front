@@ -20,8 +20,8 @@ import {
   IScheduleLessonInfo, ITeacherApiData,
   IScheduleFormatData,
   getSchedulebyUserId,
-  FormateSchedule
-} from "./APIHelper";
+  FormateSchedule, ITeacherInfo
+} from "./lib/APIHelper";
 
 import DashboardPage from './pages/DashboardPage';
 
@@ -40,6 +40,7 @@ import {Bell} from './types/ScheduleStructure'
 
 import "./themes/App.css";
 import {
+  AssistantCharacter,
   AssistantAction,
   AssistantEvent,
   AssistantEventCharacter,
@@ -56,8 +57,7 @@ import {
 
 import {
   CHAR_SBER,
-  CHAR_TIMEPARAMOY,
-  Character,
+  CharacterId,
   DAY_NOT_SUNDAY,
   DAY_SUNDAY,
   DAY_TODAY,
@@ -80,6 +80,7 @@ import {
 import Lesson from "./pages/Lesson";
 import { DH_CHECK_P_NOT_SAFE_PRIME } from "constants";
 import { title } from "process";
+import {initializeAssistant, AssistantWrapper} from './lib/AssistantWrapper';
 
 export const NON_EXISTING_PAGE_NO = -1;
 //export const HOME_PAGE_NO = 0;
@@ -96,19 +97,8 @@ export const HOME_PAGE_ROUTE = "home";
 const INITIAL_PAGE = 16;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
-const FILL_DATA_TO_OPEN_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
-const TO_VIEW_SET_GROUP_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
-
-const initializeAssistant = (getState) => {
-  if (process.env.NODE_ENV === "development") {
-    return createSmartappDebugger({
-      token: process.env.REACT_APP_TOKEN ?? "",
-      initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
-      getState,
-    });
-  }
-  return createAssistant({getState});
-};
+const FILL_DATA_NO_OFFICIAL_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
+const TO_VIEW_OFFICIAL_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
 export const Spacer100 = styled.div`
   width: 100px;
@@ -257,7 +247,7 @@ export const DEFAULT_STATE_DAY: IDayHeader[] =
     count: 0
   }, {
     title: 'Сб',
-    date: "", 
+    date: "",
     count: 0
   }
 ]
@@ -269,6 +259,10 @@ export type IScheduleDays = DayBells[]
 
 export const history = createBrowserHistory();
 
+
+function getTeacherStr(teacher_info: ITeacherInfo) {
+  return `${teacher_info.last_name} ${teacher_info.first_name}. ${teacher_info.mid_name}.`
+}
 
 
 
@@ -318,9 +312,7 @@ export interface IAppState {
   engGroup: string
   isEngGroupError: boolean
   isUser: boolean
-  character: Character
-    // todo paramoy
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   bd: string
   student: boolean
   teacher: string
@@ -335,7 +327,7 @@ export interface IAppState {
 }
 
 export class App extends React.Component<IAppProps, IAppState> {
-  _assistant
+  assistant: AssistantWrapper
 
   constructor(props: IAppProps) {
     super(props);
@@ -349,7 +341,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
-    this.sendAssistantData = this.sendAssistantData.bind(this);
+    // this.sendAssistantData = this.sendAssistantData.bind(this);
     this.ChangeTheme=this.ChangeTheme.bind(this);
     this.ChangePush=this.ChangePush.bind(this);
     this.Load_Schedule=this.Load_Schedule.bind(this);
@@ -411,159 +403,177 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       // building: building,
     }
-  
+    this.assistant = new AssistantWrapper(this);
   }
 
 
   componentDidMount() {
     console.log('componentDidMount');
 
-    this.initAssistant();
+    this.assistant.init();
+    // this.initAssistant();
+
   }
 
 
   //////////////////////////////////////////////////////////////////////////////
 
-  initAssistant() {
-    this._assistant = initializeAssistant(() => this.getStateForAssistant());
+  // initAssistant() {
+  //   this._assistant = initializeAssistant(() => this.getStateForAssistant());
+  //
+  //   this._assistant.on("data", (event: AssistantEvent) => {
+  //     console.log('_assistant.on("data"): event:', event);
+  //     this.handleAssistantDataEvent(event);
+  //   });
+  //
+  //   this._assistant.on("start", (event) => {
+  //     console.log(`_assistant.on(start)`, event);
+  //   });
+  //
+  //   this._assistant.on("ANSWER_TO_USER", (event) => {
+  //     console.log(`_assistant.on(raw)`, event);
+  //   });
+  // }
 
-    this._assistant.on("data", (event: AssistantEvent) => {
-      console.log('_assistant.on("data"): event:', event);
-      this.handleAssistantDataEvent(event);
+
+  // handleAssistantDataEvent(event: AssistantEvent) {
+  //   console.log('handleAssistantDataEvent: event:', event);
+  //
+  //   switch (event?.type) {
+  //
+  //     case "character":
+  //       this.handleAssistantDataEventCharacter(event);
+  //       break;
+  //
+  //     case "smart_app_data":
+  //       this.handleAssistantDataEventSmartAppData(event);
+  //       break
+  //
+  //     default:
+  //       break
+  //   }
+  // }
+
+
+  handleAssistantCharacter(character: AssistantCharacter) {
+
+    this.setState({
+      character: character.id,
+      description: character.appeal === 'no_official'
+        ? FILL_DATA_NO_OFFICIAL_TEXT
+        : TO_VIEW_OFFICIAL_TEXT
     });
-
-    this._assistant.on("start", (event) => {
-      console.log(`_assistant.on(start)`, event);
-    });
-
-    this._assistant.on("ANSWER_TO_USER", (event) => {
-      console.log(`_assistant.on(raw)`, event);
-    });
+    // if (character.id === CHAR_TIMEPARAMOY) {
+    //   this.setState({description: FILL_DATA_NO_OFFICIAL_TEXT});
+    // } else {
+    //   this.setState({description: TO_VIEW_OFFICIAL_TEXT});
+    // }
   }
 
 
-  handleAssistantDataEvent(event: AssistantEvent) {
-    console.log('handleAssistantDataEvent: event:', event);
-
-    switch (event?.type) {
-
-      case "character":
-        this.handleAssistantDataEventCharacter(event);
-        break;
-
-      case "smart_app_data":
-        this.handleAssistantDataEventSmartAppData(event);
-        break
-
-      default:
-        break
-    }
-  }
+  // handleAssistantDataEventSmartAppData(event: AssistantEventSmartAppData) {
+  //   console.log('handleAssistantEventSmartAppData: event:', event);
+  //
+  //   if (event.sub !== undefined) {
+  //     this.handleAssistantSub(event.sub);
+  //   }
+  //
+  //   console.log(`assistant.on(data)`, event);
+  //   const {action} = event;
+  //   this.dispatchAssistantAction(action);
+  // }
 
 
-  handleAssistantDataEventCharacter(event: AssistantEventCharacter) {
-    console.log('handleAssistantEventCharacter: character:', event.character.id);
-
-    this.setState({character: event.character.id});
-    if (event.character.id === CHAR_TIMEPARAMOY) {
-      this.setState({description: FILL_DATA_TO_OPEN_TEXT});
-    } else {
-      this.setState({description: TO_VIEW_SET_GROUP_TEXT});
-    }
-  }
-
-
-  handleAssistantDataEventSmartAppData(event: AssistantEventSmartAppData) {
-    console.log('handleAssistantEventSmartAppData: event:', event);
-
-    if (event.sub !== undefined) {
-      this.handleAssistantSub(event.sub);
-    }
-
-    console.log(`assistant.on(data)`, event);
-    const {action} = event;
-    this.dispatchAssistantAction(action);
-  }
-
-
-  handleAssistantSub(eventSub: string) {
+  async handleAssistantSub(eventSub: string) {
     console.log("handleAssistantSub: eventSub", eventSub);
+
     this.setState({userId: eventSub});
+
     const now = new Date();
     this.setState({today: now.getDay()});
 
-    getUser(this.state.userId).then((user) => {
-      console.log("handleAssistantSub: getUser", user)
+    const user = await getUser(this.state.userId)
+    console.log("handleAssistantSub: getUser", user)
 
-      if (user !== "0") {
-        console.log('user', user)
+    if (user !== "0") {
+      console.log('handleAssistantSub: user', user)
+      this.setState({
+        groupId: user.group_id,
+        subGroup: user.subgroup_name,
+        engGroup: user.eng_group,
+        teacherId: user.teacher_id
+      })
+
+     const userSchedule = await getSchedulebyUserId(this.state.userId)
+       // .then((userSchedule) => {
+        console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
+
+        history.push("/dashboard")
+
         this.setState({
-          groupId: user.group_id,
-          subGroup: user.subgroup_name,
-          engGroup: user.eng_group,
-          teacherId: user.teacher_id
+          isActive: userSchedule.isActive,
+          pushHour: userSchedule.hour,
+          pushMin: userSchedule.minute,
         })
 
-        getSchedulebyUserId(this.state.userId).then((response) => {
-          console.log("handleAssistantSub: getScheduleByUserId", response)
+        if (userSchedule.teacher_id != "" && userSchedule.teacher_id != null) {
+          console.log(`handleAssistantSub: ${userSchedule.teacher_info.last_name} ${userSchedule.teacher_info.first_name}. ${userSchedule.teacher_info.mid_name}.`);
 
-          history.push("/dashboard")
-          this.setState({isActive: response.isActive, pushHour: response.hour, pushMin: response.minute})
+          const teacher = getTeacherStr(userSchedule.teacher_info);
+          this.setState({
+            student: false,
+            teacher_bd: teacher,
+            teacher_id_bd: userSchedule.teacher_id,
+            teacher_correct: true,
+            teacher: teacher,
+            isUser: true,
+          })
 
-          if (response.teacher_id != "" && response.teacher_id != null) {
-            console.log(`${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`);
-            const teacher = `${response.teacher_info.last_name} ${response.teacher_info.first_name}. ${response.teacher_info.mid_name}.`;
-            this.setState({
-              student: false,
-              teacher_bd: teacher,
-              teacher_id_bd: response.teacher_id,
-              teacher_correct: true,
-              teacher: teacher,
-              isUser: true,
-            })
+        } else if (userSchedule.groupId != "") {
 
-          } else if (response.groupId != "") {
+          this.setState({
+            group: userSchedule.groupName,
+            flag: true,
+            bd: userSchedule.groupName,
+            group_id_bd: this.state.groupId,
+            eng_bd: this.state.engGroup,
+            sub_bd: this.state.subGroup,
+            student: true,
+            isUser: true,
+          });
+          console.log(this.state.group_id_bd, "GROUP_ID_BD");
+        } else {
+          this.setState({isUser: true})
 
-            this.setState({
-              group: response.groupName,
-              flag: true,
-              bd: response.groupName,
-              group_id_bd: this.state.groupId,
-              eng_bd: this.state.engGroup,
-              sub_bd: this.state.subGroup,
-              student: true,
-              isUser: true,
-            });
-            console.log(this.state.group_id_bd, "GROUP_ID_BD");
-          } else {
-            this.setState({isUser: true})
+        }
+        if (this.state.teacherId != "" || this.state.group != "") {
 
-          }
-          if (this.state.teacherId != "" || this.state.group != "") {
+          // todo: Зачем два вызова?
+          this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true);
+          this.SetWeekSchedule(userSchedule.formatScheduleData, 1, true);
+        }
+      // })
 
-            // todo: Зачем два вызова?
-            this.SetWeekSchedule(response.formatScheduleData, 0, true);
-            this.SetWeekSchedule(response.formatScheduleData, 1, true);
-          }
-        })
+    } else {
+      console.log("handleAssistantSub: first time")
 
-      } else {
-        console.log("first time")
-        this.setState({isUser: true});
-        history.push('/start')
-        this.sendAssistantData({
-          action_id: "hello_phrase"
-        })
-        createUser(
-          this.state.userId,
-          this.state.filialId,
-          this.state.groupId,
-          this.state.subGroup,
-          this.state.engGroup,
-          this.state.teacherId,
-        )
-      }
-    })
+      this.setState({isUser: true});
+
+      history.push('/start')
+
+      this.assistant.sendAction({
+        action_id: "hello_phrase"
+      })
+
+      await createUser(
+        this.state.userId,
+        this.state.filialId,
+        this.state.groupId,
+        this.state.subGroup,
+        this.state.engGroup,
+        this.state.teacherId,
+      )
+    }
   }
 
 
@@ -598,7 +608,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== ""))
             if (this.state.today === 0) {
 
-              this.sendAssistantData({
+              this.assistant.sendAction({
                 action_id: "todaySchedule",
                 parameters: {
                   day: DAY_SUNDAY
@@ -607,7 +617,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               return this.ChangeDay(7);
 
             } else {
-              this.sendAssistantData({
+              this.assistant.sendAction({
                 action_id: "todaySchedule",
                 parameters: {day: DAY_NOT_SUNDAY},
               })
@@ -618,13 +628,13 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'for_tomorrow':
           if ((this.state.group !== "") || (this.state.teacher !== ""))
             if (this.state.today + 1 === 7) {
-              this.sendAssistantData({
+              this.assistant.sendAction({
                 action_id: "tomorrowSchedule",
                 parameters: {day: DAY_SUNDAY},
               })
               return this.ChangeDay(7);
             } else {
-              this.sendAssistantData({
+              this.assistant.sendAction({
                 action_id: "tomorrowSchedule",
                 parameters: {day: DAY_NOT_SUNDAY},
               })
@@ -674,7 +684,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 time: answer
               }
             }
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say",
               parameters: params,
             })
@@ -741,7 +751,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               this.ChangeDay(dayOfWeekIndex + page)
             }
 
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say1",
               parameters: howManyParams,
             })
@@ -762,7 +772,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 pron: numPron[amountOfRemainingLessons]
               }
             }
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say2",
               parameters: howManyLeftParams,
             })
@@ -785,7 +795,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
             const whereLessonParams = this.whereWillLesson(new Date(this.state.date), action.note.when)
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say3",
               parameters: whereLessonParams,
             })
@@ -807,7 +817,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             }
             const whatLesson = this.whatLesson(new Date(), action.note.when);
             console.log('what_lesson: whatLesson:', whatLesson)
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say4",
               parameters: whatLesson,
             })
@@ -871,7 +881,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               const newPage = dayOfWeekIdx1 + page1;
               this.gotoPage(newPage)
             }
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say5",
               parameters: whichFirst,
             })
@@ -918,7 +928,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             const newPage = dayOfWeekIdx1 + page2;
             this.gotoPage(newPage)
             // }
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "say6",
               parameters: daySchedule,
             })
@@ -933,7 +943,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               IsStudent = false
             }
             //this.gotoPage(HOME_PAGE_NO);
-            this.sendAssistantData({
+            this.assistant.sendAction({
               action_id: "change_group",
               parameters: {
                 IsStudent: IsStudent
@@ -1037,12 +1047,13 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  sendAssistantData(action: AssistantSendAction) {
-    console.log(action);
-    return this._assistant.sendData({
-      action
-    })
-  }
+  // sendAssistantData(action: AssistantSendAction) {
+  //   this.assistant.sendAction(action)
+  //   // console.log(action);
+  //   // return this._assistant.sendData({
+  //   //   action
+  //   // })
+  // }                          ``
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1131,7 +1142,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     return [lessonsStart, lessonNumber];
   }
-  
+
 
   // определяет когда кончаются пары сегодня или завтра
   getEndLastLesson(todayOrTomorrow: number): string {
@@ -1571,11 +1582,11 @@ export class App extends React.Component<IAppProps, IAppState> {
    * заполнение данными расписания из бд
    */
 SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
-    console.log('showWeekSchedule', scheduledata)
-    console.log("IsSaveSchedule", isSavedSchedule)
-    console.log("IsCurrentWeek",i)
-   
-   
+    console.log('SetWeekSchedule: showWeekSchedule', scheduledata)
+    console.log("SetWeekSchedule: IsSaveSchedule", isSavedSchedule)
+    console.log("SetWeekSchedule: IsCurrentWeek",i)
+
+
     if(isSavedSchedule){
       let saved_schedule = this.state.saved_schedule
      if(i==0){
@@ -1596,7 +1607,11 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
         console.log("Set other shcedule; other week")
         other_schedule.other_week = scheduledata.schedule
        }
-       this.setState({other_schedule: other_schedule,isSavedSchedule: isSavedSchedule,  day: scheduledata.day});
+       this.setState({
+         other_schedule: other_schedule,
+         isSavedSchedule: isSavedSchedule,
+         day: scheduledata.day,
+       });
     }
     this.setState({spinner: true});
     console.log("Days", scheduledata, "Day", this.state.day)
@@ -1638,7 +1653,9 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
 
   doSetTeacher(teacherName: string): void {
     console.log("DoSetTeacher")
-    this.setState({teacher: teacherName}, async () => {
+    this.setState({
+      teacher: teacherName
+    }, async () => {
       await this.handleTeacherChange(false);
     });
   }
@@ -1728,7 +1745,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
         });
       })
   }
-  
+
   async Load_Schedule(isSave: boolean): Promise<void> {
     console.log("Load_Schedule. IsSave:",isSave)
     return await this._loadSchedule({
@@ -1780,7 +1797,16 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
         let isCorrect = correct_eng && correct_sub && correct
         if ((isCorrect&&this.state.checked)||(history.location.pathname!='/home')){
           console.log("create_user", history.location.pathname)
-          this.setState({groupId: groupId, group: group.name, bd: this.state.group, correct: true, group_id_bd: groupId, eng_bd: this.state.engGroup, sub_bd: this.state.subGroup, teacher_id_bd: ""}, () => {
+          this.setState({
+            groupId: groupId,
+            group: group.name,
+            bd: this.state.group,
+            correct: true,
+            group_id_bd: groupId,
+            eng_bd: this.state.engGroup,
+            sub_bd: this.state.subGroup,
+            teacher_id_bd: "",
+          }, () => {
             createUser(
               this.state.userId,
               filial.id,
@@ -1807,7 +1833,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
       console.log(this.state.student)
       //this.state.student=false;
       this.setState({student: false, teacher: this.state.teacher_bd})
-     
+
     }
       else this.setState({group: this.state.bd, student: true})
     }
@@ -1942,7 +1968,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
                 return <Settings
                   userId={this.state.userId}
                   bd={this.state.bd}
-                  sendAssistantData={this.sendAssistantData}
+                  sendAssistantData={(action: AssistantSendAction) => this.assistant.sendAction(action)}
                   teacher_bd={this.state.teacher_bd}
                   onHandleTeacherChange={this.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
@@ -1994,7 +2020,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
                     pageNo={this.state.page}
                     onDashboardClick={() => history.push("/dashboard")}
                     handleTeacherChange={this.handleTeacherChange}
-                   
+
                   />
                 )
               }
@@ -2038,11 +2064,11 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
                   teacherId={this.state.teacher_id_bd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                   handleTeacherChange={this.handleTeacherChange}
-                  
+
                 />
               }
             }/>
-          <Route 
+          <Route
           path="/home"
           render={
             ({match}) =>{
@@ -2076,7 +2102,7 @@ SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: b
             }
           }
           />
-          <Route 
+          <Route
           path="/start"
           render ={
             ({match}) =>{
