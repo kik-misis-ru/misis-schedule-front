@@ -12,17 +12,23 @@ import * as ApiHelper from "./ApiHelper";
 
 
 export class ApiModel {
-  // public userId: string | undefined
+  public userId: string | undefined
   public user: ApiHelper.IUserData | undefined
 
   constructor() {
 
   }
 
-  public async fetchUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
-    const apiResult = await ApiHelper.getUser(userId)
+  // public async fetchUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
+  public async fetchUser(userId: string): Promise<void> {
+    if (this.userId === userId && this.user) return;
+
+    // try {
+    const apiResult = await ApiHelper.getUser(userId);
     this.user = apiResult === '0' ? undefined : apiResult
-    return this.user;
+    this.userId = userId; // устанавливаем только если данные были получены без ошибки
+    // return this.user;
+    // } 
   }
 
   // protected async _dbGetUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
