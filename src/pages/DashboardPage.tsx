@@ -407,8 +407,8 @@ const DashboardPage = ({
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
 
 }) => {
-  console.log('DashboardPage:', groupId, teacherId, userId)
-  console.log('DashboardPage:', {count})
+  // console.log('DashboardPage:', groupId, teacherId, userId)
+  // console.log('DashboardPage:', {count})
   return (
     <DeviceThemeProvider>
       <DocStyle/>

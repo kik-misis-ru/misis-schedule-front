@@ -1935,7 +1935,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
                 let count = this.state.day.current_week[todayZeroIndex]?.count;
                 //console.log("COUNT", this.state.today)
-                console.log('/dashboard: count:', count)
+                // console.log('/dashboard: count:', count)
 
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
