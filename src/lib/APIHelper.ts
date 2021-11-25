@@ -2,13 +2,8 @@ import axios, {AxiosResponse} from "axios";
 
 import filial from '../data/filial.json';
 
-<<<<<<< HEAD:src/APIHelper.ts
-import {Bell} from './types/ScheduleStructure'
-import {IScheduleDays,DEFAULT_STATE_WEEK_DAY, LessonStartEnd} from './App'
-=======
 import {Bell} from '../types/ScheduleStructure'
-import {IScheduleDays,DEFAULT_STATE_DAY, LessonStartEnd} from '../App'
->>>>>>> f9c992cdbd15de4fcd0936f779742421e03d285a:src/lib/APIHelper.ts
+import {IScheduleDays,DEFAULT_STATE_WEEK_DAY, LessonStartEnd} from '../App'
 
 import {IDayHeader} from '../types/base'
 
