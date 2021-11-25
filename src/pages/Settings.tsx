@@ -20,6 +20,9 @@ import {
   addUserToPushNotification,
 } from "../lib/ApiHelper";
 import {
+  ApiModel
+} from '../lib/ApiModel'
+import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {Spacer100,Spacer200,Spacer300} from '../components/spacers'
@@ -139,12 +142,8 @@ interface SettingsProps {
   isGroupError: boolean
   theme: string
   ChangeTheme: () => void
-  ChangePush: (hour: number, min: number, isActive: boolean) => void
   subGroup: string
   isSubGroupError: boolean
-  isActive: boolean
-  pushHour: number
-  pushMin: number
   engGroup: string
   isEngGroupError: boolean
   CheckIsCorrect: () => Promise<boolean>
@@ -154,13 +153,14 @@ interface SettingsProps {
   teacher: string
   isTeacherError: boolean
   teacher_checked: boolean
+  apiModel: ApiModel
 }
 
 interface SettingsState {
   disabled: boolean
   edit: boolean
   timePush: {
-    hour: number,
+    hour: number ,
     min: number,
     value: Date
   }
@@ -183,12 +183,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     console.log()
     let edit=false;
     this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
-    this.state = {disabled: this.props.isActive,
+    let pushSettings = this.props.apiModel.pushSettings
+    this.state = {disabled: pushSettings.IsActive,
       dayPush: this.props.dayPush,
       timePush: {
-        hour:  this.props.pushHour == -1 ? 1 : this.props.pushHour,
-        min: this.props.pushMin == -1 ? 1 : this.props.pushMin,
-        value: new Date(1629996400000-68400000-2760000 + this.props.pushHour * 3600000 + this.props.pushMin * 60000)
+        hour:  pushSettings.Hour == -1 ? 1 : pushSettings.Hour,
+        min: pushSettings.Minute == -1 ? 1 : pushSettings.Minute,
+        value: new Date(1629996400000-68400000-2760000 + pushSettings.Hour * 3600000 + pushSettings.Minute * 60000)
       },
       edit: edit,
       theme: false,
@@ -245,8 +246,13 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       }
       if (!this.props.isTeacherError && !this.props.student) this.setState({edit: false })
      console.log("CHECK",!this.props.isTeacherError && !this.props.student)
-      this.props.ChangePush(this.state.timePush.hour, this.state.timePush.min, this.state.disabled);
-    addUserToPushNotification(this.props.userId, this.state.timePush.hour, this.state.timePush.min, this.state.disabled)
+     this.props.apiModel.pushSettings = 
+     {
+       Hour: this.state.timePush.hour,
+       Minute: this.state.timePush.min,
+       IsActive:  this.state.disabled
+    }
+    this.props.apiModel.AddPush()
     if(this.state.disabled){
       this.props.sendAssistantData({
         action_id: 'settings',

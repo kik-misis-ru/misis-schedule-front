@@ -523,11 +523,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       history.push("/dashboard")
 
-      this.setState({
-        isActive: userSchedule.isActive,
-        pushHour: userSchedule.hour,
-        pushMin: userSchedule.minute,
-      })
+      this.apiModel.pushSettings={
+        IsActive: userSchedule.isActive,
+        Hour: userSchedule.hour,
+        Minute: userSchedule.minute,
+      }
 
       if (userSchedule.teacher_id != "" && userSchedule.teacher_id != null) {
         console.log(`handleAssistantSub: ${userSchedule.teacher_info.last_name} ${userSchedule.teacher_info.first_name}. ${userSchedule.teacher_info.mid_name}.`);
@@ -2004,11 +2004,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   group={this.state.group}
                   theme={this.state.theme}
                   ChangeTheme={this.ChangeTheme}
-                  ChangePush={this.ChangePush}
                   isGroupError={this.state.isGroupError}
-                  isActive={this.state.isActive}
-                  pushHour={this.state.pushHour}
-                  pushMin={this.state.pushMin}
                   subGroup={this.state.subGroup}
                   dayPush={this.state.dayPush}
                   isSubGroupError={this.state.isSubGroupError}
@@ -2020,6 +2016,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   teacher={this.state.teacher}
                   isTeacherError={this.state.isTeacherError}
                   teacher_checked={this.state.teacher_checked}
+                  apiModel ={this.apiModel}
                 />
               }
             }

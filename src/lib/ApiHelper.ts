@@ -7,6 +7,8 @@ import {IScheduleDays,DEFAULT_STATE_WEEK_DAY, LessonStartEnd} from '../App'
 
 import {IDayHeader} from '../types/base'
 
+import {IPushSettings} from './ApiModel'
+
 export interface ITeacherApiData extends ITeacherInfo {
   // first_name: string
   // mid_name: string
@@ -206,13 +208,13 @@ export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherAp
   return parsedTeacherData;
 }
 
-export async function addUserToPushNotification( sub: string, hour: number, minute: number, isActive: boolean){
+export async function addUserToPushNotification( sub: string, pushSettings: IPushSettings){
   const url = `${API_URL}add_user_to_push_notification`;
   const data = {
     "sub": sub, 
-    "hour": hour, 
-    "minute": minute,
-    "isActive": isActive,
+    "hour": pushSettings.Hour, 
+    "minute": pushSettings.Minute,
+    "isActive": pushSettings.IsActive,
     // "day": day
   };
   console.log(`ApiHelper: add_user_to_push_notification: url: "${url}", data:`, data);
