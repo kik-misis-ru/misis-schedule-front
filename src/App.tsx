@@ -512,7 +512,10 @@ export class App extends React.Component<IAppProps, IAppState> {
             let params: AssistantSendActionSay['parameters'];
             let dayOfWeekZeroIndex = 0;
             const [type, day, lessonNum] = action.note || [];
-            day == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
+            // day == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
+            dayOfWeekZeroIndex = day == "today"
+              ? this.state.today - 1
+              : this.state.today;
 
             let answer = this.getStartEndLesson(type, dayOfWeekZeroIndex, lessonNum)
 
