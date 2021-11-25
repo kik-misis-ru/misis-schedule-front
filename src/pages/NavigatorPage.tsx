@@ -14,7 +14,7 @@ import {
   CellListItem,
 } from "@sberdevices/plasma-ui";
 import {IconLocation} from "@sberdevices/plasma-icons";
-import {Spacer300} from "../App";
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 
 import karta from "../images/Karta.png";
 

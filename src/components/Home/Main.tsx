@@ -3,10 +3,9 @@ import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  history,
-  Spacer100,
-  Spacer200,
-} from '../../App';
+  history, } from '../../App';
+import {Spacer100,Spacer200,Spacer300} from '../Spacers'
+
 import {
     HeaderLogoCol,
     HeaderTitleCol2,

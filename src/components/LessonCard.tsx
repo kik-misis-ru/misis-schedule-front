@@ -23,7 +23,7 @@ import {
   //IconMoreVertical
 } from "@sberdevices/plasma-icons";
 import {LessonStartEnd, StartEnd} from "../App";
-import {NO_LESSONS_NAME} from '../lib/APIHelper';
+import {NO_LESSONS_NAME} from '../lib/ApiHelper';
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 

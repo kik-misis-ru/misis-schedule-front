@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import {Card, CardBody, CardContent, RectSkeleton} from "@sberdevices/plasma-ui";
 
 import {IScheduleDays, LessonStartEnd} from "../App";
-import {NO_LESSONS_NAME} from '../lib/APIHelper'
+import {NO_LESSONS_NAME} from '../lib/ApiHelper'
 import {Bell} from "../types/ScheduleStructure";
 import {OTHER_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
 // import ScheduleDayLessons from "./ScheduleDayLessons";

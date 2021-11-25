@@ -6,8 +6,10 @@ import {
 } from "@sberdevices/plasma-ui";
 import {
   StartEnd,
-  LessonStartEnd, Spacer300,
+  LessonStartEnd,
 } from '../App';
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
 import karta from "../images/Karta.png";
