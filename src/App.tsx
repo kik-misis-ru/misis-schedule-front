@@ -21,7 +21,7 @@ import {
   IScheduleLessonInfo, ITeacherApiData,
   IScheduleFormatData,
   getSchedulebyUserId,
-  FormateSchedule, ITeacherInfo
+  FormateSchedule, ITeacherInfo, IUserData,
 } from "./lib/ApiHelper";
 import ApiModel from "./lib/ApiModel";
 
@@ -88,8 +88,8 @@ export const HOME_PAGE_ROUTE = "home";
 const INITIAL_PAGE = 16;
 
 const SEVEN_DAYS = 7 * MS_IN_DAY;
-const FILL_DATA_NO_OFFICIAL_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
-const TO_VIEW_OFFICIAL_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
+const ENTER_DATA_NO_OFFICIAL_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
+const ENTER_DATA_OFFICIAL_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
 /**
  * Время начала и конца пар
@@ -183,7 +183,6 @@ export interface IAppState {
   // logo
   flag: boolean
   checked: boolean
-  description: string
   group: string
   groupId: string
   filialId: string
@@ -268,7 +267,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       // logo: null,
       flag: true,
       checked: false,
-      description: "",
       group: "",
       groupId: "",
       filialId: "",
@@ -327,49 +325,62 @@ export class App extends React.Component<IAppProps, IAppState> {
   //////////////////////////////////////////////////////////////////////////////
 
   handleAssistantCharacter(character: AssistantCharacter) {
-
     this.setState({
       character: character.id,
-      description: character.appeal === 'no_official'
-        ? FILL_DATA_NO_OFFICIAL_TEXT
-        : TO_VIEW_OFFICIAL_TEXT
     });
   }
 
+
   async handleAssistantSub(eventSub: string) {
     console.log("handleAssistantSub: eventSub", eventSub);
-    const userId = eventSub;
 
-    this.setState({ userId });
-
-    const now = new Date();
-    this.setState({ today: now.getDay() });
-
-    // const user = await getUser(this.state.userId)
-    await this.apiModel.fetchUser(userId)
-    const user = this.apiModel.user;
-    // console.log("handleAssistantSub: getUser", user)
-    //
-    // if (user !== "0") {
-    if (!!user) {
-      console.log('handleAssistantSub: user', user)
-      // const { groupId, subGroup, engGroup, teacherId } = user;
+    const initStateUser = (user: IUserData) => {
       this.setState({
-        // groupId,
-        // subGroup,
-        // engGroup,
-        // teacherId,
         groupId: user.group_id,
         subGroup: user.subgroup_name,
         engGroup: user.eng_group,
         teacherId: user.teacher_id
       })
+    }
 
+    const initStateTeacher = (teacherId: string, teacherName: string) => {
+      this.setState({
+        student: false,
+        teacher_bd: teacherName,
+        teacher_id_bd: teacherId,
+        teacher_correct: true,
+        teacher: teacherName,
+        isUser: true,
+      })
+    }
+
+    const initStateGroup = (groupName: string) => {
+      this.setState({
+        group: groupName,
+        flag: true,
+        bd: groupName,
+        group_id_bd: this.state.groupId,
+        eng_bd: this.state.engGroup,
+        sub_bd: this.state.subGroup,
+        student: true,
+        isUser: true,
+      });
+    }
+
+    const initStateNoSettings = () => {
+      this.setState({
+        isUser: true,
+      });
+    }
+
+    const handleExistingUser = async (user) => {
+      // Такой пользователь уже есть в базе
+      initStateUser(user)
+
+      // Получаем настройки для данного пользователя
       const userSchedule = await getSchedulebyUserId(userId)
       // .then((userSchedule) => {
       console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
-
-      history.push("/dashboard")
 
       this.apiModel.pushSettings={
         IsActive: userSchedule.isActive,
@@ -378,52 +389,39 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
 
       if (userSchedule.teacher_id != "" && userSchedule.teacher_id != null) {
-        console.log(`handleAssistantSub: ${userSchedule.teacher_info.last_name} ${userSchedule.teacher_info.first_name}. ${userSchedule.teacher_info.mid_name}.`);
-
-        const teacher = formatTeacherName(userSchedule.teacher_info);
-        this.setState({
-          student: false,
-          teacher_bd: teacher,
-          teacher_id_bd: userSchedule.teacher_id,
-          teacher_correct: true,
-          teacher: teacher,
-          isUser: true,
-        })
+        // если текущий пользователь сохранен как преподаватель
+        initStateTeacher(userSchedule.teacher_id, formatTeacherName(userSchedule.teacher_info) );
 
       } else if (userSchedule.groupId != "") {
+        // Если задана студенческая группа
+        initStateGroup(userSchedule.groupName)
 
-        this.setState({
-          group: userSchedule.groupName,
-          flag: true,
-          bd: userSchedule.groupName,
-          group_id_bd: this.state.groupId,
-          eng_bd: this.state.engGroup,
-          sub_bd: this.state.subGroup,
-          student: true,
-          isUser: true,
-        });
-        console.log(this.state.group_id_bd, "GROUP_ID_BD");
       } else {
-        this.setState({ isUser: true })
+        // Пользователь сохранен, но у него не задан ни преподаватель, ни группа
+        initStateNoSettings();
 
       }
-      if (this.state.teacherId != "" || this.state.group != "") {
 
+      if (this.state.teacherId != "" || this.state.group != "") {
         // todo: Зачем два вызова?
         this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true);
         this.SetWeekSchedule(userSchedule.formatScheduleData, 1, true);
       }
-      // })
 
-    } else {
-      console.log("handleAssistantSub: first time")
+      // переход на пользовательский дэшбоард
+      history.push("/dashboard")
+    }
 
-      this.setState({ isUser: true });
 
-      history.push('/start')
+    const handleNewUser = async (userId) => {
+      console.log("handleAssistantSub: handleNewUser")
 
+      initStateNoSettings();
+
+      // Проигрываем начальное приветствие
       this.assistant.sendHello()
 
+      // Создаем пользователя в базе данных с текущими настройками
       await createUser(
         userId,
         this.state.filialId,
@@ -432,452 +430,401 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.state.engGroup,
         this.state.teacherId,
       )
+
+      history.push('/start')
+    }
+
+
+    const userId = eventSub;
+    const now = new Date();
+
+    this.setState({
+      userId,
+      today: now.getDay(),
+    });
+
+    // const user = await getUser(this.state.userId)
+    await this.apiModel.fetchUser(userId)
+    const user = this.apiModel.user;
+    console.log('handleAssistantSub: user', user)
+
+    // Проверяем, найден ли пользователь
+    if (user) {
+      await handleExistingUser(user);
+
+    } else {
+      await handleNewUser(user);
+
+    }
+  }
+
+  handleAssistantPageChange(pageRoute: string) {
+    history.push(pageRoute)
+  }
+
+  handleAssistantSetGroup(group: string) {
+    this.setState({
+      group,
+    });
+  }
+
+  handleAssistantSetSubGroup(subGroup: string) {
+    this.setState({
+      subGroup,
+    });
+  }
+
+  handleAssistantSetEngGroup(engGroup: string) {
+    this.setState({
+      engGroup,
+    })
+  }
+
+  async handleAssistantForDayOffset(offset: 0|1) {
+    if ((this.state.group !== "") || (this.state.teacher !== ""))
+      if (
+        this.state.today + offset === 0 ||
+        this.state.today + offset === 7
+      ) {
+
+        this.assistant.sendTodaySchedule(DAY_SUNDAY);
+        return this.ChangeDay(7);
+
+      } else {
+        this.assistant.sendTodaySchedule(DAY_NOT_SUNDAY);
+        return this.ChangeDay(this.state.today + offset);
+      }
+  }
+
+  async handleAssistantForNextWeek() {
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      await this.NextWeek(this.state.isSavedSchedule);
+      return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
+    }
+  }
+
+  async handleAssistantForThisWeek() {
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      await this.CurrentWeek(this.state.isSavedSchedule);
+      this.ChangeDay(this.state.today);
+    }
+  }
+
+  async handleAssistantWhenLesson(
+    type1: StartOrEnd,
+    day1: TodayOrTomorrow,
+    lessonNum: string,   // порядковый номер пары
+  ) {
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      let params: AssistantSendActionSay['parameters'];
+      // const [type1, day1, lessonNum] = action.note || [];
+      // day1 == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
+      const dayOfWeekZeroIndex = day1 === DAY_TODAY
+        ? this.state.today - 1
+        : this.state.today;
+
+      let startEndLesson = this.getStartEndLesson(type1, dayOfWeekZeroIndex, lessonNum)
+      console.log('dispatchAssistantAction: startEndLesson:', startEndLesson)
+
+      if (startEndLesson !== undefined && startEndLesson[1] === DAY_SUNDAY) {
+        // todo: startEndLesson is string|[string,string]
+        const type2 = startEndLesson[0];
+        const day2 = startEndLesson[1];
+        params = {
+          type: type2,
+          day: day2,
+        }
+      } else {
+        params = {
+          type: type1,
+          day: day1,
+          ordinal: number.ordinal.fem.singular.nominative[lessonNum],
+          time: startEndLesson
+        }
+      }
+
+      this.assistant.sendAction({
+        action_id: "say",
+        parameters: params,
+      })
+
+      if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
+        return this.ChangeDay(this.state.today);
+
+      } else if (this.state.today + 1 === 7) {
+        return this.ChangeDay(7);
+
+      } else {
+        this.ChangeDay(this.state.today + 1);
+      }
+    }
+  }
+
+  handleAssistantHowMany(date: Date|undefined, dayOfWeekStrIndex: string|undefined) {
+    // let amountOfLessonsTuple: [string, number] | undefined;
+    let day: TodayOrTomorrow | undefined;
+    let page = 0;
+    console.log("dispatchAssistantAction: how_many: group:", this.state.group, ", teacher:", this.state.teacher)
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+
+      if (date) {
+        console.log('dispatchAssistantAction: how_many', date)
+
+        // todo: упростить
+        if (String(this.state.today + 1) === dayOfWeekStrIndex) {
+          day = DAY_TODAY;
+          page = 0
+        } else if (String(this.state.today + 2) === dayOfWeekStrIndex) {
+          day = DAY_TOMORROW;
+          page = 0
+        } else { // fallback
+          day = undefined
+          page = 0
+        }
+
+      } else {
+        date = new Date();
+        day = DAY_TODAY
+      }
+
+      let howManyParams: AssistantSendActionSay1['parameters'] = {
+        day: DAY_SUNDAY,
+      };
+
+      const lessonCount = this.getLessonsCountForDate(date)
+
+      if (this.state.group !== "" && lessonCount > 0) {
+        // const [dayOfWeekShort, lessonCount] = amountOfLessonsTuple;
+        const lessonText = pairNumberToPairText(lessonCount);
+
+        // const [dayOfWeekLongPrepositional, dayOfWeekIndex] = dayNameDict[dayOfWeekShort]
+        // const dayOfWeekIndex = DayOfWeek.short.indexOf(dayOfWeekShort)
+        const dayOfWeekIndex = date.getDay();
+        const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]?.toLowerCase();
+
+        howManyParams = {
+          lesson: lessonText,
+          day: day,
+          dayName: dayOfWeekLongPrepositional,
+          amount: number.cardinal.fem[lessonCount]
+        }
+        if (dayOfWeekIndex < this.state.today) {
+          page = 7;
+        }
+        this.ChangeDay(dayOfWeekIndex + page)
+      }
+
+      this.assistant.sendAction({
+        action_id: "say1",
+        parameters: howManyParams,
+      })
+    }
+  }
+
+  // Сколько пар осталось (сегодня)
+  handleAssistantHowManyLeft() {
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      let howManyLeftParams
+      let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date())
+      if (this.state.today === 0) {
+        howManyLeftParams = {
+          day: DAY_SUNDAY,
+        }
+      } else {
+        howManyLeftParams = {
+          amount: amountOfRemainingLessons,
+          pron: number.cardinal.fem[amountOfRemainingLessons]
+        }
+      }
+      this.assistant.sendAction({
+        action_id: "say2",
+        parameters: howManyLeftParams,
+      })
+      if (this.state.group !== "")
+        this.ChangePage();
+      if (this.state.today === 0) {
+        this.gotoPage(7)
+      } else {
+        this.gotoPage(this.state.today)
+      }
+    }
+  }
+
+  handleAssistantWhere(when: NowOrWill) {
+    console.log('handleAssistantWhere: when:', when)
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      const whereLessonParams = this.whereWillLesson(new Date(this.state.date), when)
+      this.assistant.sendAction({
+        action_id: "say3",
+        parameters: whereLessonParams,
+      })
+      if (whereLessonParams.exist === DAY_SUNDAY) {
+        //this.setState({ page: 8 })
+      } else {
+        this.ChangeDay(this.state.today);
+      }
+    }
+  }
+
+  handleAssistantWhatLesson(when: NowOrWill) {
+    console.log("handleAssistantWhatLesson: when:", when)
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      const whatLesson = this.whatLesson(new Date(), when);
+      console.log('dispatchAssistantAction: what_lesson: whatLesson:', whatLesson)
+      this.assistant.sendAction({
+        action_id: "say4",
+        parameters: whatLesson,
+      })
+      if (this.state.today === 0) {
+        this.ChangeDay(7)
+      } else {
+        this.ChangeDay(this.state.today);
+      }
     }
   }
 
 
-  async dispatchAssistantAction(action: AssistantAction) {
-    console.log('dispatchAssistantAction:', action)
-    if (action) {
-      switch (action.type) {
+  handleAssistantFirstLesson(dayOfWeek: number) {
 
-        case 'settings':
-          console.log('dispatchAssistantAction: PUSH');
-          break;
+    // todo: test dayOfWeek/dayOfWeekZeroIndex
 
-        case 'profile':
-          console.log('dispatchAssistantAction: profile');
-          // if(! action.IsStudent){
-          //   this.setState({student: false})
-          // }
-          // else{
-          //   this.setState({student: true})
-          // }
-          history.push("/home")
-          break;
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      let firstLessonNumStr: string;
+      // let day: TodayOrTomorrow;
+      let day1: undefined | TodayOrTomorrow = DAY_TODAY;
+      let page1 = 0;
+      if (typeof dayOfWeek !== undefined) {
+        const dayOfWeekZeroIndex = dayOfWeek - 1
+        console.log('dispatchAssistantAction: first_lesson:', dayOfWeek)
+        firstLessonNumStr = this.getStartFirstLesson(dayOfWeekZeroIndex)[1]
 
-        case 'set_eng_group':
-          console.log('dispatchAssistantAction: pathname:', history.pathname)
-          if (action.group != undefined) {
-            this.setState({ engGroup: String(action.group) })
-          }
-          break
+        if (this.state.today + 1 === dayOfWeek) {
+          day1 = DAY_TODAY;
+          page1 = 0
 
-        case 'for_today':
-          if ((this.state.group !== "") || (this.state.teacher !== ""))
-            if (this.state.today === 0) {
+        } else if (this.state.today + 2 === dayOfWeek) {
+          day1 = DAY_TOMORROW;
+          page1 = 0
 
-              this.assistant.sendTodayScheduleSunday();
-              return this.ChangeDay(7);
-
-            } else {
-              this.assistant.sendTodayScheduleNotSunday();
-              return this.ChangeDay(this.state.today);
-            }
-          break;
-
-        case 'for_tomorrow':
-          if ((this.state.group !== "") || (this.state.teacher !== ""))
-
-            if (this.state.today + 1 === 7) {
-              this.assistant.sendTomorrowScheduleSunday()
-              return this.ChangeDay(7);
-
-            } else {
-              this.assistant.sendTomorrowScheduleNotSunday()
-              return this.ChangeDay(this.state.today + 1);
-            }
-          break;
-
-        case 'for_next_week':
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            await this.NextWeek(this.state.isSavedSchedule);
-            return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
-          }
-          break;
-
-        case 'for_this_week':
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            this.setState({
-              date: Date.now(),
-              flag: true,
-            });
-            history.push('/spinner')
-            return
-          }
-          break;
-
-        case 'when_lesson':
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            let params: AssistantSendActionSay['parameters'];
-            let dayOfWeekZeroIndex = 0;
-            const [type, day, lessonNum] = action.note || [];
-            // day == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
-            dayOfWeekZeroIndex = day == "today"
-              ? this.state.today - 1
-              : this.state.today;
-
-            let answer = this.getStartEndLesson(type, dayOfWeekZeroIndex, lessonNum)
-
-
-            console.log('dispatchAssistantAction: answer:', answer)
-            if (answer !== undefined && answer[1] === DAY_SUNDAY) {
-              params = {
-                type: answer[0],
-                day: answer[1],
-              }
-            } else {
-              params = {
-                type: type,
-                day: day,
-                ordinal: number.ordinal.fem.singular.nominative[lessonNum],
-                time: answer
-              }
-            }
-            this.assistant.sendAction({
-              action_id: "say",
-              parameters: params,
-            })
-
-            if ((params.day === DAY_TODAY) && (this.state.today !== 0)) {
-              return this.ChangeDay(this.state.today);
-            } else if (this.state.today + 1 === 7) {
-              return this.ChangeDay(7);
-            } else {
-              this.ChangeDay(this.state.today + 1);
-            }
-          }
-          break
-
-        case 'how_many':
-          let amountOfLessonsTuple: [string, number] | undefined;
-          let day: TodayOrTomorrow | undefined;
-          let date;
-          let page = 0;
-          console.log("dispatchAssistantAction: how_many: group:", this.state.group, ", teacher:", this.state.teacher)
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-
-            if (action.note !== undefined) {
-
-              const { timestamp, dayOfWeek: dayOfWeekStrIndex } = action.note;
-              date = new Date(timestamp);
-              // amountOfLessonsTuple = this.getLessonsCountForDate(date)
-              console.log('dispatchAssistantAction: how_many', timestamp, amountOfLessonsTuple, "how many")
-
-              // todo: упростить
-              if (String(this.state.today + 1) === dayOfWeekStrIndex) {
-                day = DAY_TODAY;
-                page = 0
-              } else if (String(this.state.today + 2) === dayOfWeekStrIndex) {
-                day = DAY_TOMORROW;
-                page = 0
-              } else { // fallback
-                day = undefined
-                page = 0
-              }
-            } else {
-              date = new Date(new Date());
-              // amountOfLessonsTuple = this.getLessonsCountForDate(date)
-              day = DAY_TODAY
-            }
-
-            let howManyParams: AssistantSendActionSay1['parameters'] = {
-              day: DAY_SUNDAY,
-            };
-
-            const lessonCount = this.getLessonsCountForDate(date)
-
-            if (this.state.group !== "" && amountOfLessonsTuple !== undefined) {
-              // const [dayOfWeekShort, lessonCount] = amountOfLessonsTuple;
-              const lessonText = pairNumberToPairText(lessonCount);
-
-              // const [dayOfWeekLongPrepositional, dayOfWeekIndex] = dayNameDict[dayOfWeekShort]
-              // const dayOfWeekIndex = DayOfWeek.short.indexOf(dayOfWeekShort)
-              const dayOfWeekIndex = date.getDay(date); 
-              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]?.toLowerCase();
-              
-              howManyParams = {
-                lesson: lessonText,
-                day: day,
-                dayName: dayOfWeekLongPrepositional,
-                amount: number.cardinal.fem[lessonCount]
-              }
-              if (dayOfWeekIndex < this.state.today) {
-                page = 7;
-              }
-              this.ChangeDay(dayOfWeekIndex + page)
-            }
-
-            this.assistant.sendAction({
-              action_id: "say1",
-              parameters: howManyParams,
-            })
-          }
-          break
-
-        case 'how_many_left':
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            let howManyLeftParams
-            let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date(Date.now()))
-            if (this.state.today === 0) {
-              howManyLeftParams = {
-                day: DAY_SUNDAY,
-              }
-            } else {
-              howManyLeftParams = {
-                amount: amountOfRemainingLessons,
-                pron: number.cardinal.fem[amountOfRemainingLessons]
-              }
-            }
-            this.assistant.sendAction({
-              action_id: "say2",
-              parameters: howManyLeftParams,
-            })
-            if (this.state.group !== "")
-              this.ChangePage();
-            if (this.state.today === 0) {
-              this.gotoPage(7)
-            } else {
-              this.gotoPage(this.state.today)
-            }
-          }
-          break
-
-        case 'where':
-          console.log('dispatchAssistantAction: where')
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            if (action.note === undefined) {
-              action.note = {
-                "when": "now",
-              }
-            }
-            const whereLessonParams = this.whereWillLesson(new Date(this.state.date), action.note.when)
-            this.assistant.sendAction({
-              action_id: "say3",
-              parameters: whereLessonParams,
-            })
-            if (whereLessonParams.exist === DAY_SUNDAY) {
-              //this.setState({ page: 8 })
-            } else {
-              this.ChangeDay(this.state.today);
-            }
-          }
-          break
-
-        case 'what_lesson':
-          console.log("dispatchAssistantAction: what_lesson: какая пара")
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            if (!action.note) {
-              action.note = {
-                "when": "now",
-              }
-            }
-            const whatLesson = this.whatLesson(new Date(), action.note.when);
-            console.log('dispatchAssistantAction: what_lesson: whatLesson:', whatLesson)
-            this.assistant.sendAction({
-              action_id: "say4",
-              parameters: whatLesson,
-            })
-            if (this.state.today === 0) {
-              this.ChangeDay(7)
-            } else {
-              this.ChangeDay(this.state.today);
-            }
-          }
-          break
-
-        case 'first_lesson':
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            let firstLessonNumStr: string;
-            // let day: TodayOrTomorrow;
-            let day1: undefined | TodayOrTomorrow = DAY_TODAY;
-            let page1 = 0;
-            if (action.note !== undefined) {
-              const { dayOfWeek: strDayOfWeek } = action.note;
-              const numDayOfWeek = parseInt(strDayOfWeek) - 1
-              console.log('dispatchAssistantAction: first_lesson:', action.note)
-              console.log('dispatchAssistantAction: first_lesson:', numDayOfWeek);
-              firstLessonNumStr = this.getStartFirstLesson(numDayOfWeek)[1]
-              if (String(this.state.today + 1) === strDayOfWeek) {
-                day1 = DAY_TODAY;
-                page1 = 0
-              } else if (String(this.state.today + 2) === strDayOfWeek) {
-                day1 = DAY_TOMORROW;
-                page1 = 0
-              } else {
-
-                day1 = undefined;
-              }
-            } else {
-              console.warn('dispatchAssistantAction: first_lesson: action.note is undefined');
-              // todo: fix fallback
-              firstLessonNumStr = this.getStartFirstLesson(0)[1];
-              // day = DAY_TODAY
-              day1 = undefined
-            }
-            let whichFirst: AssistantSendActionSay5['parameters'] = {
-              day1: DAY_SUNDAY,
-            }
-            if (firstLessonNumStr !== undefined) {
-              const { dayOfWeek: dayOfWeekStrIndex } = action.note;
-              const dayOfWeekIndex = parseInt(dayOfWeekStrIndex) - 1
-              const dayOfWeekShort = DayOfWeek.short[dayOfWeekIndex];
-
-              
-              // const 
-              // const [dayOfWeekLongPrepositional, dayOfWeekIdx1] = dayNameDict[dayOfWeekShort];
-              const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
-              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
-
-              whichFirst = {
-                num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
-                day: day1,
-                dayName: dayOfWeekLongPrepositional
-              }
-              console.log('dispatchAssistantAction: whichFirst:', whichFirst)
-              if (dayOfWeekIndex_ < this.state.today) {
-                page1 = 7;
-              }
-
-              const newPage = dayOfWeekIndex_ + page1;
-              this.gotoPage(newPage)
-            }
-            this.assistant.sendAction({
-              action_id: "say5",
-              parameters: whichFirst,
-            })
-          }
-          break
-
-        case 'day_schedule':
-          if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            let page2 = 0;
-
-            // todo: упростить
-
-            if ((action.note[1] === null) && (action.note[2] === null)) {
-              if (!this.state.flag) {
-                console.log('dispatchAssistantAction: day_schedule: flag:', this.state.flag);
-                page2 = 7;
-              } else {
-                page2 = 0;
-              }
-
-            } else {
-              console.log('dispatchAssistantAction: day_schedule: note:', action.note)
-              console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', parseInt(action.note[0].dayOfWeek) - 1);
-
-              if (action.note[1] !== null) {
-                console.log('dispatchAssistantAction: day_schedule: note[1]:', action.note[1]);
-                page2 = 0;
-              } else if (action.note[2] !== null) {
-                console.log('dispatchAssistantAction: day_schedule: note[2]:', action.note[2]);
-                page2 = 7;
-              }
-            }
-
-            let daySchedule: AssistantSendActionSay6['parameters'];
-            // if (this.state.group !== "") {
-            const { dayOfWeek: dayOfWeekStrIndex } = action.note[0];
-            const dayOfWeekZeroIndex = parseInt(dayOfWeekStrIndex) - 1;
-            console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex)
-            
-            // const [dayOfWeekLongPrepositional, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekZeroIndex - 1].title];
-            const dayOfWeekShort = this.state.day[dayOfWeekZeroIndex-1].title;
-            const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
-            const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
-
-            daySchedule = {
-              dayName: dayOfWeekLongPrepositional,
-            }
-
-            const newPage = dayOfWeekIndex_ + page2;
-            this.gotoPage(newPage)
-            // }
-            this.assistant.sendAction({
-              action_id: "say6",
-              parameters: daySchedule,
-            })
-          }
-          break
-
-        case 'show_schedule':
-          console.log('dispatchAssistantAction: show schedule');
-          if (action.note) {
-
-            const isStudent = !action.note.includes("препод")
-
-            this.assistant.sendAction({
-              action_id: "change_group",
-              parameters: {
-                IsStudent: isStudent
-              }
-            })
-
-          } else {
-            let success = true;
-            if (history.location == HOME_PAGE_ROUTE) {
-              if (this.state.student) {
-                success = await this.CheckIsCorrect()
-              } else {
-                success = await this.handleTeacherChange(true);
-              }
-            }
-            if (success) {
-              await this.Load_Schedule(this.state.isSavedSchedule)
-              history.push('/spinner')
-            }
-
-          }
-          break;
-
-        case 'show_settings':
-          history.push("/settings")
-          break;
-
-        case 'navigation':
-          console.log("показать навигацию");
-          history.push('/navigation')
-          break;
-
-        case 'faq':
-          history.push('/faq')
-          break;
-
-        case 'contacts':
-          history.push('/contacts')
-          break;
-
-        case 'group':
-          console.log('dispatchAssistantAction: group: action:', action)
-          let group = action.note[0] === 0
-            ? action.note[1].data.groupName[0]
-            : action.note[1].data.groupName[1];
-          group = group.toUpperCase();
-          this.setState({
-            group,
-          });
-          break
-
-        case 'dashboard':
-          history.push("/dashboard")
-          break;
-
-        case 'subgroup':
-          const subGroup = action.note;
-          this.setState({
-            subGroup,
-          });
-          //history.push('/home')
-          break
-
-        case 'show_home_page':
-          history.push('/home')
-          break
-
-        default:
-        //throw new Error();
+        } else {
+          day1 = undefined;
+        }
+      } else {
+        console.warn('dispatchAssistantAction: first_lesson: action.note is undefined');
+        // todo: fix fallback
+        firstLessonNumStr = this.getStartFirstLesson(0)[1];
+        // day = DAY_TODAY
+        day1 = undefined
       }
+
+      let whichFirst: AssistantSendActionSay5['parameters'] = {
+        day1: DAY_SUNDAY,
+      }
+
+      if (firstLessonNumStr !== undefined) {
+        const dayOfWeekIndex = dayOfWeek - 1
+        const dayOfWeekShort = DayOfWeek.short[dayOfWeekIndex];
+
+        const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
+        const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
+
+        whichFirst = {
+          num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
+          day: day1,
+          dayName: dayOfWeekLongPrepositional
+        }
+        console.log('dispatchAssistantAction: whichFirst:', whichFirst)
+        if (dayOfWeekIndex_ < this.state.today) {
+          page1 = 7;
+        }
+
+        const newPage = dayOfWeekIndex_ + page1;
+        this.gotoPage(newPage)
+      }
+      
+      this.assistant.sendAction({
+        action_id: "say5",
+        parameters: whichFirst,
+      })
+    }
+  }
+
+  async handleAssistantDaySchedule(dayOfWeek: number, note1, note2) {
+    console.log('handleAssistantDaySchedule:', dayOfWeek, note1, note2)
+
+    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+      const dayOfWeekZeroIndex = dayOfWeek - 1;
+      let page2 = 0;
+
+      // todo: упростить
+
+      if (note1 === null && note2 === null) {
+        console.log('dispatchAssistantAction: day_schedule: flag:', this.state.flag);
+
+        if (!this.state.flag) {
+          page2 = 7;
+
+        } else {
+          page2 = 0;
+        }
+
+      } else {
+        console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex);
+
+        if (note1 !== null) {
+          console.log('dispatchAssistantAction: day_schedule: note[1]:', note1);
+          page2 = 0;
+
+        } else if (note2 !== null) {
+          console.log('dispatchAssistantAction: day_schedule: note[2]:', note2);
+          page2 = 7;
+
+        }
+      }
+
+      console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex)
+
+      // todo: test dayOfWeek/dayOfWeekZeroIndex/dayOfWeekShort
+
+      // const dayOfWeekShort = this.state.day[dayOfWeekZeroIndex - 1].title;
+      // const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
+      const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
+
+      this.assistant.sendSay6(dayOfWeekLongPrepositional);
+
+      const newPage = dayOfWeekZeroIndex + page2;
+      this.gotoPage(newPage)
+
+    }
+  }
+
+  async handleAssistantShowSchedule(actionNote: string|undefined) {
+    console.log('dispatchAssistantAction: show schedule');
+    if (actionNote) {
+
+      const isStudent = !actionNote.includes("препод")
+
+      this.assistant.sendAction({
+        action_id: "change_group",
+        parameters: {
+          IsStudent: isStudent
+        }
+      })
+
+    } else {
+      let success = true;
+      if (history.location == HOME_PAGE_ROUTE) {
+        if (this.state.student) {
+          success = await this.CheckIsCorrect()
+        } else {
+          success = await this.handleTeacherChange(true);
+        }
+      }
+      if (success) {
+        await this.Load_Schedule(this.state.isSavedSchedule)
+        history.push('/spinner')
+      }
+
     }
   }
 
@@ -943,9 +890,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         break;
       case "checked":
         this.setState({ checked: value });
-        break;
-      case "description":
-        this.setState({ description: value });
         break;
       case "bd":
         this.setState({ bd: value });
@@ -1106,7 +1050,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
     return -1;
   }
-  
+
   /**
    * возвращает короткое название дня недели (Пн,Вт,...)
    * для заданной даты
@@ -1165,9 +1109,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     return countRemainingLessons
   }
-
-
-
 
   whatLesson(
     date: Date,
@@ -1453,7 +1394,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async CurrentWeek(isSave: boolean) {
-    return this.getScheduleFromDb(Date.now(), isSave, true);
+    this.setState({ spinner: false });
+    const date = Date.now();
+    return this.getScheduleFromDb(date, isSave, true);
   }
 
   /**
@@ -1485,9 +1428,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         saved_schedule.other_week = scheduledata.schedule
         day.other_week = scheduledata.day
       }
-      this.setState({ 
-        saved_schedule: saved_schedule, 
-        isSavedSchedule: isSavedSchedule, 
+      this.setState({
+        saved_schedule: saved_schedule,
+        isSavedSchedule: isSavedSchedule,
         day: day });
     }
     else {
@@ -1870,7 +1813,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                   onHandleTeacherChange={this.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
                   onSetValue={this.setValue}
-                  description={this.state.description}
+                  description={
+                    this.state.character === 'joy'
+                      ? ENTER_DATA_NO_OFFICIAL_TEXT
+                      : ENTER_DATA_OFFICIAL_TEXT
+                  }
                   character={this.state.character}
                   checked={this.state.checked}
                   onDashboardClick={() => history.push("/dashboard")}
@@ -1977,7 +1924,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                   onHandleTeacherChange={this.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
                   onSetValue={this.setValue}
-                  description={this.state.description}
+                  description={
+                    this.state.character === 'joy'
+                      ? ENTER_DATA_NO_OFFICIAL_TEXT
+                      : ENTER_DATA_OFFICIAL_TEXT
+                  }
                   character={this.state.character}
                   theme={this.state.theme}
                   checked={this.state.checked}

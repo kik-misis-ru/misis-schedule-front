@@ -1,6 +1,11 @@
 import {createAssistant, createSmartappDebugger} from "@sberdevices/assistant-client";
-import {App} from "../App";
-import {AssistantEvent, AssistantEventCharacter, AssistantEventSmartAppData} from "../types/AssistantReceiveAction";
+import {App, history} from "../App";
+import {
+  AssistantAction,
+  AssistantEvent,
+  AssistantEventCharacter,
+  AssistantEventSmartAppData
+} from "../types/AssistantReceiveAction";
 import {AssistantSendAction} from "../types/AssistantSendAction";
 import {DAY_NOT_SUNDAY, DAY_SUNDAY} from "../types/base.d";
 
@@ -28,21 +33,21 @@ export class AssistantWrapper {
     this._assistant = initializeAssistant(() => this._App.getStateForAssistant());
 
     this._assistant.on("data", (event: AssistantEvent) => {
-      console.log('_assistant.on("data"): event:', event);
+      console.log('AssistantWrapper: _assistant.on("data"): event:', event);
       this.handleAssistantDataEvent(event);
     });
 
     this._assistant.on("start", (event) => {
-      console.log(`_assistant.on(start)`, event);
+      console.log(`AssistantWrapper: _assistant.on(start)`, event);
     });
 
     this._assistant.on("ANSWER_TO_USER", (event) => {
-      console.log(`_assistant.on(raw)`, event);
+      console.log(`AssistantWrapper: _assistant.on(raw)`, event);
     });
   }
 
   handleAssistantDataEvent(event: AssistantEvent) {
-    console.log('handleAssistantDataEvent: event:', event);
+    console.log('AssistantWrapper.handleAssistantDataEvent: event:', event);
 
     switch (event?.type) {
 
@@ -60,27 +65,148 @@ export class AssistantWrapper {
   }
 
   handleAssistantDataEventCharacter(event: AssistantEventCharacter) {
-    console.log('handleAssistantEventCharacter: character.id:', event.character.id);
+    console.log('AssistantWrapper.handleAssistantEventCharacter: character.id:', event.character.id);
 
     this._App.handleAssistantCharacter(event.character)
-    // this.setState({character: event.character.id});
-    // if (event.character.id === CHAR_TIMEPARAMOY) {
-    //   this.setState({description: FILL_DATA_TO_OPEN_TEXT});
-    // } else {
-    //   this.setState({description: TO_VIEW_SET_GROUP_TEXT});
-    // }
   }
 
   handleAssistantDataEventSmartAppData(event: AssistantEventSmartAppData) {
-    console.log('handleAssistantEventSmartAppData: event:', event);
+    console.log('AssistantWrapper.handleAssistantEventSmartAppData: event:', event);
 
     if (event.sub !== undefined) {
       this._App.handleAssistantSub(event.sub);
     }
 
-    console.log(`assistant.on(data)`, event);
     const {action} = event;
-    this._App.dispatchAssistantAction(action);
+    this.dispatchAssistantAction(action);
+  }
+
+  async dispatchAssistantAction(action: AssistantAction) {
+    console.log('AssistantWrapper.dispatchAssistantAction:', action)
+
+    if (!action) return;
+
+    switch (action.type) {
+
+      case 'settings':
+        break;
+
+      case 'profile':
+      case 'show_home_page':
+        this._App.handleAssistantPageChange("/home")
+        break;
+
+      case 'show_settings':
+        this._App.handleAssistantPageChange("/settings")
+        break;
+
+      case 'navigation':
+        this._App.handleAssistantPageChange('/navigation')
+        break;
+
+      case 'faq':
+        this._App.handleAssistantPageChange('/faq')
+        break;
+
+      case 'contacts':
+        this._App.handleAssistantPageChange('/contacts')
+        break;
+
+      case 'dashboard':
+        history.push("/dashboard")
+        break;
+
+      case 'group':
+        let group = action.note[0] === 0
+          ? action.note[1].data.groupName[0]
+          : action.note[1].data.groupName[1];
+        group = group.toUpperCase();
+        this._App.handleAssistantSetGroup(group)
+        break
+
+      case 'subgroup':
+        if (action.note) {
+          const subGroup = action.note;
+          this._App.handleAssistantSetSubGroup(subGroup)
+        } else {
+          console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.note:', action.note)
+        }
+        break
+
+      case 'set_eng_group':
+        if (action.group) {
+          const engGroup = String(action.group);
+          this._App.handleAssistantSetSubGroup(engGroup)
+        } else {
+          console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.group:', action.group)
+        }
+        break
+
+      case 'for_today':
+        await this._App.handleAssistantForDayOffset(0)
+        break
+
+      case 'for_tomorrow':
+        await this._App.handleAssistantForDayOffset(1)
+        break
+
+      case 'for_next_week':
+        await this._App.handleAssistantForNextWeek()
+        break
+
+      case 'for_this_week':
+        await this._App.handleAssistantForThisWeek()
+        break
+
+      case 'when_lesson':
+        const [type, day, lessonNum] = action.note || [];
+        await this._App.handleAssistantWhenLesson(type, day, lessonNum)
+        break
+
+      case 'how_many':
+        if (action.note) {
+          const {timestamp, dayOfWeek: dayOfWeekStrIndex} = action.note;
+          const date = new Date(timestamp);
+          await this._App.handleAssistantHowMany(date, dayOfWeekStrIndex)
+        } else {
+          await this._App.handleAssistantHowMany(undefined, undefined)
+        }
+        break
+
+      // Сколько пар осталось (сегодня)
+      case 'how_many_left':
+        await this._App.handleAssistantHowManyLeft()
+        break
+
+      case 'where':
+        const when = action?.note?.when ?? 'now';
+        await this._App.handleAssistantWhere(when)
+        break
+
+      case 'what_lesson':
+        const when_ = action?.note?.when ?? 'now';
+        await this._App.handleAssistantWhatLesson(when_)
+        break
+
+      case 'first_lesson':
+        const {dayOfWeek: strDayOfWeekNum} = action.note;
+        await this._App.handleAssistantFirstLesson(parseInt(strDayOfWeekNum))
+        break
+
+      case 'day_schedule':
+        const {dayOfWeek: strDayOfWeekNum_} = action.note[0];
+
+        await this._App.handleAssistantDaySchedule(parseInt(strDayOfWeekNum_), action.note[1], action.note[2])
+        break
+
+      case 'show_schedule':
+        await this._App.handleAssistantShowSchedule(action.note)
+        break
+
+      default:
+        // console.warn('dispatchAssistantAction: Unknown action.type:', action.type)
+
+    }
   }
 
   //
@@ -100,41 +226,31 @@ export class AssistantWrapper {
     })
   }
 
-  sendTodayScheduleSunday() {
+  sendTodaySchedule(day: typeof DAY_SUNDAY | typeof DAY_NOT_SUNDAY) {
     this.sendAction({
       action_id: "todaySchedule",
       parameters: {
-        day: DAY_SUNDAY
+        day
       },
     })
   }
 
- sendTodayScheduleNotSunday() {
-    this.sendAction({
-      action_id: "todaySchedule",
-      parameters: {
-        day: DAY_NOT_SUNDAY
-      },
-    })
-  }
-
- sendTomorrowScheduleSunday() {
+  sendTomorrowSchedule(day: typeof DAY_SUNDAY | typeof DAY_NOT_SUNDAY) {
     this.sendAction({
       action_id: "tomorrowSchedule",
       parameters: {
-        day: DAY_SUNDAY
+        day: day
       },
     })
   }
 
- sendTomorrowScheduleNotSunday() {
+  sendSay6(dayOfWeekLongPrepositional: string) {
     this.sendAction({
-      action_id: "tomorrowSchedule",
+      action_id: "say6",
       parameters: {
-        day: DAY_NOT_SUNDAY
+        dayName: dayOfWeekLongPrepositional,
       },
     })
   }
-
 
 }

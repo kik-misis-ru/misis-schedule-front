@@ -19,8 +19,8 @@ import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
 import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
 
 const HOME_TITLE = 'Салют!';
-const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
-const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
+// const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
+// const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
 const LABEL_GROUP = "Номер академической группы через дефисы";
 const LABEL_SUB_GROUP = "Номер подгруппы: 1 или 2";
@@ -147,9 +147,9 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     let disabled = true;
     if (props.groupId !== "") disabled = false;
     this.state = {disabled: disabled}
-    this.onHandleChange("description", props.character === "joy"
-      ? DESC_JOY
-      : DESC_OTHERS)
+    // this.onHandleChange("description", props.character === "joy"
+    //   ? DESC_JOY
+    //   : DESC_OTHERS)
   }
 
   onHandleChange(key: string, value: any): void {

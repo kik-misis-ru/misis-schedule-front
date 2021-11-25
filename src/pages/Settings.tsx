@@ -195,9 +195,9 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       theme: false,
       themeName: this.props.theme,
     };
-    this.onHandleChange("description", props.character === "joy"
-      ? DESC_JOY
-      : DESC_OTHERS)
+    // this.onHandleChange("description", props.character === "joy"
+    //   ? DESC_JOY
+    //   : DESC_OTHERS)
   }
 
 
