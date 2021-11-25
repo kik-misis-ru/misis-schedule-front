@@ -25,7 +25,7 @@ import {
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
-import {Spacer100,Spacer200,Spacer300} from '../components/spacers'
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import {DocStyle} from '../themes/tools';
 import {CharacterId} from "../types/base";
 import TabSelectorRow from '../components/Home/TabSelectorRow'

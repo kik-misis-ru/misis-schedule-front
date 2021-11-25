@@ -2,7 +2,6 @@ import React from "react";
 import { Router, Route, Switch } from 'react-router';
 import { createBrowserHistory } from 'history';
 import 'react-toastify/dist/ReactToastify.css';
-import { createAssistant, createSmartappDebugger, } from "@sberdevices/assistant-client";
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
 
 import number from './language-ru/number';
@@ -39,6 +38,7 @@ import Settings from './pages/Settings';
 
 import buildings from './data/buldings.json'
 import filial from './data/filial.json';
+import breaks from './data/breaks.json';
 import { Bell } from './types/ScheduleStructure'
 
 import "./themes/App.css";
@@ -81,17 +81,7 @@ import {
   pairNumberToPairText
 } from './utils';
 import Lesson from "./pages/Lesson";
-import { initializeAssistant, AssistantWrapper } from './lib/AssistantWrapper';
-
-// export const NON_EXISTING_PAGE_NO = -1;
-//export const HOME_PAGE_NO = 0;
-//export const NAVIGATOR_PAGE_NO = 15;
-//export const DASHBOARD_PAGE_NO = 16;
-// export const SCHEDULE_PAGE_NO = 17;
-// export const CONTACTS_PAGE_NO = 18;
-// export const FAQ_PAGE_NO = 19;
-// export const SETTING_PAGE_NO = 20;
-// export const LESSON_PAGE_NO = 21;
+import { AssistantWrapper } from './lib/AssistantWrapper';
 
 export const HOME_PAGE_ROUTE = "home";
 
@@ -100,79 +90,6 @@ const INITIAL_PAGE = 16;
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 const FILL_DATA_NO_OFFICIAL_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
 const TO_VIEW_OFFICIAL_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
-
-// const PAIR_NAME_IDX = 0;
-// const TEACHER_NAME_IDX = 1;
-// const PAIR_NO_IDX = 5;
-
-const breaks = {
-  '1': '09:00',
-  '2': '10:35-10:50',
-  '3': '12:25-12:40',
-  '4': '14:15-14:30',
-  '5': '16:05-16:20',
-  '6': '17:55-18:10',
-  '7': '19:45'
-}
-
-// const saved_scheduleOfWeekShort = [
-//   "Вс",
-//   "Пн",
-//   "Вт",
-//   "Ср",
-//   "Чт",
-//   "Пт",
-//   "Сб",
-// ]
-
-const dayNameDict = {
-  "Пн": ["понедельник", 1],
-  "Вт": ["вторник", 2],
-  "Ср": ["среду", 3],
-  "Чт": ["четверг", 4],
-  "Пт": ["пятницу", 5],
-  "Сб": ["субботу", 6]
-}
-
-// /**
-//  * Порядковые числительные именительный падеж
-//  */
-// const ordinalNominativeCaseSingularFemDict = {
-//   "1": "первая",
-//   "2": "вторая",
-//   "3": "третья",
-//   "4": "четвертая",
-//   "5": "пятая",
-//   "6": "шестая",
-//   "7": "седьмая"
-// }
-
-// /**
-//  *
-//  */
-// const ordinalGenitiveCaseSingularFemDict = {
-//   1: "первой",
-//   2: "второй",
-//   3: "третьей",
-//   4: "четвертой",
-//   5: "пятой",
-//   6: "шестой",
-//   7: "седьмой"
-// }
-
-// /**
-//  *
-//  */
-// const numPron = {
-//   0: "ноль",
-//   1: "одна",
-//   2: "две",
-//   3: "три",
-//   4: "четыре",
-//   5: "пять",
-//   6: "шесть",
-//   7: "семь",
-// }
 
 /**
  * Время начала и конца пар
@@ -209,43 +126,39 @@ const TODAY_TOMORROW_DICT = {
   [DAY_TOMORROW]: 0,
 }
 
-export const DEFAULT_STATE_WEEK_DAY =
-  [
-    {
-      title: DayOfWeek.short[1], // 'Пн',
-      date: "",
-      count: 0
-    }, {
-      title: DayOfWeek.short[2], // 'Вт',
-      date: "",
-      count: 0,
-    }, {
-      title: DayOfWeek.short[3], // 'Ср',
-      date: "",
-      count: 0
-    }, {
-      title: DayOfWeek.short[4], // 'Чт',
-      date: "",
-      count: 0
-    }, {
-      title: DayOfWeek.short[5], // 'Пт',
-      date: "",
-      count: 0
-    }, {
-      title: DayOfWeek.short[6], // 'Сб',
-      date: "",
-      count: 0
-    }
-  ]
+export const DEFAULT_STATE_WEEK_DAY = [
+  {
+    title: 'Пн',
+    date: "",
+    count: 0
+  }, {
+    title: 'Вт',
+    date: "",
+    count: 0,
+  }, {
+    title: 'Ср',
+    date: "",
+    count: 0
+  }, {
+    title: 'Чт',
+    date: "",
+    count: 0
+  }, {
+    title: 'Пт',
+    date: "",
+    count: 0
+  }, {
+    title: 'Сб',
+    date: "",
+    count: 0
+  }
+]
 
 
 export const DEFAULT_STATE_DAY = {
   current_week: DEFAULT_STATE_WEEK_DAY,
   other_week: DEFAULT_STATE_WEEK_DAY
 }
-
-
-
 
 export type ThisOtherWeekBells = Bell
 export type DayBells = ThisOtherWeekBells[]
@@ -254,14 +167,9 @@ export type IScheduleDays = DayBells[]
 export const history = createBrowserHistory();
 
 
-// function getTeacherStr(teacher_info: ITeacherInfo) {
-//   return `${teacher_info.last_name} ${teacher_info.first_name}. ${teacher_info.mid_name}.`
-// }
 const formatTeacherName = (teacherData: ITeacherInfo) => (
   `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
 )
-
-
 
 //
 
@@ -413,51 +321,10 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   componentDidMount() {
     console.log('componentDidMount');
-
     this.assistant.init();
-    // this.initAssistant();
-
   }
 
-
   //////////////////////////////////////////////////////////////////////////////
-
-  // initAssistant() {
-  //   this._assistant = initializeAssistant(() => this.getStateForAssistant());
-  //
-  //   this._assistant.on("data", (event: AssistantEvent) => {
-  //     console.log('_assistant.on("data"): event:', event);
-  //     this.handleAssistantDataEvent(event);
-  //   });
-  //
-  //   this._assistant.on("start", (event) => {
-  //     console.log(`_assistant.on(start)`, event);
-  //   });
-  //
-  //   this._assistant.on("ANSWER_TO_USER", (event) => {
-  //     console.log(`_assistant.on(raw)`, event);
-  //   });
-  // }
-
-
-  // handleAssistantDataEvent(event: AssistantEvent) {
-  //   console.log('handleAssistantDataEvent: event:', event);
-  //
-  //   switch (event?.type) {
-  //
-  //     case "character":
-  //       this.handleAssistantDataEventCharacter(event);
-  //       break;
-  //
-  //     case "smart_app_data":
-  //       this.handleAssistantDataEventSmartAppData(event);
-  //       break
-  //
-  //     default:
-  //       break
-  //   }
-  // }
-
 
   handleAssistantCharacter(character: AssistantCharacter) {
 
@@ -467,26 +334,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         ? FILL_DATA_NO_OFFICIAL_TEXT
         : TO_VIEW_OFFICIAL_TEXT
     });
-    // if (character.id === CHAR_TIMEPARAMOY) {
-    //   this.setState({description: FILL_DATA_NO_OFFICIAL_TEXT});
-    // } else {
-    //   this.setState({description: TO_VIEW_OFFICIAL_TEXT});
-    // }
   }
-
-
-  // handleAssistantDataEventSmartAppData(event: AssistantEventSmartAppData) {
-  //   console.log('handleAssistantEventSmartAppData: event:', event);
-  //
-  //   if (event.sub !== undefined) {
-  //     this.handleAssistantSub(event.sub);
-  //   }
-  //
-  //   console.log(`assistant.on(data)`, event);
-  //   const {action} = event;
-  //   this.dispatchAssistantAction(action);
-  // }
-
 
   async handleAssistantSub(eventSub: string) {
     console.log("handleAssistantSub: eventSub", eventSub);
@@ -591,16 +439,16 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   async dispatchAssistantAction(action: AssistantAction) {
-    console.log("dispatchAssistantAction:", action)
+    console.log('dispatchAssistantAction:', action)
     if (action) {
       switch (action.type) {
 
         case 'settings':
-          console.log("PUSH");
+          console.log('dispatchAssistantAction: PUSH');
           break;
 
         case 'profile':
-          console.log("profile");
+          console.log('dispatchAssistantAction: profile');
           // if(! action.IsStudent){
           //   this.setState({student: false})
           // }
@@ -611,7 +459,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
 
         case 'set_eng_group':
-          console.log("Pathname:", history.pathname)
+          console.log('dispatchAssistantAction: pathname:', history.pathname)
           if (action.group != undefined) {
             this.setState({ engGroup: String(action.group) })
           }
@@ -657,7 +505,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'for_next_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            this.NextWeek(this.state.isSavedSchedule);
+            await this.NextWeek(this.state.isSavedSchedule);
             return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
           }
           break;
@@ -676,14 +524,14 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'when_lesson':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             let params: AssistantSendActionSay['parameters'];
-            let dayNum = 0;
+            let dayOfWeekZeroIndex = 0;
             const [type, day, lessonNum] = action.note || [];
-            day == "today" ? dayNum = this.state.today - 1 : dayNum = this.state.today;
+            day == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
 
-            let answer = this.getStartEndLesson(type, dayNum, lessonNum)
+            let answer = this.getStartEndLesson(type, dayOfWeekZeroIndex, lessonNum)
 
 
-            console.log("answer", answer)
+            console.log('dispatchAssistantAction: answer:', answer)
             if (answer !== undefined && answer[1] === DAY_SUNDAY) {
               params = {
                 type: answer[0],
@@ -715,21 +563,23 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'how_many':
           let amountOfLessonsTuple: [string, number] | undefined;
           let day: TodayOrTomorrow | undefined;
+          let date;
           let page = 0;
-          console.log("how many. group:", this.state.group, ", teacher:", this.state.teacher)
+          console.log("dispatchAssistantAction: how_many: group:", this.state.group, ", teacher:", this.state.teacher)
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
             if (action.note !== undefined) {
 
-              const { timestamp, dayOfWeek } = action.note;
-              console.log(timestamp, this.getAmountOfLessons(new Date(timestamp)), "how many")
-              amountOfLessonsTuple = this.getAmountOfLessons(new Date(timestamp))
+              const { timestamp, dayOfWeek: dayOfWeekStrIndex } = action.note;
+              date = new Date(timestamp);
+              // amountOfLessonsTuple = this.getLessonsCountForDate(date)
+              console.log('dispatchAssistantAction: how_many', timestamp, amountOfLessonsTuple, "how many")
 
               // todo: упростить
-              if (String(this.state.today + 1) === dayOfWeek) {
+              if (String(this.state.today + 1) === dayOfWeekStrIndex) {
                 day = DAY_TODAY;
                 page = 0
-              } else if (String(this.state.today + 2) === dayOfWeek) {
+              } else if (String(this.state.today + 2) === dayOfWeekStrIndex) {
                 day = DAY_TOMORROW;
                 page = 0
               } else { // fallback
@@ -737,7 +587,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                 page = 0
               }
             } else {
-              amountOfLessonsTuple = this.getAmountOfLessons(new Date(Date.now()))
+              date = new Date(new Date());
+              // amountOfLessonsTuple = this.getLessonsCountForDate(date)
               day = DAY_TODAY
             }
 
@@ -745,17 +596,22 @@ export class App extends React.Component<IAppProps, IAppState> {
               day: DAY_SUNDAY,
             };
 
+            const lessonCount = this.getLessonsCountForDate(date)
+
             if (this.state.group !== "" && amountOfLessonsTuple !== undefined) {
-              const [dayOfWeek, pairCount] = amountOfLessonsTuple;
+              // const [dayOfWeekShort, lessonCount] = amountOfLessonsTuple;
+              const lessonText = pairNumberToPairText(lessonCount);
 
-              const pairText = pairNumberToPairText(pairCount);
-
-              const [dayOfWeekLong, dayOfWeekIndex] = dayNameDict[dayOfWeek]
+              // const [dayOfWeekLongPrepositional, dayOfWeekIndex] = dayNameDict[dayOfWeekShort]
+              // const dayOfWeekIndex = DayOfWeek.short.indexOf(dayOfWeekShort)
+              const dayOfWeekIndex = date.getDay(date); 
+              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]; 
+              
               howManyParams = {
-                lesson: pairText,
+                lesson: lessonText,
                 day: day,
-                dayName: dayOfWeekLong,
-                amount: number.cardinal.fem[pairCount]
+                dayName: dayOfWeekLongPrepositional,
+                amount: number.cardinal.fem[lessonCount]
               }
               if (dayOfWeekIndex < this.state.today) {
                 page = 7;
@@ -799,7 +655,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'where':
-          console.log('ok')
+          console.log('dispatchAssistantAction: where')
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             if (action.note === undefined) {
               action.note = {
@@ -820,7 +676,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'what_lesson':
-          console.log("what_lesson: какая пара")
+          console.log("dispatchAssistantAction: what_lesson: какая пара")
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             if (!action.note) {
               action.note = {
@@ -828,7 +684,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
             const whatLesson = this.whatLesson(new Date(), action.note.when);
-            console.log('what_lesson: whatLesson:', whatLesson)
+            console.log('dispatchAssistantAction: what_lesson: whatLesson:', whatLesson)
             this.assistant.sendAction({
               action_id: "say4",
               parameters: whatLesson,
@@ -874,23 +730,27 @@ export class App extends React.Component<IAppProps, IAppState> {
               day1: DAY_SUNDAY,
             }
             if (firstLessonNumStr !== undefined) {
-              const { dayOfWeek: strDayOfWeek } = action.note;
-              const dayOfWeekIdx = parseInt(strDayOfWeek) - 1
-              const dayOfWeekShortName = DayOfWeek.short[dayOfWeekIdx];
+              const { dayOfWeek: dayOfWeekStrIndex } = action.note;
+              const dayOfWeekIndex = parseInt(dayOfWeekStrIndex) - 1
+              const dayOfWeekShort = DayOfWeek.short[dayOfWeekIndex];
 
-              const [inDayOfWeek, dayOfWeekIdx1] = dayNameDict[dayOfWeekShortName];
+              
+              // const 
+              // const [dayOfWeekLongPrepositional, dayOfWeekIdx1] = dayNameDict[dayOfWeekShort];
+              const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
+              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_];
 
               whichFirst = {
                 num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
                 day: day1,
-                dayName: inDayOfWeek
+                dayName: dayOfWeekLongPrepositional
               }
-              console.log(whichFirst)
-              if (dayOfWeekIdx1 < this.state.today) {
+              console.log('dispatchAssistantAction: whichFirst:', whichFirst)
+              if (dayOfWeekIndex_ < this.state.today) {
                 page1 = 7;
               }
 
-              const newPage = dayOfWeekIdx1 + page1;
+              const newPage = dayOfWeekIndex_ + page1;
               this.gotoPage(newPage)
             }
             this.assistant.sendAction({
@@ -908,36 +768,41 @@ export class App extends React.Component<IAppProps, IAppState> {
 
             if ((action.note[1] === null) && (action.note[2] === null)) {
               if (!this.state.flag) {
-                console.log(this.state.flag);
+                console.log('dispatchAssistantAction: day_schedule: flag:', this.state.flag);
                 page2 = 7;
               } else {
                 page2 = 0;
               }
 
             } else {
-              console.log(action.note)
-              console.log(parseInt(action.note[0].dayOfWeek) - 1);
+              console.log('dispatchAssistantAction: day_schedule: note:', action.note)
+              console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', parseInt(action.note[0].dayOfWeek) - 1);
+
               if (action.note[1] !== null) {
-                console.log(action.note[1]);
+                console.log('dispatchAssistantAction: day_schedule: note[1]:', action.note[1]);
                 page2 = 0;
               } else if (action.note[2] !== null) {
-                console.log(action.note[2]);
+                console.log('dispatchAssistantAction: day_schedule: note[2]:', action.note[2]);
                 page2 = 7;
               }
             }
 
             let daySchedule: AssistantSendActionSay6['parameters'];
             // if (this.state.group !== "") {
-            const { dayOfWeek: strDayOfWeek } = action.note[0];
-            const dayOfWeekIdx = parseInt(strDayOfWeek) - 1;
-            console.log(dayOfWeekIdx, "day")
-            const [dayOfWeekNameLong, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekIdx - 1].title];
+            const { dayOfWeek: dayOfWeekStrIndex } = action.note[0];
+            const dayOfWeekZeroIndex = parseInt(dayOfWeekStrIndex) - 1;
+            console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex)
+            
+            // const [dayOfWeekLongPrepositional, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekZeroIndex - 1].title];
+            const dayOfWeekShort = this.state.day[dayOfWeekZeroIndex-1].title;
+            const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
+            const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_];
 
             daySchedule = {
-              dayName: dayOfWeekNameLong,
+              dayName: dayOfWeekLongPrepositional,
             }
 
-            const newPage = dayOfWeekIdx1 + page2;
+            const newPage = dayOfWeekIndex_ + page2;
             this.gotoPage(newPage)
             // }
             this.assistant.sendAction({
@@ -948,39 +813,29 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'show_schedule':
-          console.log("show schedule");
-          if (action.note != undefined && action.note != "") {
-            let IsStudent = true
-            if (action.note.includes("препод")) {
-              IsStudent = false
-            }
-            //this.gotoPage(HOME_PAGE_NO);
+          console.log('dispatchAssistantAction: show schedule');
+          if (action.note) {
+
+            const isStudent = !action.note.includes("препод")
+
             this.assistant.sendAction({
               action_id: "change_group",
               parameters: {
-                IsStudent: IsStudent
+                IsStudent: isStudent
               }
             })
-          }
-          else {
+
+          } else {
+            let success = true;
             if (history.location == HOME_PAGE_ROUTE) {
               if (this.state.student) {
-                let isCorrect = await this.CheckIsCorrect()
-                if (isCorrect) {
-                  await this.Load_Schedule(this.state.isSavedSchedule)
-                  history.push('/spinner')
-                }
+                success = await this.CheckIsCorrect()
               } else {
-                this.handleTeacherChange(true).then(async (response) => {
-                  if (response) {
-                    await this.Load_Schedule(this.state.isSavedSchedule)
-                    history.push('/spinner')
-                  }
-                })
+                success = await this.handleTeacherChange(true);
               }
             }
-            else {
-              await this.Load_Schedule(this.state.isSavedSchedule);
+            if (success) {
+              await this.Load_Schedule(this.state.isSavedSchedule)
               history.push('/spinner')
             }
 
@@ -1005,20 +860,14 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
 
         case 'group':
-          console.log("Assistant: group")
-          if (action.note[0] === 0) {
-            console.log(action.note[1].data.groupName[0]);
-            this.setState({
-              group: action.note[1].data.groupName[0].toUpperCase(),
-            });
-            //history.push('/home')
-          } else {
-            console.log(action.note[1].data.groupName[1])
-            this.setState({
-              group: action.note[1].data.groupName[1].toUpperCase(),
-            })
-            //history.push("/home")
-          }
+          console.log('dispatchAssistantAction: group: action:', action)
+          let group = action.note[0] === 0
+            ? action.note[1].data.groupName[0]
+            : action.note[1].data.groupName[1];
+          group = group.toUpperCase();
+          this.setState({
+            group,
+          });
           break
 
         case 'dashboard':
@@ -1026,7 +875,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           break;
 
         case 'subgroup':
-          this.setState({ subGroup: action.note });
+          const subGroup = action.note;
+          this.setState({
+            subGroup,
+          });
           //history.push('/home')
           break
 
@@ -1071,7 +923,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   //////////////////////////////////////////////////////////////////////////////
 
 
-  TimeByLessonNum(num) {
+  TimeByLessonNum(num: number): string {
     return LessonStartEnd[num].start + " - " + LessonStartEnd[num].end
   }
 
@@ -1147,7 +999,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       const lesson = this.state.saved_schedule[dayNumber - 1][lessonIdx][week]
       if (lesson.lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        console.log(lessonIdx, "'lesson.lessonNumber'")
+        console.log('getStartFirstLesson: lessonIdx:', lessonIdx)
         lessonNumber = String(Number(lessonIdx) + 1);
         break
       }
@@ -1168,9 +1020,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет начало или конец энной пары сегодня или завтра
-  getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: number, lessonNum: number): string | undefined {
+  getBordersRequestLesson(startOrEnd: StartOrEnd, dayOfWeekIndex: number, lessonNum: number): string | undefined {
 
-    const lessonName = this.state.saved_schedule[todayOrTomorrow][lessonNum - 1][THIS_WEEK].lessonName;
+    const lessonName = this.state.saved_schedule[dayOfWeekIndex][lessonNum - 1][THIS_WEEK].lessonName;
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
@@ -1183,68 +1035,101 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   getStartEndLesson(
     startOrEnd: StartOrEnd,
-    todayOrTomorrow: number,
+    dayOfWeekIndex: number,
     // todo: lessonNum строка или число ???
     lessonNum,
   ): string | [string, string] | undefined {
-    if (todayOrTomorrow === 0) {
-      return [String(todayOrTomorrow), DAY_SUNDAY]
+    if (dayOfWeekIndex === 0) {
+      return [String(dayOfWeekIndex), DAY_SUNDAY]
 
-    } else if (todayOrTomorrow === 7) {
-      return [String(todayOrTomorrow), DAY_SUNDAY]
+    } else if (dayOfWeekIndex === 7) {
+      return [String(dayOfWeekIndex), DAY_SUNDAY]
 
     } else if (startOrEnd === "start") {
-      if (todayOrTomorrow === this.state.today) {
+      if (dayOfWeekIndex === this.state.today) {
         if (lessonNum === "0") {
-          return this.getStartFirstLesson(todayOrTomorrow)[0]
+          return this.getStartFirstLesson(dayOfWeekIndex)[0]
         } else {
-          return this.getBordersRequestLesson(startOrEnd, todayOrTomorrow, lessonNum)
+          return this.getBordersRequestLesson(startOrEnd, dayOfWeekIndex, lessonNum)
         }
       } else {
         if (lessonNum === "0") {
-          return this.getStartFirstLesson(todayOrTomorrow)[0]
+          return this.getStartFirstLesson(dayOfWeekIndex)[0]
         } else {
-          return this.getBordersRequestLesson(startOrEnd, todayOrTomorrow, lessonNum)
+          return this.getBordersRequestLesson(startOrEnd, dayOfWeekIndex, lessonNum)
         }
       }
     } else if (startOrEnd === "end") {
-      if (todayOrTomorrow === this.state.today) {
+      if (dayOfWeekIndex === this.state.today) {
         if (lessonNum === "0") {
-          return this.getEndLastLesson(todayOrTomorrow)
+          return this.getEndLastLesson(dayOfWeekIndex)
         } else {
-          return this.getBordersRequestLesson(startOrEnd, todayOrTomorrow, lessonNum)
+          return this.getBordersRequestLesson(startOrEnd, dayOfWeekIndex, lessonNum)
         }
       } else {
         if (lessonNum === "0") {
-          return this.getEndLastLesson(todayOrTomorrow)
+          return this.getEndLastLesson(dayOfWeekIndex)
         } else {
-          return this.getBordersRequestLesson(startOrEnd, todayOrTomorrow, lessonNum)
+          return this.getBordersRequestLesson(startOrEnd, dayOfWeekIndex, lessonNum)
         }
       }
     }
   }
 
 
+  // /**
+  //  * подсчет количества пар в указанную дату
+  //  * возвращает массив с днем недели (Пн,Вт,...)
+  //  * и количеством пар в этот день
+  //  *
+  //  * @param {Date} date
+  //  * @returns [string,number]|undefined
+  //  */
+  // getAmountOfLessons__(date: Date): [string, number] | undefined {
+  //   for (let i = 0; i < 6; i++) {
+  //     let day = this.state.day
+  //     if (formatDateWithDots(date) === day.current_week[i].date) {
+  //       return [day.current_week[i].title, day.current_week[i].count]
+  //     }
+  //     if (formatDateWithDots(date) === day.other_week[i].date) {
+  //       return [day.current_week[i].title, day.other_week[i].count]
+  //     }
+  //   }
+  //   // if (res !== undefined) {return res}
+  //   // else {return null}
+  // }
+
   /**
    * подсчет количества пар в указанную дату
-   * возвращает массив с днем недели (Пн,Вт,...)
-   * и количеством пар в этот день
+   * возвращает короткое название дня недели (Пн,Вт,...)
+   * и количество пар в этот день
    *
    * @param {Date} date
-   * @returns {string}
+   * @returns number
    */
-  getAmountOfLessons(date: Date): [string, number] | undefined {
+  getLessonsCountForDate(date: Date): number {
+    const strDate = formatDateWithDots(date);
     for (let i = 0; i < 6; i++) {
-      let day = this.state.day
-      if (formatDateWithDots(date) === day.current_week[i].date) {
-        return [day.current_week[i].title, day.current_week[i].count]
-      }
-      if (formatDateWithDots(date) === day.other_week[i].date) {
-        return [day.current_week[i].title, day.other_week[i].count]
+      let current_week = this.state.day.current_week
+      if (strDate === current_week[i].date) {
+        return current_week[i].count;
       }
     }
-    // if (res !== undefined) {return res}
-    // else {return null}
+    return -1;
+  }
+  
+  /**
+   * возвращает короткое название дня недели (Пн,Вт,...)
+   * для заданной даты
+   *
+   * @param {Date} date
+   * @returns string
+   */
+  getDayOfWeekShortForDate(date: Date): string {
+    // Возвращает порядковый номер дня недели на заданную дату
+    // 0 - воскресенье, 1 - понедельник
+    const dayOfWeekIndexForDate = date.getDay();
+    return DayOfWeek.short[dayOfWeekIndexForDate];
   }
 
   /**
@@ -1308,9 +1193,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log(`whatLesson: when: ${when} date:`, date)
 
     const isSunday = (this.state.today === 0)
-    const todayWorkDayIndex = this.state.today - 1;
-    const todayBells = this.state.day.current_week[todayWorkDayIndex]
-    const todayLessons = this.state.saved_schedule[todayWorkDayIndex]
+    const todayWorkDayZeroIndex = this.state.today - 1;
+    const todayBells = this.state.day.current_week[todayWorkDayZeroIndex]
+    const todayLessons = this.state.saved_schedule[todayWorkDayZeroIndex]
 
     if (isSunday) {
       const result = {
@@ -1323,7 +1208,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     } else {
       console.log('whatLesson: count:', todayBells.count[THIS_WEEK]);
-      const firstLessonTimeHhMm = this.getStartFirstLesson(todayWorkDayIndex + 1)[0];
+      const firstLessonTimeHhMm = this.getStartFirstLesson(todayWorkDayZeroIndex + 1)[0];
 
       // if (formatTimeHhMm(date) < firstLessonTimeHhMm) {
       //   console.log('formatTimeHhMm(date) < firstLessonTimeHhMm: true')
@@ -1375,10 +1260,10 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
       } else if (
-        (this.getStartFirstLesson(todayWorkDayIndex)[0] !== undefined) &&
-        (this.getStartFirstLesson(todayWorkDayIndex)[0] >= formatTimeHhMm(date))
+        (this.getStartFirstLesson(todayWorkDayZeroIndex)[0] !== undefined) &&
+        (this.getStartFirstLesson(todayWorkDayZeroIndex)[0] >= formatTimeHhMm(date))
       ) {
-        const firstLessonInfo = this.getStartFirstLesson(todayWorkDayIndex)
+        const firstLessonInfo = this.getStartFirstLesson(todayWorkDayZeroIndex)
         console.log('whatLesson:', firstLessonInfo[1]);
 
         const lessonNumber = parseInt(firstLessonInfo[1]);
@@ -1389,12 +1274,10 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       } else {
         for (let i in breaks) {
-          const startTime = breaks[i].slice(0, 5);
-          const endTime = breaks[i].slice(6);
           if (
             (
-              formatTimeHhMm(date) > startTime &&
-              formatTimeHhMm(date) < endTime
+              formatTimeHhMm(date) > breaks[i].start &&
+              formatTimeHhMm(date) < breaks[i].end
             ) &&
             (todayLessons[i][0][5][0] !== "")
           ) {
@@ -1443,24 +1326,27 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       // определяем номер ближайшей пары
       for (let i in breaks) {
-        const startTime = breaks[i].slice(0, 5);
-        const endTime = breaks[i].slice(6);
 
-        if (formatTimeHhMm(date) < breaks['1']) {
+        if (formatTimeHhMm(date) < breaks['1'].start) {
           numberNearestLesson = '1';
           break
         } else if (
-          formatTimeHhMm(date) > startTime &&
-          formatTimeHhMm(date) < endTime
+          formatTimeHhMm(date) > breaks[i].start &&
+          formatTimeHhMm(date) < breaks[i].end
         ) {
           numberNearestLesson = i;
           break
-        } else if (formatTimeHhMm(date) > breaks['7']) {
+        } else if (formatTimeHhMm(date) > breaks['7'].start) {
           numberNearestLesson = null
         }
       }
-      const amountOfLessons = this.getAmountOfLessons(date);
-      if (amountOfLessons && amountOfLessons[1] === 0) {
+      // const amountOfLessonsTuple = [
+      //   this.getDayOfWeekShortForDate(date),
+      //   this.getLessonsCountForDate(date),
+      // ]
+      // if (amountOfLessonsTuple && amountOfLessonsTuple[1] === 0) {
+      const lessonCount = this.getLessonsCountForDate(date);
+      if (lessonCount <= 0) {
         return {
           exist: "empty",
         }
@@ -1476,7 +1362,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             }
           } else {
             // сообщаем, что такой пары нет
-            console.log(`Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
+            console.log(`whereWillLesson: Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
             for (let bell in this.state.saved_schedule[this.state.today - 1]) {
               if (this.state.saved_schedule[this.state.today - 1][bell][THIS_WEEK].lessonNumber !== numberNearestLesson) {
                 return {
@@ -1937,7 +1823,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   render() {
-    window.scrollTo(0, 0)
     let { page } = this.state;
     // console.log("App: render, this.state:", this.state)
     return (
@@ -2050,7 +1935,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             path="/dashboard"
             render={
               ({ match }) => {
-                console.log("DASHBOARD; IsSave:", this.state.isSavedSchedule)
+                console.log("/dashboard: isSavedSchedule:", this.state.isSavedSchedule)
                 const now = new Date();
                 let todayIndex = this.state.today - 1;
                 let currentLessonIdx = this.getCurrentLesson(now);
@@ -2060,7 +1945,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let nextLessonIdx = this.whatLesson(now, "will").num;
                 let nextLesson = this.state.saved_schedule[todayIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
                 //console.log(this.whatLesson(now, "will").num, "next")
-                let count = this.state.day[this.state.today - 1]?.count[0]
+                let count = this.state.day[this.state.today - 1].current_week.count;
                 //console.log("COUNT", this.state.today)
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayIndex + 1)[0];
@@ -2144,7 +2029,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           />
           <Route path="*">
             {
-
               (page >= 1 && page <= 13) &&
               <SchedulePage
                 timeParam={page}
