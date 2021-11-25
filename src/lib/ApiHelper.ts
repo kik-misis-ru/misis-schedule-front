@@ -3,7 +3,9 @@ import axios, {AxiosResponse} from "axios";
 import filial from '../data/filial.json';
 
 import {Bell} from '../types/ScheduleStructure'
-import {IScheduleDays,DEFAULT_STATE_WEEK_DAY, LessonStartEnd} from '../App'
+import { LessonStartEnd} from '../App'
+
+import {IScheduleDays,DEFAULT_STATE_WEEK_DAY} from './ApiModel'
 
 import {IDayHeader} from '../types/base'
 

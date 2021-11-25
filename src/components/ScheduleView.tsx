@@ -7,9 +7,9 @@ import TopMenu from './TopMenu';
 import WeekCarousel from "./WeekCarousel";
 import WeekSelect from "./WeekSelect";
 import {
-  IScheduleDays,
   history,
 } from '../App'
+import {IScheduleDays} from "../lib/ApiModel"
 import {Spacer100,Spacer200,Spacer300} from './Spacers'
 
 import {

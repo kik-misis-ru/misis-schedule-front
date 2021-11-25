@@ -10,6 +10,7 @@ import {
   Caption
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
+import {ApiModel} from '../lib/ApiModel'
 import {
   Card,
   CardBody,
@@ -399,14 +400,13 @@ const DashboardPage = ({
                          onGoToPage,
                          theme,
                          handleTeacherChange,
-                         isUser
+                         apiModel
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
   groupId: String
   teacherId: String
   spinner: Boolean,
-  isUser: Boolean,
   count: number,
   start: string,
   end: string,
@@ -419,6 +419,7 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
+  apiModel: ApiModel
 
 }) => {
   console.log(groupId, teacherId, userId, "DASHBOARD")
@@ -533,7 +534,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!spinner &&(groupId != "" ||  teacherId != "") ||!isUser ?      (
+               {!spinner &&(groupId != "" ||  teacherId != "") ||!apiModel.isSavedUser ?      (
               <Col >
                 <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
@@ -544,7 +545,7 @@ const DashboardPage = ({
              
                     
         }
-        {groupId == "" && teacherId == "" && isUser ? (<GetCloser
+        {apiModel.user?.group_id == "" && apiModel.user.teacher_id == "" && !apiModel.isSavedUser ? (<GetCloser
                       onGoToPage={(pageNo) => onGoToPage(pageNo)}
                     />) : (<div ></div>)}
         <CatalogueHeaderRow/>
