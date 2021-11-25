@@ -505,7 +505,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         case 'for_next_week':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
-            this.NextWeek(this.state.isSavedSchedule);
+            await this.NextWeek(this.state.isSavedSchedule);
             return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
           }
           break;
@@ -524,11 +524,11 @@ export class App extends React.Component<IAppProps, IAppState> {
         case 'when_lesson':
           if ((this.state.group !== "") || (this.state.teacher !== "")) {
             let params: AssistantSendActionSay['parameters'];
-            let dayNum = 0;
+            let dayOfWeekZeroIndex = 0;
             const [type, day, lessonNum] = action.note || [];
-            day == "today" ? dayNum = this.state.today - 1 : dayNum = this.state.today;
+            day == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
 
-            let answer = this.getStartEndLesson(type, dayNum, lessonNum)
+            let answer = this.getStartEndLesson(type, dayOfWeekZeroIndex, lessonNum)
 
 
             console.log('dispatchAssistantAction: answer:', answer)
@@ -1020,9 +1020,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   // определяет начало или конец энной пары сегодня или завтра
-  getBordersRequestLesson(startOrEnd: StartOrEnd, todayOrTomorrow: number, lessonNum: number): string | undefined {
+  getBordersRequestLesson(startOrEnd: StartOrEnd, dayOfWeekIndex: number, lessonNum: number): string | undefined {
 
-    const lessonName = this.state.saved_schedule[todayOrTomorrow][lessonNum - 1][THIS_WEEK].lessonName;
+    const lessonName = this.state.saved_schedule[dayOfWeekIndex][lessonNum - 1][THIS_WEEK].lessonName;
 
     if (lessonName !== "") {
       if (startOrEnd === "start") {
@@ -1948,7 +1948,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let nextLessonIdx = this.whatLesson(now, "will").num;
                 let nextLesson = this.state.saved_schedule[todayIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
                 //console.log(this.whatLesson(now, "will").num, "next")
-                let count = this.state.day[this.state.today - 1]?.count[0]
+                let count = this.state.day[this.state.today - 1].current_week.count;
                 //console.log("COUNT", this.state.today)
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayIndex + 1)[0];

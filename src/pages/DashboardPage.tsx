@@ -44,7 +44,7 @@ import {
   formatTimeHhMm,
 } from '../utils';
 import { StartEnd } from '../App';
-import {Spacer100,Spacer200,Spacer300} from '../components/spacers'
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 
 
 import {Bell} from '../types/ScheduleStructure'
@@ -199,8 +199,7 @@ const TodaySummary = ({
         </CardParagraph2>
         <CardParagraph1 style={{color: "grey"}}>
           {
-            !isSunday &&
-            lessonCount !== 0
+            !isSunday && typeof lessonCount !== 'undefined' && lessonCount !== 0
               ? formatLessonsCountFromTo(
                 pairNumberToPairNumText(lessonCount),
                 lessonsStart,

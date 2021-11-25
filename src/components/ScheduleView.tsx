@@ -10,7 +10,7 @@ import {
   IScheduleDays,
   history,
 } from '../App'
-import {Spacer100,Spacer200,Spacer300} from './spacers'
+import {Spacer100,Spacer200,Spacer300} from './Spacers'
 
 import {
   IDayHeader,

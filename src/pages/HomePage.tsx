@@ -7,21 +7,16 @@ import {
   Caption
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
-import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
 
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
-import {
-  history
-} from '../App';
 import {DocStyle} from '../themes/tools';
 import {CharacterId} from "../types/base";
 import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
 import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
-import {GoToDashboardButton, GoToScheduleButton} from "../components/TopMenu";
 
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";

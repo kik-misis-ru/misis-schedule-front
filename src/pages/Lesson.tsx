@@ -8,7 +8,7 @@ import {
   StartEnd,
   LessonStartEnd,
 } from '../App';
-import {Spacer100,Spacer200,Spacer300} from '../components/spacers'
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
