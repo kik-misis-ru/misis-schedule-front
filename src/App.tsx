@@ -1932,8 +1932,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let nextLesson = this.state.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
                 //console.log(this.whatLesson(now, "will").num, "next")
                 console.log('/dashboard: this.state.day:', this.state.day, 'this.state.today:', this.state.today)
-                let count = this.state.day[todayZeroIndex]?.current_week.count;
+
+                let count = this.state.day.current_week[todayZeroIndex]?.count;
                 //console.log("COUNT", this.state.today)
+                console.log('/dashboard: count:', count)
+
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
                 let end = this.getEndLastLesson(todayZeroIndex);
