@@ -1,5 +1,7 @@
 import * as ApiHelper from "./ApiHelper";
 
+import {addUserToPushNotification} from './ApiHelper'
+
 
 // export interface IUserModel {
 //   engGroup: string
@@ -10,13 +12,30 @@ import * as ApiHelper from "./ApiHelper";
 //   userId: string
 // }
 
+export interface IPushSettings {
+  Hour: number
+  Minute: number
+  IsActive: boolean
+}
+
 
 export class ApiModel {
   public userId: string | undefined
   public user: ApiHelper.IUserData | undefined
+  public pushSettings: IPushSettings 
 
   constructor() {
+    this.pushSettings ={
+      Hour: -1,
+      Minute: -1,
+      IsActive: false
+    }
+  }
 
+  public async AddPush(){
+    if(this.pushSettings != undefined && this.userId != undefined){
+      addUserToPushNotification(this.userId, this.pushSettings)
+    }
   }
 
   // public async fetchUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
