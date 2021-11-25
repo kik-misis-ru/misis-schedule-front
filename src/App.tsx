@@ -1908,7 +1908,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     isTeacherAndValid={this.getIsCorrectTeacher()}
                     spinner={this.state.spinner}
                     theme={this.state.theme}
-                    currentLesson={this.state.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
+                    currentLesson={this.state.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
@@ -1928,11 +1928,13 @@ export class App extends React.Component<IAppProps, IAppState> {
                 const now = new Date();
                 let todayZeroIndex = this.state.today - 1;
                 let currentLessonIdx = this.getCurrentLesson(now);
-                let currentLesson = this.state.saved_schedule[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
+                let currentLesson = this.state.saved_schedule.current_week[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1];
                 let currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx) - 1]
 
                 let nextLessonIdx = this.whatLesson(now, "will").num;
-                let nextLesson = this.state.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
+                console.log("Today zero index",todayZeroIndex)
+                console.log("Next lesson Idx", nextLessonIdx)
+                let nextLesson = this.state.saved_schedule.current_week[todayZeroIndex]?.[nextLessonIdx - 1];
                 //console.log(this.whatLesson(now, "will").num, "next")
                 console.log('/dashboard: this.state.day:', this.state.day, 'this.state.today:', this.state.today)
 
