@@ -1,4 +1,4 @@
-const number = {
+export const Number = {
   ordinal: {
     fem: {
       singular: {
@@ -48,4 +48,4 @@ const number = {
   }
 }
 
-export default number;
+export default Number;

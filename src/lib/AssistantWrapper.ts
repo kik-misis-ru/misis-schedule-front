@@ -2,6 +2,7 @@ import {createAssistant, createSmartappDebugger} from "@sberdevices/assistant-cl
 import {App} from "../App";
 import {AssistantEvent, AssistantEventCharacter, AssistantEventSmartAppData} from "../types/AssistantReceiveAction";
 import {AssistantSendAction} from "../types/AssistantSendAction";
+import {DAY_NOT_SUNDAY, DAY_SUNDAY} from "../types/base.d";
 
 export const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development") {
@@ -90,5 +91,50 @@ export class AssistantWrapper {
       action
     })
   }
+
+  //
+
+  sendHello() {
+    this.sendAction({
+      action_id: "hello_phrase"
+    })
+  }
+
+  sendTodayScheduleSunday() {
+    this.sendAction({
+      action_id: "todaySchedule",
+      parameters: {
+        day: DAY_SUNDAY
+      },
+    })
+  }
+
+ sendTodayScheduleNotSunday() {
+    this.sendAction({
+      action_id: "todaySchedule",
+      parameters: {
+        day: DAY_NOT_SUNDAY
+      },
+    })
+  }
+
+ sendTomorrowScheduleSunday() {
+    this.sendAction({
+      action_id: "tomorrowSchedule",
+      parameters: {
+        day: DAY_SUNDAY
+      },
+    })
+  }
+
+ sendTomorrowScheduleNotSunday() {
+    this.sendAction({
+      action_id: "tomorrowSchedule",
+      parameters: {
+        day: DAY_NOT_SUNDAY
+      },
+    })
+  }
+
 
 }

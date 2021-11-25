@@ -4,7 +4,7 @@ import { createBrowserHistory } from 'history';
 import 'react-toastify/dist/ReactToastify.css';
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
 
-import number from './language-ru/number';
+import number from './language-ru/Number';
 import DayOfWeek from './language-ru/DayOfWeek';
 
 import {
@@ -422,9 +422,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       history.push('/start')
 
-      this.assistant.sendAction({
-        action_id: "hello_phrase"
-      })
+      this.assistant.sendHello()
 
       await createUser(
         userId,
@@ -469,36 +467,24 @@ export class App extends React.Component<IAppProps, IAppState> {
           if ((this.state.group !== "") || (this.state.teacher !== ""))
             if (this.state.today === 0) {
 
-              this.assistant.sendAction({
-                action_id: "todaySchedule",
-                parameters: {
-                  day: DAY_SUNDAY
-                },
-              })
+              this.assistant.sendTodayScheduleSunday();
               return this.ChangeDay(7);
 
             } else {
-              this.assistant.sendAction({
-                action_id: "todaySchedule",
-                parameters: { day: DAY_NOT_SUNDAY },
-              })
+              this.assistant.sendTodayScheduleNotSunday();
               return this.ChangeDay(this.state.today);
             }
           break;
 
         case 'for_tomorrow':
           if ((this.state.group !== "") || (this.state.teacher !== ""))
+
             if (this.state.today + 1 === 7) {
-              this.assistant.sendAction({
-                action_id: "tomorrowSchedule",
-                parameters: { day: DAY_SUNDAY },
-              })
+              this.assistant.sendTomorrowScheduleSunday()
               return this.ChangeDay(7);
+
             } else {
-              this.assistant.sendAction({
-                action_id: "tomorrowSchedule",
-                parameters: { day: DAY_NOT_SUNDAY },
-              })
+              this.assistant.sendTomorrowScheduleNotSunday()
               return this.ChangeDay(this.state.today + 1);
             }
           break;
@@ -605,7 +591,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               // const [dayOfWeekLongPrepositional, dayOfWeekIndex] = dayNameDict[dayOfWeekShort]
               // const dayOfWeekIndex = DayOfWeek.short.indexOf(dayOfWeekShort)
               const dayOfWeekIndex = date.getDay(date); 
-              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]; 
+              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]?.toLowerCase();
               
               howManyParams = {
                 lesson: lessonText,
@@ -738,7 +724,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               // const 
               // const [dayOfWeekLongPrepositional, dayOfWeekIdx1] = dayNameDict[dayOfWeekShort];
               const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
-              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_];
+              const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
 
               whichFirst = {
                 num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
@@ -796,7 +782,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             // const [dayOfWeekLongPrepositional, dayOfWeekIdx1] = dayNameDict[this.state.day[dayOfWeekZeroIndex - 1].title];
             const dayOfWeekShort = this.state.day[dayOfWeekZeroIndex-1].title;
             const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
-            const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_];
+            const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
 
             daySchedule = {
               dayName: dayOfWeekLongPrepositional,
@@ -1940,19 +1926,20 @@ export class App extends React.Component<IAppProps, IAppState> {
               ({ match }) => {
                 console.log("/dashboard: isSavedSchedule:", this.state.isSavedSchedule)
                 const now = new Date();
-                let todayIndex = this.state.today - 1;
+                let todayZeroIndex = this.state.today - 1;
                 let currentLessonIdx = this.getCurrentLesson(now);
-                let currentLesson = this.state.saved_schedule[todayIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
+                let currentLesson = this.state.saved_schedule[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
                 let currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx) - 1]
 
                 let nextLessonIdx = this.whatLesson(now, "will").num;
-                let nextLesson = this.state.saved_schedule[todayIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
+                let nextLesson = this.state.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
                 //console.log(this.whatLesson(now, "will").num, "next")
-                let count = this.state.day[this.state.today - 1].current_week.count;
+                console.log('/dashboard: this.state.day:', this.state.day, 'this.state.today:', this.state.today)
+                let count = this.state.day[todayZeroIndex]?.current_week.count;
                 //console.log("COUNT", this.state.today)
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
-                let start = this.getStartFirstLesson(todayIndex + 1)[0];
-                let end = this.getEndLastLesson(todayIndex);
+                let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
+                let end = this.getEndLastLesson(todayZeroIndex);
                 return <DashboardPage
                   character={this.state.character}
                   theme={this.state.theme}

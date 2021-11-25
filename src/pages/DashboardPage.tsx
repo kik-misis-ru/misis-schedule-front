@@ -45,6 +45,7 @@ import {
 } from '../utils';
 import { StartEnd } from '../App';
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import DayOfWeek from "../language-ru/DayOfWeek";
 
 
 import {Bell} from '../types/ScheduleStructure'
@@ -149,15 +150,7 @@ const TodaySummary = ({
   const weekDayShortToday = capitalize(
     moment(date).format('dd')
   );
-  const day = {
-    "Пн": "Понедельник",
-    "Вт": "Вторник",
-    "Ср": "Средa",
-    "Чт": "Четверг",
-    "Пт": "Пятница",
-    "Сб": "Суббота",
-  }
-  const month = {
+   const month = {
     "01": "января",
     "02": "февраля",
     "03": "марта",
@@ -172,13 +165,19 @@ const TodaySummary = ({
     "12": "декабря",
   }
   const dateToday = moment(date).format('DD.MM.YY');
-  let dateDay = ""
-  dateToday.slice(0, 1) === "0" ? dateDay = dateToday.slice(1, 2) : dateDay = dateToday.slice(0, 2)
+  const dateDay = dateToday.slice(0, 1) === "0"
+    ? dateToday.slice(1, 2)
+    : dateToday.slice(0, 2)
 
 
-  const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
+  const formatLessonsCountFromTo = (
+    count: string,
+    from: string,
+    to: string,
+  ): string => (
     `Сегодня ${count} с ${from} до ${to}`
   )
+
   console.log(lessonsStart, "lessoncount")
 
   return (
@@ -194,7 +193,7 @@ const TodaySummary = ({
           {
             isSunday
               ? DAY_OFF_TEXT
-              : `${day[weekDayShortToday]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
+              : `${DayOfWeek.long.nominative[dayOfWeek]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
           }
         </CardParagraph2>
         <CardParagraph1 style={{color: "grey"}}>
@@ -449,7 +448,6 @@ const DashboardPage = ({
                   lessonsStart={start}
                   lessonsEnd={end}
                 />
-
 
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
