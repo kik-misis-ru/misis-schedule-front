@@ -122,7 +122,7 @@ export class ApiModel {
 
   public async AddPush(){
     if(this.pushSettings != undefined && this.userId != undefined){
-      ApiHelper.addUserToPushNotification(this.userId, this.pushSettings)
+      await ApiHelper.addUserToPushNotification(this.userId, this.pushSettings)
     }
   }
 
@@ -174,7 +174,7 @@ export class ApiModel {
       } 
     }
     if(userSchedule != undefined){
-      this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
+      await this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
     }
 
   }
