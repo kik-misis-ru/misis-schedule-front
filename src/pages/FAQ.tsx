@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Headline3,
 } from "@sberdevices/plasma-ui";
-import {Spacer300} from "../App";
+import {Spacer100,Spacer200,Spacer300} from '../components/spacers'
 import faq from '../data/faq.json';
 import lib from '../data/libraries.json';
 

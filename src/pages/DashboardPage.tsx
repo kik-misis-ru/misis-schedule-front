@@ -43,10 +43,10 @@ import {
   capitalize,
   formatTimeHhMm,
 } from '../utils';
-import {
-  Spacer300,
-  StartEnd,
-} from '../App';
+import { StartEnd } from '../App';
+import {Spacer100,Spacer200,Spacer300} from '../components/spacers'
+
+
 import {Bell} from '../types/ScheduleStructure'
 import {CharacterId} from "../types/base.d";
 import {pairNumberToPairNumText} from '../utils'

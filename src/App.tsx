@@ -2,9 +2,11 @@ import React from "react";
 import { Router, Route, Switch } from 'react-router';
 import { createBrowserHistory } from 'history';
 import 'react-toastify/dist/ReactToastify.css';
-import styled from "styled-components";
 import { createAssistant, createSmartappDebugger, } from "@sberdevices/assistant-client";
 import { detectDevice } from '@sberdevices/plasma-ui/utils';
+
+import number from './language-ru/number';
+import DayOfWeek from './language-ru/DayOfWeek';
 
 import {
   createUser,
@@ -79,19 +81,17 @@ import {
   pairNumberToPairText
 } from './utils';
 import Lesson from "./pages/Lesson";
-import { DH_CHECK_P_NOT_SAFE_PRIME } from "constants";
-import { title } from "process";
 import { initializeAssistant, AssistantWrapper } from './lib/AssistantWrapper';
 
-export const NON_EXISTING_PAGE_NO = -1;
+// export const NON_EXISTING_PAGE_NO = -1;
 //export const HOME_PAGE_NO = 0;
 //export const NAVIGATOR_PAGE_NO = 15;
 //export const DASHBOARD_PAGE_NO = 16;
 // export const SCHEDULE_PAGE_NO = 17;
-export const CONTACTS_PAGE_NO = 18;
+// export const CONTACTS_PAGE_NO = 18;
 // export const FAQ_PAGE_NO = 19;
-export const SETTING_PAGE_NO = 20;
-export const LESSON_PAGE_NO = 21;
+// export const SETTING_PAGE_NO = 20;
+// export const LESSON_PAGE_NO = 21;
 
 export const HOME_PAGE_ROUTE = "home";
 
@@ -100,24 +100,6 @@ const INITIAL_PAGE = 16;
 const SEVEN_DAYS = 7 * MS_IN_DAY;
 const FILL_DATA_NO_OFFICIAL_TEXT = "Заполни данные, чтобы открывать расписание одной фразой";
 const TO_VIEW_OFFICIAL_TEXT = "Чтобы посмотреть расписание, укажите данные учебной группы";
-
-export const Spacer100 = styled.div`
-  width: 100px;
-  min-height: 100px;
-  height: 100px;
-`;
-
-export const Spacer200 = styled.div`
-  width: 200px;
-  min-height: 200px;
-  height: 200px;
-`;
-
-export const Spacer300 = styled.div`
-  width: 200px;
-  min-height: 300px;
-  height: 300px;
-`;
 
 // const PAIR_NAME_IDX = 0;
 // const TEACHER_NAME_IDX = 1;
@@ -133,15 +115,15 @@ const breaks = {
   '7': '19:45'
 }
 
-const saved_scheduleOfWeekShort = [
-  "Вс",
-  "Пн",
-  "Вт",
-  "Ср",
-  "Чт",
-  "Пт",
-  "Сб",
-]
+// const saved_scheduleOfWeekShort = [
+//   "Вс",
+//   "Пн",
+//   "Вт",
+//   "Ср",
+//   "Чт",
+//   "Пт",
+//   "Сб",
+// ]
 
 const dayNameDict = {
   "Пн": ["понедельник", 1],
@@ -152,45 +134,45 @@ const dayNameDict = {
   "Сб": ["субботу", 6]
 }
 
-/**
- * Порядковые числительные именительный падеж
- */
-const ordinalNominativeCaseSingularFemDict = {
-  "1": "первая",
-  "2": "вторая",
-  "3": "третья",
-  "4": "четвертая",
-  "5": "пятая",
-  "6": "шестая",
-  "7": "седьмая"
-}
+// /**
+//  * Порядковые числительные именительный падеж
+//  */
+// const ordinalNominativeCaseSingularFemDict = {
+//   "1": "первая",
+//   "2": "вторая",
+//   "3": "третья",
+//   "4": "четвертая",
+//   "5": "пятая",
+//   "6": "шестая",
+//   "7": "седьмая"
+// }
 
-/**
- *
- */
-const ordinalGenitiveCaseSingularFemDict = {
-  1: "первой",
-  2: "второй",
-  3: "третьей",
-  4: "четвертой",
-  5: "пятой",
-  6: "шестой",
-  7: "седьмой"
-}
+// /**
+//  *
+//  */
+// const ordinalGenitiveCaseSingularFemDict = {
+//   1: "первой",
+//   2: "второй",
+//   3: "третьей",
+//   4: "четвертой",
+//   5: "пятой",
+//   6: "шестой",
+//   7: "седьмой"
+// }
 
-/**
- *
- */
-const numPron = {
-  0: "ноль",
-  1: "одна",
-  2: "две",
-  3: "три",
-  4: "четыре",
-  5: "пять",
-  6: "шесть",
-  7: "семь",
-}
+// /**
+//  *
+//  */
+// const numPron = {
+//   0: "ноль",
+//   1: "одна",
+//   2: "две",
+//   3: "три",
+//   4: "четыре",
+//   5: "пять",
+//   6: "шесть",
+//   7: "семь",
+// }
 
 /**
  * Время начала и конца пар
@@ -230,27 +212,27 @@ const TODAY_TOMORROW_DICT = {
 export const DEFAULT_STATE_WEEK_DAY =
   [
     {
-      title: 'Пн',
+      title: DayOfWeek.short[1], // 'Пн',
       date: "",
       count: 0
     }, {
-      title: 'Вт',
+      title: DayOfWeek.short[2], // 'Вт',
       date: "",
       count: 0,
     }, {
-      title: 'Ср',
+      title: DayOfWeek.short[3], // 'Ср',
       date: "",
       count: 0
     }, {
-      title: 'Чт',
+      title: DayOfWeek.short[4], // 'Чт',
       date: "",
       count: 0
     }, {
-      title: 'Пт',
+      title: DayOfWeek.short[5], // 'Пт',
       date: "",
       count: 0
     }, {
-      title: 'Сб',
+      title: DayOfWeek.short[6], // 'Сб',
       date: "",
       count: 0
     }
@@ -711,7 +693,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               params = {
                 type: type,
                 day: day,
-                ordinal: ordinalNominativeCaseSingularFemDict[lessonNum],
+                ordinal: number.ordinal.fem.singular.nominative[lessonNum],
                 time: answer
               }
             }
@@ -731,7 +713,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           break
 
         case 'how_many':
-          let countOfLessons: [string, number] | undefined;
+          let amountOfLessonsTuple: [string, number] | undefined;
           let day: TodayOrTomorrow | undefined;
           let page = 0;
           console.log("how many. group:", this.state.group, ", teacher:", this.state.teacher)
@@ -741,8 +723,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
               const { timestamp, dayOfWeek } = action.note;
               console.log(timestamp, this.getAmountOfLessons(new Date(timestamp)), "how many")
-
-              countOfLessons = this.getAmountOfLessons(new Date(timestamp))
+              amountOfLessonsTuple = this.getAmountOfLessons(new Date(timestamp))
 
               // todo: упростить
               if (String(this.state.today + 1) === dayOfWeek) {
@@ -756,7 +737,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 page = 0
               }
             } else {
-              countOfLessons = this.getAmountOfLessons(new Date(Date.now()))
+              amountOfLessonsTuple = this.getAmountOfLessons(new Date(Date.now()))
               day = DAY_TODAY
             }
 
@@ -764,17 +745,17 @@ export class App extends React.Component<IAppProps, IAppState> {
               day: DAY_SUNDAY,
             };
 
-            if (this.state.group !== "" && countOfLessons !== undefined) {
-              const [dayOfWeek, pairCount] = countOfLessons;
+            if (this.state.group !== "" && amountOfLessonsTuple !== undefined) {
+              const [dayOfWeek, pairCount] = amountOfLessonsTuple;
 
               const pairText = pairNumberToPairText(pairCount);
 
-              const [inDayOfWeek, dayOfWeekIndex] = dayNameDict[dayOfWeek]
+              const [dayOfWeekLong, dayOfWeekIndex] = dayNameDict[dayOfWeek]
               howManyParams = {
                 lesson: pairText,
                 day: day,
-                dayName: inDayOfWeek,
-                amount: numPron[pairCount]
+                dayName: dayOfWeekLong,
+                amount: number.cardinal.fem[pairCount]
               }
               if (dayOfWeekIndex < this.state.today) {
                 page = 7;
@@ -800,7 +781,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             } else {
               howManyLeftParams = {
                 amount: amountOfRemainingLessons,
-                pron: numPron[amountOfRemainingLessons]
+                pron: number.cardinal.fem[amountOfRemainingLessons]
               }
             }
             this.assistant.sendAction({
@@ -895,12 +876,12 @@ export class App extends React.Component<IAppProps, IAppState> {
             if (firstLessonNumStr !== undefined) {
               const { dayOfWeek: strDayOfWeek } = action.note;
               const dayOfWeekIdx = parseInt(strDayOfWeek) - 1
-              const dayOfWeekShortName = saved_scheduleOfWeekShort[dayOfWeekIdx];
+              const dayOfWeekShortName = DayOfWeek.short[dayOfWeekIdx];
 
               const [inDayOfWeek, dayOfWeekIdx1] = dayNameDict[dayOfWeekShortName];
 
               whichFirst = {
-                num: ordinalGenitiveCaseSingularFemDict[firstLessonNumStr/*[0]*/],
+                num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
                 day: day1,
                 dayName: inDayOfWeek
               }

@@ -8,9 +8,10 @@ import WeekCarousel from "./WeekCarousel";
 import WeekSelect from "./WeekSelect";
 import {
   IScheduleDays,
-  Spacer200,
   history,
 } from '../App'
+import {Spacer100,Spacer200,Spacer300} from './spacers'
+
 import {
   IDayHeader,
   OTHER_WEEK,
