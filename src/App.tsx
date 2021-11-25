@@ -178,7 +178,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.apiModel = new ApiModel();
-
     this.setValue = this.setValue.bind(this)
     this.Load_Schedule = this.Load_Schedule.bind(this)
     this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
@@ -192,7 +191,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     // this.sendAssistantData = this.sendAssistantData.bind(this);
     this.ChangeTheme = this.ChangeTheme.bind(this);
     this.Load_Schedule = this.Load_Schedule.bind(this);
-    this.getScheduleFromDb = this.getScheduleFromDb.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
     history.push("/dashboard")
@@ -1267,30 +1265,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   protected isTeacher() {
     return !this.state.student && this.state.teacher_correct
   }
-  protected isSavedTeacher() {
-    return this.state.teacher_id_bd != ""
-  }
 
-  // получить дату первого дня недели
-  getFirstDayWeek(date: Date): string {
-    // номер дня недели
-    const now = new Date();
-    this.setState({ today: now.getDay() });
-
-    const weekDay = date.getDay()
-    let firstDay: number;
-    if (weekDay === 0) {
-      firstDay = date.getTime() - (weekDay + 6) * MS_IN_DAY;
-      console.log(formatDateWithDashes(new Date(firstDay)))
-      //return null
-    } else if (weekDay === 1) {
-      return formatDateWithDashes(date)
-    } else {
-      // число первого дня недели
-      firstDay = date.getTime() - (weekDay - 1) * MS_IN_DAY;
-    }
-    return formatDateWithDashes(new Date(firstDay))
-  }
 
 
   /**
@@ -1299,11 +1274,13 @@ export class App extends React.Component<IAppProps, IAppState> {
   async NextWeek(isSave: boolean) {
     this.setState({ spinner: false });
     const datePlusWeek = this.state.date + SEVEN_DAYS;
-    return this.getScheduleFromDb(datePlusWeek, isSave, false);
+    await this.apiModel.getScheduleFromDb(datePlusWeek, isSave, false);
+    this.setState({ spinner: true });
   }
 
   async CurrentWeek(isSave: boolean) {
-    return this.getScheduleFromDb(Date.now(), isSave, true);
+    await this.apiModel.getScheduleFromDb(Date.now(), isSave, true);
+    this.setState({ spinner: true });
   }
 
   /**
@@ -1312,7 +1289,8 @@ export class App extends React.Component<IAppProps, IAppState> {
   async PreviousWeek(isSave: boolean) {
     this.setState({ spinner: false });
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
-    return this.getScheduleFromDb(dateMinusWeek, isSave, false);
+    await this.apiModel.getScheduleFromDb(dateMinusWeek, isSave, false);
+    this.setState({ spinner: true });
   }
 
   
@@ -1383,7 +1361,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       } else
         getScheduleTeacherFromDb(
           teacherData.id,
-          this.getFirstDayWeek(new Date())
+          this.apiModel.getFirstDayWeek(new Date())
         ).then((response) => {
           console.log("Teahcer Shcedule", response)
           this.apiModel.SetWeekSchedule(response, 0, isSave);
@@ -1430,7 +1408,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     await getScheduleFromDb(
       groupId,
       String(engGroup),
-      this.getFirstDayWeek(new Date())
+      this.apiModel.getFirstDayWeek(new Date())
     )
       .then((response) => {
         console.log("LOAD_SCHEDULE_THEN")
@@ -1519,50 +1497,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       })
 
-  }
-
-  //Загружает расписание с бекенда
-  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: boolean) {
-    let teacher_id, group_id, eng;
-    if (isSave) {
-      teacher_id = this.state.teacher_id_bd;
-      group_id = this.state.group_id_bd;
-      eng = this.state.eng_bd
-      if (this.isSavedTeacher()) {
-        console.log(this.state.student)
-        //this.state.student=false;
-        this.setState({ student: false, teacher: this.state.teacher_bd })
-
-      }
-      else this.setState({ group: this.state.bd, student: true })
-    }
-    else {
-      teacher_id = this.state.teacherId;
-      group_id = this.state.groupId;
-      eng = this.state.engGroup;
-    }
-    const firstDayWeek = this.getFirstDayWeek(new Date(date));
-    let week = isCurrentWeek ? 0 : 1
-    if (this.isSavedTeacher()) {
-      await getScheduleTeacherFromDb(
-        teacher_id,
-        firstDayWeek
-      ).then((response) => {
-        this.apiModel.SetWeekSchedule(response, week, isSave);
-      })
-      this.setState({ student: false })
-    } else {
-      await getScheduleFromDb(
-        group_id,
-        eng,
-        firstDayWeek
-      ).then((response) => {
-        this.apiModel.SetWeekSchedule(response, week, isSave);
-      })
-      this.setState({ student: true })
-    }
-    this.setState({ date: date, flag: true });
-    console.log(this.state.student)
   }
 
   Spinner() {
@@ -1826,7 +1760,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 theme={this.state.theme}
                 isTeacher={!this.state.student}
                 // Bd={this.Bd}
-                getScheduleFromDb={this.getScheduleFromDb}
+                getScheduleFromDb={this.apiModel.getScheduleFromDb}
                 bd={this.state.bd}
                 teacher_bd={this.state.teacher_bd}
                 PreviousWeek={() => this.PreviousWeek(this.apiModel.isSavedSchedule)}
