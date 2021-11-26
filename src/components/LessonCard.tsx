@@ -34,7 +34,7 @@ import {Bell} from "../types/ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
 // import {THIS_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
-import {lessonTypeAdjToNoun} from '../utils';
+import {lessonTypeAdjToNoun} from '../language-ru/utils';
 import LinkToOnline from './LinkToOnline';
 import {
   LessonStartAndFinishTime,
