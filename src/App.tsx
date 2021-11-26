@@ -258,157 +258,48 @@ export class App extends React.Component<IAppProps, IAppState> {
   async handleAssistantSub(eventSub: string) {
     console.log("handleAssistantSub: eventSub", eventSub);
 
-    const initStateUser = (user: IUserData) => {
-      this.setState({
-        groupId: user.group_id,
-        subGroup: user.subgroup_name,
-        engGroup: user.eng_group,
-        teacherId: user.teacher_id
-      })
-    }
-
-    const initStateTeacher = (teacherId: string, teacherName: string) => {
-      this.setState({
-        student: false,
-        teacher_bd: teacherName,
-        teacher_id_bd: teacherId,
-        teacher_correct: true,
-        teacher: teacherName,
-        isUser: true,
-      })
-    }
-
-    const initStateGroup = (groupName: string) => {
-      this.setState({
-        group: groupName,
-        flag: true,
-        bd: groupName,
-        group_id_bd: this.state.groupId,
-        eng_bd: this.state.engGroup,
-        sub_bd: this.state.subGroup,
-        student: true,
-        isUser: true,
-      });
-    }
-
-    const initStateNoSettings = () => {
-      this.setState({
-        isUser: true,
-      });
-    }
-
-    const handleExistingUser = async (user) => {
-      // Такой пользователь уже есть в базе
-      initStateUser(user)
-
-      // Получаем настройки для данного пользователя
-      const userSchedule = await getSchedulebyUserId(userId)
-      // .then((userSchedule) => {
-      console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
-
-      this.apiModel.pushSettings={
-        IsActive: userSchedule.isActive,
-        Hour: userSchedule.hour,
-        Minute: userSchedule.minute,
-      }
-
-      if (userSchedule.teacher_id != "" && userSchedule.teacher_id != null) {
-        // если текущий пользователь сохранен как преподаватель
-        initStateTeacher(userSchedule.teacher_id, formatTeacherName(userSchedule.teacher_info) );
-
-      } else if (userSchedule.groupId != "") {
-        // Если задана студенческая группа
-        initStateGroup(userSchedule.groupName)
-
-      } else {
-        // Пользователь сохранен, но у него не задан ни преподаватель, ни группа
-        initStateNoSettings();
-
-      }
-
-      if (this.state.teacherId != "" || this.state.group != "") {
-        // todo: Зачем два вызова?
-        this.apiModel.SetWeekSchedule(userSchedule.formatScheduleData, 0, true);
-        this.apiModel.SetWeekSchedule(userSchedule.formatScheduleData, 1, true);
-      }
-
-      // переход на пользовательский дэшбоард
-      history.push("/dashboard")
-    }
-
-
-    const handleNewUser = async (userId) => {
-      console.log("handleAssistantSub: handleNewUser")
-      initStateNoSettings();
-
-      // Проигрываем начальное приветствие
-      this.assistant.sendHello()
-
-      // Создаем пользователя в базе данных с текущими настройками
-      await createUser(
-        userId,
-        this.state.filialId,
-        this.state.groupId,
-        this.state.subGroup,
-        this.state.engGroup,
-        this.state.teacherId,
-      )
-
-      history.push('/start')
-    }
-
-
     const userId = eventSub;
-    // const now = new Date();
 
     this.setState({
       userId,
-      // today: now.getDay(),
     });
 
-    // const user = await getUser(this.state.userId)
     await this.apiModel.fetchUser(userId)
     const user = this.apiModel.user;
     console.log('handleAssistantSub: user', user)
 
-    // // Проверяем, найден ли пользователь
-    // if (user) {
-    //   await handleExistingUser(user);
-    //
-    // } else {
-    //   await handleNewUser(user);
-    //
-    // }
     if (this.apiModel.userId != undefined && this.apiModel.userId != "") {
+
       const userSchedule = await getSchedulebyUserId(userId)
       // .then((userSchedule) => {
       console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
+
       this.apiModel.pushSettings = {
         IsActive: userSchedule.isActive,
         Hour: userSchedule.hour,
         Minute: userSchedule.minute,
       }
+
       await this.apiModel.getSchedulebyUserId()
       this.setState({spinner: true});
       console.log("USER:", this.apiModel)
+
       history.push("/dashboard")
+
+      // Проверяем, сохранен ли пользователь
       if (!this.apiModel.isSavedUser) {
         console.log("handleAssistantSub: first time")
+
         this.setState({isUser: true});
+
         history.push('/start')
+
         // Проигрываем начальное приветствие
         this.assistant.sendHello()
+
         // Создаем пользователя в базе данных с текущими настройками
         await this.apiModel.createUser()
       }
-
-    // // Проверяем, найден ли пользователь
-    // if (user) {
-    //   await handleExistingUser(user);
-    //
-    // } else {
-    //   await handleNewUser(user);
-
     }
   }
 
@@ -660,9 +551,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   handleAssistantFirstLesson(dayOfWeek: number) {
-
-    // todo: test dayOfWeek/dayOfWeekZeroIndex
-
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
       let firstLessonNumStr: string;
@@ -670,55 +558,42 @@ export class App extends React.Component<IAppProps, IAppState> {
       let day1: undefined | TodayOrTomorrow = DAY_TODAY;
       let page1 = 0;
 
-      if (typeof dayOfWeek !== undefined) {
-        const dayOfWeekZeroIndex = dayOfWeek - 1
-        console.log('dispatchAssistantAction: first_lesson:', dayOfWeek)
-        firstLessonNumStr = this.getStartFirstLesson(dayOfWeekZeroIndex)[1]
+      const dayOfWeekZeroIndex = dayOfWeek - 1
+      console.log('dispatchAssistantAction: first_lesson:', dayOfWeek)
+      firstLessonNumStr = this.getStartFirstLesson(dayOfWeekZeroIndex)[1]
 
-        if (getTodayDayOfWeek() === dayOfWeek - 1) {
-          day1 = DAY_TODAY;
-          page1 = 0
+      if (firstLessonNumStr === undefined) {
+        console.warn('dispatchAssistantAction: firstLessonNumStr is undefined')
+      }
 
-        } else if (getTodayDayOfWeek() + 1 === dayOfWeek - 1) {
-          day1 = DAY_TOMORROW;
-          page1 = 0
+      if (getTodayDayOfWeek() === dayOfWeek - 1) {
+        day1 = DAY_TODAY;
+        page1 = 0
 
-        } else {
-          day1 = undefined;
-        }
+      } else if (getTodayDayOfWeek() + 1 === dayOfWeek - 1) {
+        day1 = DAY_TOMORROW;
+        page1 = 0
+
       } else {
-        console.warn('dispatchAssistantAction: first_lesson: action.note is undefined');
-        // todo: fix fallback
-        firstLessonNumStr = this.getStartFirstLesson(0)[1];
-        // day = DAY_TODAY
-        day1 = undefined
+        day1 = undefined;
       }
 
-      let assistantParams: AssistantSendActionSay5['parameters'] = {
-        day1: DAY_SUNDAY,
+      const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
+
+      const assistantParams: AssistantSendActionSay5['parameters'] = {
+        num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
+        day: day1,
+        dayName: dayOfWeekLongPrepositional
+      }
+      console.log('dispatchAssistantAction: assistantParams:', assistantParams)
+
+      if (dayOfWeekZeroIndex < getTodayDayOfWeek()) {
+        page1 = 7;
       }
 
-      if (firstLessonNumStr !== undefined) {
-        const dayOfWeekIndex = dayOfWeek - 1
-        const dayOfWeekShort = DayOfWeek.short[dayOfWeekIndex];
+      const newPage = dayOfWeekZeroIndex + page1;
+      this.gotoPage(newPage)
 
-        const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
-        const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
-
-        assistantParams = {
-          num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
-          day: day1,
-          dayName: dayOfWeekLongPrepositional
-        }
-        console.log('dispatchAssistantAction: assistantParams:', assistantParams)
-
-        if (dayOfWeekIndex_ < getTodayDayOfWeek()) {
-          page1 = 7;
-        }
-
-        const newPage = dayOfWeekIndex_ + page1;
-        this.gotoPage(newPage)
-      }
 
       this.assistant.sendAction({
         action_id: "say5",
@@ -1195,7 +1070,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               type: "nearest",
               exist: "inSchedule",
             }
-          } else { 
+          } else {
             // сообщаем, что такой пары нет
             console.log(`whereWillLesson: Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
 
@@ -1324,8 +1199,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   toggleTheme() {
     console.log('toggleTheme:', this.state.theme)
-    if (this.state.theme === "dark") this.setState({ theme: "light" })
-    else this.setState({ theme: "dark" })
+    if (this.state.theme === "dark") this.setState({theme: "light"})
+    else this.setState({theme: "dark"})
   }
 
   doSetTeacher(teacherName: string): void {
@@ -1362,7 +1237,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           teacherData.id,
           getFirstDayWeek(new Date())
         ).then((response) => {
-        console.log("handleTeacherChange: getScheduleTeacherFromDb: response", response)
+          console.log("handleTeacherChange: getScheduleTeacherFromDb: response", response)
           this.apiModel.SetWeekSchedule(response, 0, isSave);
         });
 
@@ -1403,7 +1278,11 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  async _loadSchedule({ groupId, engGroup, isSave }: { groupId: string, engGroup: string, isSave: boolean }): Promise<void> {
+  async _loadSchedule({
+                        groupId,
+                        engGroup,
+                        isSave
+                      }: { groupId: string, engGroup: string, isSave: boolean }): Promise<void> {
     console.log('LOAD_SCHEDULE:', groupId, engGroup)
     await getScheduleFromDb(
       groupId,
@@ -1555,7 +1434,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <Contacts
                   character={this.state.character}
                   theme={this.state.theme}
-                  onDashboardClick={() => { history.push("/dashboard") }}
+                  onDashboardClick={() => {
+                    history.push("/dashboard")
+                  }}
                 />
               }
             }
@@ -1567,7 +1448,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <FAQ
                   character={this.state.character}
                   theme={this.state.theme}
-                  onDashboardClick={() => { history.push("/dashboard") }}
+                  onDashboardClick={() => {
+                    history.push("/dashboard")
+                  }}
                 />
               }
             }
@@ -1581,9 +1464,15 @@ export class App extends React.Component<IAppProps, IAppState> {
                   character={this.state.character}
                   theme={this.state.theme}
                   isMobileDevice={detectDevice() === "mobile"}
-                  onDashboardClick={() => { history.push("/dashboard") }}
-                  onHomeClick={() => { history.push("/home") }}
-                  onScheduleClick={() => { history.push('/spinner') }}
+                  onDashboardClick={() => {
+                    history.push("/dashboard")
+                  }}
+                  onHomeClick={() => {
+                    history.push("/home")
+                  }}
+                  onScheduleClick={() => {
+                    history.push('/spinner')
+                  }}
                 />
               }
             }

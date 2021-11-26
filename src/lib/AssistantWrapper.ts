@@ -212,8 +212,12 @@ export class AssistantWrapper {
         break
 
       case 'first_lesson':
-        const {dayOfWeek: strDayOfWeekNum} = action.note;
-        await this._App.handleAssistantFirstLesson(parseInt(strDayOfWeekNum))
+        let dayOfWeek = parseInt(action?.note?.dayOfWeek);
+        if (isNaN(dayOfWeek)) {
+          console.warn('dispatchAssistantAction: first_lesson: dayOfWeek is undefined');
+          dayOfWeek = 1; // Понедельник
+        }
+        await this._App.handleAssistantFirstLesson(dayOfWeek)
         break
 
       case 'day_schedule':
