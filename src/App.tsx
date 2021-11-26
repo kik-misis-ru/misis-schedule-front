@@ -620,22 +620,28 @@ export class App extends React.Component<IAppProps, IAppState> {
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
       let howManyLeftParams
       let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date())
+
       if (this.state.today === 0) {
         howManyLeftParams = {
           day: DAY_SUNDAY,
         }
+
       } else {
         howManyLeftParams = {
           amount: amountOfRemainingLessons,
           pron: number.cardinal.fem[amountOfRemainingLessons]
         }
       }
+
       this.assistant.sendAction({
         action_id: "say2",
         parameters: howManyLeftParams,
       })
-      if (this.state.group !== "")
+
+      if (this.state.group !== "") {
         this.ChangePage();
+      }
+
       if (this.state.today === 0) {
         this.gotoPage(7)
       } else {
