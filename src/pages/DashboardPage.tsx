@@ -440,7 +440,7 @@ const DashboardPage = ({
           onHomeClick={() => history.push('/settings')}
         />
         {
-          spinner === true
+          spinner
             ? (
               <Row>
                 <TodaySummary
