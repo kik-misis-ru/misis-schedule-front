@@ -19,8 +19,8 @@ import {
   THIS_WEEK,
 } from '../types/base.d'
 import {
-  getFullGroupName,
-} from '../utils';
+  formatFullGroupName,
+} from '../lib/formatters';
 
 
 const FIRST_DAY_OTHER_WEEK = 8;
@@ -78,7 +78,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.getScheduleFromDb = this.getScheduleFromDb.bind(this);
     //this.Load_Schedule = this.Load_Schedule.bind(this)
-    // const groupName = getFullGroupName(this.state.group, this.state.subGroup);
+    // const groupName = formatFullGroupName(this.state.group, this.state.subGroup);
   }
 
   async getScheduleFromDb() {
@@ -124,7 +124,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       page: this.props.weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0,
       formatDate: (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`,
       isTeacher: getIsCorrectTeacher(),
-      groupName: getFullGroupName(this.props.group, this.props.subGroup),
+      groupName: formatFullGroupName(this.props.group, this.props.subGroup),
       weekParam: weekParam
     }
 

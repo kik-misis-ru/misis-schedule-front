@@ -8,8 +8,8 @@ import{
 import { Bell } from '../types/ScheduleStructure'
 import { group } from "console";
 
-
-
+import {MS_IN_DAY, formatDateWithDashes, getFirstDayWeek} from '../lib/datetimeUtils'
+import {formatTeacherName} from '../lib/formatters'
 
 
 export interface IPushSettings {
@@ -75,6 +75,7 @@ export type IScheduleDays = DayBells[]
 export class ApiModel {
   public userId: string | undefined
   public user: IUserData | undefined
+  public unsavedUser: IUserData | undefined
   public pushSettings: IPushSettings 
   public isStudent: boolean
   //false когда пользователь первый раз зашел в приложение
@@ -118,7 +119,7 @@ export class ApiModel {
 
   public async AddPush(){
     if(this.pushSettings != undefined && this.userId != undefined){
-      ApiHelper.addUserToPushNotification(this.userId, this.pushSettings)
+      await ApiHelper.addUserToPushNotification(this.userId, this.pushSettings)
     }
   }
 
@@ -135,13 +136,17 @@ export class ApiModel {
   }
   public async getSchedulebyUserId(){
     let userSchedule : ApiHelper.IScheduleByUserIdData | undefined;
+
     if(this.userId!=undefined){
+      // Такой пользователь уже есть в базе
       this.isSavedUser = true
+
+      // Получаем настройки для данного пользователя
       userSchedule = await ApiHelper.getSchedulebyUserId(this.userId)
       console.log("USER_SCHEDULE", userSchedule)
 
       if (userSchedule.teacher_id != "" && userSchedule.teacher_id != undefined) {
-        const teacher = this.formatTeacherName(userSchedule.teacher_info);
+        const teacher = formatTeacherName(userSchedule.teacher_info);
         this.user = {
           teacher: teacher,
           teacher_id: userSchedule.teacher_id,
@@ -170,7 +175,7 @@ export class ApiModel {
       } 
     }
     if(userSchedule != undefined){
-      this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
+      await this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
     }
 
   }
@@ -220,10 +225,6 @@ export class ApiModel {
     
   }
 
-  public formatTeacherName = (teacherData: ApiHelper.ITeacherInfo) => (
-    `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
-  )
-
   public async createUser(){
     if(this.userId != undefined && this.user!=undefined){
       await ApiHelper.createUser(
@@ -236,7 +237,52 @@ export class ApiModel {
       )
     }
   }
-  
+
+  public  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: boolean) {
+    let teacher_id, group_id, eng;
+    if (isSave) {
+      teacher_id = this.user?.teacher_id;
+      group_id = this.user?.group_id;
+      eng = this.user?.eng_group
+      if (this.isSavedTeacher() && this.unsavedUser != undefined) {
+        this.isStudent=false;
+        this.unsavedUser.teacher = this.user?.teacher
+      }
+      else {
+        this.isStudent = true;
+      }
+    }
+    else {
+      teacher_id = this.unsavedUser?.teacher_id;
+      group_id = this.unsavedUser?.group_id;
+      eng = this.unsavedUser?.eng_group;
+    }
+    const firstDayWeek = getFirstDayWeek(new Date(date));
+    let week = isCurrentWeek ? 0 : 1
+    if (this.isSavedTeacher()) {
+      await ApiHelper.getScheduleTeacherFromDb(
+        teacher_id,
+        firstDayWeek
+      ).then((response) => {
+        this.SetWeekSchedule(response, week, isSave);
+      })
+      this.isStudent = false
+    } else {
+      console.log("group_id", group_id)
+      await ApiHelper.getScheduleFromDb(
+        group_id,
+        eng !=undefined ? eng : "",
+        firstDayWeek
+      ).then((response) => {
+        this.SetWeekSchedule(response, week, isSave);
+      })
+      this.isStudent = true
+    }
+  }
+
+  protected isSavedTeacher() {
+    return this.user!=undefined && this.user.teacher_id != "" && this.user.teacher_id != undefined
+  }
 
   // protected async _dbGetUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
   //   const apiResult = await ApiHelper.getUser(userId)

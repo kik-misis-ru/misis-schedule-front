@@ -13,6 +13,7 @@ import {
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronLeft, IconEdit, IconHouse} from "@sberdevices/plasma-icons";
+import {IAppState, SetValueFn, SetValueKeys} from "../App";
 import {
   AssistantSendAction,
 } from '../types/AssistantSendAction.d'
@@ -134,14 +135,14 @@ interface SettingsProps {
   description: string
   sendAssistantData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
-  onSetValue: (key: string, value: any) => void
+  onSetValue: SetValueFn
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   group: string
   isGroupError: boolean
   theme: string
-  ChangeTheme: () => void
+  toggleTheme: () => void
   subGroup: string
   isSubGroupError: boolean
   engGroup: string
@@ -195,13 +196,17 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       theme: false,
       themeName: this.props.theme,
     };
-    this.onHandleChange("description", props.character === "joy"
-      ? DESC_JOY
-      : DESC_OTHERS)
+    // this.onHandleChange("description", props.character === "joy"
+    //   ? DESC_JOY
+    //   : DESC_OTHERS)
   }
 
 
-  onHandleChange(key: string, value: any): void {
+  onHandleChange<K extends SetValueKeys
+    >(
+      key: K,
+      value: IAppState[K]
+  ): void {
     this.props.onSetValue(key, value);
   }
   async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
@@ -360,17 +365,33 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           justifyContent: "center",
           alignItems: "center"}}>
             <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о завтрашних парах</Caption>
-      <TimePicker style={{margin:"0.5em"}}
-          visibleItems={3}  min={new Date(1629925240000)} max={new Date(1630011580000)} value={this.state.timePush.value} options={{ hours: true, minutes: true, seconds: false}} onChange={((value: Date) => this.state.timePush.value=value)}></TimePicker>
+      <TimePicker
+        style={{margin:"0.5em"}}
+        visibleItems={3}
+        min={new Date(1629925240000)}
+        max={new Date(1630011580000)}
+        value={this.state.timePush.value}
+        options={{ hours: true, minutes: true, seconds: false}}
+        onChange={((value: Date) => this.state.timePush.value=value)}
+      ></TimePicker>
        </Col>: <div></div>}
-       {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.ChangeTheme(); this.setState({theme: !this.state.theme})})}/> */}
+       {/* <Switch style={{ margin: "1em" }} label="Включить светлую тему"  checked={this.state.theme} onChange={(() => {this.props.toggleTheme(); this.setState({theme: !this.state.theme})})}/> */}
       <Col size={4} style={{display: "flex",
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center"}}>
-      <Button size="m" view="primary" style={{margin:"0.5em"}} onClick={ async ()=> await this.Save() }>Сохранить</Button>
-      <Button size="m" style={{margin:"0.5em"}} onClick={()=>{this.setState({edit: false});  if (this.state.themeName!=this.props.theme)
-      this.props.ChangeTheme();}}>Отмена</Button>
+      <Button
+        size="m"
+        view="primary"
+        style={{margin:"0.5em"}}
+        onClick={ async ()=> await this.Save() }
+      >Сохранить</Button>
+        <Button
+          size="m"
+          style={{margin: "0.5em"}}
+          onClick={() => {
+            this.setState({edit: false});
+          }}>Отмена</Button>
       </Col>
       </Row>) : (
         <Row style={{margin: "1em"}}>

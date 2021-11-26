@@ -1,25 +1,16 @@
 import * as moment from 'moment';
-moment.locale('ru');
+import DayOfWeek from "../language-ru/DayOfWeek";
 
+import { padZeros } from './utils';
+import number from "../language-ru/Number";
+
+// Init `momentjs` module
+moment.locale('ru');
 
 /**
  * сколько миллисекунд в 1 дне
  */
 export const MS_IN_DAY = 24 * 60 * 60 * 1000;
-
-export function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-/**
- * Добавление незначащих нулей слева
- *
- * @param {string} s
- * @param {number} len
- * return {string}
- */
-export const padZeros = (s: string, len: number) => s.padStart(len, '0');
-
 
 /**
  * Convert string DD?MM?YYYY to Date
@@ -101,6 +92,39 @@ export function formatTimeHhMm(date: Date): string {
 
 
 /**
+ * получить дату первого дня недели
+ * в виде строки
+ *
+ * @param date
+ */
+export function getFirstDayWeek(date: Date): string {
+  console.log('getFirstDayWeek:', date)
+  // номер дня недели
+  // const now = new Date();
+  // this.setState({ today: now.getDay() });
+
+  const weekDay = date.getDay()
+  let dayDiff: number;
+
+  if (weekDay === 0) { // Воскресенье
+    dayDiff = -(weekDay + 6);
+
+  } else if (weekDay === 1) { // Понедельник
+    dayDiff = 0;
+
+  } else { // Не воскресенье и не понедельник
+    // число первого дня недели
+    dayDiff = - (weekDay - 1);
+
+  }
+  const firstDay = date.getTime() + dayDiff * MS_IN_DAY;
+  const result = formatDateWithDashes(new Date(firstDay))
+  console.log('getFirstDayWeek: result:', result)
+  return result;
+}
+
+
+/**
  *
  * @param {string} adj
  * @returns {string}
@@ -153,9 +177,17 @@ export function pairNumberToPairText(pairCount: number): string | undefined {
   return lesson;
 }
 
-
-export function getFullGroupName(group: string, subGroup: string): string {
-  return (subGroup !== "")
-    ? `${group} (${subGroup})`
-    : `${group} `
+/**
+ * возвращает короткое название дня недели (Пн,Вт,...)
+ * для заданной даты
+ *
+ * @param {Date} date
+ * @returns string    - короткое название дня недели (Пн,Вт,...)
+ */
+export function getDayOfWeekShortForDate(date: Date): string {
+  // Возвращает порядковый номер дня недели на заданную дату
+  // 0 - воскресенье, 1 - понедельник
+  const dayOfWeekIndexForDate = date.getDay();
+  return DayOfWeek.short[dayOfWeekIndexForDate];
 }
+

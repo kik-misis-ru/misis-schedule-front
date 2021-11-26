@@ -7,6 +7,7 @@ import {
   Caption
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
+import {IAppState, SetValueFn, SetValueKeys} from "../App";
 
 import {
   getThemeBackgroundByChar,
@@ -19,8 +20,8 @@ import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
 import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
 
 const HOME_TITLE = 'Салют!';
-const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
-const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
+// const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
+// const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
 const LABEL_GROUP = "Номер академической группы через дефисы";
 const LABEL_SUB_GROUP = "Номер подгруппы: 1 или 2";
@@ -83,7 +84,7 @@ const TextFieldForUserInfo = ({
   // fieldType: string
   onChange: (value: string) => void
 }) => {
-  
+
   return (
     <TextField
       // id="tf"
@@ -109,13 +110,13 @@ interface HomeViewProps {
   character: CharacterId
   checked: boolean
   description: string
-  theme: string 
-  onSetValue: (key: string, value: any) => void
+  theme: string
+  onSetValue: SetValueFn
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   CheckIsCorrect: () => Promise<boolean>
-  LoadSchedule: (isSave:boolean) => void
+  LoadSchedule: (isSave: boolean) => void
   onShowScheduleClick: () => void
 
   group: string
@@ -147,19 +148,21 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     let disabled = true;
     if (props.groupId !== "") disabled = false;
     this.state = {disabled: disabled}
-    this.onHandleChange("description", props.character === "joy"
-      ? DESC_JOY
-      : DESC_OTHERS)
+    // this.onHandleChange("description", props.character === "joy"
+    //   ? DESC_JOY
+    //   : DESC_OTHERS)
   }
 
-  onHandleChange(key: string, value: any): void {
+  onHandleChange<K extends SetValueKeys
+    >(key: K, value: IAppState[K]): void {
     this.props.onSetValue(key, value);
   }
 
-  async CheckIsCorrect(){
+  async CheckIsCorrect() {
     return await this.props.CheckIsCorrect();
   }
-  Load_Schedule(isSave: boolean){
+
+  Load_Schedule(isSave: boolean) {
     this.props.LoadSchedule(isSave)
   }
 
@@ -222,14 +225,14 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={async()=>{
+          onClick={async () => {
             let isCorrect = await this.CheckIsCorrect()
-            if(isCorrect){
+            if (isCorrect) {
               await this.Load_Schedule(this.props.checked)
               this.props.onShowScheduleClick()
+            }
+
           }
-            
-         }
           }
         />
 
@@ -276,35 +279,20 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       </Container>
     )
 
+    const mainContent = this.props.student
+      ? studentContent
+      : teacherContent;
 
     return <DeviceThemeProvider>
       <DocStyle/>
       {
         getThemeBackgroundByChar(this.props.character, this.props.theme)
       }
-      
+
       <div>
-        {
-          this.props.student
-            ? (
-              <Main
-                setValue={this.onHandleChange}
-                convertIdInGroupName={this.onConvertIdInGroupName}
-                disabled={this.state.disabled}
-                contentRight={studentContent}
-              />
-            )
-            : (
-
-
-              <Main
-                setValue={this.onHandleChange}
-                convertIdInGroupName={this.onConvertIdInGroupName}
-                disabled={this.state.disabled}
-                contentRight={teacherContent}
-              />
-            )
-        }
+        <Main
+          contentRight={mainContent}
+        />
       </div>
     </DeviceThemeProvider>
   }
