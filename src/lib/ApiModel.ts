@@ -8,11 +8,8 @@ import{
 import { Bell } from '../types/ScheduleStructure'
 import { group } from "console";
 
-import {MS_IN_DAY,
-  formatDateWithDashes} from '../utils'
-
-
-
+import {MS_IN_DAY, formatDateWithDashes, getFirstDayWeek} from '../lib/datetimeUtils'
+import {formatTeacherName} from '../lib/formatters'
 
 
 export interface IPushSettings {
@@ -149,7 +146,7 @@ export class ApiModel {
       console.log("USER_SCHEDULE", userSchedule)
 
       if (userSchedule.teacher_id != "" && userSchedule.teacher_id != undefined) {
-        const teacher = this.formatTeacherName(userSchedule.teacher_info);
+        const teacher = formatTeacherName(userSchedule.teacher_info);
         this.user = {
           teacher: teacher,
           teacher_id: userSchedule.teacher_id,
@@ -228,10 +225,6 @@ export class ApiModel {
     
   }
 
-  public formatTeacherName = (teacherData: ApiHelper.ITeacherInfo) => (
-    `${teacherData.last_name} ${teacherData.first_name}. ${teacherData.mid_name}.`
-  )
-
   public async createUser(){
     if(this.userId != undefined && this.user!=undefined){
       await ApiHelper.createUser(
@@ -264,7 +257,7 @@ export class ApiModel {
       group_id = this.unsavedUser?.group_id;
       eng = this.unsavedUser?.eng_group;
     }
-    const firstDayWeek = this.getFirstDayWeek(new Date(date));
+    const firstDayWeek = getFirstDayWeek(new Date(date));
     let week = isCurrentWeek ? 0 : 1
     if (this.isSavedTeacher()) {
       await ApiHelper.getScheduleTeacherFromDb(
@@ -290,28 +283,6 @@ export class ApiModel {
   protected isSavedTeacher() {
     return this.user!=undefined && this.user.teacher_id != "" && this.user.teacher_id != undefined
   }
-
-    // получить дату первого дня недели
-  public getFirstDayWeek(date: Date): string {
-      // номер дня недели
-      const now = new Date();
-      const weekDay = date.getDay()
-      let firstDay: number;
-      if (weekDay === 0) {
-        firstDay = date.getTime() - (weekDay + 6) * MS_IN_DAY;
-        console.log(formatDateWithDashes(new Date(firstDay)))
-        //return null
-      } else if (weekDay === 1) {
-        return formatDateWithDashes(date)
-      } else {
-        // число первого дня недели
-        firstDay = date.getTime() - (weekDay - 1) * MS_IN_DAY;
-      }
-      return formatDateWithDashes(new Date(firstDay))
-    }
-
-  
-  
 
   // protected async _dbGetUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
   //   const apiResult = await ApiHelper.getUser(userId)

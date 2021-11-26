@@ -43,8 +43,10 @@ import {
 } from '../themes/tools';
 import {
   capitalize,
+} from '../lib/utils';
+import {
   formatTimeHhMm,
-} from '../utils';
+} from '../lib/datetimeUtils';
 import { StartEnd } from '../App';
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import DayOfWeek from "../language-ru/DayOfWeek";
@@ -52,7 +54,7 @@ import DayOfWeek from "../language-ru/DayOfWeek";
 
 import {Bell} from '../types/ScheduleStructure'
 import {CharacterId} from "../types/base.d";
-import {pairNumberToPairNumText} from '../utils'
+import {pairNumberToPairNumText} from '../language-ru/utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
 import {history} from "../App";

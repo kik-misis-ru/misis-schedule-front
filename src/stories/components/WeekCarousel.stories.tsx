@@ -4,7 +4,8 @@ import moment from 'moment';
 import 'moment/locale/ru';
 
 import WeekCarousel from '../../components/WeekCarousel';
-import {MS_IN_DAY, capitalize, ddMmYyToDate, ddMmYyyyToDate} from "../../utils";
+import { capitalize } from "../../lib/utils";
+import {MS_IN_DAY, ddMmYyToDate, ddMmYyyyToDate} from "../../lib/datetimeUtils";
 
 moment.locale('ru');
 
