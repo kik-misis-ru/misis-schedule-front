@@ -58,7 +58,7 @@ export interface IUserData {
   subgroup_name: string | undefined
   teacher_id: string | undefined
   teacher:  string | undefined
-  group: string | undefined
+  group: string 
 }
 
 
