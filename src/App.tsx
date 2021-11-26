@@ -255,10 +255,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     });
   }
 
-  async handleAssistantSub(eventSub: string) {
-    console.log("handleAssistantSub: eventSub", eventSub);
-
-    const userId = eventSub;
+  async handleAssistantSub(userId: string) {
+    console.log("handleAssistantSub: userId", userId);
 
     this.setState({
       userId,
