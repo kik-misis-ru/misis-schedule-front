@@ -36,6 +36,7 @@ import {
   IconHelp, 
   IconCallCircle} 
   from "@sberdevices/plasma-icons";
+import Month from "../language-ru/Month";
 import {
   DocStyle,
   getThemeBackgroundByChar,
@@ -147,24 +148,11 @@ const TodaySummary = ({
   lessonsEnd: string
 }) => {
   const dayOfWeek = date.getDay();
+  const month = date.getMonth();
   const isSunday = dayOfWeek === 0;
   const weekDayShortToday = capitalize(
     moment(date).format('dd')
   );
-   const month = {
-    "01": "января",
-    "02": "февраля",
-    "03": "марта",
-    "04": "апреля",
-    "05": "мая",
-    "06": "июня",
-    "07": "июля",
-    "08": "августа",
-    "09": "сентября",
-    "10": "октября",
-    "11": "ноября",
-    "12": "декабря",
-  }
   const dateToday = moment(date).format('DD.MM.YY');
   const dateDay = dateToday.slice(0, 1) === "0"
     ? dateToday.slice(1, 2)
@@ -179,8 +167,6 @@ const TodaySummary = ({
     `Сегодня ${count} с ${from} до ${to}`
   )
 
-  console.log(lessonsStart, "lessoncount")
-
   return (
     <Row>
       <TextBox
@@ -194,7 +180,7 @@ const TodaySummary = ({
           {
             isSunday
               ? DAY_OFF_TEXT
-              : `${DayOfWeek.long.nominative[dayOfWeek]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
+              : `${DayOfWeek.long.nominative[dayOfWeek]}, ${dateDay} ${Month.long.genitive[month]}`
           }
         </CardParagraph2>
         <CardParagraph1 style={{color: "grey"}}>
@@ -422,7 +408,8 @@ const DashboardPage = ({
   apiModel: ApiModel
 
 }) => {
-  console.log(groupId, teacherId, userId, "DASHBOARD")
+  // console.log('DashboardPage:', groupId, teacherId, userId)
+  // console.log('DashboardPage:', {count})
   return (
     <DeviceThemeProvider>
       <DocStyle/>

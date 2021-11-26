@@ -44,10 +44,6 @@ import breaks from './data/breaks.json';
 import "./themes/App.css";
 import {
   AssistantCharacter,
-  AssistantAction,
-  AssistantEvent,
-  AssistantEventCharacter,
-  AssistantEventSmartAppData,
   NowOrWill,
 } from './types/AssistantReceiveAction.d'
 import {
@@ -55,7 +51,6 @@ import {
   AssistantSendActionSay,
   AssistantSendActionSay1,
   AssistantSendActionSay5,
-  AssistantSendActionSay6,
 } from './types/AssistantSendAction.d'
 
 import {
@@ -105,7 +100,6 @@ export interface ICheckIsCorrect {
   correct_eng: boolean
   correct: boolean
 }
-
 
 const MAX_BELL_COUNT = 8;
 
@@ -237,7 +231,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.assistant = new AssistantWrapper(this);
   }
 
-
   componentDidMount() {
     console.log('componentDidMount');
     this.assistant.init();
@@ -335,7 +328,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     const handleNewUser = async (userId) => {
       console.log("handleAssistantSub: handleNewUser")
-
       initStateNoSettings();
 
       // Проигрываем начальное приветствие
@@ -398,6 +390,14 @@ export class App extends React.Component<IAppProps, IAppState> {
         // Создаем пользователя в базе данных с текущими настройками
         await this.apiModel.createUser()
       }
+
+    // // Проверяем, найден ли пользователь
+    // if (user) {
+    //   await handleExistingUser(user);
+    //
+    // } else {
+    //   await handleNewUser(user);
+
     }
   }
 
@@ -692,13 +692,91 @@ export class App extends React.Component<IAppProps, IAppState> {
         const newPage = dayOfWeekIndex_ + page1;
         this.gotoPage(newPage)
       }
-
       this.assistant.sendAction({
         action_id: "say5",
         parameters: whichFirst,
       })
     }
   }
+
+  // async handleAssistantDaySchedule(dayOfWeek: number, note1, note2) {
+  //   console.log('handleAssistantDaySchedule:', dayOfWeek, note1, note2)
+  //
+  //   if ((this.state.group !== "") || (this.state.teacher !== "")) {
+  //     const dayOfWeekZeroIndex = dayOfWeek - 1;
+  //     let page2 = 0;
+  //
+  //     // todo: упростить
+  //
+  //     if (note1 === null && note2 === null) {
+  //       console.log('dispatchAssistantAction: day_schedule: flag:', this.state.flag);
+  //
+  //       if (!this.state.flag) {
+  //         page2 = 7;
+  //
+  //       } else {
+  //         page2 = 0;
+  //       }
+  //
+  //     } else {
+  //       console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex);
+  //
+  //       if (note1 !== null) {
+  //         console.log('dispatchAssistantAction: day_schedule: note[1]:', note1);
+  //         page2 = 0;
+  //
+  //       } else if (note2 !== null) {
+  //         console.log('dispatchAssistantAction: day_schedule: note[2]:', note2);
+  //         page2 = 7;
+  //
+  //       }
+  //     }
+  //
+  //     console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex)
+  //
+  //     // todo: test dayOfWeek/dayOfWeekZeroIndex/dayOfWeekShort
+  //
+  //     // const dayOfWeekShort = this.state.day[dayOfWeekZeroIndex - 1].title;
+  //     // const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
+  //     const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
+  //
+  //     this.assistant.sendSay6(dayOfWeekLongPrepositional);
+  //
+  //     const newPage = dayOfWeekZeroIndex + page2;
+  //     this.gotoPage(newPage)
+  //
+  //   }
+  // }
+  //
+  // async handleAssistantShowSchedule(actionNote: string|undefined) {
+  //   console.log('dispatchAssistantAction: show schedule');
+  //   if (actionNote) {
+  //
+  //     const isStudent = !actionNote.includes("препод")
+  //
+  //     this.assistant.sendAction({
+  //       action_id: "change_group",
+  //       parameters: {
+  //         IsStudent: isStudent
+  //       }
+  //     })
+  //
+  //   } else {
+  //     let success = true;
+  //     if (history.location == HOME_PAGE_ROUTE) {
+  //       if (this.state.student) {
+  //         success = await this.CheckIsCorrect()
+  //       } else {
+  //         success = await this.handleTeacherChange(true);
+  //       }
+  //     }
+  //     if (success) {
+  //       await this.Load_Schedule(this.apiModel.isSavedSchedule)
+  //       history.push('/spinner')
+  //     }
+  //
+  //   }
+  // }
 
   async handleAssistantDaySchedule(dayOfWeek: number, note1, note2) {
     console.log('handleAssistantDaySchedule:', dayOfWeek, note1, note2)
@@ -1324,6 +1402,54 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({spinner: true});
   }
 
+//   /**
+//    * заполнение данными расписания из бд
+//    */
+//   SetWeekSchedule(scheduledata: IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
+//     console.log('SetWeekSchedule: showWeekSchedule', scheduledata)
+//     console.log("SetWeekSchedule: IsSaveSchedule", isSavedSchedule)
+//     console.log("SetWeekSchedule: IsCurrentWeek", i)
+//
+//
+//     if (isSavedSchedule) {
+//       let saved_schedule = this.state.saved_schedule
+//       let day = this.state.day
+//       if (i == 0) {
+//         saved_schedule.current_week = scheduledata.schedule
+//         day.current_week = scheduledata.day
+//       }
+//       else {
+//         saved_schedule.other_week = scheduledata.schedule
+//         day.other_week = scheduledata.day
+//       }
+//       this.setState({
+//         saved_schedule: saved_schedule,
+//         isSavedSchedule: isSavedSchedule,
+//         day: day });
+//     }
+//     else {
+//       let other_schedule = this.state.other_schedule
+//       let day = this.state.day
+//       if (i == 0) {
+//         console.log("Set other shcedule; current week")
+//         other_schedule.current_week = scheduledata.schedule
+//         day.current_week = scheduledata.day
+//       }
+//       else {
+//         console.log("Set other shcedule; other week")
+//         day.other_week = scheduledata.day
+//       }
+//       this.setState({
+//         other_schedule: other_schedule,
+//         isSavedSchedule: isSavedSchedule,
+//         day: day,
+//       });
+//     }
+//     this.setState({ spinner: true });
+//     console.log("Days", scheduledata, "Day", this.state.day)
+// >>>>>>> refactor
+//   }
+
 
   ChangeDay(day: number): void {
     this.ChangePage();
@@ -1672,7 +1798,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                     isTeacherAndValid={this.getIsCorrectTeacher()}
                     spinner={this.state.spinner}
                     theme={this.state.theme}
-                    currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
+                    // currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
+                    currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
@@ -1692,15 +1819,19 @@ export class App extends React.Component<IAppProps, IAppState> {
                 const now = new Date();
                 let todayZeroIndex = this.state.today - 1;
                 let currentLessonIdx = this.getCurrentLesson(now);
-                let currentLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
+                // let currentLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
+                let currentLesson = this.apiModel.saved_schedule.current_week[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1];
                 let currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx) - 1]
 
                 let nextLessonIdx = this.whatLesson(now, "will").num;
-                let nextLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
+                // let nextLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
+                let nextLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1];
                 //console.log(this.whatLesson(now, "will").num, "next")
                 console.log('/dashboard: this.state.day:', this.apiModel.day, 'this.state.today:', this.state.today)
                 let count = this.apiModel.day[todayZeroIndex]?.current_week.count;
                 //console.log("COUNT", this.state.today)
+                // console.log('/dashboard: count:', count)
+
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
                 let end = this.getEndLastLesson(todayZeroIndex);
