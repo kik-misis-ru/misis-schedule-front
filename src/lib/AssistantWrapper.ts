@@ -167,7 +167,7 @@ export class AssistantWrapper {
         if (action.note) {
           const {timestamp, dayOfWeek: dayOfWeekStrIndex} = action.note;
           const date = new Date(timestamp);
-          await this._App.handleAssistantHowMany(date, dayOfWeekStrIndex)
+          await this._App.handleAssistantHowMany(date, parseInt(dayOfWeekStrIndex))
         } else {
           await this._App.handleAssistantHowMany(undefined, undefined)
         }
@@ -239,16 +239,16 @@ export class AssistantWrapper {
     this.sendAction({
       action_id: "tomorrowSchedule",
       parameters: {
-        day: day
+        day
       },
     })
   }
 
-  sendSay6(dayOfWeekLongPrepositional: string) {
+  sendSay6(dayName: string) {
     this.sendAction({
       action_id: "say6",
       parameters: {
-        dayName: dayOfWeekLongPrepositional,
+        dayName,
       },
     })
   }

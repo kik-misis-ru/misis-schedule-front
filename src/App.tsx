@@ -44,10 +44,6 @@ import { Bell } from './types/ScheduleStructure'
 import "./themes/App.css";
 import {
   AssistantCharacter,
-  AssistantAction,
-  AssistantEvent,
-  AssistantEventCharacter,
-  AssistantEventSmartAppData,
   NowOrWill,
 } from './types/AssistantReceiveAction.d'
 import {
@@ -55,7 +51,6 @@ import {
   AssistantSendActionSay,
   AssistantSendActionSay1,
   AssistantSendActionSay5,
-  AssistantSendActionSay6,
 } from './types/AssistantSendAction.d'
 
 import {
@@ -105,7 +100,6 @@ export interface ICheckIsCorrect {
   correct_eng: boolean
   correct: boolean
 }
-
 
 export interface IDay {
   current_week: IDayHeader[]
@@ -316,7 +310,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.assistant = new AssistantWrapper(this);
   }
 
-
   componentDidMount() {
     console.log('componentDidMount');
     this.assistant.init();
@@ -329,7 +322,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       character: character.id,
     });
   }
-
 
   async handleAssistantSub(eventSub: string) {
     console.log("handleAssistantSub: eventSub", eventSub);
@@ -560,26 +552,23 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  handleAssistantHowMany(date: Date|undefined, dayOfWeekStrIndex: string|undefined) {
+  handleAssistantHowMany(date: Date|undefined, dayOfWeek: number|undefined) {
+    console.log('handleAssistantHowMany: date', date, 'dayOfWeek:', dayOfWeek)
+
     // let amountOfLessonsTuple: [string, number] | undefined;
     let day: TodayOrTomorrow | undefined;
     let page = 0;
-    console.log("dispatchAssistantAction: how_many: group:", this.state.group, ", teacher:", this.state.teacher)
+    console.log("handleAssistantHowMany: group:", this.state.group, ", teacher:", this.state.teacher)
+
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
 
       if (date) {
-        console.log('dispatchAssistantAction: how_many', date)
-
-        // todo: упростить
-        if (String(this.state.today + 1) === dayOfWeekStrIndex) {
+        if (this.state.today + 1 === dayOfWeek) {
           day = DAY_TODAY;
-          page = 0
-        } else if (String(this.state.today + 2) === dayOfWeekStrIndex) {
+        } else if (this.state.today + 2 === dayOfWeek) {
           day = DAY_TOMORROW;
-          page = 0
         } else { // fallback
           day = undefined
-          page = 0
         }
 
       } else {
@@ -587,9 +576,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         day = DAY_TODAY
       }
 
-      let howManyParams: AssistantSendActionSay1['parameters'] = {
-        day: DAY_SUNDAY,
-      };
+      let howManyParams: AssistantSendActionSay1['parameters'];
 
       const lessonCount = this.getLessonsCountForDate(date)
 
@@ -603,15 +590,22 @@ export class App extends React.Component<IAppProps, IAppState> {
         const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]?.toLowerCase();
 
         howManyParams = {
-          lesson: lessonText,
           day: day,
+          lesson: lessonText,
           dayName: dayOfWeekLongPrepositional,
           amount: number.cardinal.fem[lessonCount]
         }
+
         if (dayOfWeekIndex < this.state.today) {
           page = 7;
         }
+
         this.ChangeDay(dayOfWeekIndex + page)
+
+      } else {
+        howManyParams = {
+          day: DAY_SUNDAY,
+        };
       }
 
       this.assistant.sendAction({
@@ -846,18 +840,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     return state;
   }
 
-
-  // sendAssistantData(action: AssistantSendAction) {
-  //   this.assistant.sendAction(action)
-  //   // console.log(action);
-  //   // return this._assistant.sendData({
-  //   //   action
-  //   // })
-  // }                          ``
-
-
   //////////////////////////////////////////////////////////////////////////////
-
 
   TimeByLessonNum(num: number): string {
     return LessonStartEnd[num].start + " - " + LessonStartEnd[num].end
