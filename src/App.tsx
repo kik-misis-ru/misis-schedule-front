@@ -308,7 +308,8 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async handleAssistantForDayOffset(offset: 0 | 1) {
-    if ((this.state.group !== "") || (this.state.teacher !== "")) {
+    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
+     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
 
       const isSunday = (
         getTodayDayOfWeek() + offset === 0 ||
