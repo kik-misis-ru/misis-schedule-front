@@ -139,8 +139,12 @@ export class ApiModel {
   }
   public async getSchedulebyUserId(){
     let userSchedule : ApiHelper.IScheduleByUserIdData | undefined;
+
     if(this.userId!=undefined){
+      // Такой пользователь уже есть в базе
       this.isSavedUser = true
+
+      // Получаем настройки для данного пользователя
       userSchedule = await ApiHelper.getSchedulebyUserId(this.userId)
       console.log("USER_SCHEDULE", userSchedule)
 

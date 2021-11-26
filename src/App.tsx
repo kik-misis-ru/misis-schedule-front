@@ -293,42 +293,109 @@ export class App extends React.Component<IAppProps, IAppState> {
       });
     }
 
-    const userId = eventSub;
+    const handleExistingUser = async (user) => {
+      // Такой пользователь уже есть в базе
+      initStateUser(user)
 
-    this.setState({userId});
-
-    const now = new Date();
-    this.setState({today: now.getDay()});
-
-    await this.apiModel.fetchUser(userId)
-    const user = this.apiModel.user;
-
-    if (this.apiModel.userId != undefined && this.apiModel.userId != "") {
+      // Получаем настройки для данного пользователя
       const userSchedule = await getSchedulebyUserId(userId)
       // .then((userSchedule) => {
       console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
 
-      this.apiModel.pushSettings = {
+      this.apiModel.pushSettings={
         IsActive: userSchedule.isActive,
         Hour: userSchedule.hour,
         Minute: userSchedule.minute,
       }
 
+      if (userSchedule.teacher_id != "" && userSchedule.teacher_id != null) {
+        // если текущий пользователь сохранен как преподаватель
+        initStateTeacher(userSchedule.teacher_id, this.apiModel.formatTeacherName(userSchedule.teacher_info) );
+
+      } else if (userSchedule.groupId != "") {
+        // Если задана студенческая группа
+        initStateGroup(userSchedule.groupName)
+
+      } else {
+        // Пользователь сохранен, но у него не задан ни преподаватель, ни группа
+        initStateNoSettings();
+
+      }
+
+      if (this.state.teacherId != "" || this.state.group != "") {
+        // todo: Зачем два вызова?
+        this.apiModel.SetWeekSchedule(userSchedule.formatScheduleData, 0, true);
+        this.apiModel.SetWeekSchedule(userSchedule.formatScheduleData, 1, true);
+      }
+
+      // переход на пользовательский дэшбоард
+      history.push("/dashboard")
+    }
+
+
+    const handleNewUser = async (userId) => {
+      console.log("handleAssistantSub: handleNewUser")
+
+      initStateNoSettings();
+
+      // Проигрываем начальное приветствие
+      this.assistant.sendHello()
+
+      // Создаем пользователя в базе данных с текущими настройками
+      await createUser(
+        userId,
+        this.state.filialId,
+        this.state.groupId,
+        this.state.subGroup,
+        this.state.engGroup,
+        this.state.teacherId,
+      )
+
+      history.push('/start')
+    }
+
+
+    const userId = eventSub;
+    const now = new Date();
+
+    this.setState({
+      userId,
+      today: now.getDay(),
+    });
+
+    // const user = await getUser(this.state.userId)
+    await this.apiModel.fetchUser(userId)
+    const user = this.apiModel.user;
+    console.log('handleAssistantSub: user', user)
+
+    // // Проверяем, найден ли пользователь
+    // if (user) {
+    //   await handleExistingUser(user);
+    //
+    // } else {
+    //   await handleNewUser(user);
+    //
+    // }
+    if (this.apiModel.userId != undefined && this.apiModel.userId != "") {
+      const userSchedule = await getSchedulebyUserId(userId)
+      // .then((userSchedule) => {
+      console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
+      this.apiModel.pushSettings = {
+        IsActive: userSchedule.isActive,
+        Hour: userSchedule.hour,
+        Minute: userSchedule.minute,
+      }
       await this.apiModel.getSchedulebyUserId()
       this.setState({spinner: true});
       console.log("USER:", this.apiModel)
-
       history.push("/dashboard")
-
       if (!this.apiModel.isSavedUser) {
         console.log("handleAssistantSub: first time")
-
         this.setState({isUser: true});
-
         history.push('/start')
-
+        // Проигрываем начальное приветствие
         this.assistant.sendHello()
-
+        // Создаем пользователя в базе данных с текущими настройками
         await this.apiModel.createUser()
       }
     }
@@ -1365,11 +1432,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  async _loadSchedule({
-                        groupId,
-                        engGroup,
-                        isSave
-                      }: { groupId: string, engGroup: string, isSave: boolean }): Promise<void> {
+  async _loadSchedule({ groupId, engGroup, isSave }: { groupId: string, engGroup: string, isSave: boolean }): Promise<void> {
     console.log('LOAD_SCHEDULE:', groupId, engGroup)
     await getScheduleFromDb(
       groupId,
@@ -1521,9 +1584,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <Contacts
                   character={this.state.character}
                   theme={this.state.theme}
-                  onDashboardClick={() => {
-                    history.push("/dashboard")
-                  }}
+                  onDashboardClick={() => { history.push("/dashboard") }}
                 />
               }
             }
@@ -1535,9 +1596,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <FAQ
                   character={this.state.character}
                   theme={this.state.theme}
-                  onDashboardClick={() => {
-                    history.push("/dashboard")
-                  }}
+                  onDashboardClick={() => { history.push("/dashboard") }}
                 />
               }
             }
@@ -1551,15 +1610,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                   character={this.state.character}
                   theme={this.state.theme}
                   isMobileDevice={detectDevice() === "mobile"}
-                  onDashboardClick={() => {
-                    history.push("/dashboard")
-                  }}
-                  onHomeClick={() => {
-                    history.push("/home")
-                  }}
-                  onScheduleClick={() => {
-                    history.push('/spinner')
-                  }}
+                  onDashboardClick={() => { history.push("/dashboard") }}
+                  onHomeClick={() => { history.push("/home") }}
+                  onScheduleClick={() => { history.push('/spinner') }}
                 />
               }
             }
