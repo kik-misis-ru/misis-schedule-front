@@ -30,7 +30,10 @@ export class AssistantWrapper {
   }
 
   init() {
+    /*
     this._assistant = initializeAssistant(() => this._App.getStateForAssistant());
+    */
+    this._assistant = initializeAssistant(() => this.getStateForAssistantStub());
 
     this._assistant.on("data", (event: AssistantEvent) => {
       console.log('AssistantWrapper: _assistant.on("data"): event:', event);
@@ -44,6 +47,26 @@ export class AssistantWrapper {
     this._assistant.on("ANSWER_TO_USER", (event) => {
       console.log(`AssistantWrapper: _assistant.on(raw)`, event);
     });
+  }
+
+  getStateForAssistantStub() {
+    console.log('getStateForAssistantStub');
+    const state = {
+      item_selector: {
+        items: [],
+/*
+        items: this.state.notes.map(
+          ({ id, title }, index) => ({
+            number: index + 1,
+            id,
+            title,
+          })
+        ),
+*/
+      },
+    };
+    console.log('getStateForAssistantStub: state:', state)
+    return state;
   }
 
   handleAssistantDataEvent(event: AssistantEvent) {
@@ -249,6 +272,15 @@ export class AssistantWrapper {
       action_id: "say6",
       parameters: {
         dayName,
+      },
+    })
+  }
+
+  sendChangeGroup(isStudent: boolean) {
+    this.sendAction({
+      action_id: "change_group",
+      parameters: {
+        IsStudent: isStudent
       },
     })
   }

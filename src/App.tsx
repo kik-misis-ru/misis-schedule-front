@@ -50,6 +50,9 @@ import {
   AssistantSendAction,
   AssistantSendActionSay,
   AssistantSendActionSay1,
+  AssistantSendActionSay2,
+  AssistantSendActionSay3,
+  AssistantSendActionSay4,
   AssistantSendActionSay5,
 } from './types/AssistantSendAction.d'
 
@@ -191,7 +194,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
     // this.sendAssistantData = this.sendAssistantData.bind(this);
-    this.ChangeTheme = this.ChangeTheme.bind(this);
     this.Load_Schedule = this.Load_Schedule.bind(this);
     // this.tfRef                = React.createRef();
     console.log('constructor');
@@ -539,7 +541,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         day = DAY_TODAY
       }
 
-      let howManyParams: AssistantSendActionSay1['parameters'];
+      let assistantParams: AssistantSendActionSay1['parameters'];
 
       const lessonCount = this.getLessonsCountForDate(date)
 
@@ -552,7 +554,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const dayOfWeekIndex = date.getDay();
         const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]?.toLowerCase();
 
-        howManyParams = {
+        assistantParams = {
           day: day,
           lesson: lessonText,
           dayName: dayOfWeekLongPrepositional,
@@ -566,14 +568,14 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.ChangeDay(dayOfWeekIndex + page)
 
       } else {
-        howManyParams = {
+        assistantParams = {
           day: DAY_SUNDAY,
         };
       }
 
       this.assistant.sendAction({
         action_id: "say1",
-        parameters: howManyParams,
+        parameters: assistantParams,
       })
     }
   }
@@ -581,24 +583,24 @@ export class App extends React.Component<IAppProps, IAppState> {
   // Сколько пар осталось (сегодня)
   handleAssistantHowManyLeft() {
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
-      let howManyLeftParams
+      let assistantParams: AssistantSendActionSay2['parameters'];
       let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date())
 
       if (getTodayDayOfWeek() === 0) {
-        howManyLeftParams = {
+        assistantParams = {
           day: DAY_SUNDAY,
         }
 
       } else {
-        howManyLeftParams = {
-          amount: amountOfRemainingLessons,
+        assistantParams = {
+          amount: String(amountOfRemainingLessons),
           pron: number.cardinal.fem[amountOfRemainingLessons]
         }
       }
 
       this.assistant.sendAction({
         action_id: "say2",
-        parameters: howManyLeftParams,
+        parameters: assistantParams,
       })
 
       if (this.state.group !== "") {
@@ -615,34 +617,44 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   handleAssistantWhere(when: NowOrWill) {
     console.log('handleAssistantWhere: when:', when)
+
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
-      const whereLessonParams = this.whereWillLesson(new Date(this.state.date), when)
+
+      const whereLessonParams: AssistantSendActionSay3['parameters'] = this.whereWillLesson(new Date(this.state.date), when)
+
       this.assistant.sendAction({
         action_id: "say3",
         parameters: whereLessonParams,
       })
+
       if (whereLessonParams.exist === DAY_SUNDAY) {
         //this.setState({ page: 8 })
       } else {
         this.ChangeDay(getTodayDayOfWeek());
       }
+
     }
   }
 
   handleAssistantWhatLesson(when: NowOrWill) {
     console.log("handleAssistantWhatLesson: when:", when)
+
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
-      const whatLesson = this.whatLesson(new Date(), when);
+
+      const whatLesson: AssistantSendActionSay4['parameters'] = this.whatLesson(new Date(), when);
       console.log('dispatchAssistantAction: what_lesson: whatLesson:', whatLesson)
+
       this.assistant.sendAction({
         action_id: "say4",
         parameters: whatLesson,
       })
+
       if (getTodayDayOfWeek() === 0) {
         this.ChangeDay(7)
       } else {
         this.ChangeDay(getTodayDayOfWeek());
       }
+
     }
   }
 
@@ -652,10 +664,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     // todo: test dayOfWeek/dayOfWeekZeroIndex
 
     if ((this.state.group !== "") || (this.state.teacher !== "")) {
+
       let firstLessonNumStr: string;
       // let day: TodayOrTomorrow;
       let day1: undefined | TodayOrTomorrow = DAY_TODAY;
       let page1 = 0;
+
       if (typeof dayOfWeek !== undefined) {
         const dayOfWeekZeroIndex = dayOfWeek - 1
         console.log('dispatchAssistantAction: first_lesson:', dayOfWeek)
@@ -680,7 +694,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         day1 = undefined
       }
 
-      let whichFirst: AssistantSendActionSay5['parameters'] = {
+      let assistantParams: AssistantSendActionSay5['parameters'] = {
         day1: DAY_SUNDAY,
       }
 
@@ -691,12 +705,13 @@ export class App extends React.Component<IAppProps, IAppState> {
         const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
         const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex_]?.toLowerCase();
 
-        whichFirst = {
+        assistantParams = {
           num: number.ordinal.fem.singular.genitive[firstLessonNumStr/*[0]*/],
           day: day1,
           dayName: dayOfWeekLongPrepositional
         }
-        console.log('dispatchAssistantAction: whichFirst:', whichFirst)
+        console.log('dispatchAssistantAction: assistantParams:', assistantParams)
+
         if (dayOfWeekIndex_ < getTodayDayOfWeek()) {
           page1 = 7;
         }
@@ -707,7 +722,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       this.assistant.sendAction({
         action_id: "say5",
-        parameters: whichFirst,
+        parameters: assistantParams,
       })
     }
   }
@@ -767,15 +782,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       const isStudent = !actionNote.includes("препод")
 
-      this.assistant.sendAction({
-        action_id: "change_group",
-        parameters: {
-          IsStudent: isStudent
-        }
-      })
+      this.assistant.sendChangeGroup(isStudent);
 
     } else {
       let success = true;
+
       if (history.location == HOME_PAGE_ROUTE) {
         if (this.state.student) {
           success = await this.CheckIsCorrect()
@@ -783,6 +794,7 @@ export class App extends React.Component<IAppProps, IAppState> {
           success = await this.handleTeacherChange(true);
         }
       }
+
       if (success) {
         await this.Load_Schedule(this.apiModel.isSavedSchedule)
         history.push('/spinner')
@@ -791,28 +803,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  getStateForAssistant() {
-    console.log('getStateForAssistant: this.state:', this.state)
-    const state = {
-      item_selector: {
-        items: this.state.notes.map(
-          ({id, title}, index) => ({
-            number: index + 1,
-            id,
-            title,
-          })
-        ),
-      },
-    };
-    console.log('getStateForAssistant: state:', state)
-    return state;
-  }
-
   //////////////////////////////////////////////////////////////////////////////
-
-  TimeByLessonNum(num: number): string {
-    return LessonStartEnd[num].start + " - " + LessonStartEnd[num].end
-  }
 
   setValue(key: string, value: any) {
     console.log(`setValue: key: ${key}, value:`, value);
@@ -958,36 +949,11 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-
-  // /**
-  //  * подсчет количества пар в указанную дату
-  //  * возвращает массив с днем недели (Пн,Вт,...)
-  //  * и количеством пар в этот день
-  //  *
-  //  * @param {Date} date
-  //  * @returns [string,number]|undefined
-  //  */
-  // getAmountOfLessons__(date: Date): [string, number] | undefined {
-  //   for (let i = 0; i < 6; i++) {
-  //     let day = this.state.day
-  //     if (formatDateWithDots(date) === day.current_week[i].date) {
-  //       return [day.current_week[i].title, day.current_week[i].count]
-  //     }
-  //     if (formatDateWithDots(date) === day.other_week[i].date) {
-  //       return [day.current_week[i].title, day.other_week[i].count]
-  //     }
-  //   }
-  //   // if (res !== undefined) {return res}
-  //   // else {return null}
-  // }
-
   /**
    * подсчет количества пар в указанную дату
-   * возвращает короткое название дня недели (Пн,Вт,...)
-   * и количество пар в этот день
    *
    * @param {Date} date
-   * @returns number
+   * @returns number    - количество пар в этот день
    */
   getLessonsCountForDate(date: Date): number {
     const strDate = formatDateWithDots(date);
@@ -998,20 +964,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     }
     return -1;
-  }
-
-  /**
-   * возвращает короткое название дня недели (Пн,Вт,...)
-   * для заданной даты
-   *
-   * @param {Date} date
-   * @returns string
-   */
-  getDayOfWeekShortForDate(date: Date): string {
-    // Возвращает порядковый номер дня недели на заданную дату
-    // 0 - воскресенье, 1 - понедельник
-    const dayOfWeekIndexForDate = date.getDay();
-    return DayOfWeek.short[dayOfWeekIndexForDate];
   }
 
   /**
@@ -1314,7 +1266,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   /**
-   * Заполнение расписанием на следующую неделю
+   * Переход на следующую неделю
    */
   async NextWeek(isSave: boolean) {
     this.setState({spinner: false});
@@ -1323,6 +1275,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({spinner: true});
   }
 
+  /**
+   * Переход на следующую неделю
+   */
   async CurrentWeek(isSave: boolean) {
     this.setState({spinner: false});
     const date = Date.now();
@@ -1331,7 +1286,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   /**
-   * Заполнение расписанием на предыдущую неделю
+   * Переход на предыдущую неделю
    */
   async PreviousWeek(isSave: boolean) {
     this.setState({spinner: false});
@@ -1367,11 +1322,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  ChangeTheme() {
-    console.log(this.state.theme, "THEME")
-    if (this.state.theme == "dark")
-      this.setState({theme: "light"})
-    else this.setState({theme: "dark"})
+  toggleTheme() {
+    console.log('toggleTheme:', this.state.theme)
+    if (this.state.theme === "dark") this.setState({ theme: "light" })
+    else this.setState({ theme: "dark" })
   }
 
   doSetTeacher(teacherName: string): void {
@@ -1658,7 +1612,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   groupId={this.state.groupId}
                   group={this.state.group}
                   theme={this.state.theme}
-                  ChangeTheme={this.ChangeTheme}
+                  toggleTheme={() => this.toggleTheme()}
                   isGroupError={this.state.isGroupError}
                   subGroup={this.state.subGroup}
                   dayPush={this.state.dayPush}
