@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import DayOfWeek from "../language-ru/DayOfWeek";
 
 import { padZeros } from './utils';
 import number from "../language-ru/Number";
@@ -174,5 +175,19 @@ export function pairNumberToPairText(pairCount: number): string | undefined {
       ? "пары"
       : "пар"
   return lesson;
+}
+
+/**
+ * возвращает короткое название дня недели (Пн,Вт,...)
+ * для заданной даты
+ *
+ * @param {Date} date
+ * @returns string    - короткое название дня недели (Пн,Вт,...)
+ */
+export function getDayOfWeekShortForDate(date: Date): string {
+  // Возвращает порядковый номер дня недели на заданную дату
+  // 0 - воскресенье, 1 - понедельник
+  const dayOfWeekIndexForDate = date.getDay();
+  return DayOfWeek.short[dayOfWeekIndexForDate];
 }
 
