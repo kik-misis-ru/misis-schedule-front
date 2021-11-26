@@ -1243,7 +1243,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               type: "nearest",
               exist: "inSchedule",
             }
-          } else { 923
+          } else { 
             // сообщаем, что такой пары нет
             console.log(`whereWillLesson: Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
 
