@@ -11,7 +11,6 @@ import {
 } from '../App'
 import ApiModel, {IScheduleDays} from "../lib/ApiModel"
 import {Spacer100,Spacer200,Spacer300} from './Spacers'
-
 import {
   IDayHeader,
   OTHER_WEEK,
@@ -27,6 +26,7 @@ const FIRST_DAY_OTHER_WEEK = 8;
 
 
 export interface ScheduleViewProps {
+  apiModel: ApiModel
   timeParam: number
   onSetValue: (string, any) => void
   teacher: string
@@ -38,7 +38,6 @@ export interface ScheduleViewProps {
   CurrentWeek: () => void
   NextWeek: () => void
   getCurrentLesson: (Date) => string
-  apiModel : ApiModel
   weekParam: number
   day: IDayHeader[]
   spinner: boolean
@@ -127,6 +126,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       isTeacher: getIsCorrectTeacher(),
       groupName: formatFullGroupName(this.props.group, this.props.subGroup),
       weekParam: weekParam
+      
     }
 
     console.log('ScheduleView: spinner:', this.props.spinner)
@@ -149,7 +149,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             subLabel={
               this.props.isTeacher
                 ? this.props.teacher
-                : this.props.groupName
+                : 
+                //this.props.groupName
+                this.props.apiModel.user?.group==undefined ? "" : this.props.apiModel.user.group
             }
             onHomeClick={() => history.push('/home')}
             onDashboardClick={async () => {

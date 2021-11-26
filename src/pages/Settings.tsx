@@ -367,7 +367,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             <Caption style={{textAlign: "center", margin: " 0 0.5em 0.5em 0.5em", color: "grey"}}>Время, в которое каждый день будут приходить напоминания о завтрашних парах</Caption>
       <TimePicker
         style={{margin:"0.5em"}}
-          visibleItems={3}
+        visibleItems={3}
         min={new Date(1629925240000)}
         max={new Date(1630011580000)}
         value={this.state.timePush.value}
@@ -391,8 +391,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           style={{margin: "0.5em"}}
           onClick={() => {
             this.setState({edit: false});
-            if (this.state.themeName != this.props.theme)
-              this.props.toggleTheme();
           }}>Отмена</Button>
       </Col>
       </Row>) : (
