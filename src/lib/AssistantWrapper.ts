@@ -54,15 +54,15 @@ export class AssistantWrapper {
     const state = {
       item_selector: {
         items: [],
-/*
-        items: this.state.notes.map(
-          ({ id, title }, index) => ({
-            number: index + 1,
-            id,
-            title,
-          })
-        ),
-*/
+        /*
+                items: this.state.notes.map(
+                  ({ id, title }, index) => ({
+                    number: index + 1,
+                    id,
+                    title,
+                  })
+                ),
+        */
       },
     };
     console.log('getStateForAssistantStub: state:', state)
@@ -144,13 +144,13 @@ export class AssistantWrapper {
           ? action.note[1].data.groupName[0]
           : action.note[1].data.groupName[1];
         group = group.toUpperCase();
-        this._App.handleAssistantSetGroup(group)
+        this._App.handleAssistantSetValue('group', group)
         break
 
       case 'subgroup':
         if (action.note) {
           const subGroup = action.note;
-          this._App.handleAssistantSetSubGroup(subGroup)
+          this._App.handleAssistantSetValue('subGroup', subGroup )
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.note:', action.note)
         }
@@ -159,7 +159,7 @@ export class AssistantWrapper {
       case 'set_eng_group':
         if (action.group) {
           const engGroup = String(action.group);
-          this._App.handleAssistantSetSubGroup(engGroup)
+          this._App.handleAssistantSetValue('engGroup', engGroup)
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.group:', action.group)
         }
@@ -231,7 +231,7 @@ export class AssistantWrapper {
         break
 
       default:
-        // console.warn('dispatchAssistantAction: Unknown action.type:', action.type)
+      // console.warn('dispatchAssistantAction: Unknown action.type:', action.type)
 
     }
   }

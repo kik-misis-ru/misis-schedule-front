@@ -3,7 +3,8 @@ import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  history, } from '../../App';
+  history, IAppState,
+} from '../../App';
 import {Spacer100,Spacer200,Spacer300} from '../Spacers'
 
 import {
@@ -15,17 +16,11 @@ import {
 
 
 interface MainProps {
-  setValue: (key: string, value: any) => void
-  convertIdInGroupName: () => void
-  disabled: boolean
   contentRight: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 }
 
 const Main = ({
-                disabled,
                 contentRight,
-                setValue,
-                convertIdInGroupName,
               }: MainProps) => {
 
   const TopMenuRow = () => (

@@ -13,6 +13,7 @@ import {
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronLeft, IconEdit, IconHouse} from "@sberdevices/plasma-icons";
+import {IAppState, SetValueFn, SetValueKeys} from "../App";
 import {
   AssistantSendAction,
 } from '../types/AssistantSendAction.d'
@@ -134,7 +135,7 @@ interface SettingsProps {
   description: string
   sendAssistantData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
-  onSetValue: (key: string, value: any) => void
+  onSetValue: SetValueFn
   onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
@@ -201,7 +202,11 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   }
 
 
-  onHandleChange(key: string, value: any): void {
+  onHandleChange<K extends SetValueKeys
+    >(
+      key: K,
+      value: IAppState[K]
+  ): void {
     this.props.onSetValue(key, value);
   }
   async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{

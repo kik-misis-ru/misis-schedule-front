@@ -86,6 +86,12 @@ import {formatTeacherName} from "./lib/formatters";
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
 
+export type SetValueKeys = keyof Pick<IAppState, 'group'|'subGroup'|'teacher'|'page'|'student'|'teacher_checked'|'engGroup'|'checked'|'bd'|'teacher_bd'|'flag'> /*extends keyof IAppState*/;
+export type SetValueFn = <K extends SetValueKeys>(
+  key: K,
+  value: IAppState[K],
+) => void;
+
 export const HOME_PAGE_ROUTE = "home";
 
 const INITIAL_PAGE = 16;
@@ -305,22 +311,18 @@ export class App extends React.Component<IAppProps, IAppState> {
     history.push(pageRoute)
   }
 
-  handleAssistantSetGroup(group: string) {
-    this.setState({
-      group,
-    });
-  }
+  handleAssistantSetValue(
+    key: 'group' | 'subGroup' | 'engGroup',
+    value: string
+  ) {
+    console.log(`handleAssistantSetValue: key: ${key}, value:`, value);
 
-  handleAssistantSetSubGroup(subGroup: string) {
-    this.setState({
-      subGroup,
-    });
-  }
-
-  handleAssistantSetEngGroup(engGroup: string) {
-    this.setState({
-      engGroup,
-    })
+    this.setState((prevState) => (
+      {
+        ...prevState,
+        [key]: value,
+      }
+    ))
   }
 
   async handleAssistantForDayOffset(offset: 0 | 1) {
@@ -678,46 +680,17 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  setValue(key: string, value: any) {
+  setValue<K extends SetValueKeys>(
+    key: K,
+    value: IAppState[K],
+  ): void {
     console.log(`setValue: key: ${key}, value:`, value);
-    //console.log(this.state.group)
-    switch (key) {
-      case "group":
-        this.setState({group: value});
-        break;
-      case "subGroup":
-        this.setState({subGroup: value});
-        break;
-      case "teacher":
-        this.setState({teacher: value});
-        break;
-      case "page":
-        this.gotoPage(value);
-        break;
-      case "student":
-        this.setState({student: value});
-        break;
-      case "teacher_checked":
-        this.setState({teacher_checked: value});
-        break;
-      case "engGroup":
-        this.setState({engGroup: value});
-        break;
-      case "checked":
-        this.setState({checked: value});
-        break;
-      case "bd":
-        this.setState({bd: value});
-        break;
-      case "teacher_bd":
-        this.setState({teacher_bd: value})
-        break;
-      case "flag":
-        this.setState({flag: value})
-        break;
-      default:
-        break;
-    }
+    this.setState((prevState) => (
+      {
+        ...prevState,
+        [key]: value,
+      }
+    ))
   }
 
   getIsCorrectTeacher(): boolean {
