@@ -9,7 +9,7 @@ import WeekSelect from "./WeekSelect";
 import {
   history,
 } from '../App'
-import {IScheduleDays} from "../lib/ApiModel"
+import ApiModel, {IScheduleDays} from "../lib/ApiModel"
 import {Spacer100,Spacer200,Spacer300} from './Spacers'
 
 import {
@@ -38,7 +38,7 @@ export interface ScheduleViewProps {
   CurrentWeek: () => void
   NextWeek: () => void
   getCurrentLesson: (Date) => string
-  doSetTeacher: (teacherName: string) => void
+  apiModel : ApiModel
   weekParam: number
   day: IDayHeader[]
   spinner: boolean
@@ -47,6 +47,7 @@ export interface ScheduleViewProps {
     current_week: IScheduleDays
     other_week: IScheduleDays
   }
+  doSetTeacher: (string) => Promise<void>
   group: string
   subGroup: string
   getIsCorrectTeacher: () => boolean
@@ -221,7 +222,10 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             // today={this.state.today}
             // validateTeacher={this.isCorrectTeacher}
             // onSetValue={this.setValue}
-            onTeacherClick={async (teacherName) => this.props.doSetTeacher(teacherName)}
+            onTeacherClick={async (teacherName) => {
+              await this.props.doSetTeacher(teacherName)
+            }
+          }
           />
 
           <Spacer200/>

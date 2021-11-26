@@ -10,6 +10,7 @@ import { group } from "console";
 
 import {MS_IN_DAY, formatDateWithDashes, getFirstDayWeek} from '../lib/datetimeUtils'
 import {formatTeacherName} from '../lib/formatters'
+import { threadId } from "worker_threads";
 
 
 export interface IPushSettings {
@@ -52,13 +53,13 @@ export const DEFAULT_STATE_WEEK_DAY = [
 ]
 
 export interface IUserData {
-  eng_group: string | undefined
-  filial_id: string | undefined
-  group_id: string | undefined
-  subgroup_name: string | undefined
-  teacher_id: string | undefined
-  teacher:  string | undefined
-  group: string | undefined
+  eng_group: string
+  filial_id: string
+  group_id: string  
+  subgroup_name: string 
+  teacher_id: string 
+  teacher:  string 
+  group: string 
 }
 
 
@@ -73,13 +74,19 @@ export type IScheduleDays = DayBells[]
 
 
 export class ApiModel {
-  public userId: string | undefined
+  public userId: string 
   public user: IUserData | undefined
-  public unsavedUser: IUserData | undefined
+  public unsavedUser: IUserData |undefined
   public pushSettings: IPushSettings 
   public isStudent: boolean
   //false когда пользователь первый раз зашел в приложение
   public isSavedUser: boolean
+
+  public validation:{
+    teacher:{
+      isTeacherError: boolean
+    }
+  }
 
   public day:{
     current_week: IDayHeader[]
@@ -98,6 +105,7 @@ export class ApiModel {
   public isSavedSchedule: boolean
 
   constructor() {
+    this.userId = ""
     this.pushSettings ={
       Hour: -1,
       Minute: -1,
@@ -115,7 +123,14 @@ export class ApiModel {
     this.isSavedSchedule = true
     this.isStudent = true
     this.isSavedUser = false
+
+    this.validation={
+      teacher:{
+        isTeacherError: false
+      }
+    }
   }
+ 
 
   public async AddPush(){
     if(this.pushSettings != undefined && this.userId != undefined){
@@ -160,10 +175,9 @@ export class ApiModel {
 
       } else if
        (userSchedule.groupName != "") {
-         console.log("SET STDENT")
         this.user = {
-          teacher: undefined,
-          teacher_id: undefined,
+          teacher: "",
+          teacher_id: "",
           group_id : userSchedule.groupId,
           group: userSchedule.groupName,
           filial_id: userSchedule.filialId,
@@ -244,9 +258,9 @@ export class ApiModel {
       teacher_id = this.user?.teacher_id;
       group_id = this.user?.group_id;
       eng = this.user?.eng_group
-      if (this.isSavedTeacher() && this.unsavedUser != undefined) {
+      if (this.isSavedTeacher() && this.unsavedUser != undefined && this.user?.teacher != undefined) {
         this.isStudent=false;
-        this.unsavedUser.teacher = this.user?.teacher
+        this.unsavedUser.teacher = this.user.teacher
       }
       else {
         this.isStudent = true;
@@ -279,6 +293,89 @@ export class ApiModel {
       this.isStudent = true
     }
   }
+
+  public async doSetTeacher(teacherName: string): Promise<boolean> {
+    console.log("DoSetTeacher", this.unsavedUser)
+    
+    if(this.unsavedUser!=undefined){
+      this.unsavedUser.teacher = teacherName
+    }
+    else{
+      this.unsavedUser  = {
+        teacher: "",
+        teacher_id: "",
+        group_id : "",
+        filial_id:"",
+        eng_group: "",
+        subgroup_name: "",
+        group: ""
+      }
+    }
+    return await this.handleTeacherChange(false);
+  }
+     
+  // todo исправить асинхронную работу
+  public  async handleTeacherChange(isSave: boolean): Promise<boolean> {
+    let result = 1;
+    let teacher_ininials = isSave ? this.user?.teacher : this.unsavedUser?.teacher
+    if(teacher_ininials!=undefined){
+      await ApiHelper.getIdTeacherFromDb(teacher_ininials).then((teacherData) => {
+        console.log('handleTeacherChange:', teacherData);
+        console.log('handleTeacherChange: status:', teacherData.status);
+  
+        result = Number(teacherData.status)
+        if (
+          (teacherData.status == "-1") ||
+          (teacherData.status == "-2")
+        ) {
+          console.log("handleTeacherChange: teacherData.status:", teacherData.status);
+          this.validation.teacher.isTeacherError = false
+          return true
+  
+        } else
+          ApiHelper.getScheduleTeacherFromDb(
+            teacherData.id,
+            getFirstDayWeek(new Date())
+          ).then((response) => {
+            console.log("handleTeacherChange: getScheduleTeacherFromDb: response", response)
+            this.SetWeekSchedule(response, 0, isSave);
+          });
+  
+        console.log('handleTeacherChange: formatTeacherName(teacherData):', formatTeacherName(teacherData))
+  
+        ApiHelper.getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
+          let  teacher = formatTeacherName(teacherData)
+          if(isSave && this.user!=undefined){
+            this.user.teacher = teacher
+          }
+          else if(this.unsavedUser!=undefined){
+            this.unsavedUser.teacher = teacher
+          }
+
+        })
+        this.validation.teacher.isTeacherError = false
+        this.isStudent = false
+        if(isSave && this.user != undefined){
+          this.user.teacher_id = teacherData.id
+          ApiHelper.createUser(
+            this.userId,
+            this.user.filial_id,
+            this.user.group_id,
+            this.user.subgroup_name,
+            this.user.eng_group,
+            this.user.teacher_id,
+          );
+        }
+        //todo: убрать проверку userId!=гтвуашткв
+        else if(this.unsavedUser!=undefined){
+          this.unsavedUser.teacher_id = teacherData.id
+        }
+        return true
+      })
+    }
+    return false
+  }
+
 
   protected isSavedTeacher() {
     return this.user!=undefined && this.user.teacher_id != "" && this.user.teacher_id != undefined

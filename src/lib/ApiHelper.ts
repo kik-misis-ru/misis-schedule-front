@@ -239,11 +239,11 @@ export async function createUser(
   const url = `${API_URL}users`;
   const data = {
     "user_id": userId,
-    "filial_id": filialId,
-    "group_id": groupId,
-    "subgroup_name": subGroup,
-    "eng_group": engGroup,
-    "teacher_id": teacher_id
+    "filial_id": filialId!=undefined ? filialId : "",
+    "group_id": groupId!=undefined ? groupId : "",
+    "subgroup_name": subGroup!=undefined ? subGroup : "",
+    "eng_group": engGroup!=undefined? engGroup : "",
+    "teacher_id": teacher_id!=undefined ? teacher_id: ""
   };
   console.log(`ApiHelper: createUser: url: "${url}", data:`, data);
 

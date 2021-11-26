@@ -11,17 +11,9 @@ import {
   createUser,
   getGroupById,
   getGroupByName,
-  getIdTeacherFromDb,
-  getInTeacherFromDb,
   getScheduleFromDb,
-  getScheduleTeacherFromDb,
-  getUser,
   IsEnglishGroupExist,
-  IScheduleApiData,
-  IScheduleLessonInfo, ITeacherApiData,
-  IScheduleFormatData,
   getSchedulebyUserId,
-  FormateSchedule, ITeacherInfo, IUserData,
 } from "./lib/ApiHelper";
 import ApiModel from "./lib/ApiModel";
 
@@ -81,7 +73,7 @@ import {
 import {
   pairNumberToPairText
 } from './language-ru/utils';
-import {formatTeacherName} from "./lib/formatters";
+
 
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
@@ -121,22 +113,11 @@ const FIRST_DAY_OTHER_WEEK = 8;
 
 export const LessonStartEnd: StartEnd[] = Array(MAX_BELL_COUNT).fill({start: "", end: ""})
 
-/**
- *
- */
-const TODAY_TOMORROW_DICT = {
-  [DAY_TODAY]: 1,
-  [DAY_TOMORROW]: 0,
-}
-
-
 export const history = createBrowserHistory();
-
 
 const getTodayDayOfWeek = () => (new Date()).getDay();
 
 //
-
 interface IAppProps {
 }
 
@@ -188,11 +169,10 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   constructor(props: IAppProps) {
     super(props);
-    this.apiModel = new ApiModel();
+    this.apiModel = new ApiModel()
     this.setValue = this.setValue.bind(this)
     this.Load_Schedule = this.Load_Schedule.bind(this)
     this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
-    this.handleTeacherChange = this.handleTeacherChange.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.getCurrentLesson = this.getCurrentLesson.bind(this);
     this.NextWeek = this.NextWeek.bind(this);
@@ -201,6 +181,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
     // this.sendAssistantData = this.sendAssistantData.bind(this);
     this.Load_Schedule = this.Load_Schedule.bind(this);
+    this.doSetTeacher = this.doSetTeacher.bind(this)
     // this.tfRef                = React.createRef();
     console.log('constructor');
     history.push("/dashboard")
@@ -268,7 +249,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       userId,
     });
 
-    await this.apiModel.fetchUser(userId)
+    this.apiModel = new ApiModel()
+    this.apiModel.fetchUser(userId)
     const user = this.apiModel.user;
     console.log('handleAssistantSub: user', user)
 
@@ -666,7 +648,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         if (this.state.student) {
           success = await this.CheckIsCorrect()
         } else {
-          success = await this.handleTeacherChange(true);
+          success = await this.apiModel.handleTeacherChange(true);
         }
       }
 
@@ -1118,6 +1100,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.setState({spinner: false});
     const datePlusWeek = this.state.date + SEVEN_DAYS;
     await this.apiModel.getScheduleFromDb(datePlusWeek, isSave, false);
+    this.setState({date: datePlusWeek})
     this.setState({spinner: true});
   }
 
@@ -1127,6 +1110,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async CurrentWeek(isSave: boolean) {
     this.setState({spinner: false});
     const date = Date.now();
+    this.setState({date: date})
     await this.apiModel.getScheduleFromDb(date, isSave, true);
     this.setState({spinner: true});
   }
@@ -1137,6 +1121,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async PreviousWeek(isSave: boolean) {
     this.setState({spinner: false});
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
+    this.setState({date: dateMinusWeek})
     await this.apiModel.getScheduleFromDb(dateMinusWeek, isSave, false);
     this.setState({spinner: true});
   }
@@ -1172,80 +1157,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log('toggleTheme:', this.state.theme)
     if (this.state.theme === "dark") this.setState({theme: "light"})
     else this.setState({theme: "dark"})
-  }
-
-  doSetTeacher(teacherName: string): void {
-    console.log("DoSetTeacher")
-    this.setState({
-      teacher: teacherName
-    }, async () => {
-      await this.handleTeacherChange(false);
-    });
-  }
-
-  // todo исправить асинхронную работу
-  async handleTeacherChange(isSave: boolean): Promise<boolean> {
-    console.log('handleTeacherChange: this.state.teacher:', this.state.teacher)
-
-    let result = 1;
-    await getIdTeacherFromDb(this.state.teacher).then((teacherData) => {
-      console.log('handleTeacherChange:', teacherData);
-      console.log('handleTeacherChange: status:', teacherData.status);
-
-      result = Number(teacherData.status)
-      if (
-        (teacherData.status == "-1") ||
-        (teacherData.status == "-2")
-      ) {
-        console.log("handleTeacherChange: teacherData.status:", teacherData.status);
-        this.setState({
-          isTeacherError: true
-        })
-        return true
-
-      } else
-        getScheduleTeacherFromDb(
-          teacherData.id,
-          getFirstDayWeek(new Date())
-        ).then((response) => {
-          console.log("handleTeacherChange: getScheduleTeacherFromDb: response", response)
-          this.apiModel.SetWeekSchedule(response, 0, isSave);
-        });
-
-      console.log('handleTeacherChange: formatTeacherName(teacherData):', formatTeacherName(teacherData))
-
-      getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
-        this.setState({
-          teacher: formatTeacherName(teacherData)
-        })
-      })
-
-      this.setState({
-        teacherId: teacherData.id,
-        teacher_correct: true,
-        date: Date.now(),
-        flag: true,
-        student: false,
-        isTeacherError: false,
-      });
-
-      if (history.location.pathname == '/home')
-        history.push('/spinner')
-
-      if (isSave) {
-        this.setState({teacher_bd: this.state.teacher, teacher_id_bd: this.state.teacherId})
-        createUser(
-          this.state.userId,
-          filial.id,
-          this.state.groupId,
-          this.state.subGroup,
-          this.state.engGroup,
-          this.state.teacherId,
-        );
-      }
-      return true
-    })
-    return false
   }
 
 
@@ -1347,6 +1258,13 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       })
 
+  }
+ async doSetTeacher(teacherName){
+    let res = await this.apiModel.doSetTeacher(teacherName)
+    if(res && (history.location.pathname == '/home')){
+      history.push('/spinner')
+    }
+    this.gotoPage(this.state.page)
   }
 
   Spinner() {
@@ -1458,7 +1376,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   bd={this.state.bd}
                   sendAssistantData={(action: AssistantSendAction) => this.assistant.sendAction(action)}
                   teacher_bd={this.state.teacher_bd}
-                  onHandleTeacherChange={this.handleTeacherChange}
+                  onHandleTeacherChange={this.apiModel.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
                   onSetValue={this.setValue}
                   description={
@@ -1509,7 +1427,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
                     onDashboardClick={() => history.push("/dashboard")}
-                    handleTeacherChange={this.handleTeacherChange}
+                    handleTeacherChange={this.apiModel.handleTeacherChange}
 
                   />
                 )
@@ -1558,7 +1476,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   groupId={this.state.group_id_bd}
                   teacherId={this.state.teacher_id_bd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
-                  handleTeacherChange={this.handleTeacherChange}
+                  handleTeacherChange={this.apiModel.handleTeacherChange}
                   apiModel={this.apiModel}
 
                 />
@@ -1572,7 +1490,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   // state={this.state}
                   CheckIsCorrect={this.CheckIsCorrect}
                   LoadSchedule={this.Load_Schedule}
-                  onHandleTeacherChange={this.handleTeacherChange}
+                  onHandleTeacherChange={this.apiModel.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
                   onSetValue={this.setValue}
                   description={
@@ -1645,7 +1563,8 @@ export class App extends React.Component<IAppProps, IAppState> {
                   this.NextWeek(this.apiModel.isSavedSchedule)
                 }}
                 getCurrentLesson={this.getCurrentLesson}
-                doSetTeacher={(teacherName: string) => this.doSetTeacher(teacherName)}
+                apiModel={ this.apiModel}
+                doSetTeacher = {this.doSetTeacher}
                 weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
                 spinner={this.state.spinner}
