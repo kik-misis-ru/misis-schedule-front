@@ -1330,6 +1330,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             render={
               ({match}) => {
                 return <HomePage
+                  assistant={this.assistant}
                   // state={this.state}
                   CheckIsCorrect={this.CheckIsCorrect}
                   LoadSchedule={this.Load_Schedule}

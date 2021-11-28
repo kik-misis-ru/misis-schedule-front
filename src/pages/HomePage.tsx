@@ -16,6 +16,7 @@ IStudentSettings,
 ITeacherSettings,
 
 } from '../lib/ApiModel'
+import {AssistantWrapper} from "../lib/AssistantWrapper";
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
@@ -113,6 +114,7 @@ const TextFieldForUserInfo = ({
 
 
 interface HomeViewProps {
+  assistant: AssistantWrapper
   character: CharacterId
   description: string
   theme: string
@@ -163,6 +165,23 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     // this.onHandleChange("description", props.character === "joy"
     //   ? DESC_JOY
     //   : DESC_OTHERS)
+  }
+
+
+  componentDidMount() {
+    this.props.assistant.on('action-group', (group) => {
+      console.log('action-group', group)
+    })
+    this.props.assistant.on('action-subGroup', (subGroup) => {
+      console.log('action-subGroup', subGroup)
+    })
+    this.props.assistant.on('action-engGroup', (engGroup) => {
+      console.log('action-engGroup', engGroup)
+    })
+  }
+
+  componentWillUnmount() {
+    this.props.assistant.removeAllListeners();
   }
 
   async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation> {

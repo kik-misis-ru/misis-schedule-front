@@ -1,5 +1,7 @@
 import {createAssistant, createSmartappDebugger} from "@sberdevices/assistant-client";
-import {App, history} from "../App";
+import EventEmitter from 'eventemitter3';
+
+import {DAY_NOT_SUNDAY, DAY_SUNDAY} from "../types/base.d";
 import {
   AssistantAction,
   AssistantEvent,
@@ -7,7 +9,7 @@ import {
   AssistantEventSmartAppData
 } from "../types/AssistantReceiveAction";
 import {AssistantSendAction} from "../types/AssistantSendAction";
-import {DAY_NOT_SUNDAY, DAY_SUNDAY} from "../types/base.d";
+import {App, history} from "../App";
 
 export const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development") {
@@ -20,12 +22,14 @@ export const initializeAssistant = (getState) => {
   return createAssistant({getState});
 };
 
+type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup';
 
-export class AssistantWrapper {
+export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
   _assistant
   _App: App
 
   constructor(_App: App) {
+    super();
     this._App = _App;
   }
 
@@ -144,6 +148,7 @@ export class AssistantWrapper {
           ? action.note[1].data.groupName[0]
           : action.note[1].data.groupName[1];
         group = group.toUpperCase();
+        this.emit('action-group', group);
         this._App.handleAssistantSetValue('group', group)
         break
 
@@ -151,6 +156,7 @@ export class AssistantWrapper {
         if (action.note) {
           const subGroup = action.note;
           this._App.handleAssistantSetValue('subGroup', subGroup )
+          this.emit('action-subGroup', subGroup);
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.note:', action.note)
         }
@@ -160,6 +166,7 @@ export class AssistantWrapper {
         if (action.group) {
           const engGroup = String(action.group);
           this._App.handleAssistantSetValue('engGroup', engGroup)
+          this.emit('action-engGroup', engGroup);
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.group:', action.group)
         }
