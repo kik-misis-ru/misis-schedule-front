@@ -425,6 +425,7 @@ const DashboardPage = ({
           onHomeClick={() => history.push('/settings')}
         />
         {
+
           apiModel.isSchedule
             ? (
               <Row>
@@ -444,7 +445,7 @@ const DashboardPage = ({
                         marginRight: "2.5em"
                       }}
                             onClick={ () => {
-                              history.push('/')
+                              history.push('/schedule')
                             }}
                       >
 

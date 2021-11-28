@@ -1361,10 +1361,11 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
           />
-          <Route path="*">
-            {
-              <SchedulePage
-                timeParam={page}
+          <Route path="/schedule:page"
+             render={
+             ({match}) => {
+                return <SchedulePage
+                timeParam={match.params.page}
                 onSetValue={this.setValue}
                 character={this.state.character}
                 theme={this.state.theme}
@@ -1382,8 +1383,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                 schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
+
+              }
             }
-          </Route>
+          />
         </Switch>
       </Router>
     )
