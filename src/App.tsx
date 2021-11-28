@@ -15,7 +15,10 @@ import {
   IsEnglishGroupExist,
   getSchedulebyUserId,
 } from "./lib/ApiHelper";
-import ApiModel from "./lib/ApiModel";
+import ApiModel, 
+{IStudentValidation,
+  IStudentSettings
+} from "./lib/ApiModel";
 
 import DashboardPage from './pages/DashboardPage';
 
@@ -654,9 +657,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       if (history.location == HOME_PAGE_ROUTE) {
         if (this.state.student) {
-          success = await this.CheckIsCorrect()
+          //TODO!!!!!!!!!
+          //success = await this.CheckIsCorrect()
         } else {
-          success = await this.apiModel.handleTeacherChange(true);
+          //TODO!!!!
+          // success = (await this.apiModel.handleTeacherChange(true)).IsInitialsError;
         }
       }
 
@@ -1176,15 +1181,18 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  async _loadSchedule({
-                        groupId,
-                        engGroup,
-                        isSave
-                      }: { groupId: string, engGroup: string, isSave: boolean }): Promise<void> {
-    console.log('LOAD_SCHEDULE:', groupId, engGroup)
+  async _loadSchedule(isSave: boolean): Promise<void> {
+    let group_id = isSave ? this.apiModel.user?.group_id : this.apiModel.unsavedUser?.group_id
+    let eng_group = isSave ?  this.apiModel.user?.eng_group : this.apiModel.unsavedUser?.eng_group
+    if(eng_group == undefined){
+      eng_group = ""
+    }
+    if(group_id == undefined){
+      return
+    }
     await getScheduleFromDb(
-      groupId,
-      String(engGroup),
+      group_id,
+      String(eng_group),
       getFirstDayWeek(new Date())
     )
       .then((response) => {
@@ -1200,26 +1208,22 @@ export class App extends React.Component<IAppProps, IAppState> {
       })
   }
 
-  async Load_Schedule(isSave: boolean): Promise<void> {
+  async Load_Schedule( isSave: boolean): Promise<void> {
     console.log("Load_Schedule. IsSave:", isSave)
-    return await this._loadSchedule({
-      groupId: this.state.groupId,
-      engGroup: String(this.state.engGroup),
-      isSave
-    });
+    return await this._loadSchedule(isSave);
   }
 
   //Проверяет правильность ввода данных студента
-  async CheckIsCorrect(): Promise<boolean> {
-    console.log('App: isCorrect')
-    this.setState({correct: false, date: Date.now(), flag: true});
-    let correct_sub = false;
-    let correct_eng = false;
-    let correct = false;
-    console.log("this.state.engGroup", this.state.engGroup)
-
-    let promiseGroupName = getGroupByName(this.state.group);
-    let promiseEnglishGroup = IsEnglishGroupExist(Number(this.state.engGroup));
+  async CheckIsCorrect(settings: IStudentSettings, isSave: boolean): Promise<IStudentValidation> {
+    console.log('App: isCorrect', settings)
+    //this.setState({correct: false, date: Date.now(), flag: true});
+    let IsError: IStudentValidation ={
+      IsGroupNameError: true,
+      IsSubGroupError: true,
+      IsEngGroupError: true
+    }
+    let promiseGroupName = getGroupByName(settings.groupName);
+    let promiseEnglishGroup = IsEnglishGroupExist(Number(settings.engGroupName));
 
     return Promise.all([
       promiseGroupName,
@@ -1235,46 +1239,52 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log("App: isCorrect: response: english", english_response);
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")
-          this.setState({group: group.name, groupId: group.id})
-          correct = true;
+          //this.setState({group: group.name, groupId: group.id})
+          IsError.IsGroupNameError = false;
         }
         console.log(this.state.groupId, "group Id");
-        if (english_response || this.state.engGroup == "") {
-          correct_eng = true;
-          console.log(`App: isCorrect: correct_eng: ${correct_eng}`);
+        if (english_response || settings.engGroupName == "") {
+          IsError.IsEngGroupError = false;
+          console.log(`App: isCorrect: correct_eng: ${ IsError.IsEngGroupError}`);
         }
-        if ((this.state.subGroup === "") || (this.state.subGroup.replace(/[\s-_.]/g, '') === "1") || (this.state.subGroup.replace(/[\s-_.]/g, '') === "2")) {
-          correct_sub = true;
+        if ((settings.subGroupName === "") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "1") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "2")) {
+          IsError.IsSubGroupError = false;
         }
-        this.setState({isEngGroupError: !correct_eng, isSubGroupError: !correct_sub, isGroupError: !correct})
+        //this.setState({isEngGroupError: !correct_eng, isSubGroupError: !correct_sub, isGroupError: !correct})
         const groupId = String(group.id);
-        let isCorrect = correct_eng && correct_sub && correct
-        if ((isCorrect && this.state.checked) || (history.location.pathname != '/home')) {
+        let isCorrect = !IsError.IsEngGroupError && !IsError.IsGroupNameError && !IsError.IsSubGroupError
+        if (isCorrect && isSave) {
           console.log("create_user", history.location.pathname)
-          this.setState({
-            groupId: groupId,
-            group: group.name,
-            bd: this.state.group,
-            correct: true,
-            group_id_bd: groupId,
-            eng_bd: this.state.engGroup,
-            sub_bd: this.state.subGroup,
-            teacher_id_bd: "",
-          }, () => {
-            createUser(
-              this.state.userId,
-              filial.id,
-              group.id,
-              this.state.subGroup,
-              this.state.engGroup,
-              "")
-          })
+          let updateUser ={
+            group_id: groupId,
+            group : group.name,
+            eng_group: settings.engGroupName,
+            subgroup_name: settings.subGroupName,
+            teacher_id: "",
+            teacher: "",
+            filial_id: this.apiModel.user== undefined ? "" : this.apiModel.user.filial_id
+          }
+          if(isSave){
+            this.apiModel.user = updateUser
+          }
+          else{
+            this.apiModel.unsavedUser = updateUser
+          }
+          
+          
+          createUser(
+            this.apiModel.userId,
+            filial.id,
+            group.id,
+            settings.subGroupName,
+            settings.engGroupName,
+            ""
+          )
         }
-        return isCorrect
-
+        return IsError
       })
-
-  }
+      
+    }
  async doSetTeacher(teacherName){
     let res = await this.apiModel.doSetTeacher(teacherName)
     if(res && (history.location.pathname == '/home')){
@@ -1389,36 +1399,20 @@ export class App extends React.Component<IAppProps, IAppState> {
               ({match}) => {
                 return <Settings
                   userId={this.state.userId}
-                  bd={this.state.bd}
                   sendAssistantData={(action: AssistantSendAction) => this.assistant.sendAction(action)}
-                  teacher_bd={this.state.teacher_bd}
-                  onHandleTeacherChange={this.apiModel.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
-                  onSetValue={this.setValue}
                   description={
                     this.state.character === 'joy'
                       ? ENTER_DATA_NO_OFFICIAL_TEXT
                       : ENTER_DATA_OFFICIAL_TEXT
                   }
                   character={this.state.character}
-                  checked={this.state.checked}
                   onDashboardClick={() => history.push("/dashboard")}
-                  groupId={this.state.groupId}
-                  group={this.state.group}
                   theme={this.state.theme}
                   toggleTheme={() => this.toggleTheme()}
-                  isGroupError={this.state.isGroupError}
-                  subGroup={this.state.subGroup}
                   dayPush={this.state.dayPush}
-                  isSubGroupError={this.state.isSubGroupError}
                   CheckIsCorrect={this.CheckIsCorrect}
-                  engGroup={this.state.engGroup}
-                  isEngGroupError={this.state.isEngGroupError}
                   LoadSchedule={() => this.Load_Schedule(true)}
-                  student={this.state.student}
-                  teacher={this.state.teacher}
-                  isTeacherError={this.state.isTeacherError}
-                  teacher_checked={this.state.teacher_checked}
                   apiModel={this.apiModel}
                 />
               }
@@ -1508,7 +1502,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   LoadSchedule={this.Load_Schedule}
                   onHandleTeacherChange={this.apiModel.handleTeacherChange}
                   onConvertIdInGroupName={this.convertIdInGroupName}
-                  onSetValue={this.setValue}
                   description={
                     this.state.character === 'joy'
                       ? ENTER_DATA_NO_OFFICIAL_TEXT
@@ -1516,24 +1509,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                   }
                   character={this.state.character}
                   theme={this.state.theme}
-                  checked={this.state.checked}
                   onShowScheduleClick={() => {
                     history.push('/spinner')
                   }}
-                  groupId={this.state.groupId}
-                  group={this.state.group}
-                  isGroupError={this.state.isGroupError}
-                  subGroup={this.state.subGroup}
-                  isSubGroupError={this.state.isSubGroupError}
-
-                  engGroup={this.state.engGroup}
-                  isEngGroupError={this.state.isEngGroupError}
-
-                  student={this.state.student}
-                  teacher={this.state.teacher}
-                  isTeacherError={this.state.isTeacherError}
-                  // handleTeacherChange={this.handleTeacherChange}
-                  teacher_checked={this.state.teacher_checked}
+                  apiModel={this.apiModel}
                 />
               }
             }

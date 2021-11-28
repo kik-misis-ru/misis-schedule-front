@@ -24,6 +24,23 @@ export interface IDay {
   other_week: IDayHeader[]
 }
 
+export interface IStudentSettings{
+  groupName: string,
+  subGroupName: string,
+  engGroupName: string
+}
+export interface ITeacherSettings{
+  initials: string
+}
+export interface IStudentValidation{
+  IsGroupNameError: boolean,
+  IsSubGroupError: boolean,
+  IsEngGroupError: boolean
+}
+export interface ITeacherValidation{
+  IsInitialsError: boolean
+}
+
 export const DEFAULT_STATE_WEEK_DAY = [
   {
     title: 'Пн',
@@ -311,19 +328,22 @@ export class ApiModel {
         group: ""
       }
     }
-    return await this.handleTeacherChange(false);
+    let teacher: ITeacherSettings = {initials: teacherName}
+    return !(await (await this.handleTeacherChange(teacher, false)).IsInitialsError);
   }
      
   // todo исправить асинхронную работу
-  public  async handleTeacherChange(isSave: boolean): Promise<boolean> {
-    let result = 1;
-    let teacher_ininials = isSave ? this.user?.teacher : this.unsavedUser?.teacher
-    if(teacher_ininials!=undefined){
-      await ApiHelper.getIdTeacherFromDb(teacher_ininials).then((teacherData) => {
+  public  async handleTeacherChange(settings: ITeacherSettings, isSave: boolean): Promise<ITeacherValidation> {
+    let result: ITeacherValidation ={
+      IsInitialsError: true
+    }
+    if(settings.initials!=undefined){
+      await ApiHelper.getIdTeacherFromDb(settings.initials).then((teacherData) => {
         console.log('handleTeacherChange:', teacherData);
         console.log('handleTeacherChange: status:', teacherData.status);
   
-        result = Number(teacherData.status)
+        console.log("Number(teacherData.status)", Number(teacherData.status))
+        result.IsInitialsError = Number(teacherData.status)!=1
         if (
           (teacherData.status == "-1") ||
           (teacherData.status == "-2")
@@ -344,7 +364,7 @@ export class ApiModel {
         console.log('handleTeacherChange: formatTeacherName(teacherData):', formatTeacherName(teacherData))
   
         ApiHelper.getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
-          let  teacher = formatTeacherName(teacherData)
+          let  teacher = formatTeacherName(parsedTeacher2)
           if(isSave && this.user!=undefined){
             this.user.teacher = teacher
           }
@@ -370,10 +390,10 @@ export class ApiModel {
         else if(this.unsavedUser!=undefined){
           this.unsavedUser.teacher_id = teacherData.id
         }
-        return true
+        return result
       })
     }
-    return false
+    return result
   }
 
 

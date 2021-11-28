@@ -8,7 +8,14 @@ import {
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
 import {IAppState, SetValueFn, SetValueKeys} from "../App";
+import{
+  ApiModel,
+IStudentValidation,
+ITeacherValidation,
+IStudentSettings,
+ITeacherSettings,
 
+} from '../lib/ApiModel'
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
@@ -106,60 +113,63 @@ const TextFieldForUserInfo = ({
 
 
 interface HomeViewProps {
-  groupId: string
   character: CharacterId
-  checked: boolean
   description: string
   theme: string
-  onSetValue: SetValueFn
-  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
+  onHandleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   // handleTeacherChange
   onConvertIdInGroupName: () => void
-  CheckIsCorrect: () => Promise<boolean>
+  CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
   LoadSchedule: (isSave: boolean) => void
   onShowScheduleClick: () => void
-
-  group: string
-  isGroupError: boolean
-
-  subGroup: string
-  isSubGroupError: boolean
-
-  engGroup: string
-  isEngGroupError: boolean
-
-  student: boolean
-  teacher: string
-  isTeacherError: boolean
-  teacher_checked: boolean
+  apiModel: ApiModel
 }
 
 interface HomeViewState {
   disabled: boolean
+  studentSettings: IStudentSettings
+  teacherSettings: ITeacherSettings
+  studentValidation: IStudentValidation
+  teacherValidation: ITeacherValidation
+  IsStudent: boolean
+  IsSave: boolean
 }
 
 class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   constructor(props: HomeViewProps) {
     super(props);
-    this.onHandleChange = this.onHandleChange.bind(this)
+    //this.onHandleChange = this.onHandleChange.bind(this)
     this.Load_Schedule = this.Load_Schedule.bind(this)
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     let disabled = true;
-    if (props.groupId !== "") disabled = false;
-    this.state = {disabled: disabled}
+    if (props.apiModel.user!=undefined && props.apiModel.user?.group_id !== "") disabled = false;
+    let user = this.props.apiModel.user;
+    this.state = {
+      disabled: disabled,
+      studentSettings:{
+        groupName: user==undefined? "" : user.group,
+        subGroupName: user==undefined? "" : user.subgroup_name,
+        engGroupName: user==undefined? "" : user.eng_group,
+      },
+      IsStudent: this.props.apiModel.isStudent,
+      teacherSettings:{
+        initials: user == undefined ? "" : user.teacher
+      },
+      studentValidation: {
+        IsGroupNameError: false, 
+        IsSubGroupError: false,
+        IsEngGroupError: false},
+      teacherValidation : {IsInitialsError: false},
+      IsSave: false
+    }
     // this.onHandleChange("description", props.character === "joy"
     //   ? DESC_JOY
     //   : DESC_OTHERS)
   }
 
-  onHandleChange<K extends SetValueKeys
-    >(key: K, value: IAppState[K]): void {
-    this.props.onSetValue(key, value);
-  }
-
-  async CheckIsCorrect() {
-    return await this.props.CheckIsCorrect();
+  async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation> {
+    return await this.props.CheckIsCorrect(student, isSave);
   }
 
   Load_Schedule(isSave: boolean) {
@@ -189,8 +199,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <TabSelectorRow
           tabs={USER_MODES}
-          selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
+          selectedIndex={this.state.IsStudent ? 0 : 1}
+          onSelect={(tabIndex) => this.setState({IsStudent: tabIndex === 0})}
         />
 
         <HomeDescription
@@ -199,36 +209,61 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <TextFieldForUserInfo
           label={LABEL_GROUP}
-          isError={this.props.isGroupError}
-          value={this.props.group}
-          onChange={(value) => this.onHandleChange('group', value)}
+          isError={this.state.studentValidation.IsGroupNameError}
+          value={this.state.studentSettings.groupName}
+          onChange={(value) => this.setState({
+            studentSettings:
+            {
+              groupName: value,
+              engGroupName: this.state.studentSettings.engGroupName,
+              subGroupName: this.state.studentSettings.subGroupName
+            }
+          })
+        }
+
         />
 
         <TextFieldForUserInfo
           label={LABEL_SUB_GROUP}
-          isError={this.props.isSubGroupError}
-          value={this.props.subGroup}
-          onChange={(value) => this.onHandleChange('subGroup', value)}
+          isError={this.state.studentValidation.IsSubGroupError}
+          value={this.state.studentSettings.subGroupName}
+          onChange={(value) => this.setState({
+            studentSettings:
+            {
+              groupName: this.state.studentSettings.groupName,
+              engGroupName: this.state.studentSettings.engGroupName,
+              subGroupName: value
+            }
+          })
+        }
         />
 
         <TextFieldForUserInfo
           label={LABEL_ENG_GROUP}
-          isError={this.props.isEngGroupError}
-          value={this.props.engGroup}
-          onChange={(value) => this.onHandleChange('engGroup', value)}
+          isError={this.state.studentValidation.IsEngGroupError}
+          value={this.state.studentSettings.engGroupName}
+          onChange={(value) => this.setState({
+            studentSettings:
+            {
+              groupName: this.state.studentSettings.groupName,
+              engGroupName: value,
+              subGroupName: this.state.studentSettings.subGroupName
+            }
+          })
+        }
         />
 
         <RememberCheckboxRow
           label={LABEL_REMEMBER_GROUP}
-          checked={this.props.checked}
-          onChange={(value) => this.onHandleChange('checked', value)}
+          checked={this.state.IsSave}
+          onChange={(value) => this.setState({IsSave:value})}
         />
 
         <ShowScheduleButtonRow
           onClick={async () => {
-            let isCorrect = await this.CheckIsCorrect()
+            let isCorrect = await this.CheckIsCorrect(this.state.studentSettings, this.state.IsSave)
             if (isCorrect) {
-              await this.Load_Schedule(this.props.checked)
+              await this.Load_Schedule(this.state.IsSave)
               this.props.onShowScheduleClick()
             }
 
@@ -249,8 +284,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <TabSelectorRow
           tabs={USER_MODES}
-          selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
+          selectedIndex={this.state.IsStudent ? 0 : 1}
+          onSelect={(tabIndex) => this.setState({IsStudent: tabIndex === 0})}
         />
 
         <HomeDescription
@@ -259,27 +294,26 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <TextFieldForUserInfo
           label={LABEL_TEACHER}
-          value={this.props.teacher}
-          isError={this.props.isTeacherError}
-          onChange={(value) => this.onHandleChange('teacher', value)}
+          value={this.state.teacherSettings.initials}
+          isError={this.state.teacherValidation.IsInitialsError}
+          onChange={(value) => this.setState({teacherSettings: {initials: value}})}
         />
 
         <RememberCheckboxRow
           label={LABEL_REMEMBER_FIO}
-          checked={this.props.teacher_checked}
-          onChange={(value: boolean) => {
-            this.onHandleChange("teacher_checked", value);
-          }}
+          checked={this.state.IsSave}
+          onChange={(value) => this.setState({IsSave:value})
+          }
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onHandleTeacherChange(this.props.teacher_checked)}
+          onClick={() => this.props.onHandleTeacherChange(this.state.teacherSettings, this.state.IsSave)}
         />
 
       </Container>
     )
 
-    const mainContent = this.props.student
+    const mainContent = this.state.IsStudent
       ? studentContent
       : teacherContent;
 

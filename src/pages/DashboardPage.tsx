@@ -10,7 +10,7 @@ import {
   Caption
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
-import {ApiModel} from '../lib/ApiModel'
+import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 import {
   Card,
   CardBody,
@@ -44,6 +44,9 @@ import {
 import {
   capitalize,
 } from '../lib/utils';
+import{
+  ITeacherValidation
+} from '../lib/ApiModel'
 import {
   formatTimeHhMm,
 } from '../lib/datetimeUtils';
@@ -406,7 +409,7 @@ const DashboardPage = ({
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
-  handleTeacherChange: (isSave: boolean) => Promise<boolean>
+  handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   apiModel: ApiModel
 
 }) => {
@@ -471,7 +474,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={true}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
+                                    onTeacherClick={(teacherName) => handleTeacherChange({initials: currentLesson.teacher}, false)}
                                   />
                                 )
                                 : <NoLesson/>
@@ -501,7 +504,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={() => handleTeacherChange(false)}
+                                    onTeacherClick={() => handleTeacherChange({initials: nextLesson.teacher}, false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>

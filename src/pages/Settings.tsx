@@ -21,7 +21,11 @@ import {
   addUserToPushNotification,
 } from "../lib/ApiHelper";
 import {
-  ApiModel
+  ApiModel,
+  IStudentSettings,
+  ITeacherSettings,
+  IStudentValidation,
+  ITeacherValidation
 } from '../lib/ApiModel'
 import {
   getThemeBackgroundByChar,
@@ -35,6 +39,8 @@ import {
   HeaderTitleCol2,
 } from '../components/TopMenu';
 import internal from "stream";
+import { threadId } from "worker_threads";
+import { connected } from "process";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
@@ -127,33 +133,16 @@ const TextFieldForUserInfo = ({
 
 interface SettingsProps {
   userId: string
-  groupId: string
   character: CharacterId
-  bd: string
-  teacher_bd: string
-  checked: boolean
   description: string
   sendAssistantData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
-  onSetValue: SetValueFn
-  onHandleTeacherChange: (isSave: boolean) => Promise<boolean>
-  // handleTeacherChange
   onConvertIdInGroupName: () => void
-  group: string
-  isGroupError: boolean
   theme: string
   toggleTheme: () => void
-  subGroup: string
-  isSubGroupError: boolean
-  engGroup: string
-  isEngGroupError: boolean
-  CheckIsCorrect: () => Promise<boolean>
+  CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
   LoadSchedule: () => void
-  student: boolean
   dayPush: number
-  teacher: string
-  isTeacherError: boolean
-  teacher_checked: boolean
   apiModel: ApiModel
 }
 
@@ -168,7 +157,11 @@ interface SettingsState {
   theme: boolean
   themeName: string
   dayPush: number
-
+  studentSettings: IStudentSettings
+  teacherSettings: ITeacherSettings
+  studentValidation: IStudentValidation
+  teacherValidation: ITeacherValidation
+  IsStudent: boolean
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
@@ -176,15 +169,15 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   constructor(props: SettingsProps) {
     super(props);
 
-    this.onHandleChange = this.onHandleChange.bind(this);
+   // this.onHandleChange = this.onHandleChange.bind(this);
     this.Save = this.Save.bind(this);
     this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
-    this.onHandleTeacherChange = this.props.onHandleTeacherChange.bind(this);
     this.Load_Schedule = this.props.LoadSchedule.bind(this)
     console.log()
     let edit=false;
-    this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
+   // this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
     let pushSettings = this.props.apiModel.pushSettings
+    let user = this.props.apiModel.user;
     this.state = {disabled: pushSettings.IsActive,
       dayPush: this.props.dayPush,
       timePush: {
@@ -195,6 +188,20 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       edit: edit,
       theme: false,
       themeName: this.props.theme,
+      studentSettings:{
+        groupName: user?.group==undefined? "" : user.group,
+        subGroupName: user?.subgroup_name==undefined? "" : user.subgroup_name,
+        engGroupName: user?.eng_group==undefined? "" : user.eng_group,
+      },
+      IsStudent: this.props.apiModel.isStudent,
+      teacherSettings:{
+        initials: user?.teacher == undefined ? "" : user.teacher
+      },
+      studentValidation: {
+        IsGroupNameError: false, 
+        IsSubGroupError: false,
+        IsEngGroupError: false},
+      teacherValidation : {IsInitialsError: false}
     };
     // this.onHandleChange("description", props.character === "joy"
     //   ? DESC_JOY
@@ -202,18 +209,16 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   }
 
 
-  onHandleChange<K extends SetValueKeys
-    >(
-      key: K,
-      value: IAppState[K]
-  ): void {
-    this.props.onSetValue(key, value);
-  }
-  async onHandleTeacherChange(isSave: boolean) : Promise<boolean>{
-    return await this.props.onHandleTeacherChange(isSave);
-  }
-  async CheckIsCorrect(){
-    return await this.props.CheckIsCorrect();
+  // onHandleChange<K extends SetValueKeys
+  //   >(
+  //     key: K,
+  //     value: IAppState[K]
+  // ): void {
+  //   this.props.onSetValue(key, value);
+  // }
+
+  async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation>{
+    return await this.props.CheckIsCorrect(student, isSave);
   }
   Load_Schedule(){
     this.props.LoadSchedule()
@@ -233,24 +238,28 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
-      if(this.props.student){
-        let isCorrect = await this.CheckIsCorrect()
-        if(isCorrect && this.props.student){
+      if(this.state.IsStudent){
+        let studentValidation = await this.CheckIsCorrect(this.state.studentSettings, true)
+        await this.setState({studentValidation: studentValidation})
+        if(!studentValidation.IsGroupNameError && !studentValidation.IsSubGroupError && !studentValidation.IsEngGroupError){
           await this.Load_Schedule()
           this.setState({edit: false })
          }
       }
 
       else{
-        console.log("TEACHER CHECK")
-        this.onHandleTeacherChange(true).then((response)=>{
-          if(response){
+        this.props.apiModel.handleTeacherChange(this.state.teacherSettings, true).then((response)=>{
+          console.log("response.IsInitialsError", response.IsInitialsError)
+          if(!response.IsInitialsError){
             this.setState({edit: false })
+          }
+          else{
+            this.setState({teacherValidation: {IsInitialsError: true}})
           }
         })
       }
-      if (!this.props.isTeacherError && !this.props.student) this.setState({edit: false })
-     console.log("CHECK",!this.props.isTeacherError && !this.props.student)
+     // if (!this.props.isTeacherError && !this.props.student) this.setState({edit: false })
+     //console.log("CHECK",!this.props.isTeacherError && !this.props.student)
      this.props.apiModel.pushSettings = 
      {
        Hour: this.state.timePush.hour,
@@ -311,38 +320,48 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
             alignItems: "center", margin: "0 0 1.5em 0"}}>
               <TabSelectorRow
           tabs={USER_MODES}
-          selectedIndex={this.props.student ? 0 : 1}
-          onSelect={(tabIndex) => this.onHandleChange("student", tabIndex === 0)}
+          selectedIndex={this.state.IsStudent ? 0 : 1}
+          onSelect={(tabIndex) => this.setState({IsStudent: tabIndex === 0})}
         />
-        { this.props.student ?
+        { this.state.IsStudent ?
           <Col size={4} style={{marginTop: "1em"}}>
            <TextFieldForUserInfo
           label={LABEL_GROUP}
-          isError={this.props.isGroupError}
-          value={this.props.group}
-          onChange={(value) => this.onHandleChange('group', value)}
+          isError={this.state.studentValidation.IsGroupNameError}
+          value={this.state.studentSettings.groupName}
+          onChange={(value) => this.setState({studentSettings: 
+            {groupName: value,
+            subGroupName: this.state.studentSettings.subGroupName,
+          engGroupName: this.state.studentSettings.engGroupName}})}
         />
 
         <TextFieldForUserInfo
           label={LABEL_SUB_GROUP}
-          isError={this.props.isSubGroupError}
-          value={this.props.subGroup}
-          onChange={(value) => this.onHandleChange('subGroup', value)}
+          isError={this.state.studentValidation.IsSubGroupError}
+          value={this.state.studentSettings.subGroupName}
+          onChange={(value) =>  this.setState(
+            {studentSettings: 
+            {groupName: this.state.studentSettings.groupName,
+            subGroupName: value,
+          engGroupName: this.state.studentSettings.engGroupName}})}
         />
 
         <TextFieldForUserInfo
           label={LABEL_ENG_GROUP}
-          isError={this.props.isEngGroupError}
-          value={this.props.engGroup}
-          onChange={(value) => this.onHandleChange('engGroup', value)}
+          isError={this.state.studentValidation.IsEngGroupError}
+          value={this.state.studentSettings.engGroupName}
+          onChange={(value) =>  this.setState({studentSettings: 
+            {groupName: this.state.studentSettings.groupName,
+            subGroupName: this.state.studentSettings.subGroupName,
+          engGroupName: value}})}
         />
           </Col> :
           <Col size={4}>
            <TextFieldForUserInfo
           label={LABEL_TEACHER}
-          value={this.props.teacher}
-          isError={this.props.isTeacherError}
-          onChange={(value) => this.onHandleChange('teacher', value)}
+          value={this.state.teacherSettings.initials}
+          isError={this.state.teacherValidation.IsInitialsError}
+          onChange={(value) => this.setState({teacherSettings: {initials: value}})}
         />
           </Col>
         }
@@ -399,41 +418,41 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         <Headline2 style={{margin: "0 0 1em 0"}}> Мои параметры </Headline2>
           </Col>
           {
-            this.props.student && this.props.bd!=""
+            this.state.IsStudent && this.state.studentSettings.groupName!=""
 
               ? (<Col size={10}>
 
-                {this.props.bd != "" ?
+                { this.state.studentSettings.groupName != "" ?
                  <TextBox>
                   <TextBoxLabel >
                     Номер академической группы
                   </TextBoxLabel>
-                  <Headline4>{this.props.bd} </Headline4>
+                  <Headline4>{ this.state.studentSettings.groupName} </Headline4>
                 </TextBox> : <div></div> }
-                {this.props.subGroup != "" ?
+                { this.state.studentSettings.subGroupName != "" ?
                  <TextBox>
                   <TextBoxLabel >
                     Номер подгруппы
                   </TextBoxLabel>
-                  <Headline4>{this.props.subGroup} </Headline4>
+                  <Headline4>{ this.state.studentSettings.subGroupName} </Headline4>
                 </TextBox> : <div></div> }
-                {this.props.engGroup != "" ?
+                {this.state.studentSettings.engGroupName != "" ?
                  <TextBox>
                   <TextBoxLabel >
                     Номер группы по английскому
                   </TextBoxLabel>
-                  <Headline4>{this.props.engGroup} </Headline4>
+                  <Headline4>{this.state.studentSettings.engGroupName} </Headline4>
                 </TextBox> : <div></div> }
 
                   </Col>
               )
               : (<Col size={10}>
-                {this.props.teacher_bd != "" ?
+                {this.state.teacherSettings.initials != "" ?
                 <TextBox>
                   <TextBoxLabel>
                    ФИО
                   </TextBoxLabel>
-                  <Headline4>{this.props.teacher_bd}</Headline4>
+                  <Headline4>{this.state.teacherSettings.initials}</Headline4>
                   </TextBox>
                   : <div></div> }
                   </Col>

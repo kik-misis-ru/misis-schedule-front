@@ -8,6 +8,10 @@ import {
   StartEnd,
   LessonStartEnd,
 } from '../App';
+import{
+  ITeacherSettings,
+ITeacherValidation
+}from '../lib/ApiModel'
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
@@ -37,7 +41,7 @@ const Lesson = (props: {
   theme: string 
   pageNo: number
   onDashboardClick: () => void
-  handleTeacherChange: (isSave: boolean) => Promise<boolean>
+  handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   onGoToPage: (page: number) => void
 }) => {
   const {
@@ -92,7 +96,7 @@ const Lesson = (props: {
             isAccented={true}
             onGoToPage={(page)=> onGoToPage(page)}
             // todo: задавать имя преподавателя
-            onTeacherClick={() => handleTeacherChange(false)}
+            onTeacherClick={() => handleTeacherChange({initials: currentLesson.teacher},false)}
           />
           : <div></div>
       }
