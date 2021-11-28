@@ -643,7 +643,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async handleAssistantShowSchedule(actionNote: string | undefined) {
-    console.log('dispatchAssistantAction: show schedule');
+    console.log('dispatchAssistantAction: show schedule', actionNote);
     if (actionNote) {
 
       const isStudent = !actionNote.includes("препод")
