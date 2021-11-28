@@ -91,16 +91,12 @@ const NavigatorPage = ({
                          buildings,
                          isMobileDevice,
                          onDashboardClick,
-                         onHomeClick,
-                         onScheduleClick,
                        }: {
   character: CharacterId
   theme: string
   buildings: IBuilding[]
   isMobileDevice: boolean
   onDashboardClick: () => void
-  onHomeClick: () => void
-  onScheduleClick: () => void
 }) => {
   return <DeviceThemeProvider>
     <DocStyle/>

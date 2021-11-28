@@ -446,7 +446,7 @@ const DashboardPage = ({
                         marginRight: "2.5em"
                       }}
                             onClick={ () => {
-                              history.push('/spinner')
+                              history.push('/')
                             }}
                       >
 

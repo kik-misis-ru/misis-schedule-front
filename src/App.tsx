@@ -583,7 +583,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       if (success) {
         await this.Load_Schedule(this.apiModel.isSavedSchedule)
-        history.push('/spinner')
+        history.push('/')
       }
 
     }
@@ -1061,9 +1061,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   ChangePage() {
     let timeParam = this.state.page;
-    if ('/spinner' == history.location) {
-      return
-    }
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
     console.log("timeParam", timeParam)
     console.log("WeekParam", weekParam)
@@ -1181,7 +1178,7 @@ export class App extends React.Component<IAppProps, IAppState> {
  async doSetTeacher(teacherName){
     let res = await this.apiModel.doSetTeacher(teacherName)
     if(res && (history.location.pathname == '/home')){
-      history.push('/spinner')
+      history.push('/')
     }
     this.gotoPage(this.state.page)
   }
@@ -1274,12 +1271,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   isMobileDevice={detectDevice() === "mobile"}
                   onDashboardClick={() => {
                     history.push("/dashboard")
-                  }}
-                  onHomeClick={() => {
-                    history.push("/home")
-                  }}
-                  onScheduleClick={() => {
-                    history.push('/spinner')
                   }}
                 />
               }
@@ -1398,7 +1389,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   character={this.state.character}
                   theme={this.state.theme}
                   onShowScheduleClick={() => {
-                    history.push('/spinner')
+                    history.push('/')
                   }}
                   apiModel={this.apiModel}
                 />
@@ -1417,17 +1408,8 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
           />
-          <Route
-            path="/spinner"
-            render={
-              ({match}) => {
-                return this.Spinner()
-              }
-            }
-          />
           <Route path="*">
             {
-              (page >= 1 && page <= 13) &&
               <SchedulePage
                 timeParam={page}
                 onSetValue={this.setValue}
@@ -1440,6 +1422,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 groupName={this.apiModel.isSavedSchedule ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
                 apiModel={ this.apiModel}
                 doSetTeacher = {this.doSetTeacher}
+                
                 weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
                 spinner={this.state.spinner}
