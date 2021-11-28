@@ -36,7 +36,6 @@ const Lesson = (props: {
   character: CharacterId
   isTeacherAndValid: boolean,
   currentLesson: Bell,
-  spinner: Boolean,
   currentLessonStartEnd: StartEnd,
   theme: string 
   pageNo: number
@@ -47,7 +46,6 @@ const Lesson = (props: {
   const {
     character,
     theme,
-    spinner,
     currentLesson,
     isTeacherAndValid,
     currentLessonStartEnd,
@@ -87,9 +85,9 @@ const Lesson = (props: {
       </Row>
       <Row>
         <Col style={{overflow: "hidden"}}>
-      {
-        spinner === true
-          ? <LessonCard
+      
+       
+          <LessonCard
             lesson={currentLesson}
             startEndTime={currentLessonStartEnd}
             isTeacherAndValid={isTeacherAndValid}
@@ -98,8 +96,7 @@ const Lesson = (props: {
             // todo: задавать имя преподавателя
             onTeacherClick={() => handleTeacherChange({initials: currentLesson.teacher},false)}
           />
-          : <div></div>
-      }
+     
       </Col>
       </Row>
 

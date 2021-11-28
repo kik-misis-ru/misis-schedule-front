@@ -36,7 +36,6 @@ export interface ScheduleViewProps {
   getCurrentLesson: (Date) => string
   weekParam: number
   day: IDayHeader[]
-  spinner: boolean
   today: number
   schedule: {
     current_week: IScheduleDays
@@ -106,7 +105,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     }
 
     let apiModel =this.props.apiModel;
-    let groupName = apiModel.isSavedUser ? apiModel.user?.group : apiModel.unsavedUser?.group
+    //let groupName = apiModel.isSavedUser ? apiModel.user?.group : apiModel.unsavedUser?.group
     let subGroupName = apiModel.isSavedUser ? apiModel.user?.subgroup_name : apiModel.unsavedUser?.subgroup_name
     let teacher =this.props.apiModel.isSavedUser? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
     if(teacher == undefined){
@@ -128,7 +127,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       
     }
 
-    console.log('ScheduleView: spinner:', this.props.spinner)
     console.log('ScheduleView: schedule', this.props.schedule)
 
     return (
@@ -204,7 +202,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <ScheduleDay
-            isReady={this.props.spinner}
+            isReady={this.props.apiModel.isSchedule}
             // days={this.state.days}
             // day_num={day_num}
             dayLessons={
