@@ -102,7 +102,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     }
 
     let apiModel =this.props.apiModel;
-    let groupName = apiModel.isSavedUser ? apiModel.user?.group : apiModel.unsavedUser?.group
+    //let groupName = apiModel.isSavedUser ? apiModel.user?.group : apiModel.unsavedUser?.group
     let subGroupName = apiModel.isSavedUser ? apiModel.user?.subgroup_name : apiModel.unsavedUser?.subgroup_name
     let teacher =this.props.apiModel.isSavedUser? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
     if(teacher == undefined){
