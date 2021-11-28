@@ -28,6 +28,7 @@ const FIRST_DAY_OTHER_WEEK = 8;
 export interface ScheduleViewProps {
   apiModel: ApiModel
   timeParam: number
+  groupName: string | undefined
   onSetValue: (string, any) => void
   PreviousWeek: () => void
   CurrentWeek: () => void
@@ -116,7 +117,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       page: this.props.weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0,
       formatDate: (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`,
       isTeacher: getIsCorrectTeacher(),
-      groupName: formatFullGroupName(groupName ? groupName : "", subGroupName ? subGroupName : ""),
+      groupName: formatFullGroupName(this.props.groupName ? this.props.groupName : "", subGroupName ? subGroupName : ""),
       weekParam: weekParam,
       teacher : teacher
       

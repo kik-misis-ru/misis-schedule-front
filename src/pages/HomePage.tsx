@@ -145,8 +145,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       disabled: disabled,
       studentSettings:{
         groupName: user==undefined? "" : user.group,
-        subGroupName: user==undefined? "" : user.subgroup_name,
-        engGroupName: user==undefined? "" : user.eng_group,
+        subGroupName: user?.subgroup_name==undefined? "" : user.subgroup_name,
+        engGroupName: user?.eng_group==undefined? "" : user.eng_group,
       },
       IsStudent: this.props.apiModel.isStudent,
       teacherSettings:{
@@ -159,12 +159,14 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       teacherValidation : {IsInitialsError: false},
       IsSave: false
     }
+    console.log(this.state.studentSettings, "Student Settings")
     // this.onHandleChange("description", props.character === "joy"
     //   ? DESC_JOY
     //   : DESC_OTHERS)
   }
 
   async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation> {
+    console.log(student, "Student Settings")
     return await this.props.CheckIsCorrect(student, isSave);
   }
 
@@ -198,14 +200,14 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           label={LABEL_GROUP}
           isError={this.state.studentValidation.IsGroupNameError}
           value={this.state.studentSettings.groupName}
-          onChange={(value) => this.setState({
+          onChange={(value) => this.setState(prevState => ({
             studentSettings:
             {
+              ...prevState.studentSettings,
               groupName: value,
-              engGroupName: this.state.studentSettings.engGroupName,
-              subGroupName: this.state.studentSettings.subGroupName
+              
             }
-          })
+          }))
         }
 
         />
@@ -214,14 +216,14 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           label={LABEL_SUB_GROUP}
           isError={this.state.studentValidation.IsSubGroupError}
           value={this.state.studentSettings.subGroupName}
-          onChange={(value) => this.setState({
+          onChange={(value) => this.setState(prevState => ({
             studentSettings:
             {
-              groupName: this.state.studentSettings.groupName,
-              engGroupName: this.state.studentSettings.engGroupName,
-              subGroupName: value
+              ...prevState.studentSettings,
+              subGroupName: value,
+              
             }
-          })
+          }))
         }
         />
 
@@ -229,14 +231,14 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           label={LABEL_ENG_GROUP}
           isError={this.state.studentValidation.IsEngGroupError}
           value={this.state.studentSettings.engGroupName}
-          onChange={(value) => this.setState({
+          onChange={(value) => this.setState(prevState => ({
             studentSettings:
             {
-              groupName: this.state.studentSettings.groupName,
+              ...prevState.studentSettings,
               engGroupName: value,
-              subGroupName: this.state.studentSettings.subGroupName
+              
             }
-          })
+          }))
         }
         />
 

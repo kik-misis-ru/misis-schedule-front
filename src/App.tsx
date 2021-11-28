@@ -1147,7 +1147,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
         const groupId = String(group.id);
         let isCorrect = !IsError.IsEngGroupError && !IsError.IsGroupNameError && !IsError.IsSubGroupError
-        if (isCorrect && isSave) {
+        if (isCorrect ) {
           console.log("create_user", history.location.pathname)
           let updateUser ={
             group_id: groupId,
@@ -1159,14 +1159,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             filial_id: this.apiModel.user== undefined ? "" : this.apiModel.user.filial_id
           }
           if(isSave){
-            this.apiModel.user = updateUser
-          }
-          else{
-            this.apiModel.unsavedUser = updateUser
-          }
-          
-          
-          createUser(
+            createUser(
             this.apiModel.userId,
             filial.id,
             group.id,
@@ -1174,6 +1167,12 @@ export class App extends React.Component<IAppProps, IAppState> {
             settings.engGroupName,
             ""
           )
+            this.apiModel.user = updateUser
+          }
+          else{
+            this.apiModel.unsavedUser = updateUser
+          }
+          
         }
         return IsError
       })
@@ -1436,10 +1435,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                 theme={this.state.theme}
                 PreviousWeek={() => this.PreviousWeek(this.apiModel.isSavedSchedule)}
                 CurrentWeek={() => this.CurrentWeek(this.apiModel.isSavedSchedule)}
-                NextWeek={() => {
-                  this.NextWeek(this.apiModel.isSavedSchedule)
-                }}
+                NextWeek={() => {this.NextWeek(this.apiModel.isSavedSchedule)}}
                 getCurrentLesson={this.getCurrentLesson}
+                groupName={this.apiModel.isSavedSchedule ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
                 apiModel={ this.apiModel}
                 doSetTeacher = {this.doSetTeacher}
                 weekParam={page > 7 ? 1 : 0}
