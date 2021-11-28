@@ -10,8 +10,8 @@ body {
   margin: 0;
   padding: 0;
 }
-
+/* 
 html, body, #root {
   overflow: hidden;
-  height: 100%;
-}
+  min-height: 100%;
+} */

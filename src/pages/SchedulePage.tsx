@@ -30,14 +30,14 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
         <div>
           <Container style={{
             padding: 0,
-            // overflow: "hidden",
-            height: '100%',
+            overflow: "hidden",
+             //minHeight: '100%',
           }}>
 
             <ScheduleView
               {...restProps}
             />
-
+         
           </Container>
         </div>
       </DeviceThemeProvider>

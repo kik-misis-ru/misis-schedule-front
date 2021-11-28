@@ -10,7 +10,7 @@ import {
   Caption
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
-import {ApiModel} from '../lib/ApiModel'
+import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 import {
   Card,
   CardBody,
@@ -44,6 +44,9 @@ import {
 import {
   capitalize,
 } from '../lib/utils';
+import{
+  ITeacherValidation
+} from '../lib/ApiModel'
 import {
   formatTimeHhMm,
 } from '../lib/datetimeUtils';
@@ -380,8 +383,6 @@ const DashboardPage = ({
                          userId,
                          currentLesson,
                          currentLessonStartEnd,
-                         groupId,
-                         teacherId,
                          nextLesson,
                          nextLessonStartEnd,
                          spinner,
@@ -392,8 +393,6 @@ const DashboardPage = ({
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
-  groupId: String
-  teacherId: String
   spinner: Boolean,
   count: number,
   start: string,
@@ -401,12 +400,11 @@ const DashboardPage = ({
   theme: string
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
-  filialId: String,
   userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
-  handleTeacherChange: (isSave: boolean) => Promise<boolean>
+  handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   apiModel: ApiModel
 
 }) => {
@@ -420,9 +418,9 @@ const DashboardPage = ({
       }
       <Container style={{
         padding: 0,
-        // overflow: "hidden",
-        height: '100%',
-        overflow: 'auto',
+        overflow: "hidden",
+        // height: '100%',
+        // overflow: 'auto',
       }}>
         <HeaderRow
           // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
@@ -471,7 +469,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={true}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
+                                    onTeacherClick={(teacherName) => handleTeacherChange({initials: currentLesson.teacher}, false)}
                                   />
                                 )
                                 : <NoLesson/>
@@ -501,7 +499,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={() => handleTeacherChange(false)}
+                                    onTeacherClick={() => handleTeacherChange({initials: nextLesson.teacher}, false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>
@@ -523,7 +521,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!spinner &&(groupId != "" ||  teacherId != "") ||!apiModel.isSavedUser ?      (
+               {!spinner &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
               <Col >
                 <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
