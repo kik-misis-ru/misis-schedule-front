@@ -36,7 +36,6 @@ export interface ScheduleViewProps {
   getCurrentLesson: (Date) => string
   weekParam: number
   day: IDayHeader[]
-  spinner: boolean
   today: number
   schedule: {
     current_week: IScheduleDays
@@ -124,7 +123,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       
     }
 
-    console.log('ScheduleView: spinner:', this.props.spinner)
     console.log('ScheduleView: schedule', this.props.schedule)
 
     return (
@@ -158,25 +156,21 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               history.push("/dashboard")
             }}
             Bd={() =>this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true)}
-            //Load_Schedule={()=> this.Load_Schedule()}
-            // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
           />
 
           <WeekSelect
-            onPrevWeekClick={() => {
-              this.onHandleChange("spinner", false);
-              this.PreviousWeek();
+            onPrevWeekClick={async () => {
+              await this.PreviousWeek()
               this.onHandleChange("flag", false)
               this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
             }}
             onThisWeekClick={() => {
               this.CurrentWeek();
               this.onHandleChange("flag", true)
-              history.push('/spinner')
+              history.push('/')
             }}
-            onNextWeekClick={() => {
-              this.onHandleChange("spinner", false);
-              this.NextWeek();
+            onNextWeekClick={async () => {
+              await this.NextWeek();
               this.onHandleChange("flag", false)
               this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
             }}
@@ -204,7 +198,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <ScheduleDay
-            isReady={this.props.spinner}
+            isReady={this.props.apiModel.isSchedule}
             // days={this.state.days}
             // day_num={day_num}
             dayLessons={

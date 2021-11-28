@@ -385,7 +385,6 @@ const DashboardPage = ({
                          currentLessonStartEnd,
                          nextLesson,
                          nextLessonStartEnd,
-                         spinner,
                          onGoToPage,
                          theme,
                          handleTeacherChange,
@@ -393,7 +392,6 @@ const DashboardPage = ({
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
-  spinner: Boolean,
   count: number,
   start: string,
   end: string,
@@ -427,7 +425,7 @@ const DashboardPage = ({
           onHomeClick={() => history.push('/settings')}
         />
         {
-          spinner
+          apiModel.isSchedule
             ? (
               <Row>
                 <TodaySummary
@@ -446,7 +444,7 @@ const DashboardPage = ({
                         marginRight: "2.5em"
                       }}
                             onClick={ () => {
-                              history.push('/spinner')
+                              history.push('/')
                             }}
                       >
 
@@ -521,7 +519,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!spinner &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
+               {!apiModel.isSchedule &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
               <Col >
                 <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
