@@ -81,7 +81,7 @@ import {
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
 
-export type SetValueKeys = keyof Pick<IAppState, 'page'|'student'|'engGroup'|'flag'> /*extends keyof IAppState*/;
+export type SetValueKeys = keyof Pick<IAppState, 'page'|'flag'> /*extends keyof IAppState*/;
 export type SetValueFn = <K extends SetValueKeys>(
   key: K,
   value: IAppState[K],
@@ -127,23 +127,14 @@ interface IAppProps {
 export interface IAppState {
   notes: { id: string, title: string }[];
   page: number
-  // logo
   flag: boolean
   spinner: boolean
   date: number
-  // today: number
   character: CharacterId
   theme: string
   dayPush: number
-  isGroupError: boolean
   isActive: boolean
-  isSubGroupError: boolean
-  engGroup: string
-  isEngGroupError: boolean
   isUser: boolean
-  student: boolean
-  isTeacherError: boolean
-  // building: IBuilding[]
 }
 
 export class App extends React.Component<IAppProps, IAppState> {
@@ -155,7 +146,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.apiModel = new ApiModel()
     this.Load_Schedule = this.Load_Schedule.bind(this)
     this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
-    this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
     this.getCurrentLesson = this.getCurrentLesson.bind(this);
     this.NextWeek = this.NextWeek.bind(this);
     this.CurrentWeek = this.CurrentWeek.bind(this);
@@ -170,20 +160,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       notes: [],
       page: INITIAL_PAGE,
       flag: true,
-      engGroup: "",
       spinner: false,
       date: Date.now() ,
       theme: "dark",
-      isGroupError: false,
-      isTeacherError: false,
-      isSubGroupError: false,
-      isEngGroupError: false,
-
       isActive: false,
-
       character: CHAR_SBER,
       isUser: false,
-      student: true,
       dayPush: 0,
     }
     this.assistant = new AssistantWrapper(this);
@@ -590,7 +572,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       let success = true;
 
       if (history.location == HOME_PAGE_ROUTE) {
-        if (this.state.student) {
+        if (this.apiModel.isStudent) {
           //TODO!!!!!!!!!
           //success = await this.CheckIsCorrect()
         } else {
@@ -1036,10 +1018,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     return {};
   }
 
-  async convertIdInGroupName(groupId : string): Promise<void> {
-    let group = await getGroupById(Number(groupId))
-    //TODO: куда сохранять group
-  }
 
   /**
    * Переход на следующую неделю
@@ -1456,9 +1434,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 onSetValue={this.setValue}
                 character={this.state.character}
                 theme={this.state.theme}
-                isTeacher={!this.state.student}
-                // Bd={this.Bd}
-                getScheduleFromDb={this.apiModel.getScheduleFromDb}
                 PreviousWeek={() => this.PreviousWeek(this.apiModel.isSavedSchedule)}
                 CurrentWeek={() => this.CurrentWeek(this.apiModel.isSavedSchedule)}
                 NextWeek={() => {

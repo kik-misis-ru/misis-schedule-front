@@ -29,7 +29,6 @@ export interface ScheduleViewProps {
   apiModel: ApiModel
   timeParam: number
   onSetValue: (string, any) => void
-  isTeacher: boolean
   PreviousWeek: () => void
   CurrentWeek: () => void
   NextWeek: () => void
@@ -44,8 +43,6 @@ export interface ScheduleViewProps {
   }
   doSetTeacher: (string) => Promise<void>
   getIsCorrectTeacher: () => boolean
-  getScheduleFromDb: (date: number, isSave: boolean, isCurrentWeek: boolean) => void
-
 }
 
 interface ScheduleViewState {
@@ -69,14 +66,8 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     this.PreviousWeek = this.PreviousWeek.bind(this)
     this.NextWeek = this.NextWeek.bind(this);
     this.CurrentWeek = this.CurrentWeek.bind(this);
-    this.getScheduleFromDb = this.getScheduleFromDb.bind(this);
-    //this.Load_Schedule = this.Load_Schedule.bind(this)
-    // const groupName = formatFullGroupName(this.state.group, this.state.subGroup);
   }
 
-  async getScheduleFromDb() {
-    await this.props.getScheduleFromDb(Date.now(), true, true)
-  }
 
   PreviousWeek() {
     this.props.PreviousWeek()
@@ -160,12 +151,12 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             onDashboardClick={async () => {
 
               if (this.props.apiModel.unsavedUser) {
-                await this.getScheduleFromDb();
+                await this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true);
               }
               this.onHandleChange("isSavedSchedule", true)
               history.push("/dashboard")
             }}
-            Bd={this.getScheduleFromDb}
+            Bd={() =>this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true)}
             //Load_Schedule={()=> this.Load_Schedule()}
             // onNavigatorClick={() => this.setState({page: NAVIGATOR_PAGE_NO})}
           />

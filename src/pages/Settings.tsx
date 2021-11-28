@@ -196,20 +196,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         IsEngGroupError: false},
       teacherValidation : {IsInitialsError: false}
     };
-    // this.onHandleChange("description", props.character === "joy"
-    //   ? DESC_JOY
-    //   : DESC_OTHERS)
   }
-
-
-  // onHandleChange<K extends SetValueKeys
-  //   >(
-  //     key: K,
-  //     value: IAppState[K]
-  // ): void {
-  //   this.props.onSetValue(key, value);
-  // }
-
   async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation>{
     return await this.props.CheckIsCorrect(student, isSave);
   }
