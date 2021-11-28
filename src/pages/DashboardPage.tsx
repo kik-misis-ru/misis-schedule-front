@@ -383,8 +383,6 @@ const DashboardPage = ({
                          userId,
                          currentLesson,
                          currentLessonStartEnd,
-                         groupId,
-                         teacherId,
                          nextLesson,
                          nextLessonStartEnd,
                          spinner,
@@ -395,8 +393,6 @@ const DashboardPage = ({
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
-  groupId: String
-  teacherId: String
   spinner: Boolean,
   count: number,
   start: string,
@@ -404,7 +400,6 @@ const DashboardPage = ({
   theme: string
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
-  filialId: String,
   userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
@@ -526,7 +521,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!spinner &&(groupId != "" ||  teacherId != "") ||!apiModel.isSavedUser ?      (
+               {!spinner &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
               <Col >
                 <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>

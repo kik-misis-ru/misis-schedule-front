@@ -137,7 +137,6 @@ interface SettingsProps {
   description: string
   sendAssistantData: (action: AssistantSendAction) => void
   onDashboardClick: () => void
-  onConvertIdInGroupName: () => void
   theme: string
   toggleTheme: () => void
   CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
@@ -168,14 +167,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
 
   constructor(props: SettingsProps) {
     super(props);
-
-   // this.onHandleChange = this.onHandleChange.bind(this);
     this.Save = this.Save.bind(this);
-    this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     this.Load_Schedule = this.props.LoadSchedule.bind(this)
-    console.log()
-    let edit=false;
-   // this.props.group==""&&this.props.teacher=="" ? edit = true : edit= false;
     let pushSettings = this.props.apiModel.pushSettings
     let user = this.props.apiModel.user;
     this.state = {disabled: pushSettings.IsActive,
@@ -185,7 +178,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         min: pushSettings.Minute == -1 ? 1 : pushSettings.Minute,
         value: new Date(1629996400000-68400000-2760000 + pushSettings.Hour * 3600000 + pushSettings.Minute * 60000)
       },
-      edit: edit,
+      edit: false,
       theme: false,
       themeName: this.props.theme,
       studentSettings:{
@@ -224,15 +217,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     this.props.LoadSchedule()
   }
 
-
-
-  // handleTeacherChange() {
-  //   this.props.handleTeacherChange();
-  // }
-
-  onConvertIdInGroupName() {
-    this.props.onConvertIdInGroupName();
-  }
   async Save() {
       console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
       this.state.timePush.hour=Number(this.state.timePush.value.getHours());

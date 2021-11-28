@@ -81,7 +81,7 @@ import {
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
 
-export type SetValueKeys = keyof Pick<IAppState, 'group'|'subGroup'|'teacher'|'page'|'student'|'teacher_checked'|'engGroup'|'checked'|'bd'|'teacher_bd'|'flag'> /*extends keyof IAppState*/;
+export type SetValueKeys = keyof Pick<IAppState, 'page'|'student'|'engGroup'|'flag'> /*extends keyof IAppState*/;
 export type SetValueFn = <K extends SetValueKeys>(
   key: K,
   value: IAppState[K],
@@ -126,16 +126,9 @@ interface IAppProps {
 
 export interface IAppState {
   notes: { id: string, title: string }[];
-  userId: string
   page: number
   // logo
   flag: boolean
-  checked: boolean
-  group: string
-  groupId: string
-  filialId: string
-  correct: boolean
-
   spinner: boolean
   date: number
   // today: number
@@ -144,24 +137,11 @@ export interface IAppState {
   dayPush: number
   isGroupError: boolean
   isActive: boolean
-  subGroup: string
-  group_id_bd: string
-  eng_bd: string
-  sub_bd: string
   isSubGroupError: boolean
   engGroup: string
   isEngGroupError: boolean
   isUser: boolean
-  bd: string
   student: boolean
-
-  teacher: string
-  teacherId: string
-  teacher_checked: boolean
-  teacher_bd: string
-  teacher_id_bd: string
-  teacher_correct: boolean
-
   isTeacherError: boolean
   // building: IBuilding[]
 }
@@ -173,7 +153,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.apiModel = new ApiModel()
-    this.setValue = this.setValue.bind(this)
     this.Load_Schedule = this.Load_Schedule.bind(this)
     this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
     this.convertIdInGroupName = this.convertIdInGroupName.bind(this);
@@ -181,35 +160,19 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.NextWeek = this.NextWeek.bind(this);
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
-    this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this);
-    // this.sendAssistantData = this.sendAssistantData.bind(this);
     this.Load_Schedule = this.Load_Schedule.bind(this);
     this.doSetTeacher = this.doSetTeacher.bind(this)
-    // this.tfRef                = React.createRef();
+    this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this)
+    this.setValue = this.setValue.bind(this);
     console.log('constructor');
     history.push("/dashboard")
     this.state = {
       notes: [],
-      //
-      userId: "",
-      //
       page: INITIAL_PAGE,
-      // logo: null,
       flag: true,
-      checked: false,
-      group: "",
-      groupId: "",
-      filialId: "",
-      subGroup: "",
       engGroup: "",
-      bd: "",
-      group_id_bd: "",
-      eng_bd: "",
-      sub_bd: "",
-      correct: false,
       spinner: false,
       date: Date.now() ,
-      // today: 0,
       theme: "dark",
       isGroupError: false,
       isTeacherError: false,
@@ -222,12 +185,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       isUser: false,
       student: true,
       dayPush: 0,
-      teacher: "",
-      teacherId: "",
-      teacher_checked: false,
-      teacher_bd: "",
-      teacher_id_bd: "",
-      teacher_correct: false,
     }
     this.assistant = new AssistantWrapper(this);
   }
@@ -247,10 +204,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async handleAssistantSub(userId: string) {
     console.log("handleAssistantSub: userId", userId);
-
-    this.setState({
-      userId,
-    });
 
     this.apiModel = new ApiModel()
     this.apiModel.fetchUser(userId)
@@ -311,9 +264,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async handleAssistantForDayOffset(offset: 0 | 1) {
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
-
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       const isSunday = (
         getTodayDayOfWeek() + offset === 0 ||
         getTodayDayOfWeek() + offset === 7
@@ -331,16 +282,14 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async handleAssistantForNextWeek() {
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-    if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+    if (this.apiModel.CheckGroupOrTeacherSetted()) {
       await this.NextWeek(this.apiModel.isSavedSchedule);
       return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
     }
   }
 
   async handleAssistantForThisWeek() {
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       await this.CurrentWeek(this.apiModel.isSavedSchedule);
       this.ChangeDay(getTodayDayOfWeek());
     }
@@ -351,8 +300,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     day1: TodayOrTomorrow,
     lessonNum: string,   // порядковый номер пары
   ) {
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       let params: AssistantSendActionSay['parameters'];
       // const [type1, day1, lessonNum] = action.note || [];
       // day1 == "today" ? dayOfWeekZeroIndex = this.state.today - 1 : dayOfWeekZeroIndex = this.state.today;
@@ -403,10 +351,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     // let amountOfLessonsTuple: [string, number] | undefined;
     let day: TodayOrTomorrow | undefined;
     let page = 0;
-    console.log("handleAssistantHowMany: group:", this.state.group, ", teacher:", this.state.teacher)
-
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
 
       if (date) {
         if (getTodayDayOfWeek() + 1 === dayOfWeek) {
@@ -425,7 +370,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       let assistantParams: AssistantSendActionSay1['parameters'];
 
       const lessonCount = this.getLessonsCountForDate(date)
-
+      let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
       if (groupApiModel !== "" && lessonCount > 0) {
         // const [dayOfWeekShort, lessonCount] = amountOfLessonsTuple;
         const lessonText = pairNumberToPairText(lessonCount);
@@ -462,8 +407,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   // Сколько пар осталось (сегодня)
   handleAssistantHowManyLeft() {
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       let assistantParams: AssistantSendActionSay2['parameters'];
       let amountOfRemainingLessons = this.getAmountOfRemainingLessons(new Date())
 
@@ -484,7 +428,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         parameters: assistantParams,
       })
 
-      if (this.state.group !== "") {
+      if ((this.apiModel.isSavedUser && this.apiModel.user?.group_id!="") || (this.apiModel.isSavedUser && this.apiModel.unsavedUser?.group_id!="")) {
         this.ChangePage();
       }
 
@@ -498,12 +442,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   handleAssistantWhere(when: NowOrWill) {
     console.log('handleAssistantWhere: when:', when)
-
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
-
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       const whereLessonParams: AssistantSendActionSay3['parameters'] = this.whereWillLesson(new Date(this.state.date), when)
-
       this.assistant.sendAction({
         action_id: "say3",
         parameters: whereLessonParams,
@@ -514,15 +454,12 @@ export class App extends React.Component<IAppProps, IAppState> {
       } else {
         this.ChangeDay(getTodayDayOfWeek());
       }
-
     }
   }
 
   handleAssistantWhatLesson(when: NowOrWill) {
     console.log("handleAssistantWhatLesson: when:", when)
-
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
 
       const whatLesson: AssistantSendActionSay4['parameters'] = this.whatLesson(new Date(), when);
       console.log('dispatchAssistantAction: what_lesson: whatLesson:', whatLesson)
@@ -541,10 +478,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-
   handleAssistantFirstLesson(dayOfWeek: number) {
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
 
       let firstLessonNumStr: string;
       // let day: TodayOrTomorrow;
@@ -597,9 +532,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async handleAssistantDaySchedule(dayOfWeek: number, note1, note2) {
     console.log('handleAssistantDaySchedule:', dayOfWeek, note1, note2)
-
-    let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
-     if ((groupApiModel !== "") || (this.state.teacher !== "")) {
+     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       const dayOfWeekZeroIndex = dayOfWeek - 1;
       let page2 = 0;
 
@@ -674,8 +607,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-
   setValue<K extends SetValueKeys>(
     key: K,
     value: IAppState[K],
@@ -689,10 +620,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     ))
   }
 
+
+  //Зачем проверка на correct?
   getIsCorrectTeacher(): boolean {
-    const isStudent = this.state.student;
-    const isTeacherCorrect = this.state.teacher_correct;
-    return !isStudent && isTeacherCorrect
+    return !this.apiModel.isStudent
   }
 
   /**
@@ -1105,14 +1036,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     return {};
   }
 
-  async convertIdInGroupName(): Promise<void> {
-    console.log(this.state.groupId);
-    let group = await getGroupById(Number(this.state.groupId))
-    this.setState({group: group.name})
-  }
-
-  protected isTeacher() {
-    return !this.state.student && this.state.teacher_correct
+  async convertIdInGroupName(groupId : string): Promise<void> {
+    let group = await getGroupById(Number(groupId))
+    //TODO: куда сохранять group
   }
 
   /**
@@ -1197,15 +1123,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       getFirstDayWeek(new Date())
     )
       .then((response) => {
-        console.log("LOAD_SCHEDULE_THEN")
         this.apiModel.SetWeekSchedule(response, 0, isSave);
-        console.log('_loadSchedule:', String(this.state.engGroup), this.state.groupId);
-        console.log("RESPONSE", response)
-        this.setState({
-          flag: true,
-          isGroupError: false,
-          //teacher_bd: ""
-        });
       })
   }
 
@@ -1240,10 +1158,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log("App: isCorrect: response: english", english_response);
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")
-          //this.setState({group: group.name, groupId: group.id})
           IsError.IsGroupNameError = false;
         }
-        console.log(this.state.groupId, "group Id");
         if (english_response || settings.engGroupName == "") {
           IsError.IsEngGroupError = false;
           console.log(`App: isCorrect: correct_eng: ${ IsError.IsEngGroupError}`);
@@ -1251,7 +1167,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         if ((settings.subGroupName === "") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "1") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "2")) {
           IsError.IsSubGroupError = false;
         }
-        //this.setState({isEngGroupError: !correct_eng, isSubGroupError: !correct_sub, isGroupError: !correct})
         const groupId = String(group.id);
         let isCorrect = !IsError.IsEngGroupError && !IsError.IsGroupNameError && !IsError.IsSubGroupError
         if (isCorrect && isSave) {
@@ -1399,9 +1314,8 @@ export class App extends React.Component<IAppProps, IAppState> {
             render={
               ({match}) => {
                 return <Settings
-                  userId={this.state.userId}
+                  userId={this.apiModel.userId}
                   sendAssistantData={(action: AssistantSendAction) => this.assistant.sendAction(action)}
-                  onConvertIdInGroupName={this.convertIdInGroupName}
                   description={
                     this.state.character === 'joy'
                       ? ENTER_DATA_NO_OFFICIAL_TEXT
@@ -1477,15 +1391,12 @@ export class App extends React.Component<IAppProps, IAppState> {
                   start={start}
                   end={end}
                   count={count}
-                  filialId={this.state.filialId}
-                  userId={this.state.userId}
+                  userId={this.apiModel.userId}
                   spinner={this.state.spinner}
                   currentLesson={currentLesson}
                   currentLessonStartEnd={currentLessonStartEnd}
                   nextLesson={nextLesson}
                   nextLessonStartEnd={nextLessonStartEnd}
-                  groupId={this.state.group_id_bd}
-                  teacherId={this.state.teacher_id_bd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                   handleTeacherChange={this.apiModel.handleTeacherChange}
                   apiModel={this.apiModel}
@@ -1502,7 +1413,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   CheckIsCorrect={this.CheckIsCorrect}
                   LoadSchedule={this.Load_Schedule}
                   onHandleTeacherChange={this.apiModel.handleTeacherChange}
-                  onConvertIdInGroupName={this.convertIdInGroupName}
                   description={
                     this.state.character === 'joy'
                       ? ENTER_DATA_NO_OFFICIAL_TEXT
@@ -1544,15 +1454,11 @@ export class App extends React.Component<IAppProps, IAppState> {
               <SchedulePage
                 timeParam={page}
                 onSetValue={this.setValue}
-                teacher={this.state.teacher}
-                groupName={this.state.group}
                 character={this.state.character}
                 theme={this.state.theme}
                 isTeacher={!this.state.student}
                 // Bd={this.Bd}
                 getScheduleFromDb={this.apiModel.getScheduleFromDb}
-                bd={this.state.bd}
-                teacher_bd={this.state.teacher_bd}
                 PreviousWeek={() => this.PreviousWeek(this.apiModel.isSavedSchedule)}
                 CurrentWeek={() => this.CurrentWeek(this.apiModel.isSavedSchedule)}
                 NextWeek={() => {
@@ -1566,8 +1472,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 spinner={this.state.spinner}
                 today={getTodayDayOfWeek()}
                 schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
-                group={this.state.group}
-                subGroup={this.state.subGroup}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
             }

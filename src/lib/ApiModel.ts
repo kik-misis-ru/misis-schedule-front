@@ -400,6 +400,17 @@ export class ApiModel {
   protected isSavedTeacher() {
     return this.user!=undefined && this.user.teacher_id != "" && this.user.teacher_id != undefined
   }
+  public CheckGroupOrTeacherSetted() : boolean{
+    let groupApiModel = this.user?.group==undefined ? "" : this.user.group
+    let teacher = this.isSavedUser ? this.user?.teacher : this.unsavedUser?.teacher
+    if(teacher == undefined){
+      teacher = ""
+    }
+    if(groupApiModel == undefined){
+      groupApiModel = "";
+    }
+    return groupApiModel!="" || teacher!=""
+  }
 
   // protected async _dbGetUser(userId: string): Promise<ApiHelper.IUserData | undefined> {
   //   const apiResult = await ApiHelper.getUser(userId)

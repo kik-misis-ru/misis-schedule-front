@@ -117,8 +117,6 @@ interface HomeViewProps {
   description: string
   theme: string
   onHandleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
-  // handleTeacherChange
-  onConvertIdInGroupName: () => void
   CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
   LoadSchedule: (isSave: boolean) => void
   onShowScheduleClick: () => void
@@ -139,9 +137,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   constructor(props: HomeViewProps) {
     super(props);
-    //this.onHandleChange = this.onHandleChange.bind(this)
     this.Load_Schedule = this.Load_Schedule.bind(this)
-    this.onConvertIdInGroupName = this.onConvertIdInGroupName.bind(this);
     let disabled = true;
     if (props.apiModel.user!=undefined && props.apiModel.user?.group_id !== "") disabled = false;
     let user = this.props.apiModel.user;
@@ -175,15 +171,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   Load_Schedule(isSave: boolean) {
     this.props.LoadSchedule(isSave)
   }
-
-  // handleTeacherChange() {
-  //   this.props.handleTeacherChange();
-  // }
-
-  onConvertIdInGroupName() {
-    this.props.onConvertIdInGroupName();
-  }
-
   render() {
 
     const studentContent = (
