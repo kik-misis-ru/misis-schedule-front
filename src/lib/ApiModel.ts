@@ -96,6 +96,7 @@ export class ApiModel {
   public unsavedUser: IUserData |undefined
   public pushSettings: IPushSettings 
   public isStudent: boolean
+  public isSchedule: boolean
   //false когда пользователь первый раз зашел в приложение
   public isSavedUser: boolean
 
@@ -140,7 +141,7 @@ export class ApiModel {
     this.isSavedSchedule = true
     this.isStudent = true
     this.isSavedUser = false
-
+    this.isSchedule = false
     this.validation={
       teacher:{
         isTeacherError: false
@@ -220,6 +221,7 @@ export class ApiModel {
    * заполнение данными расписания из бд
    */
    public async SetWeekSchedule(scheduleData: ApiHelper.IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
+     this.isSchedule = false;
     if (isSavedSchedule) {
       let saved_schedule = this.saved_schedule
       let day = this.day
@@ -252,7 +254,7 @@ export class ApiModel {
         this.day = day
 
     }
-
+    this.isSchedule = true
     
   }
 

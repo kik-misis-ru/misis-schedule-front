@@ -27,7 +27,6 @@ import Contacts from './pages/Contacts';
 import FAQ from './pages/FAQ';
 import Start from './pages/Start';
 import NavigatorPage from './pages/NavigatorPage';
-import SpinnerPage from "./pages/SpinnerPage";
 import SchedulePage from './pages/SchedulePage';
 import Settings from './pages/Settings';
 
@@ -128,7 +127,6 @@ export interface IAppState {
   notes: { id: string, title: string }[];
   page: number
   flag: boolean
-  spinner: boolean
   date: number
   character: CharacterId
   theme: string
@@ -160,7 +158,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       notes: [],
       page: INITIAL_PAGE,
       flag: true,
-      spinner: false,
       date: Date.now() ,
       theme: "dark",
       isActive: false,
@@ -205,7 +202,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
 
       await this.apiModel.getSchedulebyUserId()
-      this.setState({spinner: true});
       console.log("USER:", this.apiModel)
 
       history.push("/dashboard")
@@ -1023,33 +1019,27 @@ export class App extends React.Component<IAppProps, IAppState> {
    * Переход на следующую неделю
    */
   async NextWeek(isSave: boolean) {
-    this.setState({spinner: false});
     const datePlusWeek = this.state.date + SEVEN_DAYS;
     await this.apiModel.getScheduleFromDb(datePlusWeek, isSave, false);
     this.setState({date: datePlusWeek})
-    this.setState({spinner: true});
   }
 
   /**
    * Переход на следующую неделю
    */
   async CurrentWeek(isSave: boolean) {
-    this.setState({spinner: false});
     const date = Date.now();
     this.setState({date: date})
     await this.apiModel.getScheduleFromDb(date, isSave, true);
-    this.setState({spinner: true});
   }
 
   /**
    * Переход на предыдущую неделю
    */
   async PreviousWeek(isSave: boolean) {
-    this.setState({spinner: false});
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
     this.setState({date: dateMinusWeek})
     await this.apiModel.getScheduleFromDb(dateMinusWeek, isSave, false);
-    this.setState({spinner: true});
   }
 
 
@@ -1183,42 +1173,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.gotoPage(this.state.page)
   }
 
-  Spinner() {
-
-    const CHECK_INTERVAL = 1;
-    const REDIRECT_DELAY = 1;
-
-    // делаем периодическую проверку
-    const checkInterval = setInterval(() => {
-
-      // если признак `spinner` выставлен
-      if (this.state.spinner) {
-
-        // переходим на другую страницу с задержкой
-        setTimeout(() => {
-          console.log("this.state.flag", this.state.flag)
-
-          const pageNo = getTodayDayOfWeek() === 0
-            ? this.state.flag ? 7 : FIRST_DAY_OTHER_WEEK
-            : this.state.flag ? getTodayDayOfWeek() : FIRST_DAY_OTHER_WEEK
-          console.log('Spinner: pageNo:', pageNo)
-
-          // переходим на другую страницу
-          this.gotoPage(pageNo);
-        }, REDIRECT_DELAY);
-        clearInterval(checkInterval)
-      }
-    }, CHECK_INTERVAL);
-
-    return (
-
-      <SpinnerPage
-        theme={this.state.theme}
-        character={this.state.character}
-      />
-    )
-  }
-
+  
   gotoPage(pageNo: number): void {
     console.log('App: gotoPage:', pageNo);
     // temporary workaround
@@ -1312,7 +1267,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   <Lesson
                     character={this.state.character}
                     isTeacherAndValid={this.getIsCorrectTeacher()}
-                    spinner={this.state.spinner}
                     theme={this.state.theme}
                     // currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
                     currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]}
@@ -1360,7 +1314,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   end={end}
                   count={count}
                   userId={this.apiModel.userId}
-                  spinner={this.state.spinner}
                   currentLesson={currentLesson}
                   currentLessonStartEnd={currentLessonStartEnd}
                   nextLesson={nextLesson}
@@ -1426,7 +1379,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 
                 weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
-                spinner={this.state.spinner}
                 today={getTodayDayOfWeek()}
                 schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
