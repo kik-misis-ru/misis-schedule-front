@@ -14,6 +14,10 @@ interface ScheduleState {
 
 class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
+
+ async componentDidMount(){
+    await this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true)
+  }
   constructor(props) {
     super(props);
   }

@@ -61,6 +61,10 @@ interface ScheduleViewState {
 
 export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleViewState> {
 
+    async componentDidMount(){
+      await this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true)
+    }
+  
   constructor(props) {
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
