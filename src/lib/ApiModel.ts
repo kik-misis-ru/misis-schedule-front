@@ -277,9 +277,9 @@ export class ApiModel {
       teacher_id = this.user?.teacher_id;
       group_id = this.user?.group_id;
       console.log("getScheduleFromDb: groupId", group_id)
-      if(group_id==undefined && this.user!=undefined){
+      if(group_id!=undefined && this.user!=undefined){
         console.log("GROUP:",this.user.group)
-        group_id = this.convertGroupNameToGroupId(this.user?.group)
+        //group_id = this.convertGroupNameToGroupId(this.user?.group)
       }
       else{
         return
@@ -299,7 +299,7 @@ export class ApiModel {
       eng = this.unsavedUser?.eng_group;
     }
     const firstDayWeek = getFirstDayWeek(new Date(date));
-    let week = isCurrentWeek ? 0 : 1
+    let week = isCurrentWeek===true ? 0 : 1
     if (this.isSavedTeacher()) {
       await ApiHelper.getScheduleTeacherFromDb(
         teacher_id,

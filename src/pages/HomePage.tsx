@@ -1,12 +1,16 @@
 import React from "react";
-import {Container, Row, Col, Button, DeviceThemeProvider} from '@sberdevices/plasma-ui';
-import 'react-toastify/dist/ReactToastify.css';
 import {
   TextBoxBigTitle,
   TextBox,
-  Caption
+  Caption,
+  TextBoxLabel,
+  TextField,
+  Container, 
+  Row, 
+  Col, 
+  Button, 
+  DeviceThemeProvider
 } from "@sberdevices/plasma-ui";
-import {TextField} from "@sberdevices/plasma-ui";
 import {IAppState, SetValueFn, SetValueKeys} from "../App";
 import{
   ApiModel,
@@ -68,12 +72,12 @@ const HomeDescription = ({
   text: string
 }) => (
   <TextBox>
-    <Caption style={{
+    <TextBoxLabel style={{
       margin: '1.5em',
       textAlign: "center"
     }}>
       {text}
-    </Caption>
+    </TextBoxLabel>
   </TextBox>
 
 )

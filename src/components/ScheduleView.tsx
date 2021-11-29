@@ -128,7 +128,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
 
   render() {
+    let isReady = this.props.apiModel.isSchedule
     let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
+    console.log(schedule);
     console.log('Day', this.state.Day)
     return (
  /*     <DeviceThemeProvider>
@@ -178,7 +180,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
              // await this.NextWeek();
               //this.onHandleChange("flag", false)
               //this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
+              isReady = false;
               history.push('/schedule/'+Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
+              console.log(isReady)
             }}
           />
 
@@ -202,7 +206,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <ScheduleDay
-            isReady={this.props.apiModel.isSchedule}
+            isReady={isReady}
             dayLessons={
               this.state.weekParam == 0 ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1]
             }

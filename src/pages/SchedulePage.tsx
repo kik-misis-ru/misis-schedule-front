@@ -18,7 +18,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
   async componentDidUpdate(){
     console.log("ComponentDidUpdate")
     await this.props.apiModel.getScheduleFromDb(Number(this.props.Date), this.props.IsSavedSchedule, this.props.IsCurrentWeek)
-    
+    console.log(this.props.apiModel.saved_schedule.other_week)
   }
 
   constructor(props) {
