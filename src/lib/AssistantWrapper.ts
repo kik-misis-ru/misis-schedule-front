@@ -149,13 +149,11 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
           : action.note[1].data.groupName[1];
         group = group.toUpperCase();
         this.emit('action-group', group);
-        this._App.handleAssistantSetValue('group', group)
         break
 
       case 'subgroup':
         if (action.note) {
           const subGroup = action.note;
-          this._App.handleAssistantSetValue('subGroup', subGroup )
           this.emit('action-subGroup', subGroup);
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.note:', action.note)
@@ -165,7 +163,6 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
       case 'set_eng_group':
         if (action.group) {
           const engGroup = String(action.group);
-          this._App.handleAssistantSetValue('engGroup', engGroup)
           this.emit('action-engGroup', engGroup);
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.group:', action.group)

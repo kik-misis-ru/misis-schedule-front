@@ -276,6 +276,14 @@ export class ApiModel {
     if (isSave) {
       teacher_id = this.user?.teacher_id;
       group_id = this.user?.group_id;
+      console.log("getScheduleFromDb: groupId", group_id)
+      if(group_id==undefined && this.user!=undefined){
+        console.log("GROUP:",this.user.group)
+        group_id = this.convertGroupNameToGroupId(this.user?.group)
+      }
+      else{
+        return
+      }
       eng = this.user?.eng_group
       if (this.isSavedTeacher() && this.unsavedUser != undefined && this.user?.teacher != undefined) {
         this.isStudent=false;
@@ -332,6 +340,13 @@ export class ApiModel {
     }
     let teacher: ITeacherSettings = {initials: teacherName}
     return !(await (await this.handleTeacherChange(teacher, false)).IsInitialsError);
+  }
+
+  public async convertGroupNameToGroupId(groupName: string): Promise<Number>{
+    if(groupName && groupName!=""){
+      return await ApiHelper.getGroupByName(groupName);
+    }
+    return -1
   }
      
   // todo исправить асинхронную работу

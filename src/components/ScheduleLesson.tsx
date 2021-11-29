@@ -58,7 +58,6 @@ export const LessonName = (
     lessonNumber: string
   }
 ) => {
-  console.log('LessonName:', text);
   return (
     <Link
       to={`/lesson/${lessonNumber}`}
@@ -106,7 +105,6 @@ export const TeacherName = (
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
   }
 ) => {
-  console.log('TeacherName:', text);
   return (
     text != "" || text != null ? (
       <a
