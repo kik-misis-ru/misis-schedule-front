@@ -65,11 +65,10 @@ interface ScheduleViewState {
   Day: number
 }
 
-
 export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleViewState> {
 
+
   constructor(props) {
-    console.log("ScheduleView: constructor")
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
     this.PreviousWeek = this.PreviousWeek.bind(this)
@@ -111,48 +110,26 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
   }
 
 
-  async PreviousWeek() {
+  PreviousWeek() {
     this.props.PreviousWeek()
-    await this.refetchData();
   }
 
-  async NextWeek() {
-    // this.props.NextWeek()
-    await this.refetchData();
-    this.setState({});
+  NextWeek() {
+    this.props.NextWeek()
   }
 
-  async CurrentWeek() {
+  CurrentWeek() {
     this.props.CurrentWeek();
-    await this.refetchData();
   }
 
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
 
-  async refetchData() {
-    await this.props.apiModel.getScheduleFromDb(Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7)), this.props.IsSavedSchedule, false)
-
-  }
-
-  componentDidMount() {
-    console.log("ScheduleView: componentDidMount")
-    this.refetchData();
-  }
 
   render() {
-
-    let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
-    console.log("ScheduleView: render")
-    console.log("ScheduleView: render, Schedule:", this.props.apiModel.saved_schedule)
-    console.log("ScheduleView: render, IsCurrentWeek:",this.props.IsCurrentWeek )
-    console.log("ScheduleView: render, Day:", this.state.Day )
-
-    console.log("ScheduleView: render, ScheduleDay:", String(this.props.IsCurrentWeek)=="true" ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1])
-
     let isReady = this.props.apiModel.isSchedule
-  
+    let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
     console.log(schedule);
     console.log('Day', this.state.Day)
     return (
@@ -200,19 +177,18 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               history.push('/schedule/')
             }}
             onNextWeekClick={async () => {
+             // await this.NextWeek();
               //this.onHandleChange("flag", false)
               //this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
-              await this.NextWeek();
               isReady = false;
               history.push('/schedule/'+Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
-              
               console.log(isReady)
             }}
           />
 
           <WeekCarousel
             selectedIndex={this.state.Day - 1}
-            markedIndex={this.props.IsCurrentWeek !=false  ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
+            markedIndex={this.state.weekParam === THIS_WEEK ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
             cols={
               this.props.day.map(d => {
                 const {title, date} = d;
@@ -225,18 +201,18 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               })
             }
             onSelect={(weekDayIndex) => {
-              this.setState({Day:  weekDayIndex + (this.props.IsCurrentWeek != true ? 0 : 1)})
+              this.setState({Day:  weekDayIndex + (this.state.weekParam === OTHER_WEEK ? 0 : 1)})
             }}
           />
 
           <ScheduleDay
             isReady={isReady}
             dayLessons={
-              String(this.props.IsCurrentWeek)=="true"  ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1]
+              this.state.weekParam == 0 ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1]
             }
             currentLessonNumber={this.state.current}
             isTeacherAndValid={this.state.isTeacher}
-            isToday={this.props.today === this.state.Day && this.props.IsCurrentWeek != false}
+            isToday={this.props.today === this.state.Day && this.props.weekParam === THIS_WEEK}
             isDayOff={this.state.Day == 7}
             onTeacherClick={async (teacherName) => {
               await this.props.doSetTeacher(teacherName)
