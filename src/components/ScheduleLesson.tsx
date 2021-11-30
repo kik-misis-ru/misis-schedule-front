@@ -59,6 +59,7 @@ export const LessonName = (
     lessonNumber: string
   }
 ) => {
+  let lessonNum = `${lessonNumber}. `
   return (
     <Link
       to={`/lesson/${lessonNumber}`}
@@ -74,7 +75,7 @@ export const LessonName = (
       <Body2
         style={isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
       >
-       {lessonNumber}. {text}
+       {lessonNum} {text}
       </Body2>
 
     </Link>

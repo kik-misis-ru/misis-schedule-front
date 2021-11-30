@@ -615,7 +615,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       const lesson = this.apiModel.saved_schedule.current_week[dayNumber - 1][lessonIdx]
       if (lesson.lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        console.log('getStartFirstLesson: lessonIdx:', lessonIdx)
+        console.log('getStartFirstLesson: lessonIdx:', lesson.lessonName)
         lessonNumber = String(Number(lessonIdx) + 1);
         break
       }
