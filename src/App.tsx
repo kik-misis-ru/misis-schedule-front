@@ -1348,7 +1348,7 @@ export class App extends React.Component<IAppProps, IAppState> {
              render={
              ({match}) => {
                 return <SchedulePage
-                timeParam={getTodayDayOfWeek() }
+                timeParam={getTodayDayOfWeek()-1 }
                 onSetValue={this.setValue}
                 character={this.state.character}
                 theme={this.state.theme}

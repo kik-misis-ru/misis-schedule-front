@@ -225,7 +225,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               })
             }
             onSelect={(weekDayIndex) => {
-              this.setState({Day:  weekDayIndex + (this.state.weekParam === OTHER_WEEK ? 0 : 1)})
+              this.setState({Day:  weekDayIndex-1 + (this.state.weekParam === OTHER_WEEK ? 0 : 1)})
             }}
           />
 

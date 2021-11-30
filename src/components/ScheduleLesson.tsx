@@ -73,7 +73,7 @@ export const LessonName = (
     >
 
       <Body2
-        style={isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
+        style={isAccented ? {color: ACCENT_TEXT_COLOR, fontSize: "18px"} : {color: COLOR_BUTTON_PRIMARY, fontSize: "18px"}}
       >
        {lessonNum} {text}
       </Body2>
@@ -209,7 +209,7 @@ export const LessonRightContent = (
   return (
     <TextBox>
       {room ? (
-        <TextBoxTitle >{room}</TextBoxTitle>) : (<div></div>)
+        <TextBoxTitle style={{fontSize: "16px"}}>{room}</TextBoxTitle>) : (<div></div>)
       }
       <TextBoxLabel >
         {lessonType}
@@ -257,7 +257,7 @@ const ScheduleLesson = (
             isTeacherAndValid={isTeacherAndValid}
             onTeacherClick={onTeacherClick}
           />
-          : <Body2 style={{marginLeft: "1em"}}>
+          : <Body2 style={{marginLeft: "1em", fontSize: "18px"}}>
             {lesson.lessonName}
           </Body2>
       }
