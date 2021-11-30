@@ -133,6 +133,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
   async refetchData() {
     console.log('ScheduleView: refetchData')
+    console.log("Data",this.props.Date)
     await this.props.apiModel.getScheduleFromDb(Number(this.props.Date), this.props.IsSavedSchedule, this.props.IsCurrentWeek)
 
   }

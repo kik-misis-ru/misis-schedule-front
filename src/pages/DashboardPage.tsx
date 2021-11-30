@@ -448,7 +448,7 @@ const DashboardPage = ({
                         marginRight: "10px"
                       }}
                             onClick={ () => {
-                              history.push('/schedule/'+Number(new Date())+'/'+true+'/'+true)
+                              history.push('/schedule/'+Math.floor(Number(new Date())/1000)+'/'+true+'/'+true)
                             }}
                       >
 

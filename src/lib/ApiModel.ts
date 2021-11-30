@@ -298,7 +298,9 @@ export class ApiModel {
       group_id = this.unsavedUser?.group_id;
       eng = this.unsavedUser?.eng_group;
     }
-    const firstDayWeek = getFirstDayWeek(new Date(date));
+    const firstDayWeek = getFirstDayWeek(new Date(date * 1000));
+    console.log("apiModel:getScheduleFromDb: firstDayWeek", firstDayWeek)
+    console.log("apiModel:getScheduleFromDb: Date", new Date(date * 1000))
     let week = isCurrentWeek===true ? 0 : 1
     if (this.isSavedTeacher()) {
       await ApiHelper.getScheduleTeacherFromDb(
