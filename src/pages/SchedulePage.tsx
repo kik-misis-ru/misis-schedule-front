@@ -45,6 +45,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
   async componentDidMount() {
     console.log("SchedulePage: componentDidMount")
+    await this.refetchData();
   }
 
   async componentDidUpdate(prevProps) {

@@ -40,7 +40,7 @@ export const ScheduleDayLessons = ({
   return (
     <React.Fragment>
       {
-        dayLessons.map((lesson, lessonIndex) => {
+        dayLessons && dayLessons.map((lesson, lessonIndex) => {
 
           const getIsCurrentLesson = () => (
             lesson.lessonNumber === currentLessonNumber
