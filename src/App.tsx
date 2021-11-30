@@ -226,21 +226,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   handleAssistantPageChange(pageRoute: string) {
     history.push(pageRoute)
   }
-
-  handleAssistantSetValue(
-    key: 'group' | 'subGroup' | 'engGroup',
-    value: string
-  ) {
-    console.log(`handleAssistantSetValue: key: ${key}, value:`, value);
-
-    this.setState((prevState) => (
-      {
-        ...prevState,
-        [key]: value,
-      }
-    ))
-  }
-
   async handleAssistantForDayOffset(offset: 0 | 1) {
      if (this.apiModel.CheckGroupOrTeacherSetted()) {
       const isSunday = (
@@ -776,7 +761,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     date: Date,
     when: NowOrWill | 'next',
   ): {
-    lesson: string | undefined,
+    lesson: string ,
     type: NowOrWill | 'next',
     num: number,
   } {
@@ -789,10 +774,15 @@ export class App extends React.Component<IAppProps, IAppState> {
     const todayWorkDayZeroIndex = todayDayOfWeek - 1;
     const todayBells = this.apiModel.day.current_week[todayWorkDayZeroIndex]
     const todayLessons = this.apiModel.saved_schedule.current_week[todayWorkDayZeroIndex]
-
+    
+    let result = {
+                lesson: '',
+                type: when,
+                num: -1,
+              }
     if (isSunday) {
-      const result = {
-        lesson: undefined,
+      result = {
+        lesson: '',
         type: when,
         num: -1,
       }
@@ -810,21 +800,21 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       // if (this.state.today !== 0) {
       const currLessonNum = this.getCurrentLesson(date);
-
+      
       //
       if (
         (when === "now") &&
         (currLessonNum !== undefined)
       ) {
         for (let bellIdx in todayLessons) {
-          const lesson = todayLessons[bellIdx][THIS_WEEK];
+          const lesson = todayLessons[bellIdx];
 
           if (
             (lesson.lessonNumber === currLessonNum) &&
             (lesson.lessonNumber !== "")
           ) {
-            return {
-              lesson: lesson[0],
+            result = {
+              lesson: lesson.lessonName,
               type: "now",
               num: parseInt(currLessonNum)
             };
@@ -836,17 +826,18 @@ export class App extends React.Component<IAppProps, IAppState> {
         (currLessonNum !== undefined) &&
         (parseInt(currLessonNum) + 1 < 8)
       ) {
-        console.log("whatLesson: будет")
+        
         for (let bell in todayLessons) {
           console.log('whatLesson:', parseInt(currLessonNum) + 1);
-          const lesson = todayLessons[bell][THIS_WEEK];
-
+          const lesson = todayLessons[bell];
+            
           if (
-            (lesson.lessonNumber == String(parseInt(currLessonNum) + 1)) &&
+            (lesson && lesson.lessonNumber == String(parseInt(currLessonNum) + 1)) &&
             (lesson.lessonNumber !== "")
           ) {
-            return {
-              lesson: lesson[0],
+            console.log("whatLesson: будет", todayLessons[bell])
+            result = {
+              lesson: lesson.lessonName,
               type: "next",
               num: parseInt(currLessonNum) + 1
             };
@@ -860,8 +851,8 @@ export class App extends React.Component<IAppProps, IAppState> {
         console.log('whatLesson:', firstLessonInfo[1]);
 
         const lessonNumber = parseInt(firstLessonInfo[1]);
-        return {
-          lesson: todayLessons[lessonNumber][0][0],
+        result = {
+          lesson: todayLessons[lessonNumber].lessonName,
           type: "will",
           num: lessonNumber,
         }
@@ -872,16 +863,16 @@ export class App extends React.Component<IAppProps, IAppState> {
               formatTimeHhMm(date) > breaks[i].start &&
               formatTimeHhMm(date) < breaks[i].end
             ) &&
-            (todayLessons[i][0][5][0] !== "")
+            (todayLessons[i].lessonNumber !== "")
           ) {
-            return {
-              lesson: todayLessons[i][0][0],
+            result = {
+              lesson: todayLessons[i].lessonName,
               type: "will",
               num: parseInt(i)
             };
           } else {
-            return {
-              lesson: undefined,
+            result = {
+              lesson: '',
               type: when,
               num: -1
             };
@@ -890,11 +881,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
       // }
     }
-    const result = {
-      lesson: undefined,
-      type: when,
-      num: -1,
-    }
+    
     console.log(`whatLesson: not found: result:`, result)
     return result;
   }
@@ -1295,9 +1282,9 @@ export class App extends React.Component<IAppProps, IAppState> {
 
                 let nextLessonIdx = this.whatLesson(now, "will").num;
                 // let nextLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
-                let nextLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1];
+                let nextLesson = this.apiModel.saved_schedule.current_week[todayZeroIndex]?.[nextLessonIdx - 1];
                 //console.log(this.whatLesson(now, "will").num, "next")
-                console.log('/dashboard: getTodayDayOfWeek():', getTodayDayOfWeek())
+                console.log('/dashboard: getTodayDayOfWeek():', nextLesson);
 
                 let count = this.apiModel.day.current_week[todayZeroIndex]?.count;
                 //console.log("COUNT", this.state.today)
@@ -1362,10 +1349,11 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
           />
-          <Route path="*">
-            {
-              <SchedulePage
-                timeParam={page}
+          <Route path="/schedule/:Date/:IsSaved/:IsCurrentWeek"
+             render={
+             ({match}) => {
+                return <SchedulePage
+                timeParam={getTodayDayOfWeek() }
                 onSetValue={this.setValue}
                 character={this.state.character}
                 theme={this.state.theme}
@@ -1376,15 +1364,19 @@ export class App extends React.Component<IAppProps, IAppState> {
                 groupName={this.apiModel.isSavedSchedule ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
                 apiModel={ this.apiModel}
                 doSetTeacher = {this.doSetTeacher}
-                
+                Date={match.params.Date}
+                IsSavedSchedule ={match.params.IsSaved}
+                IsCurrentWeek={match.params.IsCurrentWeek}
                 weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
                 today={getTodayDayOfWeek()}
                 schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
+
+              }
             }
-          </Route>
+          />
         </Switch>
       </Router>
     )

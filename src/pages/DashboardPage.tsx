@@ -7,12 +7,8 @@ import {
   DeviceThemeProvider,
   TextBoxBiggerTitle,
   Body1,
-  Caption
-} from '@sberdevices/plasma-ui';
-import 'react-toastify/dist/ReactToastify.css';
-import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
-import {
   Card,
+  Image,
   CardBody,
   CardBody2,
   //CardBody1,
@@ -26,7 +22,10 @@ import {
   LineSkeleton,
   RectSkeleton,
   CellDisclosure,
-} from "@sberdevices/plasma-ui";
+  Caption
+} from '@sberdevices/plasma-ui';
+import 'react-toastify/dist/ReactToastify.css';
+import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 //import {createGlobalStyle} from "styled-components";
 import {
   IconLocation, 
@@ -54,6 +53,10 @@ import { StartEnd } from '../App';
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import DayOfWeek from "../language-ru/DayOfWeek";
 
+import phone from "../images/phone.png";
+import schedule from "../images/schedule.png";
+import faq from "../images/faq.png";
+import location from "../images/location.png";
 
 import {Bell} from '../types/ScheduleStructure'
 import {CharacterId} from "../types/base.d";
@@ -102,15 +105,15 @@ const ScheduleSectionTitleRow = () => (
 
     <Col
       style={{
-        marginLeft: "2em",
-        paddingTop: "0.5em"
+        marginLeft: "15px",
+        paddingTop: "1.2em"
       }}
     >
-      <IconStarFill color="grey"/>
+      <IconEvent/>
     </Col>
 
     <Col style={{
-      paddingTop: "0.6em"
+      paddingTop: "1.3em"
     }}>
       <TextBox>
         <CardHeadline3>
@@ -126,10 +129,10 @@ const ScheduleSectionTitleRow = () => (
 const CatalogueHeaderRow = () => {
   return (
     <Row>
-      <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
-        <IconApps color="grey"/>
+      <Col style={{marginLeft: "15px", paddingTop: "1.6em"}}>
+        <IconApps />
       </Col>
-      <Col style={{paddingTop: "1.1em"}}>
+      <Col style={{paddingTop: "1.7em"}}>
         <TextBox>
           <CardHeadline3>
             Каталог
@@ -173,13 +176,13 @@ const TodaySummary = ({
   )
 
   return (
-    <Row>
+    <Row style={{
+          marginLeft: "1.3em",
+          paddingTop: "0.5em",
+        }}>
       <TextBox
         // @ts-ignore
-        style={{
-          marginLeft: "2.5em",
-          paddingTop: "0.5em",
-        }}
+        
       >
         <CardParagraph2 style={{fontSize: "20px"}}>
           {
@@ -235,23 +238,23 @@ const DashboardCard = ({
               </CardHeadline3>
             </TextBox>
             {text=="Другое расписание" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconEvent size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={schedule} />
             </Col> : <div></div>
             }
             {text=="Карта" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconLocation size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={location} />
             </Col> : <div></div>
             }
             {text=="FAQ" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconHelp size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={faq} />
             </Col> : <div></div>
             }
             {text=="Контакты" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconCallCircle size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={phone} />
             </Col> : <div></div>
             }
           </CardContent>
@@ -267,7 +270,7 @@ const GetCloser = ({
 onGoToPage: (pageNo) => void
 }) => {
 return (
-<Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+<Row style={{marginLeft: "10px", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
 
 <Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.5vh"}}>
 
@@ -320,7 +323,7 @@ const CatalogueItems = ({
   // use history.push('/some/path') here
 
   return (
-    <Row style={{marginLeft: "1em", marginRight: "1em"}}>
+    <Row style={{marginLeft: "8px", marginRight: "8px"}}>
 
      
 
@@ -406,7 +409,7 @@ const DashboardPage = ({
   apiModel: ApiModel
 
 }) => {
-  // console.log('DashboardPage:', groupId, teacherId, userId)
+  console.log('DashboardPage:', nextLesson)
   // console.log('DashboardPage:', {count})
   return (
     <DeviceThemeProvider>
@@ -425,6 +428,7 @@ const DashboardPage = ({
           onHomeClick={() => history.push('/settings')}
         />
         {
+
           apiModel.isSchedule
             ? (
               <Row>
@@ -438,13 +442,12 @@ const DashboardPage = ({
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
                       <Card style={{
-                        width: "88%",
-                        marginLeft: "1.5em",
+                        marginLeft: "10px",
                         marginTop: "0.5em",
-                        marginRight: "2.5em"
+                        marginRight: "10px"
                       }}
                             onClick={ () => {
-                              history.push('/')
+                              history.push('/schedule/'+Number(new Date())+'/'+true+'/'+true)
                             }}
                       >
 
@@ -521,10 +524,10 @@ const DashboardPage = ({
              
                {!apiModel.isSchedule &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
               <Col >
-                <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
-                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
+                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
+                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
                 <ScheduleSectionTitleRow/>
-                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em", marginLeft: "1em", width:"90%"}} roundness={16}/>
+                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "10px", marginRight: "10px"}} roundness={16}/>
               </Col>): (<div ></div>)
 
              

@@ -24,6 +24,8 @@ import {
 
 const FIRST_DAY_OTHER_WEEK = 8;
 
+const DAY_IN_SECONDS = 86400
+
 
 export interface ScheduleViewProps {
   apiModel: ApiModel
@@ -43,22 +45,28 @@ export interface ScheduleViewProps {
   }
   doSetTeacher: (string) => Promise<void>
   getIsCorrectTeacher: () => boolean
+  Date: number
+  IsSavedSchedule: boolean
+  IsCurrentWeek: boolean
 }
 
 interface ScheduleViewState {
-  day_num: number
   current: string
-  index: number
   page: number
   formatDate: (weekDayShort: string, dateDdDotMm: string) => string
   isTeacher: boolean
   groupName: string
   weekParam: number
-  timeParam: number
   teacher: string
+  schedule: {
+    current_week: IScheduleDays
+    other_week: IScheduleDays
+  }
+  Day: number
 }
 
 export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleViewState> {
+
 
   constructor(props) {
     super(props);
@@ -66,6 +74,39 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     this.PreviousWeek = this.PreviousWeek.bind(this)
     this.NextWeek = this.NextWeek.bind(this);
     this.CurrentWeek = this.CurrentWeek.bind(this);
+
+    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
+    let _timeparam = this.props.timeParam
+    if (this.props.timeParam > 7) {
+      _timeparam -= 7;
+      weekParam = OTHER_WEEK
+    }
+
+
+    const getIsCorrectTeacher = () => {
+      return this.props.getIsCorrectTeacher()
+    }
+
+    let apiModel =this.props.apiModel;
+    let subGroupName = apiModel.isSavedUser ? apiModel.user?.subgroup_name : apiModel.unsavedUser?.subgroup_name
+    let teacher =this.props.apiModel.isSavedUser? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
+    if(teacher == undefined){
+      teacher = ""
+    }
+    let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
+
+    this.state = {
+      current: this.props.getCurrentLesson(new Date()),
+      page: this.props.weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0,
+      formatDate: (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`,
+      isTeacher: getIsCorrectTeacher(),
+      groupName: formatFullGroupName(this.props.groupName ? this.props.groupName : "", subGroupName ? subGroupName : ""),
+      weekParam: weekParam,
+      teacher : teacher,
+      schedule: schedule,
+      Day: this.props.timeParam
+    }
+   
   }
 
 
@@ -87,44 +128,10 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
 
   render() {
-
-    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    let _timeparam = this.props.timeParam
-    if (this.props.timeParam > 7) {
-      _timeparam -= 7;
-      weekParam = OTHER_WEEK
-    }
-
-
-    const getIsCorrectTeacher = () => {
-      return this.props.getIsCorrectTeacher()
-    }
-
-    let apiModel =this.props.apiModel;
-    //let groupName = apiModel.isSavedUser ? apiModel.user?.group : apiModel.unsavedUser?.group
-    let subGroupName = apiModel.isSavedUser ? apiModel.user?.subgroup_name : apiModel.unsavedUser?.subgroup_name
-    let teacher =this.props.apiModel.isSavedUser? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
-    if(teacher == undefined){
-      teacher = ""
-    }
-    
-    this.state = {
-      timeParam: _timeparam,
-      current: this.props.getCurrentLesson(new Date()),
-      day_num: _timeparam - 1,
-      index: _timeparam,
-      page: this.props.weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0,
-      formatDate: (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`,
-      isTeacher: getIsCorrectTeacher(),
-      groupName: formatFullGroupName(this.props.groupName ? this.props.groupName : "", subGroupName ? subGroupName : ""),
-      weekParam: weekParam,
-      teacher : teacher
-      
-      
-    }
-
-    console.log('ScheduleView: schedule', this.props.schedule)
-
+    let isReady = this.props.apiModel.isSchedule
+    let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
+    console.log(schedule);
+    console.log('Day', this.state.Day)
     return (
  /*     <DeviceThemeProvider>
       <DocStyle/>
@@ -167,17 +174,20 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             onThisWeekClick={() => {
               this.CurrentWeek();
               this.onHandleChange("flag", true)
-              history.push('/')
+              history.push('/schedule/')
             }}
             onNextWeekClick={async () => {
-              await this.NextWeek();
-              this.onHandleChange("flag", false)
-              this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
+             // await this.NextWeek();
+              //this.onHandleChange("flag", false)
+              //this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
+              isReady = false;
+              history.push('/schedule/'+Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
+              console.log(isReady)
             }}
           />
 
           <WeekCarousel
-            selectedIndex={this.state.index - 1}
+            selectedIndex={this.state.Day - 1}
             markedIndex={this.state.weekParam === THIS_WEEK ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
             cols={
               this.props.day.map(d => {
@@ -191,28 +201,19 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               })
             }
             onSelect={(weekDayIndex) => {
-              this.onHandleChange("page", (
-                weekDayIndex + this.state.page + (this.state.weekParam === OTHER_WEEK ? 0 : 1)
-              ))
+              this.setState({Day:  weekDayIndex + (this.state.weekParam === OTHER_WEEK ? 0 : 1)})
             }}
           />
 
           <ScheduleDay
-            isReady={this.props.apiModel.isSchedule}
-            // days={this.state.days}
-            // day_num={day_num}
+            isReady={isReady}
             dayLessons={
-              this.state.weekParam == 0 ? this.props.schedule.current_week[this.state.day_num] : this.props.schedule.other_week[this.state.day_num]
+              this.state.weekParam == 0 ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1]
             }
             currentLessonNumber={this.state.current}
-            // weekParam={weekParam}
-            // timeParam={timeParam}
             isTeacherAndValid={this.state.isTeacher}
-            isToday={this.props.today === this.state.timeParam && this.props.weekParam === THIS_WEEK}
-            isDayOff={this.state.timeParam == 7}
-            // today={this.state.today}
-            // validateTeacher={this.isCorrectTeacher}
-            // onSetValue={this.setValue}
+            isToday={this.props.today === this.state.Day && this.props.weekParam === THIS_WEEK}
+            isDayOff={this.state.Day == 7}
             onTeacherClick={async (teacherName) => {
               await this.props.doSetTeacher(teacherName)
             }
