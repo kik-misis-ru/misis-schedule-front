@@ -773,24 +773,19 @@ export class App extends React.Component<IAppProps, IAppState> {
     const isSunday = (todayDayOfWeek === 0)
     const todayWorkDayZeroIndex = todayDayOfWeek - 1;
     const todayBells = this.apiModel.day.current_week[todayWorkDayZeroIndex]
-    const todayLessons = this.apiModel.saved_schedule.current_week[todayWorkDayZeroIndex]
-
-
-    const NOT_FOUND = {
+    const todayLessons = this.apiModel.saved_schedule?.current_week[todayWorkDayZeroIndex]
+    
+    let result = {
                 lesson: '',
                 type: when,
                 num: -1,
               }
-    let result = NOT_FOUND;
-
-
-    if (!todayLessons) {
-      result = NOT_FOUND
-      console.log(`whatLesson: !todayLessons: result:`, result)
-      return result;
-
-    } else if (isSunday) {
-      result = NOT_FOUND
+    if (isSunday) {
+      result = {
+        lesson: '',
+        type: when,
+        num: -1,
+      }
       console.log(`whatLesson: isSunday: result:`, result)
       return result;
 
@@ -833,7 +828,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       ) {
         
         for (let bell in todayLessons) {
-          console.log('whatLesson:', parseInt(currLessonNum) + 1);
           const lesson = todayLessons[bell];
             
           if (
@@ -862,33 +856,34 @@ export class App extends React.Component<IAppProps, IAppState> {
           num: lessonNumber,
         }
       } else {
-        console.log('whatLesson: breaks:', breaks)
-        console.log('whatLesson: todayLessons:', todayLessons)
-
+        
         for (let i in breaks) {
-          console.log('whatLesson: i, breaks:', i, breaks[i])
-          console.log('todayLessons: i, todayLessons:', i, todayLessons[i])
+          console.log(breaks, formatTimeHhMm(date), todayLessons)
           if (
             (
               formatTimeHhMm(date) > breaks[i].start &&
               formatTimeHhMm(date) < breaks[i].end
             ) &&
-            (todayLessons[i].lessonNumber !== "")
+            (todayLessons !== undefined) &&
+            (todayLessons[i].lessonName !== undefined)
           ) {
+            
             result = {
               lesson: todayLessons[i].lessonName,
               type: "will",
               num: parseInt(i)
             };
           } else {
-            result = NOT_FOUND;
+            result = {
+              lesson: '',
+              type: when,
+              num: -1
+            };
           }
         }
       }
       // }
     }
-    
-    console.log(`whatLesson: not found: result:`, result)
     return result;
   }
 

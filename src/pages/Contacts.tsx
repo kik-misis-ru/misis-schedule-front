@@ -1,5 +1,5 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, DeviceThemeProvider, Header} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Headline3,
@@ -42,18 +42,12 @@ const Contacts = ({
     }}>
 
             <Row style={{margin: "1em"}}>
-
-              <HeaderLogoCol/>
-
-              <HeaderTitleCol2
-                title="Контакты"
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-                <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
-                />
-              </Col>
+            <Header
+                    back={true}
+                    title="Контакты"
+                    onBackClick={() => onDashboardClick()}
+                >
+                </Header>
 
             </Row>
             {

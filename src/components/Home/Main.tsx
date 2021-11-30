@@ -1,5 +1,5 @@
 import React, {DetailedHTMLProps, HTMLAttributes} from "react";
-import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, Cell, Header} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
@@ -26,19 +26,12 @@ const Main = ({
   const TopMenuRow = () => (
     <Row style={{margin: "1em"}}>
 
-              <HeaderLogoCol/>
-
-              <HeaderTitleCol2
-                title="Другое расписание"
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-              <GoToDashboardButton
-          onClick={() => {
-            history.push('/dashboard')
-          }}
-        />
-              </Col>
+<Header
+                    back={true}
+                    title="Другое расписание"
+                    onBackClick={() => history.push('/dashboard')}
+                >
+                </Header>
 
             </Row>
    

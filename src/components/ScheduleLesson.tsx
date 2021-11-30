@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  CardHeadline3,
+  Body2,
   TextBox,
   TextBoxSubTitle,
   TextBoxTitle,
@@ -70,11 +70,11 @@ export const LessonName = (
       }}
     >
 
-      <CardHeadline3
+      <Body2
         style={isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
       >
-        {text}
-      </CardHeadline3>
+       {lessonNumber}. {text}
+      </Body2>
 
     </Link>
   )
@@ -165,7 +165,7 @@ const MainContent = (
 ) => {
   return (
 
-    <TextBox>
+    <TextBox >
       <LessonStartAndFinishTime
         time={time}
       />
@@ -264,9 +264,9 @@ const ScheduleLesson = (
             isTeacherAndValid={isTeacherAndValid}
             onTeacherClick={onTeacherClick}
           />
-          : <CardHeadline3 style={{marginLeft: "1em"}}>
+          : <Body2 style={{marginLeft: "1em"}}>
             {lesson.lessonName}
-          </CardHeadline3>
+          </Body2>
       }
       contentRight={
         <LessonRightContent
@@ -275,12 +275,6 @@ const ScheduleLesson = (
             // todo: это преобразование должно быть раньше
             lessonTypeAdjToNoun(lesson.lessonType)
           }
-        />
-      }
-      contentLeft={
-        <LessonLeftContent
-          visible={!(lesson.lessonName == NO_LESSONS_NAME)}
-          text={lesson.lessonNumber}
         />
       }
     />
