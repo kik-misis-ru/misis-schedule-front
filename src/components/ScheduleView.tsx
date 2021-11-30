@@ -154,12 +154,8 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     // console.log("ScheduleView: render, ScheduleDay:", String(this.props.IsCurrentWeek)=="true" ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1])
 
     let isReady = this.props.apiModel.isSchedule
-<<<<<<< HEAD
-    console.log(schedule);
-=======
   
     // console.log(schedule);
->>>>>>> 7d0c551dd09ef706aee919a099e8e8d7dc246413
     console.log('Day', this.state.Day)
     return (
  /*     <DeviceThemeProvider>
@@ -236,13 +232,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           <ScheduleDay
             isReady={isReady}
             dayLessons={
-<<<<<<< HEAD
-              this.state.weekParam == 0 ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1]
-=======
               String(this.props.IsCurrentWeek)=="true"
                 ? schedule.current_week[this.state.Day-1]
                 : schedule.other_week[this.state.Day-1]
->>>>>>> 7d0c551dd09ef706aee919a099e8e8d7dc246413
             }
             currentLessonNumber={this.state.current}
             isTeacherAndValid={this.state.isTeacher}

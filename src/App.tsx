@@ -605,7 +605,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         const lesson = this.apiModel.saved_schedule.other_week[dayNumber - 1][lessonIdx]
         if (lesson.lessonName !== "") {
           lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-          console.log('getStartFirstLesson: lessonIdx:', lessonIdx)
+          console.log('getStartFirstLesson: lessonIdx:', lesson.lessonName)
           lessonNumber = String(Number(lessonIdx) + 1);
           break
         }
@@ -615,7 +615,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       const lesson = this.apiModel.saved_schedule.current_week[dayNumber - 1][lessonIdx]
       if (lesson.lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        console.log('getStartFirstLesson: lessonIdx:', lesson.lessonName)
+        console.log('getStartFirstLesson: lessonIdx:', lessonIdx, lesson.lessonName)
         lessonNumber = String(Number(lessonIdx) + 1);
         break
       }
@@ -842,11 +842,11 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
       } else if (
-        (this.getStartFirstLesson(todayWorkDayZeroIndex)[0] !== undefined) &&
-        (this.getStartFirstLesson(todayWorkDayZeroIndex)[0] >= formatTimeHhMm(date))
+        (firstLessonTimeHhMm !== undefined) &&
+        (firstLessonTimeHhMm >= formatTimeHhMm(date))
       ) {
-        const firstLessonInfo = this.getStartFirstLesson(todayWorkDayZeroIndex)
-        console.log('whatLesson:', firstLessonInfo[1]);
+        const firstLessonInfo = this.getStartFirstLesson(todayWorkDayZeroIndex+1)
+        console.log('whatLesson:', firstLessonInfo[1], this.getStartFirstLesson(todayWorkDayZeroIndex+1)[0]);
 
         const lessonNumber = parseInt(firstLessonInfo[1]);
         result = {
@@ -857,7 +857,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       } else {
         
         for (let i in breaks) {
-          console.log(breaks, formatTimeHhMm(date), todayLessons)
+          
           if (
             (
               formatTimeHhMm(date) > breaks[i].start &&
@@ -1273,14 +1273,12 @@ export class App extends React.Component<IAppProps, IAppState> {
                 const now = new Date();
                 let todayZeroIndex = getTodayDayOfWeek() - 1;
                 let currentLessonIdx = this.getCurrentLesson(now);
-                // let currentLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1]?.[THIS_WEEK];
                 let currentLesson = this.apiModel.saved_schedule.current_week[todayZeroIndex]?.[parseInt(currentLessonIdx) - 1];
                 let currentLessonStartEnd = LessonStartEnd[parseInt(currentLessonIdx) - 1]
 
                 let nextLessonIdx = this.whatLesson(now, "will").num;
-                // let nextLesson = this.apiModel.saved_schedule[todayZeroIndex]?.[nextLessonIdx - 1]?.[THIS_WEEK];
                 let nextLesson = this.apiModel.saved_schedule.current_week[todayZeroIndex]?.[nextLessonIdx - 1];
-                //console.log(this.whatLesson(now, "will").num, "next")
+                console.log(this.whatLesson(now, "will").num, "next")
                 console.log('/dashboard: getTodayDayOfWeek():', nextLesson);
 
                 let count = this.apiModel.day.current_week[todayZeroIndex]?.count;
