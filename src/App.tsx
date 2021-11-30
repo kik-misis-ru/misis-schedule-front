@@ -774,18 +774,23 @@ export class App extends React.Component<IAppProps, IAppState> {
     const todayWorkDayZeroIndex = todayDayOfWeek - 1;
     const todayBells = this.apiModel.day.current_week[todayWorkDayZeroIndex]
     const todayLessons = this.apiModel.saved_schedule.current_week[todayWorkDayZeroIndex]
-    
-    let result = {
+
+
+    const NOT_FOUND = {
                 lesson: '',
                 type: when,
                 num: -1,
               }
-    if (isSunday) {
-      result = {
-        lesson: '',
-        type: when,
-        num: -1,
-      }
+    let result = NOT_FOUND;
+
+
+    if (!todayLessons) {
+      result = NOT_FOUND
+      console.log(`whatLesson: !todayLessons: result:`, result)
+      return result;
+
+    } else if (isSunday) {
+      result = NOT_FOUND
       console.log(`whatLesson: isSunday: result:`, result)
       return result;
 
@@ -857,7 +862,12 @@ export class App extends React.Component<IAppProps, IAppState> {
           num: lessonNumber,
         }
       } else {
+        console.log('whatLesson: breaks:', breaks)
+        console.log('whatLesson: todayLessons:', todayLessons)
+
         for (let i in breaks) {
+          console.log('whatLesson: i, breaks:', i, breaks[i])
+          console.log('todayLessons: i, todayLessons:', i, todayLessons[i])
           if (
             (
               formatTimeHhMm(date) > breaks[i].start &&
@@ -871,11 +881,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               num: parseInt(i)
             };
           } else {
-            result = {
-              lesson: '',
-              type: when,
-              num: -1
-            };
+            result = NOT_FOUND;
           }
         }
       }
