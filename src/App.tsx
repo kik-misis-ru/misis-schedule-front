@@ -828,7 +828,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       ) {
         
         for (let bell in todayLessons) {
-          console.log('whatLesson:', parseInt(currLessonNum) + 1);
           const lesson = todayLessons[bell];
             
           if (
@@ -881,8 +880,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
       // }
     }
-    
-    console.log(`whatLesson: not found: result:`, result)
     return result;
   }
 
