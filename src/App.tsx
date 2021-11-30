@@ -1176,7 +1176,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   render() {
     let {page} = this.state;
-    // console.log("App: render, this.state:", this.state)
+    console.log("App: render, this.state:", this.state)
     return (
       <Router history={history}>
         <Switch>

@@ -65,10 +65,11 @@ interface ScheduleViewState {
   Day: number
 }
 
+
 export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleViewState> {
 
-
   constructor(props) {
+    console.log("ScheduleView: constructor")
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
     this.PreviousWeek = this.PreviousWeek.bind(this)
@@ -110,24 +111,40 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
   }
 
 
-  PreviousWeek() {
+  async PreviousWeek() {
     this.props.PreviousWeek()
+    await this.refetchData();
   }
 
-  NextWeek() {
-    this.props.NextWeek()
+  async NextWeek() {
+    // this.props.NextWeek()
+    await this.refetchData();
+    this.setState({});
   }
 
-  CurrentWeek() {
+  async CurrentWeek() {
     this.props.CurrentWeek();
+    await this.refetchData();
   }
 
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
 
+  async refetchData() {
+    console.log('ScheduleView: refetchData')
+    await this.props.apiModel.getScheduleFromDb(Number(this.props.Date), this.props.IsSavedSchedule, this.props.IsCurrentWeek)
+
+  }
+
+  componentDidMount() {
+    console.log("ScheduleView: componentDidMount")
+    this.refetchData();
+  }
 
   render() {
+    console.log("ScheduleView: render")
+
     let isReady = this.props.apiModel.isSchedule
     let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
     console.log(schedule);
@@ -177,7 +194,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               history.push('/schedule/')
             }}
             onNextWeekClick={async () => {
-             // await this.NextWeek();
+             await this.NextWeek();
               //this.onHandleChange("flag", false)
               //this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
               isReady = false;
