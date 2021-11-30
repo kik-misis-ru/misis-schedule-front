@@ -773,7 +773,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     const isSunday = (todayDayOfWeek === 0)
     const todayWorkDayZeroIndex = todayDayOfWeek - 1;
     const todayBells = this.apiModel.day.current_week[todayWorkDayZeroIndex]
-    const todayLessons = this.apiModel.saved_schedule.current_week[todayWorkDayZeroIndex]
+    const todayLessons = this.apiModel.saved_schedule?.current_week[todayWorkDayZeroIndex]
     
     let result = {
                 lesson: '',
@@ -856,14 +856,18 @@ export class App extends React.Component<IAppProps, IAppState> {
           num: lessonNumber,
         }
       } else {
+        
         for (let i in breaks) {
+          console.log(breaks, formatTimeHhMm(date), todayLessons)
           if (
             (
               formatTimeHhMm(date) > breaks[i].start &&
               formatTimeHhMm(date) < breaks[i].end
             ) &&
-            (todayLessons[i].lessonNumber !== "")
+            (todayLessons !== undefined) &&
+            (todayLessons[i].lessonName !== undefined)
           ) {
+            
             result = {
               lesson: todayLessons[i].lessonName,
               type: "will",

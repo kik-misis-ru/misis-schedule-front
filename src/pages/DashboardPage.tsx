@@ -22,7 +22,8 @@ import {
   LineSkeleton,
   RectSkeleton,
   CellDisclosure,
-  Caption
+  Caption,
+  Header
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
@@ -57,6 +58,7 @@ import phone from "../images/phone.png";
 import schedule from "../images/schedule.png";
 import faq from "../images/faq.png";
 import location from "../images/location.png";
+import logo from "../images/App Icon.png";
 
 import {Bell} from '../types/ScheduleStructure'
 import {CharacterId} from "../types/base.d";
@@ -83,18 +85,17 @@ const HeaderRow = ({
   <Row style={{
     margin: "1em"
   }}>
-
-    <HeaderLogoCol/>
-
-    <HeaderTitleCol
-      title='Мир МИСиС'
-    />
-
-    <Col style={{margin: "0 0 0 auto"}}>
-      <GoToHomeButton
+                <Header
+                    back={false}
+                    logo={logo}
+                    title="Мир МИСиС"
+                    minimize 
+                    onMinimizeClick={() => alert('Minimize click.')}
+                >
+                    <GoToHomeButton
         onClick={() => onHomeClick()}
       />
-    </Col>
+                </Header>
 
   </Row>
 )

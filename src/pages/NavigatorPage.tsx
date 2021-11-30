@@ -1,5 +1,5 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider, Caption, Body1} from '@sberdevices/plasma-ui';
+import {Container, Row, Col, DeviceThemeProvider, Header, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Card,
@@ -115,17 +115,12 @@ const NavigatorPage = ({
 
             <Row style={{margin: "1em"}}>
 
-              <HeaderLogoCol/>
-
-              <HeaderTitleCol2
-                title="Карта университета"
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-                <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
-                />
-              </Col>
+            <Header
+                    back={true}
+                    title="Карта"
+                    onBackClick={() => onDashboardClick()}
+                >
+                </Header>
 
             </Row>
 
