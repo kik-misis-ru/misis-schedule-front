@@ -148,8 +148,8 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
           ? action.note[1].data.groupName[0]
           : action.note[1].data.groupName[1];
         group = group.toUpperCase();
-        this.emit('action-group', group);
         this._App.handleAssistantSetValue('group', group)
+        this.emit('action-group', group);
         break
 
       case 'subgroup':
