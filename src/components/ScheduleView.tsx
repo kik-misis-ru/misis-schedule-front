@@ -211,8 +211,8 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <WeekCarousel
-            selectedIndex={this.state.Day - 1}
-            markedIndex={this.state.weekParam === THIS_WEEK ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
+            selectedIndex={this.state.Day}
+            markedIndex={this.props.IsCurrentWeek !=false  ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
             cols={
               this.props.day.map(d => {
                 const {title, date} = d;
@@ -233,8 +233,8 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             isReady={isReady}
             dayLessons={
               String(this.props.IsCurrentWeek)=="true"
-                ? schedule.current_week[this.state.Day-1]
-                : schedule.other_week[this.state.Day-1]
+                ? schedule.current_week[this.state.Day]
+                : schedule.other_week[this.state.Day]
             }
             currentLessonNumber={this.state.current}
             isTeacherAndValid={this.state.isTeacher}
