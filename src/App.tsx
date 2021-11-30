@@ -774,18 +774,17 @@ export class App extends React.Component<IAppProps, IAppState> {
     const todayWorkDayZeroIndex = todayDayOfWeek - 1;
     const todayBells = this.apiModel.day.current_week[todayWorkDayZeroIndex]
     const todayLessons = this.apiModel.saved_schedule?.current_week[todayWorkDayZeroIndex]
-    
-    let result = {
+
+    const NO_LESSON = {
                 lesson: '',
                 type: when,
                 num: -1,
               }
-    if (isSunday) {
-      result = {
-        lesson: '',
-        type: when,
-        num: -1,
-      }
+
+    let result = NO_LESSON;
+
+      if (isSunday) {
+      result = NO_LESSON
       console.log(`whatLesson: isSunday: result:`, result)
       return result;
 
@@ -874,11 +873,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               num: parseInt(i)
             };
           } else {
-            result = {
-              lesson: '',
-              type: when,
-              num: -1
-            };
+            result = NO_LESSON;
           }
         }
       }
@@ -1008,6 +1003,7 @@ export class App extends React.Component<IAppProps, IAppState> {
    */
   async NextWeek(isSave: boolean) {
     const datePlusWeek = this.state.date + SEVEN_DAYS;
+    console.log("App: NewxtWeek: Date", datePlusWeek)
     await this.apiModel.getScheduleFromDb(datePlusWeek, isSave, false);
     this.setState({date: datePlusWeek})
   }
@@ -1171,7 +1167,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   render() {
     let {page} = this.state;
-    // console.log("App: render, this.state:", this.state)
+    console.log("App: render, this.state:", this.state)
     return (
       <Router history={history}>
         <Switch>
