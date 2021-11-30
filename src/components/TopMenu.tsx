@@ -6,9 +6,6 @@ import {
   IconHouse,
   IconNavigationArrow,
   IconSettings,
-  IconStar,
-  IconStarFill,
-  IconMoreVertical,
   IconChevronRight
 } from "@sberdevices/plasma-icons";
 

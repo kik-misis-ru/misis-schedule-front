@@ -109,7 +109,7 @@ const ScheduleSectionTitleRow = () => (
         paddingTop: "1.2em"
       }}
     >
-      <IconEvent color="grey"/>
+      <IconEvent/>
     </Col>
 
     <Col style={{
@@ -130,7 +130,7 @@ const CatalogueHeaderRow = () => {
   return (
     <Row>
       <Col style={{marginLeft: "15px", paddingTop: "1.6em"}}>
-        <IconApps color="grey"/>
+        <IconApps />
       </Col>
       <Col style={{paddingTop: "1.7em"}}>
         <TextBox>
@@ -409,7 +409,7 @@ const DashboardPage = ({
   apiModel: ApiModel
 
 }) => {
-  // console.log('DashboardPage:', groupId, teacherId, userId)
+  console.log('DashboardPage:', nextLesson)
   // console.log('DashboardPage:', {count})
   return (
     <DeviceThemeProvider>
