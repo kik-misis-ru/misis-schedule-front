@@ -47,7 +47,7 @@ export interface ScheduleViewProps {
   getIsCorrectTeacher: () => boolean
   Date: number
   IsSavedSchedule: boolean
-  IsCurrentWeek: boolean
+  IsCurrentWeek: Boolean
 }
 
 interface ScheduleViewState {
@@ -112,33 +112,33 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
 
   async PreviousWeek() {
-    this.props.PreviousWeek()
-    await this.refetchData();
+    //this.props.PreviousWeek()
+    await this.refetchData(Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7)), false);
   }
 
   async NextWeek() {
     // this.props.NextWeek()
-    await this.refetchData();
+    await this.refetchData(Math.floor(Number(new Date())/1000), false);
     this.setState({});
   }
 
   async CurrentWeek() {
-    this.props.CurrentWeek();
-    await this.refetchData();
+    //this.props.CurrentWeek();
+    await this.refetchData(Number(Number(this.props.Date)-Number(DAY_IN_SECONDS*7)), true);
   }
 
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
 
-  async refetchData() {
-    await this.props.apiModel.getScheduleFromDb(Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7)), this.props.IsSavedSchedule, false)
+  async refetchData(date: number, isCurrentWeek : Boolean) {
+    await this.props.apiModel.getScheduleFromDb(date, this.props.IsSavedSchedule, isCurrentWeek)
 
   }
 
   componentDidMount() {
     console.log("ScheduleView: componentDidMount")
-    this.refetchData();
+    this.refetchData(Math.floor(Number(new Date())/1000), true);
   }
 
   render() {
@@ -148,7 +148,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     console.log("ScheduleView: render, Schedule:", this.props.apiModel.saved_schedule)
     console.log("ScheduleView: render, IsCurrentWeek:",this.props.IsCurrentWeek )
     console.log("ScheduleView: render, Day:", this.state.Day )
-
+    console.log(this.props.IsCurrentWeek ? "CURRENT WEEK" : "OTHER WEEKs")
     console.log("ScheduleView: render, ScheduleDay:", String(this.props.IsCurrentWeek)=="true" ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1])
 
     let isReady = this.props.apiModel.isSchedule
@@ -191,13 +191,12 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           <WeekSelect
             onPrevWeekClick={async () => {
               await this.PreviousWeek()
-              this.onHandleChange("flag", false)
-              this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
+              isReady = false;
+              history.push('/schedule/'+Number(Number(this.props.Date)-Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
             }}
             onThisWeekClick={() => {
               this.CurrentWeek();
-              this.onHandleChange("flag", true)
-              history.push('/schedule/')
+              history.push('/schedule/'+Math.floor(Number(new Date())/1000)+'/'+true+'/'+true)
             }}
             onNextWeekClick={async () => {
               //this.onHandleChange("flag", false)

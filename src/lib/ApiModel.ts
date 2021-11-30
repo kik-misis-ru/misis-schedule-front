@@ -271,7 +271,7 @@ export class ApiModel {
     }
   }
 
-  public  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: boolean) {
+  public  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: Boolean) {
     let teacher_id, group_id, eng;
     if (isSave) {
       teacher_id = this.user?.teacher_id;
