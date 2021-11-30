@@ -1367,7 +1367,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
                 today={getTodayDayOfWeek()}
-                schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
+                // schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
 
