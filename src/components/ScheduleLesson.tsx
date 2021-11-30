@@ -8,6 +8,7 @@ import {
   TextBox,
   TextBoxSubTitle,
   TextBoxTitle,
+  TextBoxLabel,
   Badge,
   Col,
   CellListItem,
@@ -207,20 +208,11 @@ export const LessonRightContent = (
   return (
     <TextBox>
       {room ? (
-        <Badge
-          text={room}
-          contentLeft={
-            <IconLocation size="xs"/>
-          }
-          style={{
-            backgroundColor: COLOR_BLACK,
-            color: COLOR_BUTTON_PRIMARY,
-          }}
-        />) : (<div></div>)
+        <TextBoxTitle >{room}</TextBoxTitle>) : (<div></div>)
       }
-      <TextBoxTitle style={{paddingRight: "0.3em"}}>
+      <TextBoxLabel >
         {lessonType}
-      </TextBoxTitle>
+      </TextBoxLabel>
     </TextBox>
   )
 }
@@ -248,7 +240,7 @@ const ScheduleLesson = (
 
   return (
     <CellListItem
-      style={{padding: "0", margin: "0"}}
+      style={{paddingLeft: "1em", paddingRight: "1em", margin: "0"}}
       content={
         lesson.lessonName != "Пар нет 🎉"
           ? <MainContent

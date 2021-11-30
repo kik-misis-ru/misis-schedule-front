@@ -1003,6 +1003,7 @@ export class App extends React.Component<IAppProps, IAppState> {
    */
   async NextWeek(isSave: boolean) {
     const datePlusWeek = this.state.date + SEVEN_DAYS;
+    console.log("App: NewxtWeek: Date", datePlusWeek)
     await this.apiModel.getScheduleFromDb(datePlusWeek, isSave, false);
     this.setState({date: datePlusWeek})
   }

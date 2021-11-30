@@ -10,8 +10,9 @@ import {
   Tabs,
   TabItem,
   TextBoxLabel,
+  Header,
+  TextField
 } from "@sberdevices/plasma-ui";
-import {TextField} from "@sberdevices/plasma-ui";
 import {IconChevronLeft, IconEdit, IconHouse} from "@sberdevices/plasma-icons";
 import {IAppState, SetValueFn, SetValueKeys} from "../App";
 import {
@@ -271,17 +272,15 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           overflow: 'auto',
         }}>
         <Row style={{margin: "1em"}}>
+        <Header
+                    back={true}
+                    title="Настройки"
+                    onBackClick={() => this.props.onDashboardClick()}
+                >
+                {!this.state.edit ? (  <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
+) : (<div></div>)}
+                </Header>
 
-<Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => this.props.onDashboardClick()} />
-
-<HeaderTitleCol2
-  title="Настройки"
-/>
-{!this.state.edit ? (
-<Col style={{margin: "0 0 0 auto"}}>
-  <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
-</Col>) : (<div></div>)
-  }
 </Row >
 
           { this.state.edit ? (

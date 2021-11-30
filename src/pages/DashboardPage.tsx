@@ -350,7 +350,7 @@ const CatalogueItems = ({
 
       <DashboardCard
         text="Контакты"
-        sub="Помощь"
+        sub="Как связаться"
         // onClick={() => onGoToPage(CONTACTS_PAGE_NO)}
         onClick={() => history.push('/contacts')}
       />
