@@ -1129,6 +1129,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             teacher: "",
             filial_id: this.apiModel.user== undefined ? "" : this.apiModel.user.filial_id
           }
+          console.log("UPDATE USER", updateUser)
           if(isSave){
             createUser(
             this.apiModel.userId,
