@@ -64,8 +64,8 @@ const Lesson = (props: {
     <Container style={{
       padding: 0,
       // overflow: "hidden",
-      height: '100%',
-      overflow: 'auto',
+      // height: '100%',
+      // overflow: 'auto',
     }}>
 
       <Row style={{margin: "1em"}}>
@@ -76,11 +76,11 @@ const Lesson = (props: {
           title="Карточка пары"
         />
 
-        <Col style={{margin: "0 0 0 auto"}}>
+        {/* <Col style={{margin: "0 0 0 auto"}}>
           <GoToDashboardButton
             onClick={() => onDashboardClick()}
           />
-        </Col>
+        </Col> */}
 
       </Row>
       <Row>

@@ -127,7 +127,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
     let isReady = this.props.apiModel.isSchedule
   
-    // console.log(schedule);
+    console.log("isReady", isReady);
     console.log('Day', this.state.Day)
     return (
  /*     <DeviceThemeProvider>
@@ -200,7 +200,8 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               })
             }
             onSelect={(weekDayIndex) => {
-              this.setState({Day:  weekDayIndex-1 + (this.state.weekParam === OTHER_WEEK ? 0 : 1)})
+              this.setState({Day:  weekDayIndex-1 + (this.state.weekParam === OTHER_WEEK ? 0 : 1)});
+              this.props.onSetValue("page", weekDayIndex-1)
             }}
           />
 

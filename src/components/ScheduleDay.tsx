@@ -107,7 +107,7 @@ export const ScheduleDay = ({
   // today: number,
   onTeacherClick: (teacherName: string) => void
 }) => (
-  isReady
+  isReady==true
     ? (
       <div style={{flexDirection: "column"}}>
         <Card style={isDayOff

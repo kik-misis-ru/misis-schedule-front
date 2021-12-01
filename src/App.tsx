@@ -171,6 +171,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   componentDidMount() {
     console.log('componentDidMount');
     this.assistant.init();
+    this.setState({page: getTodayDayOfWeek()-1})
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1077,6 +1078,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async Load_Schedule( isSave: boolean): Promise<void> {
+    this.setState({page: getTodayDayOfWeek()-1})
     console.log("Load_Schedule. IsSave:", isSave)
     return await this._loadSchedule(isSave);
   }
@@ -1247,6 +1249,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               ({match}) => {
                 // temporary workaround
                 console.log("/lesson/...: this.state.page:", this.state.page)
+                console.log("/lesson/...: this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]", this.apiModel.saved_schedule.current_week)
                 // if (this.state.page!==NON_EXISTING_PAGE_NO) this.gotoPage(NON_EXISTING_PAGE_NO);
                 return (
                   <Lesson
@@ -1254,7 +1257,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     isTeacherAndValid={this.getIsCorrectTeacher()}
                     theme={this.state.theme}
                     // currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
-                    currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]}
+                    currentLesson={this.apiModel.saved_schedule.current_week[this.state.page]?.[match.params.lessonIndex - 1]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
