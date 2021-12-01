@@ -31,7 +31,8 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
   async refetchData() {
     console.log("SchedulePage: refetchData: saved_schedule.other_week:", this.props.apiModel.saved_schedule.other_week)
-
+    console.log("SchedulePage: refetchData: IsSavedSchedule:", this.props.IsSavedSchedule)
+    console.log("SchedulePage: refetchData: IsCurrentWeek:", this.props.IsCurrentWeek)
     await this.props.apiModel.getScheduleFromDb(this.props.Date, this.props.IsSavedSchedule, this.props.IsCurrentWeek)
 
     this.setState({

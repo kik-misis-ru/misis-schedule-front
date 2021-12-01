@@ -11,6 +11,7 @@ import { group } from "console";
 import {MS_IN_DAY, formatDateWithDashes, getFirstDayWeek} from '../lib/datetimeUtils'
 import {formatTeacherName} from '../lib/formatters'
 import { threadId } from "worker_threads";
+import ScheduleDay from "../components/ScheduleDay";
 
 
 export interface IPushSettings {
@@ -221,6 +222,8 @@ export class ApiModel {
    * заполнение данными расписания из бд
    */
    public async SetWeekSchedule(scheduleData: ApiHelper.IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
+     console.log("SetWeekSchedule: IsSave:", isSavedSchedule)
+     console.log("SetWeekSchedule: i:", i)
      this.isSchedule = false;
     if (isSavedSchedule) {
       let saved_schedule = this.saved_schedule
@@ -248,6 +251,7 @@ export class ApiModel {
       else {
         console.log("Set other shcedule; other week")
         day.other_week = scheduleData.day
+        other_schedule.other_week = scheduleData.schedule
       }
         this.other_schedule = other_schedule
         this.isSavedSchedule = isSavedSchedule
@@ -317,6 +321,7 @@ export class ApiModel {
         eng !=undefined ? eng : "",
         firstDayWeek
       ).then((response) => {
+        
         this.SetWeekSchedule(response, week, isSave);
       })
       this.isStudent = true

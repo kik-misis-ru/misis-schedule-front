@@ -1316,7 +1316,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   // state={this.state}
                   CheckIsCorrect={this.CheckIsCorrect}
                   LoadSchedule={this.Load_Schedule}
-                  onHandleTeacherChange={this.apiModel.handleTeacherChange}
                   description={
                     this.state.character === 'joy'
                       ? ENTER_DATA_NO_OFFICIAL_TEXT
@@ -1325,7 +1324,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                   character={this.state.character}
                   theme={this.state.theme}
                   onShowScheduleClick={() => {
-                    history.push('/')
+                    let current_date = new Date().toISOString().slice(0,10)
+                    let IsSave = false
+                    let IsCurrentWeek = true
+                    history.push('/schedule/'+current_date+'/'+IsSave+'/'+IsCurrentWeek)
                   }}
                   apiModel={this.apiModel}
                 />
@@ -1356,12 +1358,12 @@ export class App extends React.Component<IAppProps, IAppState> {
                 CurrentWeek={() => this.CurrentWeek(this.apiModel.isSavedSchedule)}
                 NextWeek={() => {this.NextWeek(this.apiModel.isSavedSchedule)}}
                 getCurrentLesson={this.getCurrentLesson}
-                groupName={this.apiModel.isSavedSchedule ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
+                groupName={match.params.IsSaved == "true" ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
                 apiModel={ this.apiModel}
                 doSetTeacher = {this.doSetTeacher}
                 Date={new Date(match.params.Date)}
-                IsSavedSchedule ={match.params.IsSaved}
-                IsCurrentWeek={match.params.IsCurrentWeek}
+                IsSavedSchedule ={match.params.IsSaved == "true"}
+                IsCurrentWeek={match.params.IsCurrentWeek == "true"}
                 weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
                 today={getTodayDayOfWeek()}
