@@ -324,7 +324,18 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.apiModel.handleTeacherChange(this.state.teacherSettings, this.state.IsSave)}
+          onClick={async () => {
+            let teacherValidation = await this.props.apiModel.handleTeacherChange(this.state.teacherSettings, this.state.IsSave)
+            if(!teacherValidation.IsInitialsError){
+              console.log("Show Schedule")
+              console.log(this.props.apiModel)
+              this.props.onShowScheduleClick()
+            }
+            else{
+              this.setState({teacherValidation: {IsInitialsError : teacherValidation.IsInitialsError}})
+            }
+
+          }}
         />
 
       </Container>
