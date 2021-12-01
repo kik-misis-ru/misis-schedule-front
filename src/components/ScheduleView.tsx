@@ -45,7 +45,7 @@ export interface ScheduleViewProps {
   }
   doSetTeacher: (string) => Promise<void>
   getIsCorrectTeacher: () => boolean
-  Date: number
+  Date: Date
   IsSavedSchedule: boolean
   IsCurrentWeek: Boolean
 }
@@ -71,10 +71,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
   constructor(props) {
     super(props);
     this.onHandleChange = this.onHandleChange.bind(this)
-    this.PreviousWeek = this.PreviousWeek.bind(this)
-    this.NextWeek = this.NextWeek.bind(this);
-    this.CurrentWeek = this.CurrentWeek.bind(this);
-
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
     let _timeparam = this.props.timeParam
     if (this.props.timeParam > 7) {
@@ -109,23 +105,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
    
   }
 
-
-  async PreviousWeek() {
-    //this.props.PreviousWeek()
-    // await this.refetchData(Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7)), false);
-  }
-
-  async NextWeek() {
-    // this.props.NextWeek()
-    // await this.refetchData(Math.floor(Number(new Date())/1000), false);
-    // this.setState({});
-  }
-
-  async CurrentWeek() {
-    //this.props.CurrentWeek();
-    // await this.refetchData(Number(Number(this.props.Date)-Number(DAY_IN_SECONDS*7)), true);
-  }
-
   onHandleChange(key: string, value: any): void {
     this.props.onSetValue(key, value);
   }
@@ -141,17 +120,10 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
   }
 
   render() {
-
-    // let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
-
     const {schedule } = this.props;
 
-    console.log("ScheduleView: render")
-    console.log("ScheduleView: render, Schedule:", this.props.apiModel.saved_schedule)
-    console.log("ScheduleView: render, IsCurrentWeek:",this.props.IsCurrentWeek )
-    console.log("ScheduleView: render, Day:", this.state.Day )
-    console.log(this.props.IsCurrentWeek ? "CURRENT WEEK" : "OTHER WEEKs")
-    // console.log("ScheduleView: render, ScheduleDay:", String(this.props.IsCurrentWeek)=="true" ? schedule.current_week[this.state.Day-1] : schedule.other_week[this.state.Day-1])
+    console.log("ScheduleView: render: schedule", schedule)
+  
 
     let isReady = this.props.apiModel.isSchedule
   
@@ -182,30 +154,33 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             onDashboardClick={async () => {
 
               if (this.props.apiModel.unsavedUser) {
-                await this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true);
+                await this.props.apiModel.getScheduleFromDb(new Date(), true, true);
               }
               this.onHandleChange("isSavedSchedule", true)
               history.push("/dashboard")
             }}
-            Bd={() =>this.props.apiModel.getScheduleFromDb(Number(new Date()), true, true)}
+            Bd={() =>this.props.apiModel.getScheduleFromDb(new Date(), true, true)}
           />
 
           <WeekSelect
             onPrevWeekClick={async () => {
-              await this.PreviousWeek()
               isReady = false;
-              history.push('/schedule/'+Number(Number(this.props.Date)-Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
+              let date = this.props.Date
+              date.setDate(date.getDate() - 7)
+              let date_to_url = date.toISOString().slice(0,10)
+              history.push('/schedule/'+date_to_url+'/'+this.props.IsSavedSchedule+'/'+false)
             }}
             onThisWeekClick={() => {
-              this.CurrentWeek();
-              history.push('/schedule/'+Math.floor(Number(new Date())/1000)+'/'+true+'/'+true)
+              let current_date = new Date().toISOString().slice(0,10)
+              history.push('/schedule/'+current_date+'/'+this.props.IsSavedSchedule+'/'+true)
             }}
             onNextWeekClick={async () => {
-             // await this.NextWeek();
-              //this.onHandleChange("flag", false)
-              //this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
               isReady = false;
-              history.push('/schedule/'+Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
+              let date = this.props.Date
+              date.setDate(date.getDate() +7)
+              let date_to_url = date.toISOString().slice(0,10)
+              history.push('/schedule/'+date_to_url+'/'+this.props.IsSavedSchedule+'/'+false)
+              
               console.log(isReady)
             }}
           />

@@ -11,6 +11,7 @@ import { group } from "console";
 import {MS_IN_DAY, formatDateWithDashes, getFirstDayWeek} from '../lib/datetimeUtils'
 import {formatTeacherName} from '../lib/formatters'
 import { threadId } from "worker_threads";
+import ScheduleDay from "../components/ScheduleDay";
 
 
 export interface IPushSettings {
@@ -93,7 +94,7 @@ export type IScheduleDays = DayBells[]
 export class ApiModel {
   public userId: string 
   public user: IUserData | undefined
-  public unsavedUser: IUserData |undefined
+  public unsavedUser: IUserData 
   public pushSettings: IPushSettings 
   public isStudent: boolean
   public isSchedule: boolean
@@ -146,6 +147,15 @@ export class ApiModel {
       teacher:{
         isTeacherError: false
       }
+    }
+    this.unsavedUser  = {
+      teacher: "",
+      teacher_id: "",
+      group_id : "",
+      filial_id:"",
+      eng_group: "",
+      subgroup_name: "",
+      group: ""
     }
   }
  
@@ -221,6 +231,8 @@ export class ApiModel {
    * заполнение данными расписания из бд
    */
    public async SetWeekSchedule(scheduleData: ApiHelper.IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
+     console.log("SetWeekSchedule: IsSave:", isSavedSchedule)
+     console.log("SetWeekSchedule: i:", i)
      this.isSchedule = false;
     if (isSavedSchedule) {
       let saved_schedule = this.saved_schedule
@@ -248,6 +260,7 @@ export class ApiModel {
       else {
         console.log("Set other shcedule; other week")
         day.other_week = scheduleData.day
+        other_schedule.other_week = scheduleData.schedule
       }
         this.other_schedule = other_schedule
         this.isSavedSchedule = isSavedSchedule
@@ -271,7 +284,7 @@ export class ApiModel {
     }
   }
 
-  public  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: Boolean) {
+  public  async getScheduleFromDb(date: Date, isSave: boolean, isCurrentWeek: Boolean) {
     let teacher_id, group_id, eng;
     if (isSave) {
       teacher_id = this.user?.teacher_id;
@@ -285,7 +298,7 @@ export class ApiModel {
         return
       }
       eng = this.user?.eng_group
-      if (this.isSavedTeacher() && this.unsavedUser != undefined && this.user?.teacher != undefined) {
+      if (this.isTeacher(isSave) && this.unsavedUser != undefined && this.user?.teacher != undefined) {
         this.isStudent=false;
         this.unsavedUser.teacher = this.user.teacher
       }
@@ -294,15 +307,16 @@ export class ApiModel {
       }
     }
     else {
-      teacher_id = this.unsavedUser?.teacher_id;
-      group_id = this.unsavedUser?.group_id;
-      eng = this.unsavedUser?.eng_group;
+      teacher_id = this.unsavedUser.teacher_id;
+      group_id = this.unsavedUser.group_id;
+      eng = this.unsavedUser.eng_group;
     }
-    const firstDayWeek = getFirstDayWeek(new Date(date * 1000));
+    const firstDayWeek = getFirstDayWeek(date);
     console.log("apiModel:getScheduleFromDb: firstDayWeek", firstDayWeek)
-    console.log("apiModel:getScheduleFromDb: Date", new Date(date * 1000))
+    console.log("apiModel:getScheduleFromDb: Date", date)
     let week = isCurrentWeek===true ? 0 : 1
-    if (this.isSavedTeacher()) {
+    if (this.isTeacher(isSave)) {
+
       await ApiHelper.getScheduleTeacherFromDb(
         teacher_id,
         firstDayWeek
@@ -310,13 +324,15 @@ export class ApiModel {
         this.SetWeekSchedule(response, week, isSave);
       })
       this.isStudent = false
-    } else {
+    }
+    else {
       console.log("group_id", group_id)
       await ApiHelper.getScheduleFromDb(
         group_id,
         eng !=undefined ? eng : "",
         firstDayWeek
       ).then((response) => {
+        
         this.SetWeekSchedule(response, week, isSave);
       })
       this.isStudent = true
@@ -328,17 +344,6 @@ export class ApiModel {
     
     if(this.unsavedUser!=undefined){
       this.unsavedUser.teacher = teacherName
-    }
-    else{
-      this.unsavedUser  = {
-        teacher: "",
-        teacher_id: "",
-        group_id : "",
-        filial_id:"",
-        eng_group: "",
-        subgroup_name: "",
-        group: ""
-      }
     }
     let teacher: ITeacherSettings = {initials: teacherName}
     return !(await (await this.handleTeacherChange(teacher, false)).IsInitialsError);
@@ -357,7 +362,7 @@ export class ApiModel {
       IsInitialsError: true
     }
     if(settings.initials!=undefined){
-      await ApiHelper.getIdTeacherFromDb(settings.initials).then((teacherData) => {
+      let teacherData = await  ApiHelper.getIdTeacherFromDb(settings.initials)
         console.log('handleTeacherChange:', teacherData);
         console.log('handleTeacherChange: status:', teacherData.status);
   
@@ -369,55 +374,61 @@ export class ApiModel {
         ) {
           console.log("handleTeacherChange: teacherData.status:", teacherData.status);
           this.validation.teacher.isTeacherError = false
-          return true
+          return {IsInitialsError : false}
   
         } else
-          ApiHelper.getScheduleTeacherFromDb(
-            teacherData.id,
-            getFirstDayWeek(new Date())
-          ).then((response) => {
-            console.log("handleTeacherChange: getScheduleTeacherFromDb: response", response)
-            this.SetWeekSchedule(response, 0, isSave);
-          });
+         {
+          // ApiHelper.getScheduleTeacherFromDb(
+          //   teacherData.id,
+          //   getFirstDayWeek(new Date())
+          // ).then((response) => {
+          //   console.log("handleTeacherChange: getScheduleTeacherFromDb: response", response)
+          //   this.SetWeekSchedule(response, 0, isSave);
+          // });
+         }
   
         console.log('handleTeacherChange: formatTeacherName(teacherData):', formatTeacherName(teacherData))
   
-        ApiHelper.getInTeacherFromDb(teacherData.id).then((parsedTeacher2) => {
+        let parsedTeacher2 = await ApiHelper.getInTeacherFromDb(teacherData.id)
           let  teacher = formatTeacherName(parsedTeacher2)
           if(isSave && this.user!=undefined){
             this.user.teacher = teacher
           }
-          else if(this.unsavedUser!=undefined){
-            this.unsavedUser.teacher = teacher
+          else if(!isSave){
+            this.unsavedUser  = {
+              teacher: teacher,
+              teacher_id: teacherData.id,
+              group_id : "",
+              filial_id:"",
+              eng_group: "",
+              subgroup_name: "",
+              group: ""
+            }
+            console.log("UNSAVED USER", this.unsavedUser)
           }
-
-        })
-        this.validation.teacher.isTeacherError = false
-        this.isStudent = false
-        if(isSave && this.user != undefined){
-          this.user.teacher_id = teacherData.id
-          ApiHelper.createUser(
-            this.userId,
-            this.user.filial_id,
-            this.user.group_id,
-            this.user.subgroup_name,
-            this.user.eng_group,
-            this.user.teacher_id,
-          );
-        }
-        //todo: убрать проверку userId!=гтвуашткв
-        else if(this.unsavedUser!=undefined){
-          this.unsavedUser.teacher_id = teacherData.id
-        }
-        return result
-      })
+          this.validation.teacher.isTeacherError = false
+          this.isStudent = false
+          if(isSave && this.user != undefined){
+            this.user.teacher_id = teacherData.id
+            ApiHelper.createUser(
+              this.userId,
+              this.user.filial_id,
+              this.user.group_id,
+              this.user.subgroup_name,
+              this.user.eng_group,
+              this.user.teacher_id,
+            );
+          }
+          return result
     }
     return result
   }
 
 
-  protected isSavedTeacher() {
-    return this.user!=undefined && this.user.teacher_id != "" && this.user.teacher_id != undefined
+  protected isTeacher(isSave: boolean) {
+    console.log("IsTeacher", this.unsavedUser)
+    return  isSave ?  this.user!=undefined && this.user.teacher_id != "" && this.user.teacher_id != undefined
+    : this.unsavedUser!=undefined && this.unsavedUser.teacher_id != "" && this.unsavedUser.teacher_id != undefined
   }
   public CheckGroupOrTeacherSetted() : boolean{
     let groupApiModel = this.user?.group==undefined ? "" : this.user.group

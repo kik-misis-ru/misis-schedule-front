@@ -123,7 +123,6 @@ interface HomeViewProps {
   character: CharacterId
   description: string
   theme: string
-  onHandleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
   LoadSchedule: (isSave: boolean) => void
   onShowScheduleClick: () => void
@@ -275,9 +274,15 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <ShowScheduleButtonRow
           onClick={async () => {
             let isCorrect = await this.CheckIsCorrect(this.state.studentSettings, this.state.IsSave)
-            if (isCorrect) {
+            if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
               await this.Load_Schedule(this.state.IsSave)
               this.props.onShowScheduleClick()
+            }
+            else{
+              this.setState({studentValidation: 
+                {IsEngGroupError: isCorrect.IsEngGroupError, 
+                IsGroupNameError: isCorrect.IsGroupNameError,
+                IsSubGroupError: isCorrect.IsSubGroupError}})
             }
 
           }
@@ -320,7 +325,18 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         />
 
         <ShowScheduleButtonRow
-          onClick={() => this.props.onHandleTeacherChange(this.state.teacherSettings, this.state.IsSave)}
+          onClick={async () => {
+            let teacherValidation = await this.props.apiModel.handleTeacherChange(this.state.teacherSettings, this.state.IsSave)
+            if(!teacherValidation.IsInitialsError){
+              console.log("Show Schedule")
+              console.log(this.props.apiModel)
+              this.props.onShowScheduleClick()
+            }
+            else{
+              this.setState({teacherValidation: {IsInitialsError : teacherValidation.IsInitialsError}})
+            }
+
+          }}
         />
 
       </Container>
