@@ -412,6 +412,7 @@ const DashboardPage = ({
 }) => {
   console.log('DashboardPage:', nextLesson)
   // console.log('DashboardPage:', {count})
+  let current_date = new Date().toISOString().slice(0,10)
   return (
     <DeviceThemeProvider>
       <DocStyle/>
@@ -448,7 +449,7 @@ const DashboardPage = ({
                         marginRight: "10px"
                       }}
                             onClick={ () => {
-                              history.push('/schedule/'+Math.floor(Number(new Date())/1000)+'/'+true+'/'+true)
+                              history.push('/schedule/'+current_date+'/'+true+'/'+true)
                             }}
                       >
 

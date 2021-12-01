@@ -1004,7 +1004,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async NextWeek(isSave: boolean) {
     const datePlusWeek = this.state.date + SEVEN_DAYS;
     console.log("App: NewxtWeek: Date", datePlusWeek)
-    await this.apiModel.getScheduleFromDb(datePlusWeek, isSave, false);
+    await this.apiModel.getScheduleFromDb(new Date(datePlusWeek), isSave, false);
     this.setState({date: datePlusWeek})
   }
 
@@ -1014,7 +1014,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async CurrentWeek(isSave: boolean) {
     const date = Date.now();
     this.setState({date: date})
-    await this.apiModel.getScheduleFromDb(date, isSave, true);
+    await this.apiModel.getScheduleFromDb(new Date(date), isSave, true);
   }
 
   /**
@@ -1023,7 +1023,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async PreviousWeek(isSave: boolean) {
     const dateMinusWeek = this.state.date - SEVEN_DAYS;
     this.setState({date: dateMinusWeek})
-    await this.apiModel.getScheduleFromDb(dateMinusWeek, isSave, false);
+    await this.apiModel.getScheduleFromDb(new Date(dateMinusWeek), isSave, false);
   }
 
 
@@ -1361,7 +1361,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 groupName={this.apiModel.isSavedSchedule ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
                 apiModel={ this.apiModel}
                 doSetTeacher = {this.doSetTeacher}
-                Date={match.params.Date}
+                Date={new Date(match.params.Date)}
                 IsSavedSchedule ={match.params.IsSaved}
                 IsCurrentWeek={match.params.IsCurrentWeek}
                 weekParam={page > 7 ? 1 : 0}

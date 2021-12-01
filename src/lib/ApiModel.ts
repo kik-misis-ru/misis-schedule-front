@@ -271,7 +271,7 @@ export class ApiModel {
     }
   }
 
-  public  async getScheduleFromDb(date: number, isSave: boolean, isCurrentWeek: Boolean) {
+  public  async getScheduleFromDb(date: Date, isSave: boolean, isCurrentWeek: Boolean) {
     let teacher_id, group_id, eng;
     if (isSave) {
       teacher_id = this.user?.teacher_id;
@@ -298,9 +298,9 @@ export class ApiModel {
       group_id = this.unsavedUser?.group_id;
       eng = this.unsavedUser?.eng_group;
     }
-    const firstDayWeek = getFirstDayWeek(new Date(date * 1000));
+    const firstDayWeek = getFirstDayWeek(date);
     console.log("apiModel:getScheduleFromDb: firstDayWeek", firstDayWeek)
-    console.log("apiModel:getScheduleFromDb: Date", new Date(date * 1000))
+    console.log("apiModel:getScheduleFromDb: Date", date)
     let week = isCurrentWeek===true ? 0 : 1
     if (this.isSavedTeacher()) {
       await ApiHelper.getScheduleTeacherFromDb(
