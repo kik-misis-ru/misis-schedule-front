@@ -208,15 +208,11 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               //this.onHandleChange("flag", false)
               //this.onHandleChange("page", FIRST_DAY_OTHER_WEEK)
               isReady = false;
-<<<<<<< HEAD
               let date = this.props.Date
               date.setDate(date.getDate() +7)
               let date_to_url = date.toISOString().slice(0,10)
               history.push('/schedule/'+date_to_url+'/'+true+'/'+false)
               
-=======
-              history.push('/schedule/'+Number(Number(this.props.Date)+Number(DAY_IN_SECONDS*7))+'/'+true+'/'+false)
->>>>>>> e8a8571dc130ddc1992f8617fa301161b3418059
               console.log(isReady)
             }}
           />
