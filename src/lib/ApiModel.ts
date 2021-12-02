@@ -231,6 +231,7 @@ export class ApiModel {
    * заполнение данными расписания из бд
    */
    public async SetWeekSchedule(scheduleData: ApiHelper.IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
+     this.isSavedSchedule =isSavedSchedule
      console.log("SetWeekSchedule: IsSave:", isSavedSchedule)
      console.log("SetWeekSchedule: i:", i)
      this.isSchedule = false;
@@ -246,7 +247,7 @@ export class ApiModel {
         day.other_week = scheduleData.day
       }
       this.saved_schedule=saved_schedule
-      this.isSavedSchedule =isSavedSchedule
+      
       this.day = day
     }
     else {
@@ -263,7 +264,6 @@ export class ApiModel {
         other_schedule.other_week = scheduleData.schedule
       }
         this.other_schedule = other_schedule
-        this.isSavedSchedule = isSavedSchedule
         this.day = day
 
     }
@@ -286,6 +286,7 @@ export class ApiModel {
 
   public  async getScheduleFromDb(date: Date, isSave: boolean, isCurrentWeek: Boolean) {
     let teacher_id, group_id, eng;
+    console.log("isSave", isSave)
     if (isSave) {
       teacher_id = this.user?.teacher_id;
       group_id = this.user?.group_id;

@@ -31,6 +31,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
   async refetchData() {
     console.log("SchedulePage: refetchData: apiModel", this.props.apiModel.unsavedUser)
+    console.log("SchedulePage: refetchData: this.props.IsSavedSchedule:", this.props.IsSavedSchedule)
     await this.props.apiModel.getScheduleFromDb(this.props.Date, this.props.IsSavedSchedule, this.props.IsCurrentWeek)
 
     this.setState({
@@ -39,7 +40,6 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
         : this.props.apiModel.other_schedule
     })
 
-    console.log("SchedulePage: refetchData: saved_schedule.other_week:", this.props.apiModel.saved_schedule.other_week)
   }
 
   async componentDidMount() {
@@ -50,6 +50,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
   async componentDidUpdate(prevProps) {
     console.log("SchedulePage: ComponentDidUpdate")
     // Typical usage (don't forget to compare props):
+    
     if (this.props.Date !== prevProps.Date) {
       await this.refetchData();
       // this.setState({})

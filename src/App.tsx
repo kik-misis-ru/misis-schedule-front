@@ -80,7 +80,7 @@ import {
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
 
-export type SetValueKeys = keyof Pick<IAppState, 'page'|'flag'> /*extends keyof IAppState*/;
+export type SetValueKeys = keyof Pick<IAppState, 'page'|'isCurrentWeek'> /*extends keyof IAppState*/;
 export type SetValueFn = <K extends SetValueKeys>(
   key: K,
   value: IAppState[K],
@@ -126,7 +126,7 @@ interface IAppProps {
 export interface IAppState {
   notes: { id: string, title: string }[];
   page: number
-  flag: boolean
+  isCurrentWeek: boolean
   date: number
   character: CharacterId
   theme: string
@@ -157,7 +157,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.state = {
       notes: [],
       page: INITIAL_PAGE,
-      flag: true,
+      isCurrentWeek: true,
       date: Date.now() ,
       theme: "dark",
       isActive: false,
@@ -236,11 +236,11 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       if (isSunday) {
         this.assistant.sendTodaySchedule(DAY_SUNDAY);
-        return this.ChangeDay(7);
+        return this.ChangePage(true);
 
       } else {
         offset== 0 ? this.assistant.sendTodaySchedule(DAY_NOT_SUNDAY) : this.assistant.sendTomorrowSchedule(DAY_NOT_SUNDAY)
-        return this.ChangeDay(getTodayDayOfWeek() + offset);
+        return this.ChangePage(true);
       }
     }
   }
@@ -248,14 +248,14 @@ export class App extends React.Component<IAppProps, IAppState> {
   async handleAssistantForNextWeek() {
     if (this.apiModel.CheckGroupOrTeacherSetted()) {
       await this.NextWeek(this.apiModel.isSavedSchedule);
-      return this.ChangeDay(FIRST_DAY_OTHER_WEEK);
+      return this.ChangePage(false);
     }
   }
 
   async handleAssistantForThisWeek() {
      if (this.apiModel.CheckGroupOrTeacherSetted()) {
       await this.CurrentWeek(this.apiModel.isSavedSchedule);
-      this.ChangeDay(getTodayDayOfWeek());
+      this.ChangePage(true);
     }
   }
 
@@ -298,13 +298,15 @@ export class App extends React.Component<IAppProps, IAppState> {
       })
 
       if ((params.day === DAY_TODAY) && (getTodayDayOfWeek() !== 0)) {
-        return this.ChangeDay(getTodayDayOfWeek());
+        this.setState({page: getTodayDayOfWeek()-1})
+        return this.ChangePage(true);
 
       } else if (getTodayDayOfWeek() + 1 === 7) {
-        return this.ChangeDay(7);
+        return this.ChangePage(true);
 
       } else {
-        this.ChangeDay(getTodayDayOfWeek() + 1);
+        this.setState({page: getTodayDayOfWeek()})
+        return this.ChangePage(true);
       }
     }
   }
@@ -350,11 +352,12 @@ export class App extends React.Component<IAppProps, IAppState> {
           dayName: dayOfWeekLongPrepositional,
           amount: number.cardinal.fem[lessonCount]
         }
+        this.setState({page: dayOfWeekIndex})
         if (dayOfWeekIndex < getTodayDayOfWeek()) {
-          page = 7;
+          return this.ChangePage(false);
+        } else {
+          this.ChangePage(true)
         }
-
-        this.ChangeDay(dayOfWeekIndex + page)
 
       } else {
         assistantParams = {
@@ -393,14 +396,15 @@ export class App extends React.Component<IAppProps, IAppState> {
       })
 
       if ((this.apiModel.isSavedUser && this.apiModel.user?.group_id!="") || (this.apiModel.isSavedUser && this.apiModel.unsavedUser?.group_id!="")) {
-        this.ChangePage();
+        this.setState({page: getTodayDayOfWeek()-1})
+        this.ChangePage(true);
       }
 
-      if (getTodayDayOfWeek() === 0) {
-        this.gotoPage(7)
-      } else {
-        this.gotoPage(getTodayDayOfWeek())
-      }
+      // if (getTodayDayOfWeek() === 0) {
+      //   this.gotoPage(7)
+      // } else {
+      //   this.gotoPage(getTodayDayOfWeek())
+      // }
     }
   }
 
@@ -416,7 +420,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (whereLessonParams.exist === DAY_SUNDAY) {
         //this.setState({ page: 8 })
       } else {
-        this.ChangeDay(getTodayDayOfWeek());
+        this.ChangePage(true);
       }
     }
   }
@@ -432,12 +436,12 @@ export class App extends React.Component<IAppProps, IAppState> {
         action_id: "say4",
         parameters: whatLesson,
       })
-
-      if (getTodayDayOfWeek() === 0) {
-        this.ChangeDay(7)
-      } else {
-        this.ChangeDay(getTodayDayOfWeek());
-      }
+      this.ChangePage(true);
+      // if (getTodayDayOfWeek() === 0) {
+      //   this.ChangeDay(7)
+      // } else {
+      //   this.ChangeDay(getTodayDayOfWeek());
+      // }
 
     }
   }
@@ -448,7 +452,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       let firstLessonNumStr: string;
       // let day: TodayOrTomorrow;
       let day1: undefined | TodayOrTomorrow = DAY_TODAY;
-      let page1 = 0;
 
       const dayOfWeekZeroIndex = dayOfWeek - 1
       console.log('dispatchAssistantAction: first_lesson:', dayOfWeek)
@@ -460,11 +463,9 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       if (getTodayDayOfWeek() === dayOfWeek - 1) {
         day1 = DAY_TODAY;
-        page1 = 0
 
       } else if (getTodayDayOfWeek() + 1 === dayOfWeek - 1) {
         day1 = DAY_TOMORROW;
-        page1 = 0
 
       } else {
         day1 = undefined;
@@ -478,14 +479,10 @@ export class App extends React.Component<IAppProps, IAppState> {
         dayName: dayOfWeekLongPrepositional
       }
       console.log('dispatchAssistantAction: assistantParams:', assistantParams)
-
+      this.setState({page: dayOfWeek})
       if (dayOfWeekZeroIndex < getTodayDayOfWeek()) {
-        page1 = 7;
-      }
-
-      const newPage = dayOfWeekZeroIndex + page1;
-      this.gotoPage(newPage)
-
+        this.ChangePage(false)
+      } else this.ChangePage(true)
 
       this.assistant.sendAction({
         action_id: "say5",
@@ -498,46 +495,33 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log('handleAssistantDaySchedule:', dayOfWeek, note1, note2)
      if (this.apiModel.CheckGroupOrTeacherSetted()) {
       const dayOfWeekZeroIndex = dayOfWeek - 1;
-      let page2 = 0;
 
-      // todo: упростить
-
+      this.setState({page: dayOfWeek})
       if (note1 === null && note2 === null) {
-        console.log('dispatchAssistantAction: day_schedule: flag:', this.state.flag);
+        console.log('dispatchAssistantAction: day_schedule: isCurrentWeek:', );
 
-        if (!this.state.flag) {
-          page2 = 7;
-
-        } else {
-          page2 = 0;
-        }
+          this.ChangePage(true)
+        
 
       } else {
         console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex);
 
         if (note1 !== null) {
           console.log('dispatchAssistantAction: day_schedule: note[1]:', note1);
-          page2 = 0;
+          this.ChangePage(true)
 
         } else if (note2 !== null) {
           console.log('dispatchAssistantAction: day_schedule: note[2]:', note2);
-          page2 = 7;
+          this.ChangePage(false)
 
         }
       }
-
       console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex)
 
-      // todo: test dayOfWeek/dayOfWeekZeroIndex/dayOfWeekShort
-
-      // const dayOfWeekShort = this.state.day[dayOfWeekZeroIndex - 1].title;
-      // const dayOfWeekIndex_ = DayOfWeek.short.indexOf(dayOfWeekShort)
       const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
 
       this.assistant.sendSay6(dayOfWeekLongPrepositional);
 
-      const newPage = dayOfWeekZeroIndex + page2;
-      this.gotoPage(newPage)
 
     }
   }
@@ -601,22 +585,21 @@ export class App extends React.Component<IAppProps, IAppState> {
   getStartFirstLesson(dayNumber: number): [string, string] {
     let lessonsStart = '';
     let lessonNumber = '';
+    const lesson = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule : this.apiModel.other_schedule
     if (dayNumber < getTodayDayOfWeek()) {
-      for (let lessonIdx in this.apiModel.saved_schedule.other_week[dayNumber - 1]) {
-        const lesson = this.apiModel.saved_schedule.other_week[dayNumber - 1][lessonIdx]
-        if (lesson.lessonName !== "") {
+      for (let lessonIdx in lesson.other_week[dayNumber - 1]) {
+        if (lesson.other_week[dayNumber - 1][lessonIdx].lessonName !== "") {
           lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-          console.log('getStartFirstLesson: lessonIdx:', lesson.lessonName)
+          console.log('getStartFirstLesson: lessonIdx:', lesson.other_week[dayNumber - 1][lessonIdx].lessonName)
           lessonNumber = String(Number(lessonIdx) + 1);
           break
         }
       }
     } else {
-    for (let lessonIdx in this.apiModel.saved_schedule.current_week[dayNumber - 1]) {
-      const lesson = this.apiModel.saved_schedule.current_week[dayNumber - 1][lessonIdx]
-      if (lesson.lessonName !== "") {
+    for (let lessonIdx in lesson.current_week[dayNumber - 1]) {
+      if (lesson.current_week[dayNumber - 1][lessonIdx].lessonName !== "") {
         lessonsStart = LessonStartEnd[Number(lessonIdx)].start
-        console.log('getStartFirstLesson: lessonIdx:', lessonIdx, lesson.lessonName)
+        console.log('getStartFirstLesson: lessonIdx:', lessonIdx, lesson.current_week[dayNumber - 1][lessonIdx].lessonName)
         lessonNumber = String(Number(lessonIdx) + 1);
         break
       }
@@ -629,8 +612,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   // определяет когда кончаются пары сегодня или завтра
   getEndLastLesson(todayOrTomorrow: number): string {
     let lessonEnd = '';
-    for (let lessonIdx in this.apiModel.saved_schedule.current_week[todayOrTomorrow]) {
-      if (this.apiModel.saved_schedule.current_week[todayOrTomorrow][lessonIdx].lessonName !== "") {
+    const lesson = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule : this.apiModel.other_schedule
+    for (let lessonIdx in lesson.current_week[todayOrTomorrow]) {
+      if (lesson.current_week[todayOrTomorrow][lessonIdx].lessonName !== "") {
         lessonEnd = LessonStartEnd[lessonIdx].end;
       }
     }
@@ -640,8 +624,8 @@ export class App extends React.Component<IAppProps, IAppState> {
   // определяет начало или конец энной пары сегодня или завтра
   getBordersRequestLesson(startOrEnd: StartOrEnd, dayOfWeekIndex: number, lessonNum: number): string | undefined {
 
-    const lessonName = this.apiModel.saved_schedule.current_week[dayOfWeekIndex][lessonNum - 1].lessonName;
-
+    const lessonName = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule.current_week[dayOfWeekIndex][lessonNum - 1].lessonName : this.apiModel.other_schedule.current_week[dayOfWeekIndex][lessonNum - 1].lessonName
+    
     if (lessonName !== "") {
       if (startOrEnd === "start") {
         return LessonStartEnd[lessonNum - 1].start
@@ -719,7 +703,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   getCurrentLesson(date: Date): string {
     if (getTodayDayOfWeek() !== 0) {
       const todayIndex = getTodayDayOfWeek() - 1
-      const day = this.apiModel.saved_schedule.current_week[todayIndex]
+      const day = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule.current_week[todayIndex] : this.apiModel.other_schedule.current_week[todayIndex]
       for (let bellIdx in day) {
         // console.log(`getCurrentLesson: bellIdx: ${bellIdx}, typeof bellIdx: ${typeof bellIdx}`);
         const lesson = day[bellIdx];
@@ -745,9 +729,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   getAmountOfRemainingLessons(date: Date): number {
     let countRemainingLessons = 0
     const todayDayOfWeek = getTodayDayOfWeek();
-
+    const day = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1] : this.apiModel.other_schedule.current_week[todayDayOfWeek - 1]
     if ((todayDayOfWeek !== 0) && (todayDayOfWeek + 1 !== 7))
-      for (let bell in this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1]) {
+      for (let bell in day) {
         if (
           formatTimeHhMm(date) < LessonStartEnd[Number(bell)].start &&
           LessonStartEnd[Number(bell)].start !== ""
@@ -774,7 +758,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     const isSunday = (todayDayOfWeek === 0)
     const todayWorkDayZeroIndex = todayDayOfWeek - 1;
     const todayBells = this.apiModel.day.current_week[todayWorkDayZeroIndex]
-    const todayLessons = this.apiModel.saved_schedule?.current_week[todayWorkDayZeroIndex]
+    const todayLessons = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule?.current_week[todayWorkDayZeroIndex] : this.apiModel.other_schedule?.current_week[todayWorkDayZeroIndex]
+
 
     const NO_LESSON = {
                 lesson: '',
@@ -924,17 +909,18 @@ export class App extends React.Component<IAppProps, IAppState> {
       // ]
       // if (amountOfLessonsTuple && amountOfLessonsTuple[1] === 0) {
       const lessonCount = this.getLessonsCountForDate(date);
+      const todayLessons = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule?.current_week[todayDayOfWeek - 1] : this.apiModel.other_schedule?.current_week[todayDayOfWeek - 1]
       if (lessonCount <= 0) {
         return {
           exist: "empty",
         }
       }
       if (numberNearestLesson !== undefined) {
-        for (let bell in this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1]) {
+        for (let bell in todayLessons) {
           // если пара с таким номером есть в расписании
-          if (this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].lessonNumber === numberNearestLesson) {
+          if (todayLessons[bell].lessonNumber === numberNearestLesson) {
             return {
-              audience: this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].room,
+              audience: todayLessons[bell].room,
               type: "nearest",
               exist: "inSchedule",
             }
@@ -942,10 +928,10 @@ export class App extends React.Component<IAppProps, IAppState> {
             // сообщаем, что такой пары нет
             console.log(`whereWillLesson: Сейчас перерыв. Ближайшей будет ${numberNearestLesson} пара`)
 
-            for (let bell in this.apiModel.saved_schedule[todayDayOfWeek - 1]) {
-              if (this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].lessonNumber !== numberNearestLesson) {
+            for (let bell in todayLessons) {
+              if (todayLessons[bell].lessonNumber !== numberNearestLesson) {
                 return {
-                  audience: this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].room,
+                  audience: todayLessons[bell].room,
                   type: "nearest",
                   exist: "notInSchedule",
                 }
@@ -957,9 +943,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       if (numberNearestLesson === undefined && will === "now") {
         // вернуть номер текущей пары
         let whereCurrentLesson
-        for (let bell in this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1]) {
-          if (this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].lessonNumber === this.getCurrentLesson(date)) {
-            whereCurrentLesson = this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].room
+        for (let bell in todayLessons) {
+          if (todayLessons[bell].lessonNumber === this.getCurrentLesson(date)) {
+            whereCurrentLesson = todayLessons[bell].room
           }
         }
         if (whereCurrentLesson === "") {
@@ -974,9 +960,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       }
       if (numberNearestLesson === undefined && will === "will") {
-        for (let bell in this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1]) {
-          if (this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].lessonNumber === String(Number(this.getCurrentLesson(date)) + 1)) {
-            nextLessonRoom = this.apiModel.saved_schedule.current_week[todayDayOfWeek - 1][bell].room
+        for (let bell in todayLessons) {
+          if (todayLessons[bell].lessonNumber === String(Number(this.getCurrentLesson(date)) + 1)) {
+            nextLessonRoom = todayLessons[bell].room
           }
         }
         if (nextLessonRoom !== "") {
@@ -1028,27 +1014,13 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  ChangeDay(day: number): void {
-    this.ChangePage();
-    this.gotoPage(day);
-  }
 
 
-  ChangePage() {
-    let timeParam = this.state.page;
-    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    console.log("timeParam", timeParam)
-    console.log("WeekParam", weekParam)
-    if (timeParam > 7) {
-      weekParam = OTHER_WEEK
-      timeParam -= 7
-    }
-    if (weekParam === OTHER_WEEK) {
-      console.log("OTHER WEEK")
-      this.setState({flag: false});
-    } else {
-      this.setState({flag: true});
-    }
+  ChangePage(IsCurrentWeek: boolean) {
+    let current_date = new Date().toISOString().slice(0,10)
+    let IsSave = this.apiModel.isSavedSchedule
+    console.log("current_date+'/'+IsSave+'/'+IsCurrentWeek+page", current_date, IsSave, IsCurrentWeek, this.state.page)
+    history.push('/schedule/'+current_date+'/'+IsSave+'/'+IsCurrentWeek)
   }
 
   toggleTheme() {
@@ -1086,7 +1058,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   //Проверяет правильность ввода данных студента
   async CheckIsCorrect(settings: IStudentSettings, isSave: boolean): Promise<IStudentValidation> {
     console.log('App: isCorrect', settings)
-    //this.setState({correct: false, date: Date.now(), flag: true});
     let IsError: IStudentValidation ={
       IsGroupNameError: true,
       IsSubGroupError: true,
@@ -1330,6 +1301,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   onShowScheduleClick={() => {
                     let current_date = new Date().toISOString().slice(0,10)
                     let IsSave = this.apiModel.isSavedSchedule
+                    console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule)
                     let IsCurrentWeek = true
                     history.push('/schedule/'+current_date+'/'+IsSave+'/'+IsCurrentWeek)
                   }}
@@ -1353,8 +1325,9 @@ export class App extends React.Component<IAppProps, IAppState> {
           <Route path="/schedule/:Date/:IsSaved/:IsCurrentWeek"
              render={
              ({match}) => {
+               console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule, this.state.page)
                 return <SchedulePage
-                timeParam={getTodayDayOfWeek()-1 }
+                timeParam={this.state.page}
                 onSetValue={this.setValue}
                 character={this.state.character}
                 theme={this.state.theme}

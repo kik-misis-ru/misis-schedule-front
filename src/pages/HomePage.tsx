@@ -268,13 +268,15 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <RememberCheckboxRow
           label={LABEL_REMEMBER_GROUP}
           checked={this.state.IsSave}
-          onChange={(value) => this.setState({IsSave:value})}
+          onChange={(value) => {this.setState({IsSave:value})}}
         />
 
         <ShowScheduleButtonRow
           onClick={async () => {
             let isCorrect = await this.CheckIsCorrect(this.state.studentSettings, this.state.IsSave)
             if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
+              console.log(this.state.IsSave)
+              this.props.apiModel.isSavedSchedule = this.state.IsSave
               await this.Load_Schedule(this.state.IsSave)
               this.props.onShowScheduleClick()
             }
