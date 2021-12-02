@@ -27,6 +27,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
         other_week: [],
       }
     }
+    this.props.apiModel.isSchedule = false;
   }
 
   async refetchData() {
