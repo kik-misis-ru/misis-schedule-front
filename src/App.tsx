@@ -1298,11 +1298,11 @@ export class App extends React.Component<IAppProps, IAppState> {
                   }
                   character={this.state.character}
                   theme={this.state.theme}
-                  onShowScheduleClick={() => {
+                  onShowScheduleClick={(IsSave: boolean, IsCurrentWeek: boolean) => {
                     let current_date = new Date().toISOString().slice(0,10)
-                    let IsSave = this.apiModel.isSavedSchedule
-                    console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule)
-                    let IsCurrentWeek = true
+                    // let IsSave = this.apiModel.isSavedSchedule
+                    // console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule)
+                    // let IsCurrentWeek = true
                     history.push('/schedule/'+current_date+'/'+IsSave+'/'+IsCurrentWeek)
                   }}
                   apiModel={this.apiModel}

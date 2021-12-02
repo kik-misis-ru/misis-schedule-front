@@ -125,7 +125,7 @@ interface HomeViewProps {
   theme: string
   CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
   LoadSchedule: (isSave: boolean) => void
-  onShowScheduleClick: () => void
+  onShowScheduleClick: (IsSave: boolean, IsCurrentWeek: boolean) => void
   apiModel: ApiModel
 }
 
@@ -278,7 +278,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
               console.log(this.state.IsSave)
               this.props.apiModel.isSavedSchedule = this.state.IsSave
               await this.Load_Schedule(this.state.IsSave)
-              this.props.onShowScheduleClick()
+              this.props.onShowScheduleClick(this.state.IsSave, true)
             }
             else{
               this.setState({studentValidation: 
@@ -332,7 +332,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
             if(!teacherValidation.IsInitialsError){
               console.log("Show Schedule")
               console.log(this.props.apiModel)
-              this.props.onShowScheduleClick()
+              this.props.onShowScheduleClick(this.state.IsSave, true)
             }
             else{
               this.setState({teacherValidation: {IsInitialsError : teacherValidation.IsInitialsError}})
