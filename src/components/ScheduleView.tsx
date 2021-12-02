@@ -30,11 +30,6 @@ const DAY_IN_SECONDS = 86400
 export interface ScheduleViewProps {
   apiModel: ApiModel
   timeParam: number
-  groupName: string | undefined
-  onSetValue: (string, any) => void
-  PreviousWeek: () => void
-  CurrentWeek: () => void
-  NextWeek: () => void
   getCurrentLesson: (Date) => string
   weekParam: number
   day: IDayHeader[]
@@ -70,7 +65,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
   constructor(props) {
     super(props);
-    this.onHandleChange = this.onHandleChange.bind(this)
     let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
     let _timeparam = this.props.timeParam
     if (this.props.timeParam > 7) {
@@ -89,24 +83,21 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     if(teacher == undefined){
       teacher = ""
     }
-    let schedule = this.props.apiModel.isSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
+    let schedule = this.props.IsSavedSchedule ? this.props.apiModel.saved_schedule : this.props.apiModel.other_schedule
+    let groupName = this.props.IsSavedSchedule ? this.props.apiModel.user?.group : this.props.apiModel.unsavedUser.group
 
     this.state = {
       current: this.props.getCurrentLesson(new Date()),
       page: this.props.weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0,
       formatDate: (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`,
       isTeacher: getIsCorrectTeacher(),
-      groupName: formatFullGroupName(this.props.groupName ? this.props.groupName : "", subGroupName ? subGroupName : ""),
+      groupName: formatFullGroupName(groupName ? groupName : "", subGroupName ? subGroupName : ""),
       weekParam: weekParam,
       teacher : teacher,
       schedule: schedule,
       Day: this.props.timeParam
     }
    
-  }
-
-  onHandleChange(key: string, value: any): void {
-    this.props.onSetValue(key, value);
   }
 
   // async refetchData(date: number, isCurrentWeek : Boolean) {
@@ -156,7 +147,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               if (this.props.apiModel.unsavedUser) {
                 await this.props.apiModel.getScheduleFromDb(new Date(), true, true);
               }
-              this.onHandleChange("isSavedSchedule", true)
               history.push('/dashboard')
             }}
             Bd={() =>this.props.apiModel.getScheduleFromDb(new Date(), true, true)}
@@ -201,7 +191,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             }
             onSelect={(weekDayIndex) => {
               this.setState({Day:  weekDayIndex-1 + (this.state.weekParam === OTHER_WEEK ? 0 : 1)});
-              this.props.onSetValue("page", weekDayIndex-1)
             }}
           />
 

@@ -1328,14 +1328,9 @@ export class App extends React.Component<IAppProps, IAppState> {
                console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule, this.state.page)
                 return <SchedulePage
                 timeParam={this.state.page}
-                onSetValue={this.setValue}
                 character={this.state.character}
                 theme={this.state.theme}
-                PreviousWeek={() => this.PreviousWeek(this.apiModel.isSavedSchedule)}
-                CurrentWeek={() => this.CurrentWeek(this.apiModel.isSavedSchedule)}
-                NextWeek={() => {this.NextWeek(this.apiModel.isSavedSchedule)}}
                 getCurrentLesson={this.getCurrentLesson}
-                groupName={match.params.IsSaved == "true" ? this.apiModel.user?.group : this.apiModel.unsavedUser?.group}
                 apiModel={ this.apiModel}
                 doSetTeacher = {this.doSetTeacher}
                 Date={new Date(match.params.Date)}

@@ -171,6 +171,32 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     //   : DESC_OTHERS)
   }
 
+ async save_teacher(){
+    let teacherValidation = await this.props.apiModel.handleTeacherChange(this.state.teacherSettings, this.state.IsSave)
+    if(!teacherValidation.IsInitialsError){
+      console.log("Show Schedule")
+      console.log(this.props.apiModel)
+      this.props.onShowScheduleClick(this.state.IsSave, true)
+    }
+    else{
+      this.setState({teacherValidation: {IsInitialsError : teacherValidation.IsInitialsError}})
+    }
+  }
+  async save_student(){
+    let isCorrect = await this.CheckIsCorrect(this.state.studentSettings, this.state.IsSave)
+            if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
+              console.log(this.state.IsSave)
+              this.props.apiModel.isSavedSchedule = this.state.IsSave
+              await this.Load_Schedule(this.state.IsSave)
+              this.props.onShowScheduleClick(this.state.IsSave, true)
+            }
+            else{
+              this.setState({studentValidation: 
+                {IsEngGroupError: isCorrect.IsEngGroupError, 
+                IsGroupNameError: isCorrect.IsGroupNameError,
+                IsSubGroupError: isCorrect.IsSubGroupError}})
+            }
+  }
 
   componentDidMount() {
     this.props.assistant.on('action-group', (group) => {
@@ -182,6 +208,10 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     this.props.assistant.on('action-engGroup', (engGroup) => {
       console.log('action-engGroup', engGroup)
     })
+    this.props.assistant.on('show_schedule', async () => {
+      this.state.IsStudent ? await this.save_student() : await this.save_teacher()
+    })
+    
   }
 
   componentWillUnmount() {
@@ -273,20 +303,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <ShowScheduleButtonRow
           onClick={async () => {
-            let isCorrect = await this.CheckIsCorrect(this.state.studentSettings, this.state.IsSave)
-            if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
-              console.log(this.state.IsSave)
-              this.props.apiModel.isSavedSchedule = this.state.IsSave
-              await this.Load_Schedule(this.state.IsSave)
-              this.props.onShowScheduleClick(this.state.IsSave, true)
-            }
-            else{
-              this.setState({studentValidation: 
-                {IsEngGroupError: isCorrect.IsEngGroupError, 
-                IsGroupNameError: isCorrect.IsGroupNameError,
-                IsSubGroupError: isCorrect.IsSubGroupError}})
-            }
-
+            await this.save_student()
           }
           }
         />
@@ -328,16 +345,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <ShowScheduleButtonRow
           onClick={async () => {
-            let teacherValidation = await this.props.apiModel.handleTeacherChange(this.state.teacherSettings, this.state.IsSave)
-            if(!teacherValidation.IsInitialsError){
-              console.log("Show Schedule")
-              console.log(this.props.apiModel)
-              this.props.onShowScheduleClick(this.state.IsSave, true)
-            }
-            else{
-              this.setState({teacherValidation: {IsInitialsError : teacherValidation.IsInitialsError}})
-            }
-
+            await this.save_teacher()
           }}
         />
 

@@ -22,7 +22,7 @@ export const initializeAssistant = (getState) => {
   return createAssistant({getState});
 };
 
-type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup';
+type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup'|'show_schedule';
 
 export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
   _assistant
@@ -231,7 +231,8 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
         break
 
       case 'show_schedule':
-        await this._App.handleAssistantShowSchedule(action.note)
+        this.emit('show_schedule');
+        //await this._App.handleAssistantShowSchedule(action.note)
         break
 
       default:
