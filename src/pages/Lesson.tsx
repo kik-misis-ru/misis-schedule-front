@@ -70,7 +70,7 @@ const Lesson = (props: {
 
       <Row style={{margin: "1em"}}>
       {/* <HeaderLogoCol/> */}
-      <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {onGoToPage(pageNo)}} />
+      <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {history.go(-1)}} />
 
         <HeaderTitleCol2
           title="Карточка пары"
