@@ -164,7 +164,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
           <WeekSelect
             onPrevWeekClick={async () => {
-              isReady = false;
+              this.props.apiModel.isSchedule = false;
               let date = this.props.Date
               date.setDate(date.getDate() - 7)
               let date_to_url = date.toISOString().slice(0,10)
@@ -175,7 +175,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               history.push('/schedule/'+current_date+'/'+this.props.IsSavedSchedule+'/'+true)
             }}
             onNextWeekClick={async () => {
-              isReady = false;
+              this.props.apiModel.isSchedule = false;
               let date = this.props.Date
               date.setDate(date.getDate() +7)
               let date_to_url = date.toISOString().slice(0,10)
