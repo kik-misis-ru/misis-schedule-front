@@ -157,7 +157,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
                 await this.props.apiModel.getScheduleFromDb(new Date(), true, true);
               }
               this.onHandleChange("isSavedSchedule", true)
-              history.go(-1)
+              history.push('/dashboard')
             }}
             Bd={() =>this.props.apiModel.getScheduleFromDb(new Date(), true, true)}
           />
