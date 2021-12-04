@@ -1,51 +1,47 @@
 import React, {DetailedHTMLProps, HTMLAttributes} from "react";
-import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
+import {
+  Container, 
+  Row, 
+  Col, 
+  Cell, 
+  Header,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
+} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
+import logo from "../../images/App Icon.png";
 import {
-  history, } from '../../App';
+  history, IAppState,
+} from '../../App';
 import {Spacer100,Spacer200,Spacer300} from '../Spacers'
 
-import {
-    HeaderLogoCol,
-    HeaderTitleCol2,
-  GoToDashboardButton,
-  GoToScheduleButton,
-} from '../TopMenu';
 
 
 interface MainProps {
-  setValue: (key: string, value: any) => void
-  convertIdInGroupName: () => void
-  disabled: boolean
   contentRight: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 }
 
 const Main = ({
-                disabled,
                 contentRight,
-                setValue,
-                convertIdInGroupName,
               }: MainProps) => {
 
   const TopMenuRow = () => (
-    <Row style={{margin: "1em"}}>
+  <Row style={{margin: "1em"}}>
 
-              <HeaderLogoCol/>
-
-              <HeaderTitleCol2
-                title="Другое расписание"
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-              <GoToDashboardButton
-          onClick={() => {
-            history.push('/dashboard')
-          }}
-        />
-              </Col>
-
-            </Row>
+    <HeaderRoot>
+      <HeaderBack onClick={() => history.push('/dashboard')} />
+      <HeaderLogo src={logo} alt="Logo" onClick={() => history.push('/dashboard')}/>
+        <HeaderTitleWrapper>
+          <HeaderTitle>Другое расписание</HeaderTitle>
+        </HeaderTitleWrapper>
+    </HeaderRoot>
+  </Row>
    
 
   )

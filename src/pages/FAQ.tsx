@@ -1,13 +1,23 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Headline3,
+  Container, 
+  Row, 
+  Col, 
+  DeviceThemeProvider, 
+  Header,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import faq from '../data/faq.json';
 import lib from '../data/libraries.json';
-
+import logo from "../images/App Icon.png";
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId, IBuilding} from "../types/base";
@@ -43,18 +53,13 @@ const FAQ = ({
 
       <Row style={{margin: "1em"}}>
 
-        <HeaderLogoCol/>
-
-        <HeaderTitleCol2
-          title="Часто задаваемые вопросы"
-        />
-
-        <Col style={{margin: "0 0 0 auto"}}>
-          <GoToDashboardButton
-            onClick={() => onDashboardClick()}
-          />
-        </Col>
-
+      <HeaderRoot>
+              <HeaderBack onClick={() => onDashboardClick()} />
+            <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
+            <HeaderTitleWrapper>
+              <HeaderTitle>Часто задаваемые вопросы</HeaderTitle>
+            </HeaderTitleWrapper>
+            </HeaderRoot>
       </Row>
       {
         faq?.map((faq, index) => (

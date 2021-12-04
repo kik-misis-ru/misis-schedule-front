@@ -55,13 +55,10 @@ const MainContent = (
     teacher,
     time,
     url,
-    isAccented,
     lessonType,
     room,
     isTeacherAndValid,
     onTeacherClick,
-    onGoToPage,
-    
   }: {
     lessonName: string
     lessonNumber: string
@@ -74,18 +71,21 @@ const MainContent = (
     isAccented: boolean
     isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
-    onGoToPage: (pageNo: number) => void
   }
 ) => {
 
   const sanitizeRoom = (room: string): string =>
     room?.replace(/[^\d]/g, '');
+  let date = new Date();
 console.log(teacher, groupNumber)
   return (
-    <Container style={{padding: "0 0.5em 0.5em 0.5em"}}>
-    <Row style={{margin:"0 0.5em 0.5em 0.5em"}}>
+    <Container style={{padding: "0 2.5em 0.5em 0.5em"}}>
+    <Row style={{margin:"0 2.5em 0.5em 0.5em"}}>
     <TextBox >
       <LessonName
+        isCurrentWeek={true}
+        isSave={true}
+        Day={date.getDay()}
         text={lessonName}
         lessonNumber={lessonNumber}
         isAccented={false}
@@ -189,7 +189,6 @@ const LessonCard = (
     startEndTime,
     isAccented,
     isTeacherAndValid,
-    onGoToPage,
     onTeacherClick,
 
   }: {
@@ -197,7 +196,6 @@ const LessonCard = (
     startEndTime: StartEnd
     isAccented: boolean
     isTeacherAndValid: boolean
-    onGoToPage: (pageNo: number) => void
     onTeacherClick: (teacherName: string) => void
 
   }
@@ -227,7 +225,6 @@ const LessonCard = (
         isAccented={isAccented}
         isTeacherAndValid={isTeacherAndValid}
         onTeacherClick={onTeacherClick}
-        onGoToPage={onGoToPage}
       />
     }
 

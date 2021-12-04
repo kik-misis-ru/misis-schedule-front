@@ -1,30 +1,34 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider, Caption, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Button
+  Container, 
+  Row, 
+  Col, 
+  DeviceThemeProvider, 
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
 import {
   StartEnd,
   LessonStartEnd,
 } from '../App';
-import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import {AssistantWrapper} from '../lib/AssistantWrapper'
 
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import logo from "../images/App Icon.png";
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
-import karta from "../images/Karta.png";
 import LessonCard from "../components/LessonCard";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId} from "../types/base";
-import {COLOR_BLACK} from '../components/consts';
-import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
-  GoToDashboardButton,
-  GoToHomeButton,
-  GoToScheduleButton,
-} from '../components/TopMenu';
+
 import {createBrowserHistory} from 'history';
+import ApiModel from "../lib/ApiModel";
 
 export const history = createBrowserHistory();
 
@@ -32,25 +36,20 @@ const Lesson = (props: {
   character: CharacterId
   isTeacherAndValid: boolean,
   currentLesson: Bell,
-  spinner: Boolean,
   currentLessonStartEnd: StartEnd,
   theme: string 
   pageNo: number
   onDashboardClick: () => void
-  handleTeacherChange: (isSave: boolean) => Promise<boolean>
-  onGoToPage: (page: number) => void
+  apiModel: ApiModel
 }) => {
   const {
     character,
     theme,
-    spinner,
+    apiModel,
     currentLesson,
     isTeacherAndValid,
     currentLessonStartEnd,
-    pageNo,
     onDashboardClick,
-    handleTeacherChange,
-    onGoToPage
   } = props;
 
   console.log('Lesson:props:', props)
@@ -62,40 +61,37 @@ const Lesson = (props: {
     <Container style={{
       padding: 0,
       // overflow: "hidden",
-      height: '100%',
-      overflow: 'auto',
+      // height: '100%',
+      // overflow: 'auto',
     }}>
 
       <Row style={{margin: "1em"}}>
-      {/* <HeaderLogoCol/> */}
-      <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {onGoToPage(pageNo)}} />
-
-        <HeaderTitleCol2
-          title="Карточка пары"
-        />
-
-        <Col style={{margin: "0 0 0 auto"}}>
-          <GoToDashboardButton
-            onClick={() => onDashboardClick()}
-          />
-        </Col>
+      <HeaderRoot>
+              <HeaderBack onClick={() => {history.go(-1)}} />
+            <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
+            <HeaderTitleWrapper>
+              <HeaderTitle>Карточка пары</HeaderTitle>
+            </HeaderTitleWrapper>
+            </HeaderRoot>
 
       </Row>
       <Row>
         <Col style={{overflow: "hidden"}}>
-      {
-        spinner === true
-          ? <LessonCard
+      
+       
+          <LessonCard
             lesson={currentLesson}
             startEndTime={currentLessonStartEnd}
             isTeacherAndValid={isTeacherAndValid}
             isAccented={true}
-            onGoToPage={(page)=> onGoToPage(page)}
             // todo: задавать имя преподавателя
-            onTeacherClick={() => handleTeacherChange(false)}
+            onTeacherClick={async () => { 
+              await apiModel.CheckIsCorrectTeacher({initials: currentLesson.teacher},false)
+              let current_date = new Date().toISOString().slice(0,10)
+              history.push('/schedule/'+current_date+'/'+false+'/'+true)
+            }}
           />
-          : <div></div>
-      }
+     
       </Col>
       </Row>
 

@@ -1,5 +1,7 @@
 import {createAssistant, createSmartappDebugger} from "@sberdevices/assistant-client";
-import {App, history} from "../App";
+import EventEmitter from 'eventemitter3';
+
+import {DAY_NOT_SUNDAY, DAY_SUNDAY} from "../types/base.d";
 import {
   AssistantAction,
   AssistantEvent,
@@ -7,7 +9,7 @@ import {
   AssistantEventSmartAppData
 } from "../types/AssistantReceiveAction";
 import {AssistantSendAction} from "../types/AssistantSendAction";
-import {DAY_NOT_SUNDAY, DAY_SUNDAY} from "../types/base.d";
+import {App, history} from "../App";
 
 export const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === "development") {
@@ -20,12 +22,14 @@ export const initializeAssistant = (getState) => {
   return createAssistant({getState});
 };
 
+type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup'|'show_schedule'|'for_this_week'|'for_next_week'|'exit'|'day_schedule';
 
-export class AssistantWrapper {
+export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
   _assistant
   _App: App
 
   constructor(_App: App) {
+    super();
     this._App = _App;
   }
 
@@ -54,15 +58,15 @@ export class AssistantWrapper {
     const state = {
       item_selector: {
         items: [],
-/*
-        items: this.state.notes.map(
-          ({ id, title }, index) => ({
-            number: index + 1,
-            id,
-            title,
-          })
-        ),
-*/
+        /*
+                items: this.state.notes.map(
+                  ({ id, title }, index) => ({
+                    number: index + 1,
+                    id,
+                    title,
+                  })
+                ),
+        */
       },
     };
     console.log('getStateForAssistantStub: state:', state)
@@ -144,13 +148,13 @@ export class AssistantWrapper {
           ? action.note[1].data.groupName[0]
           : action.note[1].data.groupName[1];
         group = group.toUpperCase();
-        this._App.handleAssistantSetGroup(group)
+        this.emit('action-group', group);
         break
 
       case 'subgroup':
         if (action.note) {
           const subGroup = action.note;
-          this._App.handleAssistantSetSubGroup(subGroup)
+          this.emit('action-subGroup', subGroup);
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.note:', action.note)
         }
@@ -159,7 +163,7 @@ export class AssistantWrapper {
       case 'set_eng_group':
         if (action.group) {
           const engGroup = String(action.group);
-          this._App.handleAssistantSetSubGroup(engGroup)
+          this.emit('action-engGroup', engGroup);
         } else {
           console.warn('AssistantWrapper.dispatchAssistantAction: set_eng_group: action.group:', action.group)
         }
@@ -174,12 +178,13 @@ export class AssistantWrapper {
         break
 
       case 'for_next_week':
-        await this._App.handleAssistantForNextWeek()
+        this.emit('for_next_week')
         break
 
       case 'for_this_week':
-        await this._App.handleAssistantForThisWeek()
+        this.emit('for_this_week')
         break
+      
 
       case 'when_lesson':
         const [type, day, lessonNum] = action.note || [];
@@ -212,22 +217,31 @@ export class AssistantWrapper {
         break
 
       case 'first_lesson':
-        const {dayOfWeek: strDayOfWeekNum} = action.note;
-        await this._App.handleAssistantFirstLesson(parseInt(strDayOfWeekNum))
+        let dayOfWeek = parseInt(action?.note?.dayOfWeek);
+        if (isNaN(dayOfWeek)) {
+          console.warn('dispatchAssistantAction: first_lesson: dayOfWeek is undefined');
+          dayOfWeek = 1; // Понедельник
+        }
+        await this._App.handleAssistantFirstLesson(dayOfWeek)
         break
 
       case 'day_schedule':
-        const {dayOfWeek: strDayOfWeekNum_} = action.note[0];
-
-        await this._App.handleAssistantDaySchedule(parseInt(strDayOfWeekNum_), action.note[1], action.note[2])
+       
+        this.emit('day_schedule', action)
+       // await this._App.handleAssistantDaySchedule(parseInt(strDayOfWeekNum_), action.note[1], action.note[2])
         break
 
       case 'show_schedule':
-        await this._App.handleAssistantShowSchedule(action.note)
+        this.emit('show_schedule');
+        //await this._App.handleAssistantShowSchedule(action.note)
+        break
+
+      case 'exit':
+        this._assistant.close();
         break
 
       default:
-        // console.warn('dispatchAssistantAction: Unknown action.type:', action.type)
+      // console.warn('dispatchAssistantAction: Unknown action.type:', action.type)
 
     }
   }

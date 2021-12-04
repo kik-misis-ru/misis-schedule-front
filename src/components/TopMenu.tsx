@@ -6,10 +6,8 @@ import {
   IconHouse,
   IconNavigationArrow,
   IconSettings,
-  IconStar,
-  IconStarFill,
-  IconMoreVertical,
-  IconChevronRight
+  IconChevronRight,
+  IconChevronLeft
 } from "@sberdevices/plasma-icons";
 
 import logo from "../images/logo.png";
@@ -100,7 +98,7 @@ export const GoToDashboardButton = ({
     pin="circle-circle"
     onClick={(event) => onClick(event)}
     contentRight={
-      <IconHouse size="s" color="inherit"/>
+      <IconChevronLeft size="s" color="inherit"/>
     }
   />
 )
@@ -171,7 +169,7 @@ export const TopMenu = ({
                    Bd,
                    //Load_Schedule
                  }: {
-  label?: string
+  label?: string 
   subLabel: string
   // onNavigatorClick: () => void
   onDashboardClick: () => void
@@ -180,10 +178,13 @@ export const TopMenu = ({
   //Load_Schedule: () => void
 }) => {
   return (
-    <Row style={{margin: "1em"}}>
+    <Row style={{margin: "1.5em 1em 1em 0.5em "}}>
 
-      <HeaderLogoCol />
-
+      <GoToDashboardButton
+                        onClick={async () => {
+                          onDashboardClick();
+                        }}
+                      />
       <HeaderScheduleCol
         label={label}
         subLabel={subLabel}
@@ -191,11 +192,7 @@ export const TopMenu = ({
 
       <Col style={{margin: "0 0 0 auto"}}>
 
-        <GoToDashboardButton
-                  onClick={async () => {
-                    onDashboardClick();
-                  }}
-                />
+       
       </Col>
     </Row>
   )

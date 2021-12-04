@@ -1,22 +1,27 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
+  Container, 
+  Row, Col, 
+  DeviceThemeProvider, 
+  Header,
   Headline3,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import contacts_data from '../data/contacts.json';
 import social_media from '../data/social_media.json';
-
+import logo from "../images/App Icon.png";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId, IBuilding} from "../types/base";
 import {SocialList} from '../components/SocialList'
 import {ContactsCard} from '../components/ContactsCard'
-import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
-  GoToDashboardButton,
-} from '../components/TopMenu';
 
 
 
@@ -42,18 +47,19 @@ const Contacts = ({
     }}>
 
             <Row style={{margin: "1em"}}>
-
-              <HeaderLogoCol/>
-
-              <HeaderTitleCol2
-                title="Контакты"
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-                <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
-                />
-              </Col>
+            <HeaderRoot>
+              <HeaderBack onClick={() => onDashboardClick()} />
+            <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
+            <HeaderTitleWrapper>
+              <HeaderTitle>Контакты</HeaderTitle>
+            </HeaderTitleWrapper>
+            </HeaderRoot>
+            {/* <Header
+                    back={true}
+                    title="Контакты"
+                    onBackClick={() => onDashboardClick()}
+                >
+                </Header> */}
 
             </Row>
             {
