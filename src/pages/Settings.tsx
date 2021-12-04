@@ -1,7 +1,16 @@
 import React from "react";
-import {Container, Row, Col, Button, DeviceThemeProvider, Headline3, Headline2, TextBoxRoot, Headline4} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
+  Container, 
+  Row, 
+  Col, 
+  Button, 
+  DeviceThemeProvider, 
+  Headline3, 
+  Headline2, 
+  TextBoxRoot, 
+  Headline4, 
+  HeaderContent,
   TextBoxBigTitle,
   TextBox,
   Caption,
@@ -11,13 +20,21 @@ import {
   TabItem,
   TextBoxLabel,
   Header,
-  TextField
+  TextField,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
 import {IconChevronLeft, IconEdit, IconHouse} from "@sberdevices/plasma-icons";
 import {IAppState, SetValueFn, SetValueKeys} from "../App";
 import {
   AssistantSendAction,
 } from '../types/AssistantSendAction.d'
+
+import logo from "../images/App Icon.png";
 import {
   addUserToPushNotification,
 } from "../lib/ApiHelper";
@@ -262,14 +279,18 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
           overflow: 'auto',
         }}>
         <Row style={{margin: "1em"}}>
-        <Header
-                    back={true}
-                    title="Настройки"
-                    onBackClick={() => this.props.onDashboardClick()}
-                >
-                {!this.state.edit ? (  <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
+        <HeaderRoot>
+              <HeaderBack onClick={() => this.props.onDashboardClick()} />
+            <HeaderLogo src={logo} alt="Logo" onClick={() => this.props.onDashboardClick()}/>
+            <HeaderTitleWrapper>
+              <HeaderTitle>Настройки</HeaderTitle>
+            </HeaderTitleWrapper>
+            <HeaderContent>
+              {!this.state.edit ? (  <Button size="s" view="clear" contentLeft={<IconEdit />} onClick={()=>{this.Edit()}}/>
 ) : (<div></div>)}
-                </Header>
+            </HeaderContent>
+        </HeaderRoot>
+      
 
 </Row >
 

@@ -1,7 +1,11 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider, Header, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
+  Container,
+  Row, 
+  Col, 
+  DeviceThemeProvider,  
+  Body1,
   Card,
   CardBody,
   CardContent,
@@ -12,10 +16,17 @@ import {
   TextBoxLabel,
   Badge,
   CellListItem,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
 import {IconLocation} from "@sberdevices/plasma-icons";
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
-
+import logo from "../images/App Icon.png";
 import karta from "../images/Karta.png";
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
@@ -115,12 +126,13 @@ const NavigatorPage = ({
 
             <Row style={{margin: "1em"}}>
 
-            <Header
-                    back={true}
-                    title="Карта"
-                    onBackClick={() => onDashboardClick()}
-                >
-                </Header>
+            <HeaderRoot>
+              <HeaderBack onClick={() => onDashboardClick()} />
+            <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
+            <HeaderTitleWrapper>
+              <HeaderTitle>Карта</HeaderTitle>
+            </HeaderTitleWrapper>
+            </HeaderRoot>
 
             </Row>
 

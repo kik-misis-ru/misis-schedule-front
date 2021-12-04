@@ -1,8 +1,17 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider, Caption, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Button
+  Container, 
+  Row, 
+  Col, 
+  DeviceThemeProvider, 
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
 import {
   StartEnd,
@@ -13,7 +22,7 @@ import{
 ITeacherValidation
 }from '../lib/ApiModel'
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
-
+import logo from "../images/App Icon.png";
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
 import karta from "../images/Karta.png";
@@ -67,18 +76,13 @@ const Lesson = (props: {
     }}>
 
       <Row style={{margin: "1em"}}>
-      {/* <HeaderLogoCol/> */}
-      <Button size="s" view="clear" contentLeft={<IconChevronLeft/>} onClick={() => {history.go(-1)}} />
-
-        <HeaderTitleCol2
-          title="Карточка пары"
-        />
-
-        {/* <Col style={{margin: "0 0 0 auto"}}>
-          <GoToDashboardButton
-            onClick={() => onDashboardClick()}
-          />
-        </Col> */}
+      <HeaderRoot>
+              <HeaderBack onClick={() => {history.go(-1)}} />
+            <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
+            <HeaderTitleWrapper>
+              <HeaderTitle>Карточка пары</HeaderTitle>
+            </HeaderTitleWrapper>
+            </HeaderRoot>
 
       </Row>
       <Row>
