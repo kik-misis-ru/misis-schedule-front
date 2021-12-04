@@ -169,6 +169,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
  async save_teacher(){
     let teacherValidation = await this.props.apiModel.CheckIsCorrectTeacher(this.state.teacherSettings, this.state.IsSave)
+    console.log("Teacher validation", teacherValidation)
     if(!teacherValidation.IsInitialsError){
       console.log("Show Schedule")
       console.log(this.props.apiModel)
@@ -229,7 +230,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <TabSelectorRow
           tabs={USER_MODES}
           selectedIndex={this.props.IsStudent ? 0 : 1}
-          onSelect={(tabIndex) => tabIndex === 0 ? history.push('/Home/true') : history.push('/Home/false')}
+          onSelect={(tabIndex) => tabIndex === 0 ? history.push('/home/true') : history.push('/home/false')}
         />
 
         <HomeDescription

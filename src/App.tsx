@@ -480,7 +480,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   async handleAssistantShowSchedule(actionNote: string | undefined) {
 
-    if (history.location == HOME_PAGE_ROUTE) {
+    if (String(history.location.pathname).toLocaleLowerCase().includes(HOME_PAGE_ROUTE)) {
       return
     }
     console.log('dispatchAssistantAction: show schedule', actionNote);

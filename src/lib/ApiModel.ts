@@ -462,12 +462,19 @@ export class ApiModel {
           group_response,
           english_response,
         ] = responses;
-        const group = JSON.parse(group_response);
-        console.log("App: isCorrect: response: english", english_response);
+       let group
+       let groupId
+       if(group_response){
+         console.log("Group response", group_response)
+         group = JSON.parse(group_response);
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")
           IsError.IsGroupNameError = false;
         }
+        groupId = String(group.id);
+       }
+        console.log("App: isCorrect: response: english", english_response);
+      
         if (english_response || settings.engGroupName == "") {
           IsError.IsEngGroupError = false;
           console.log(`App: isCorrect: correct_eng: ${ IsError.IsEngGroupError}`);
@@ -475,7 +482,7 @@ export class ApiModel {
         if ((settings.subGroupName === "") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "1") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "2")) {
           IsError.IsSubGroupError = false;
         }
-        const groupId = String(group.id);
+        
         let isCorrect = !IsError.IsEngGroupError && !IsError.IsGroupNameError && !IsError.IsSubGroupError
         if (isCorrect ) {
           let updateUser ={
