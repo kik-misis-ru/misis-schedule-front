@@ -7,25 +7,20 @@ import {
   Caption
 } from "@sberdevices/plasma-ui";
 import {TextField} from "@sberdevices/plasma-ui";
-import {IconChevronRight, IconHouse} from "@sberdevices/plasma-icons";
 
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
-import {
-  history
-} from '../App';
 import {DocStyle} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character} from "../types/base";
+import {CharacterId} from "../types/base";
 import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
 import {RememberCheckboxRow} from '../components/Home/RememberCheckboxRow'
-import {GoToDashboardButton, GoToScheduleButton} from "../components/TopMenu";
 
 const HOME_TITLE = 'Салют!';
-const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
-const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
+// const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
+// const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";
 
 const LABEL_GROUP = "Номер академической группы через дефисы";
 const LABEL_SUB_GROUP = "Номер подгруппы: 1 или 2";
@@ -111,10 +106,7 @@ const TextFieldForUserInfo = ({
 
 interface HomeViewProps {
   groupId: string
-  character: Character
-    // todo paramoy
-    | typeof CHAR_TIMEPARAMOY
-  // disabled: boolean
+  character: CharacterId
   checked: boolean
   description: string
   theme: string 
@@ -123,7 +115,7 @@ interface HomeViewProps {
   // handleTeacherChange
   onConvertIdInGroupName: () => void
   CheckIsCorrect: () => Promise<boolean>
-  LoadSchedule: () => void
+  LoadSchedule: (isSave:boolean) => void
   onShowScheduleClick: () => void
 
   group: string
@@ -155,9 +147,9 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     let disabled = true;
     if (props.groupId !== "") disabled = false;
     this.state = {disabled: disabled}
-    this.onHandleChange("description", props.character === "joy"
-      ? DESC_JOY
-      : DESC_OTHERS)
+    // this.onHandleChange("description", props.character === "joy"
+    //   ? DESC_JOY
+    //   : DESC_OTHERS)
   }
 
   onHandleChange(key: string, value: any): void {
@@ -167,8 +159,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   async CheckIsCorrect(){
     return await this.props.CheckIsCorrect();
   }
-  Load_Schedule(){
-    this.props.LoadSchedule()
+  Load_Schedule(isSave: boolean){
+    this.props.LoadSchedule(isSave)
   }
 
   // handleTeacherChange() {
@@ -182,9 +174,11 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   render() {
 
     const studentContent = (
-      <Container
-        style={{padding: 0}}
-      >
+      <Container style={{
+        padding: 0,
+        // overflow: "hidden",
+        height: '100%',
+      }}>
 
         {/* <HomeTitle
           text={HOME_TITLE}
@@ -231,7 +225,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           onClick={async()=>{
             let isCorrect = await this.CheckIsCorrect()
             if(isCorrect){
-              await this.Load_Schedule()
+              await this.Load_Schedule(this.props.checked)
               this.props.onShowScheduleClick()
           }
             

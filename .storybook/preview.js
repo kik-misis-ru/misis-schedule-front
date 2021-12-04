@@ -32,7 +32,9 @@ export const decorators = [
       {
         getThemeBackgroundByChar(context.globals.character, context.globals.themeType)
       }
+
       <Story/>
+
     </DeviceThemeProvider>
   ),
 ];

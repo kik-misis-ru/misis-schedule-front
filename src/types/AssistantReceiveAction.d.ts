@@ -16,12 +16,16 @@ interface AssistantEventGeneric {
 
 }
 
+export interface AssistantCharacter {
+  id: CharacterId
+  name: 'Сбер' | 'Афина' | 'Джой'
+  gender: 'male' | 'female'
+  appeal: 'official' | 'no_official'
+}
+
 interface AssistantEventCharacter extends AssistantEventGeneric {
   type: 'character'
-  character: {
-    id: Character
-      | typeof CHAR_TIMEPARAMOY
-  }
+  character: AssistantCharacter
 }
 
 //

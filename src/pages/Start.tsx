@@ -22,7 +22,7 @@ import {IconLocation} from "@sberdevices/plasma-icons";
 
 import star from "../images/Star-1.png";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
 import {
   HeaderLogoCol,
@@ -31,6 +31,10 @@ import {
   GoToHomeButton,
   GoToScheduleButton,
 } from '../components/TopMenu';
+
+import {
+  history
+} from '../App'
 //import { Button } from "@sberdevices/plasma-ui/node_modules/@sberdevices/plasma-core";
 //import { ParagraphText1 } from "@sberdevices/plasma-core";
 
@@ -38,16 +42,11 @@ import {
 const Start = ({
                          character,
                          isMobileDevice,
-                         onDashboardClick,
                          theme,
                        }: {
   theme: string 
-  character: Character
-  
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   isMobileDevice: boolean
-  onDashboardClick: () => void
 }) => {
   return <DeviceThemeProvider>
     <DocStyle/>
@@ -57,7 +56,12 @@ const Start = ({
     {
       isMobileDevice
         ? (
-          <Container style={{padding: 0, overflow: "hidden"}}>
+          <Container style={{
+            padding: 0,
+            // overflow: "hidden",
+            height: '100%',
+            overflow: 'auto',
+          }}>
 
 <Row style={{
     margin: "1em"
@@ -94,15 +98,13 @@ const Start = ({
     не отвлекаясь на рутину
     </ParagraphText1>
   </TextBox>
-  <Button onClick={()=>{onDashboardClick()}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
+  <Button onClick={()=>{ history.push("/dashboard")}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
   
   </Row>
   <Image src={star} style={{margin:"0 0 auto 0", overflow: "hidden"}}/>
-            
-            {/* <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div> */}
+
+            {/*<Spacer300/>*/}
+
           </Container>
         )
         :
@@ -148,7 +150,7 @@ const Start = ({
     не отвлекаясь на рутину
     </ParagraphText1>
   </TextBox>
-  <Button onClick={()=>{onDashboardClick()}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
+  <Button onClick={()=>{ history.push("/dashboard")}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
   </Col>
   </Row>
 

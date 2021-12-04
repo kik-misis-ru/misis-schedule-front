@@ -3,9 +3,9 @@ import {Container, Row, Col, Cell, Button} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  history,
-  Spacer100,
-} from '../../App';
+  history, } from '../../App';
+import {Spacer100,Spacer200,Spacer300} from '../Spacers'
+
 import {
     HeaderLogoCol,
     HeaderTitleCol2,
@@ -60,15 +60,14 @@ const Main = ({
           contentRight
         }
         style={{
-          // padding: 0,
+           padding: '0',
           margin: '0 auto',
         }}
       >
       </Cell>
 
-      <Spacer100/>
-    <div
-    style={{height: "100px", width: "100px"}}></div>
+      <Spacer200/>
+
     </Container>
     
   )

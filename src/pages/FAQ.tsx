@@ -4,12 +4,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Headline3,
 } from "@sberdevices/plasma-ui";
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import faq from '../data/faq.json';
 import lib from '../data/libraries.json';
 
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {Libraries} from '../components/Libraries'
 import {FAQCard} from '../components/FAQCard'
 import {
@@ -25,9 +26,7 @@ const FAQ = ({
                onDashboardClick,
              }: {
   theme: string
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   onDashboardClick: () => void
 }) => {
   return <DeviceThemeProvider>
@@ -35,7 +34,12 @@ const FAQ = ({
     {
       getThemeBackgroundByChar(character, theme)
     }
-    <Container style={{padding: 0, overflow: "hidden"}}>
+    <Container style={{
+      padding: 0,
+      // overflow: "hidden",
+      height: '100%',
+      overflow: 'auto',
+    }}>
 
       <Row style={{margin: "1em"}}>
 
@@ -74,10 +78,9 @@ const FAQ = ({
           />
         ))
       }
-      <div style={{
-        width: '200px',
-        height: '300px',
-      }}></div>
+
+      <Spacer300/>
+
     </Container>
   </DeviceThemeProvider>
 }

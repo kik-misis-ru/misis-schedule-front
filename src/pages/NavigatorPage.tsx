@@ -14,11 +14,12 @@ import {
   CellListItem,
 } from "@sberdevices/plasma-ui";
 import {IconLocation} from "@sberdevices/plasma-icons";
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 
 import karta from "../images/Karta.png";
 
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
 import {
   HeaderLogoCol,
@@ -93,9 +94,7 @@ const NavigatorPage = ({
                          onHomeClick,
                          onScheduleClick,
                        }: {
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   theme: string
   buildings: IBuilding[]
   isMobileDevice: boolean
@@ -111,7 +110,12 @@ const NavigatorPage = ({
     {
       isMobileDevice
         ? (
-          <Container style={{padding: 0, overflow: "hidden"}}>
+          <Container style={{
+            padding: 0,
+            // overflow: "hidden",
+            height: '100%',
+            overflow: 'auto',
+          }}>
 
             <Row style={{margin: "1em"}}>
 
@@ -143,10 +147,9 @@ const NavigatorPage = ({
               </CardBody>
 
             </Card>
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
+
+            <Spacer300/>
+
           </Container>
         )
         :
@@ -191,10 +194,7 @@ const NavigatorPage = ({
               </div>
             </Row>
 
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
+            <Spacer300/>
 
           </Container>
         )

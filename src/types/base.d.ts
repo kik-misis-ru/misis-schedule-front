@@ -31,8 +31,7 @@ export type THIS_OR_OTHER_WEEK = typeof THIS_WEEK | typeof OTHER_WEEK;
 export const CHAR_SBER = 'sber'; // Сбер
 export const CHAR_EVA = 'eva';   // Афина
 export const CHAR_JOY = 'joy';   // Джой
-export const CHAR_TIMEPARAMOY = 'timeParamoy';
-export type Character = typeof CHAR_SBER
+export type CharacterId = typeof CHAR_SBER
   | typeof CHAR_EVA
   | typeof CHAR_JOY
 
@@ -46,8 +45,8 @@ export type ThemeType = THEME_DARK | THEME_LIGHT
 
 export interface IDayHeader {
   title: string
-  date: [string, string]
-  count: [number, number]
+  date: string
+  count: number
 }
 
 

@@ -35,20 +35,25 @@ import {
   IconHelp, 
   IconCallCircle} 
   from "@sberdevices/plasma-icons";
+import Month from "../language-ru/Month";
 import {
   DocStyle,
   getThemeBackgroundByChar,
 } from '../themes/tools';
 import {
   capitalize,
-  formatTimeHhMm,
-} from '../utils';
+} from '../lib/utils';
 import {
-  StartEnd,
-} from '../App';
+  formatTimeHhMm,
+} from '../lib/datetimeUtils';
+import { StartEnd } from '../App';
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import DayOfWeek from "../language-ru/DayOfWeek";
+
+
 import {Bell} from '../types/ScheduleStructure'
-import {CHAR_TIMEPARAMOY, Character} from "../types/base.d";
-import {pairNumberToPairNumText} from '../utils'
+import {CharacterId} from "../types/base.d";
+import {pairNumberToPairNumText} from '../language-ru/utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
 import {history} from "../App";
@@ -144,41 +149,24 @@ const TodaySummary = ({
   lessonsEnd: string
 }) => {
   const dayOfWeek = date.getDay();
+  const month = date.getMonth();
   const isSunday = dayOfWeek === 0;
   const weekDayShortToday = capitalize(
     moment(date).format('dd')
   );
-  const day = {
-    "Пн": "Понедельник",
-    "Вт": "Вторник",
-    "Ср": "Средa",
-    "Чт": "Четверг",
-    "Пт": "Пятница",
-    "Сб": "Суббота",
-  }
-  const month = {
-    "01": "января",
-    "02": "февраля",
-    "03": "марта",
-    "04": "апреля",
-    "05": "мая",
-    "06": "июня",
-    "07": "июля",
-    "08": "августа",
-    "09": "сентября",
-    "10": "октября",
-    "11": "ноября",
-    "12": "декабря",
-  }
   const dateToday = moment(date).format('DD.MM.YY');
-  let dateDay = ""
-  dateToday.slice(0, 1) === "0" ? dateDay = dateToday.slice(1, 2) : dateDay = dateToday.slice(0, 2)
+  const dateDay = dateToday.slice(0, 1) === "0"
+    ? dateToday.slice(1, 2)
+    : dateToday.slice(0, 2)
 
 
-  const formatLessonsCountFromTo = (count: string, from: string, to: string): string => (
+  const formatLessonsCountFromTo = (
+    count: string,
+    from: string,
+    to: string,
+  ): string => (
     `Сегодня ${count} с ${from} до ${to}`
   )
-  console.log(lessonsStart, "lessoncount")
 
   return (
     <Row>
@@ -193,13 +181,12 @@ const TodaySummary = ({
           {
             isSunday
               ? DAY_OFF_TEXT
-              : `${day[weekDayShortToday]}, ${dateDay} ${month[dateToday.slice(3, 5)]}`
+              : `${DayOfWeek.long.nominative[dayOfWeek]}, ${dateDay} ${Month.long.genitive[month]}`
           }
         </CardParagraph2>
         <CardParagraph1 style={{color: "grey"}}>
           {
-            !isSunday &&
-            lessonCount !== 0
+            !isSunday && typeof lessonCount !== 'undefined' && lessonCount !== 0
               ? formatLessonsCountFromTo(
                 pairNumberToPairNumText(lessonCount),
                 lessonsStart,
@@ -400,11 +387,9 @@ const DashboardPage = ({
                          onGoToPage,
                          theme,
                          handleTeacherChange,
-                         isUser,
+                         isUser
                        }: {
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   isTeacherAndValid: boolean
   groupId: String
   teacherId: String
@@ -422,16 +407,22 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (isSave: boolean) => Promise<boolean>
-  
+
 }) => {
-  console.log(groupId, teacherId, userId, "DASHBOARD")
+  // console.log('DashboardPage:', groupId, teacherId, userId)
+  // console.log('DashboardPage:', {count})
   return (
     <DeviceThemeProvider>
       <DocStyle/>
       {
         getThemeBackgroundByChar(character, theme)
       }
-      <Container style={{padding: 0, overflow: "hidden"}}>
+      <Container style={{
+        padding: 0,
+        // overflow: "hidden",
+        height: '100%',
+        overflow: 'auto',
+      }}>
         <HeaderRow
           // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
           onHomeClick={() => history.push('/settings')}
@@ -446,7 +437,6 @@ const DashboardPage = ({
                   lessonsStart={start}
                   lessonsEnd={end}
                 />
-
 
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
@@ -552,11 +542,7 @@ const DashboardPage = ({
           onGoToPage={(pageNo) => onGoToPage(pageNo)}
         />
 
-
-        <div style={{
-          width: '200px',
-          height: '300px',
-        }}></div>
+        <Spacer300/>
 
       </Container>
     </DeviceThemeProvider>

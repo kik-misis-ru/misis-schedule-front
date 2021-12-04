@@ -22,7 +22,8 @@ import {
   IconLocation,
   //IconMoreVertical
 } from "@sberdevices/plasma-icons";
-import {LessonStartEnd, NO_LESSONS_NAME, StartEnd} from "../App";
+import {LessonStartEnd, StartEnd} from "../App";
+import {NO_LESSONS_NAME} from '../lib/ApiHelper';
 //import { darkJoy, darkEva, darkSber } from "@sberdevices/plasma-tokens/themes";
 //import { createGlobalStyle } from "styled-components";
 
@@ -33,7 +34,7 @@ import {Bell} from "../types/ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
 // import {THIS_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
-import {lessonTypeAdjToNoun} from '../utils';
+import {lessonTypeAdjToNoun} from '../language-ru/utils';
 import LinkToOnline from './LinkToOnline';
 import {
   LessonStartAndFinishTime,

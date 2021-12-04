@@ -4,14 +4,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   Headline3,
 } from "@sberdevices/plasma-ui";
+import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import contacts_data from '../data/contacts.json';
 import social_media from '../data/social_media.json';
 
-
-
-
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CHAR_TIMEPARAMOY, Character, IBuilding} from "../types/base";
+import {CharacterId, IBuilding} from "../types/base";
 import {SocialList} from '../components/SocialList'
 import {ContactsCard} from '../components/ContactsCard'
 import {
@@ -28,9 +26,7 @@ const Contacts = ({
                          onDashboardClick,
                        }: {
   theme: string
-  character: Character
-    // todo: что такое 'timeParamoy' ???
-    | typeof CHAR_TIMEPARAMOY
+  character: CharacterId
   onDashboardClick: () => void
 }) => {
   return <DeviceThemeProvider>
@@ -38,7 +34,12 @@ const Contacts = ({
     {
       getThemeBackgroundByChar(character, theme)
     }
-          <Container style={{padding: 0, overflow: "hidden"}}>
+    <Container style={{
+      padding: 0,
+      // overflow: "hidden",
+      height: '100%',
+      overflow: 'auto',
+    }}>
 
             <Row style={{margin: "1em"}}>
 
@@ -73,10 +74,9 @@ const Contacts = ({
             </Headline3>
             <SocialList/>
             </div>
-            <div style={{
-              width: '200px',
-              height: '300px',
-            }}></div>
+
+            <Spacer300/>
+
           </Container>
   </DeviceThemeProvider>
 }
