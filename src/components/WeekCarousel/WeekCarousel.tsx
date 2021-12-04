@@ -21,7 +21,6 @@ export const WeekCarousel = ({
       width: "100%",
       overflow: "hidden"
     }}>
-      <Col >
       <CarouselGridWrapper style={{
       marginRight: "0",
       width: "100%",
@@ -53,7 +52,6 @@ export const WeekCarousel = ({
           }
         </Carousel>
       </CarouselGridWrapper>
-      </Col>
     </Row>
   )
 }
