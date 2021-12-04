@@ -8,17 +8,9 @@ import number from './language-ru/Number';
 import DayOfWeek from './language-ru/DayOfWeek';
 
 import {
-  createUser,
-  getGroupById,
-  getGroupByName,
-  getScheduleFromDb,
-  IsEnglishGroupExist,
   getSchedulebyUserId,
 } from "./lib/ApiHelper";
-import ApiModel, 
-{IStudentValidation,
-  IStudentSettings
-} from "./lib/ApiModel";
+import ApiModel from "./lib/ApiModel";
 
 import DashboardPage from './pages/DashboardPage';
 
@@ -31,7 +23,6 @@ import SchedulePage from './pages/SchedulePage';
 import Settings from './pages/Settings';
 
 import buildings from './data/buldings.json'
-import filial from './data/filial.json';
 import breaks from './data/breaks.json';
 
 
@@ -57,19 +48,14 @@ import {
   DAY_SUNDAY,
   DAY_TODAY,
   DAY_TOMORROW,
-  IDayHeader,
   LESSON_EXIST,
-  OTHER_WEEK,
   StartOrEnd,
-  THIS_OR_OTHER_WEEK,
   THIS_WEEK,
   TodayOrTomorrow,
 } from './types/base.d'
 import {
-  formatDateWithDashes,
   formatDateWithDots,
   formatTimeHhMm,
-  getFirstDayWeek,
   MS_IN_DAY,
 } from './lib/datetimeUtils';
 import {
@@ -79,13 +65,6 @@ import {
 
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
-import { realpathSync } from "fs";
-
-export type SetValueKeys = keyof Pick<IAppState, 'page'|'isCurrentWeek'> /*extends keyof IAppState*/;
-export type SetValueFn = <K extends SetValueKeys>(
-  key: K,
-  value: IAppState[K],
-) => void;
 
 export const HOME_PAGE_ROUTE = "home";
 
@@ -145,7 +124,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.apiModel = new ApiModel()
     this.getCurrentLesson = this.getCurrentLesson.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this)
-    this.setValue = this.setValue.bind(this);
     console.log('constructor');
     history.push("/dashboard")
     this.state = {
@@ -240,20 +218,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
     }
   }
-
-  // async handleAssistantForNextWeek() {
-  //   if (this.apiModel.CheckGroupOrTeacherSetted()) {
-  //     await this.NextWeek(this.apiModel.isSavedSchedule);
-  //     return this.ChangePage(false);
-  //   }
-  // }
-
-  // async handleAssistantForThisWeek() {
-  //    if (this.apiModel.CheckGroupOrTeacherSetted()) {
-  //     await this.CurrentWeek(this.apiModel.isSavedSchedule);
-  //     this.ChangePage(true);
-  //   }
-  // }
 
   async handleAssistantWhenLesson(
     type1: StartOrEnd,
@@ -542,20 +506,6 @@ export class App extends React.Component<IAppProps, IAppState> {
 
     }
   }
-
-  setValue<K extends SetValueKeys>(
-    key: K,
-    value: IAppState[K],
-  ): void {
-    console.log(`setValue: key: ${key}, value:`, value);
-    this.setState((prevState) => (
-      {
-        ...prevState,
-        [key]: value,
-      }
-    ))
-  }
-
 
   //Зачем проверка на correct?
   getIsCorrectTeacher(): boolean {
