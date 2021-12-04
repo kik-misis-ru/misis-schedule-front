@@ -453,6 +453,9 @@ const DashboardPage = ({
                               !!currentLesson&&count!=0
                                 ? (
                                   <ScheduleLesson
+                                    isCurrentWeek={true}
+                                    isSave={true}
+                                    Day={new Date().getDay()}
                                     lesson={currentLesson}
                                     startEndTime={currentLessonStartEnd}
                                     isTeacherAndValid={isTeacherAndValid}
@@ -483,6 +486,9 @@ const DashboardPage = ({
                                   <ScheduleLessonTitle text="Дальше"/>
 
                                   <ScheduleLesson
+                                    isCurrentWeek={true}
+                                    isSave={true}
+                                    Day={new Date().getDay()}
                                     lesson={nextLesson}
                                     startEndTime={nextLessonStartEnd}
                                     isTeacherAndValid={isTeacherAndValid}

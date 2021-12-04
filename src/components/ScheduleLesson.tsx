@@ -53,17 +53,22 @@ export const LessonName = (
     isAccented,
     text,
     lessonNumber,
+    isCurrentWeek,
+    isSave,
+    Day
   }: {
     isAccented: boolean
     text: string
     lessonNumber: string
+    isCurrentWeek: boolean
+    isSave: boolean
+    Day: number
   }
 ) => {
-  
   let lessonNum = `${lessonNumber}. `
   return (
     <Link
-      to={`/lesson/${lessonNumber}`}
+      to={`/lesson/${isSave}/${isCurrentWeek}/${Day}/${lessonNumber}`}
       style={{
         color: isAccented
           ? ACCENT_TEXT_COLOR
@@ -153,6 +158,9 @@ const MainContent = (
     url,
     isAccented,
     isTeacherAndValid,
+    isCurrentWeek,
+    isSave,
+    Day,
     onTeacherClick,
   }: {
     lessonName: string
@@ -163,6 +171,9 @@ const MainContent = (
     url: string
     isAccented: boolean
     isTeacherAndValid: boolean
+    isCurrentWeek: boolean
+    isSave: boolean
+    Day: number
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
@@ -173,6 +184,9 @@ const MainContent = (
         time={time}
       />
       <LessonName
+        isCurrentWeek={isCurrentWeek}
+        isSave={isSave}
+        Day={Day}
         text={lessonName}
         lessonNumber={lessonNumber}
         isAccented={isAccented}
@@ -227,12 +241,18 @@ const ScheduleLesson = (
     isAccented,
     isTeacherAndValid,
     onTeacherClick,
+    isCurrentWeek,
+    isSave,
+    Day
   }: {
     lesson: Bell
     startEndTime: StartEnd
     isAccented: boolean
     isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
+    isCurrentWeek: boolean
+    isSave: boolean
+    Day: number
   }
 ) => {
 
@@ -246,6 +266,9 @@ const ScheduleLesson = (
       content={
         lesson.lessonName != "Пар нет 🎉"
           ? <MainContent
+            isCurrentWeek={isCurrentWeek}
+            isSave={isSave}
+            Day={Day}
             lessonName={lesson.lessonName}
             lessonNumber={lesson.lessonNumber}
             groupNumber={lesson.groupNumber}

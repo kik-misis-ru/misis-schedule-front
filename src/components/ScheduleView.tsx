@@ -227,6 +227,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <ScheduleDay
+            isCurrentWeek={String(this.props.IsCurrentWeek)=="true"}
+            isSave={String(this.props.IsSavedSchedule)=="true"}
+            Day={this.props.page}
             isReady={isReady}
             dayLessons={
               String(this.props.IsCurrentWeek)=="true"

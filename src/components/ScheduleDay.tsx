@@ -15,24 +15,22 @@ const EMPTY_LESSON_NUM = 7;
 
 
 export const ScheduleDayLessons = ({
-                                     // days,
-                                     // day_num,
+                                     
                                      dayLessons,
                                      currentLessonNumber,
-                                     // today,
-                                     // weekParam,
-                                     // timeParam,
+                                     isCurrentWeek,
+                                     isSave,
+                                     Day,
                                      isTeacherAndValid,
                                      isToday,
                                      onTeacherClick,
                                    }: {
-  // days: IScheduleDays,
-  // day_num: number,
+  
   dayLessons: Bell[]
-  // today: number,
   currentLessonNumber: string | undefined,
-  // weekParam: THIS_OR_OTHER_WEEK,
-  // timeParam: number,
+  isCurrentWeek: boolean
+  isSave: boolean
+  Day: number
   isTeacherAndValid: boolean,
   isToday: boolean,
   onTeacherClick: (teacherName: string) => void
@@ -54,6 +52,9 @@ export const ScheduleDayLessons = ({
           return lesson.lessonName !== ""
             ? (
               <ScheduleLesson
+                isCurrentWeek={isCurrentWeek}
+                isSave={isSave}
+                Day={Day}
                 key={lessonIndex}
                 lesson={lesson}
                 startEndTime={
@@ -89,22 +90,20 @@ export const ScheduleDay = ({
                               isTeacherAndValid,
                               isToday,
                               isDayOff,
-                              // today,
-                              // validateTeacher,
-                              // onSetValue,
+                              isCurrentWeek,
+                              isSave,
+                              Day,
                               onTeacherClick,
                             }: {
   isReady: boolean
-  // days: IScheduleDays,
-  // day_num: number,
   dayLessons: Bell[];
   currentLessonNumber: string | undefined,
-  // weekParam: THIS_OR_OTHER_WEEK,
-  // timeParam: number,
   isTeacherAndValid: boolean,
   isToday: boolean,
   isDayOff: boolean,
-  // today: number,
+  isCurrentWeek: boolean
+  isSave: boolean
+  Day: number
   onTeacherClick: (teacherName: string) => void
 }) => (
   isReady==true
@@ -120,12 +119,12 @@ export const ScheduleDay = ({
                 isDayOff
                   ? <ScheduleDayOff/>
                   : <ScheduleDayLessons
-                    // days={days}
-                    // day_num={day_num}
+                    
                     dayLessons={dayLessons}
                     currentLessonNumber={currentLessonNumber}
-                    // weekParam={weekParam}
-                    // timeParam={timeParam}
+                    isCurrentWeek={isCurrentWeek}
+                    isSave={isSave}
+                    Day={Day}
                     isTeacherAndValid={isTeacherAndValid}
                     isToday={isToday}
                     // today={today}

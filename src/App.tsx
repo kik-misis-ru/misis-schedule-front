@@ -1019,31 +1019,7 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
           />
-          <Route
-            path="/lesson/:lessonIndex"
-            render={
-              ({match}) => {
-                // temporary workaround
-                console.log("/lesson/...: this.state.page:", this.state.page)
-                console.log("/lesson/...: this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]", this.apiModel.saved_schedule.current_week)
-                // if (this.state.page!==NON_EXISTING_PAGE_NO) this.gotoPage(NON_EXISTING_PAGE_NO);
-                return (
-                  <Lesson
-                    character={this.state.character}
-                    isTeacherAndValid={this.getIsCorrectTeacher()}
-                    theme={this.state.theme}
-                    // currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
-                    currentLesson={this.apiModel.saved_schedule.current_week[this.state.page]?.[match.params.lessonIndex - 1]}
-                    currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
-                    pageNo={this.state.page}
-                    onDashboardClick={() => history.push("/dashboard")}
-                    handleTeacherChange={this.apiModel.CheckIsCorrectTeacher}
-
-                  />
-                )
-              }
-            }
-          />
+         
           <Route
             path="/dashboard"
             render={
@@ -1122,6 +1098,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                let timeParam = this.state.page;
                console.log("timeParam", timeParam)
                 return <SchedulePage
+
                 page={match.params.Day ?Number(match.params.Day): new Date().getDay()-1}
                 assistant={this.assistant}
                 timeParam={timeParam}
@@ -1138,6 +1115,34 @@ export class App extends React.Component<IAppProps, IAppState> {
                 getIsCorrectTeacher={this.getIsCorrectTeacher}
               />
 
+              }
+            }
+          />
+           <Route
+            path="/lesson/:IsSaved/:IsCurrentWeek/:Day/:lessonIndex"
+            render={
+              ({match}) => {
+                console.log("/lesson/:IsSaved/:IsCurrentWeek/:Day/:lessonIndex", match.params.IsSaved, match.params.IsCurrentWeek, Number(match.params.Day), Number(match.params.lessonIndex))
+                // temporary workaround
+                let lesson = String(match.params.IsSaved)=="true" ? this.apiModel.saved_schedule : this.apiModel.other_schedule
+                let lessonWeek = String(match.params.IsCurrentWeek)=="true" ? lesson.current_week : lesson.other_week
+                
+                console.log("/lesson/...: this.state.page:", this.state.page)
+                console.log("/lesson/...: this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]", this.apiModel.saved_schedule.current_week)
+                // if (this.state.page!==NON_EXISTING_PAGE_NO) this.gotoPage(NON_EXISTING_PAGE_NO);
+                return (
+                  <Lesson
+                    character={this.state.character}
+                    isTeacherAndValid={this.getIsCorrectTeacher()}
+                    theme={this.state.theme}
+                    currentLesson={lessonWeek[Number(match.params.Day)]?.[Number(match.params.lessonIndex) - 1]}
+                    currentLessonStartEnd={LessonStartEnd[Number(match.params.lessonIndex)]}
+                    pageNo={Number(match.params.Day)}
+                    onDashboardClick={() => history.push("/dashboard")}
+                    handleTeacherChange={this.apiModel.CheckIsCorrectTeacher}
+
+                  />
+                )
               }
             }
           />
