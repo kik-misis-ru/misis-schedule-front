@@ -16,10 +16,7 @@ import {
   Caption,
   Switch,
   TimePicker,
-  Tabs,
-  TabItem,
   TextBoxLabel,
-  Header,
   TextField,
   HeaderBack,
   HeaderLogo,
@@ -41,6 +38,7 @@ import {
   IStudentValidation,
   ITeacherValidation
 } from '../lib/ApiModel'
+import {AssistantWrapper} from '../lib/AssistantWrapper'
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
@@ -147,6 +145,7 @@ interface SettingsProps {
   toggleTheme: () => void
   dayPush: number
   apiModel: ApiModel
+  assistant: AssistantWrapper
 }
 
 interface SettingsState {
@@ -168,6 +167,33 @@ interface SettingsState {
 }
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
+
+
+  componentDidMount() {
+    this.props.assistant.on('action-group', (group) => {
+      console.log('action-group', group)
+    })
+    this.props.assistant.on('action-subGroup', (subGroup) => {
+      let settings = this.state.studentSettings
+      this.setState({studentSettings: 
+        {groupName: settings.groupName,
+        engGroupName: settings.engGroupName,
+        subGroupName: subGroup
+        }})
+    })
+    this.props.assistant.on('action-engGroup', (engGroup) => {
+      let settings = this.state.studentSettings
+      this.setState({studentSettings: 
+        {groupName: settings.groupName,
+        engGroupName: engGroup,
+        subGroupName: settings.subGroupName
+        }})
+    })
+    this.props.assistant.on('show_schedule', async () => {
+      await this.Save()
+    })
+    
+  }
 
   constructor(props: SettingsProps) {
     super(props);
@@ -231,6 +257,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
      this.props.apiModel.pushSettings = 
      {
        Hour: this.state.timePush.hour,
+
        Minute: this.state.timePush.min,
        IsActive:  this.state.disabled
     }

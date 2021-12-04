@@ -1014,6 +1014,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   toggleTheme={() => this.toggleTheme()}
                   dayPush={this.state.dayPush}
                   apiModel={this.apiModel}
+                  assistant={this.assistant}
                 />
               }
             }
