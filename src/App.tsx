@@ -144,9 +144,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     super(props);
     this.apiModel = new ApiModel()
     this.getCurrentLesson = this.getCurrentLesson.bind(this);
-    this.NextWeek = this.NextWeek.bind(this);
-    this.CurrentWeek = this.CurrentWeek.bind(this);
-    this.PreviousWeek = this.PreviousWeek.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this)
     this.setValue = this.setValue.bind(this);
     console.log('constructor');
@@ -242,19 +239,19 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  async handleAssistantForNextWeek() {
-    if (this.apiModel.CheckGroupOrTeacherSetted()) {
-      await this.NextWeek(this.apiModel.isSavedSchedule);
-      return this.ChangePage(false);
-    }
-  }
+  // async handleAssistantForNextWeek() {
+  //   if (this.apiModel.CheckGroupOrTeacherSetted()) {
+  //     await this.NextWeek(this.apiModel.isSavedSchedule);
+  //     return this.ChangePage(false);
+  //   }
+  // }
 
-  async handleAssistantForThisWeek() {
-     if (this.apiModel.CheckGroupOrTeacherSetted()) {
-      await this.CurrentWeek(this.apiModel.isSavedSchedule);
-      this.ChangePage(true);
-    }
-  }
+  // async handleAssistantForThisWeek() {
+  //    if (this.apiModel.CheckGroupOrTeacherSetted()) {
+  //     await this.CurrentWeek(this.apiModel.isSavedSchedule);
+  //     this.ChangePage(true);
+  //   }
+  // }
 
   async handleAssistantWhenLesson(
     type1: StartOrEnd,
@@ -974,37 +971,6 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
 
-  /**
-   * Переход на следующую неделю
-   */
-  async NextWeek(isSave: boolean) {
-    const datePlusWeek = this.state.date + SEVEN_DAYS;
-    console.log("App: NewxtWeek: Date", datePlusWeek)
-    await this.apiModel.getScheduleFromDb(new Date(datePlusWeek), isSave, false);
-    this.setState({date: datePlusWeek})
-  }
-
-  /**
-   * Переход на следующую неделю
-   */
-  async CurrentWeek(isSave: boolean) {
-    const date = Date.now();
-    this.setState({date: date})
-    await this.apiModel.getScheduleFromDb(new Date(date), isSave, true);
-  }
-
-  /**
-   * Переход на предыдущую неделю
-   */
-  async PreviousWeek(isSave: boolean) {
-    const dateMinusWeek = this.state.date - SEVEN_DAYS;
-    this.setState({date: dateMinusWeek})
-    await this.apiModel.getScheduleFromDb(new Date(dateMinusWeek), isSave, false);
-  }
-
-
-
-
   ChangePage(IsCurrentWeek: boolean) {
     let current_date = new Date().toISOString().slice(0,10)
     let IsSave = this.apiModel.isSavedSchedule
@@ -1210,6 +1176,7 @@ export class App extends React.Component<IAppProps, IAppState> {
              ({match}) => {
                console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule, this.state.page)
                 return <SchedulePage
+                assistant={this.assistant}
                 timeParam={this.state.page}
                 character={this.state.character}
                 theme={this.state.theme}

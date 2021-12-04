@@ -22,7 +22,7 @@ export const initializeAssistant = (getState) => {
   return createAssistant({getState});
 };
 
-type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup'|'show_schedule';
+type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup'|'show_schedule'|'for_this_week'|'for_next_week';
 
 export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
   _assistant
@@ -178,11 +178,11 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
         break
 
       case 'for_next_week':
-        await this._App.handleAssistantForNextWeek()
+        this.emit('for_next_week')
         break
 
       case 'for_this_week':
-        await this._App.handleAssistantForThisWeek()
+        this.emit('for_this_week')
         break
 
       case 'when_lesson':

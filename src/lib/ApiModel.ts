@@ -506,6 +506,7 @@ export class ApiModel {
         getFirstDayWeek(new Date())
       )
         .then((response) => {
+          this.isStudent = true
           this.SetWeekSchedule(response, 0, isSave);
         })
     }
