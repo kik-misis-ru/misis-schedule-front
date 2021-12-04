@@ -23,19 +23,11 @@ import {
   RectSkeleton,
   CellDisclosure,
   Caption,
-  HeaderBack,
-  HeaderLogo,
-  HeaderTitle,
-  HeaderTitleWrapper,
-  HeaderContent,
-  HeaderRoot,
-  HeaderMinimize,
   Header
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 //import {createGlobalStyle} from "styled-components";
-
 import {
   IconLocation, 
   IconStarFill, 
@@ -86,28 +78,24 @@ moment.locale('ru');
 
 
 const HeaderRow = ({
-                     assistant,
                      onHomeClick
                    }: {
-  assistant: AssistantWrapper
   onHomeClick: () => void
 }) => (
   <Row style={{
     margin: "1em"
   }}>
-<HeaderRoot>
-      <HeaderMinimize onClick={() => assistant.on('exit', () => {
-  })  } />
-    <HeaderLogo src={logo} alt="Logo" />
-    <HeaderTitleWrapper>
-      <HeaderTitle>Мир МИСиС</HeaderTitle>
-    </HeaderTitleWrapper>
-    <HeaderContent>
-    <GoToHomeButton
-         onClick={() => onHomeClick()}
-       />
-    </HeaderContent>
-    </HeaderRoot>
+                <Header
+                    back={false}
+                    logo={logo}
+                    title="Мир МИСиС"
+                    minimize 
+                    onMinimizeClick={() => alert('Minimize click.')}
+                >
+                    <GoToHomeButton
+        onClick={() => onHomeClick()}
+      />
+                </Header>
 
   </Row>
 )
@@ -393,8 +381,7 @@ const DashboardPage = ({
                          nextLesson,
                          nextLessonStartEnd,
                          theme,
-                         apiModel,
-                         assistant,
+                         apiModel
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
@@ -407,7 +394,6 @@ const DashboardPage = ({
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
   apiModel: ApiModel
-  assistant: AssistantWrapper
 }) => {
 
   console.log('DashboardPage:', nextLesson)
@@ -426,7 +412,7 @@ const DashboardPage = ({
         // overflow: 'auto',
       }}>
         <HeaderRow
-          assistant={assistant}
+          // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
           onHomeClick={() => history.push('/settings')}
         />
         {
@@ -524,7 +510,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user.teacher_id != "")  ?      (
+               {!apiModel.isSchedule &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
               <Col >
                 <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
