@@ -102,6 +102,11 @@ const HeaderRow = ({
     <HeaderTitleWrapper>
       <HeaderTitle>Мир МИСиС</HeaderTitle>
     </HeaderTitleWrapper>
+    <HeaderContent>
+    <GoToHomeButton
+         onClick={() => onHomeClick()}
+       />
+    </HeaderContent>
     </HeaderRoot>
 
   </Row>
