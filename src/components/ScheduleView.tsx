@@ -72,7 +72,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     })
 
     this.props.assistant.on('day_schedule', (action) => {
+      console.log("ACTION",action)
       const {dayOfWeek: strDayOfWeekNum_} = action.note[0];
+      this.handleDayChange(parseInt(strDayOfWeekNum_),action.note[1], action.note[2])
 
     })
 
@@ -130,28 +132,25 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
   handleDayChange(dayOfWeek: number, note1, note2){
      if (this.props.apiModel.CheckGroupOrTeacherSetted()) {
       const dayOfWeekZeroIndex = dayOfWeek - 1;
+      if (note1 === null && note2 === null) {
+        history.push('/schedule/'+this.props.Date.toISOString().slice(0,10)+'/'+this.props.IsSavedSchedule+'/'+this.props.IsCurrentWeek+'/'+Number(dayOfWeek-2))
+      } else {
+        
+        if (note1 !== null) {
+          console.log('dispatchAssistantAction: day_schedule: note[1]:', note1);
+          history.push('/schedule/'+this.props.Date.toISOString().slice(0,10)+'/'+this.props.IsSavedSchedule+'/'+this.props.IsCurrentWeek+'/'+Number(dayOfWeek-2))
 
-      //this.setState({Day: dayOfWeek-1})
-      // if (note1 === null && note2 === null) {
-      //   console.log('dispatchAssistantAction: day_schedule: isCurrentWeek:', );
-      //     this.ChangePage(true)
-      // } else {
-      //   console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex);
+        } else if (note2 !== null) {
+          let date = this.props.Date
+          date.setDate(date.getDate()+7)
+          history.push('/schedule/'+date.toISOString().slice(0,10)+'/'+this.props.IsSavedSchedule+'/'+false+'/'+Number(dayOfWeek-1))
 
-      //   if (note1 !== null) {
-      //     console.log('dispatchAssistantAction: day_schedule: note[1]:', note1);
-      //     this.ChangePage(true)
+        }
+     }
 
-      //   } else if (note2 !== null) {
-      //     console.log('dispatchAssistantAction: day_schedule: note[2]:', note2);
-      //     this.ChangePage(false)
+      const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
 
-      //   }
-     // }
-
-      // const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
-
-      // this.props.assistant.sendSay6(dayOfWeekLongPrepositional);
+      this.props.assistant.sendSay6(dayOfWeekLongPrepositional);
 
 
     }

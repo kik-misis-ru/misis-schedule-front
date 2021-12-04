@@ -226,14 +226,13 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
         break
 
       case 'day_schedule':
-        const {dayOfWeek: strDayOfWeekNum_} = action.note[0];
-        this.emit('day_schedule')
-        await this._App.handleAssistantDaySchedule(parseInt(strDayOfWeekNum_), action.note[1], action.note[2])
+       
+        this.emit('day_schedule', action)
+       // await this._App.handleAssistantDaySchedule(parseInt(strDayOfWeekNum_), action.note[1], action.note[2])
         break
 
       case 'show_schedule':
         this.emit('show_schedule');
-        this._App.handleAssistantShowSchedule(action.note)
         //await this._App.handleAssistantShowSchedule(action.note)
         break
 
