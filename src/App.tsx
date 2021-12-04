@@ -190,11 +190,13 @@ export class App extends React.Component<IAppProps, IAppState> {
       // .then((userSchedule) => {
       console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
 
+     if(userSchedule){
       this.apiModel.pushSettings = {
         IsActive: userSchedule.isActive,
         Hour: userSchedule.hour,
         Minute: userSchedule.minute,
       }
+     }
 
       await this.apiModel.getSchedulebyUserId()
       console.log("USER:", this.apiModel)

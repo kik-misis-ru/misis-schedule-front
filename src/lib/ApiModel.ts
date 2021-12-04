@@ -187,34 +187,41 @@ export class ApiModel {
       // Получаем настройки для данного пользователя
       userSchedule = await ApiHelper.getSchedulebyUserId(this.userId)
       console.log("USER_SCHEDULE", userSchedule)
+      if(userSchedule == undefined){
+        this.isSavedUser = false
+      }
+      else{
+        if (userSchedule.teacher_id != "" && userSchedule.teacher_id != undefined) {
+          const teacher = formatTeacherName(userSchedule.teacher_info);
+          this.user = {
+            teacher: teacher,
+            teacher_id: userSchedule.teacher_id,
+            group_id : userSchedule.groupId,
+            filial_id: userSchedule.filialId,
+            eng_group: userSchedule.eng_group,
+            subgroup_name: userSchedule.subgroup_name,
+            group: userSchedule.groupName
+          }
+          this.isStudent = false
+  
+        } else if
+         (userSchedule.groupName != "") {
+          this.user = {
+            teacher: "",
+            teacher_id: "",
+            group_id : userSchedule.groupId,
+            group: userSchedule.groupName,
+            filial_id: userSchedule.filialId,
+            eng_group: userSchedule.eng_group,
+            subgroup_name: userSchedule.subgroup_name
+          }
+          this.isStudent = true;
+  
+        } 
 
-      if (userSchedule.teacher_id != "" && userSchedule.teacher_id != undefined) {
-        const teacher = formatTeacherName(userSchedule.teacher_info);
-        this.user = {
-          teacher: teacher,
-          teacher_id: userSchedule.teacher_id,
-          group_id : userSchedule.groupId,
-          filial_id: userSchedule.filialId,
-          eng_group: userSchedule.eng_group,
-          subgroup_name: userSchedule.subgroup_name,
-          group: userSchedule.groupName
-        }
-        this.isStudent = false
+      }
 
-      } else if
-       (userSchedule.groupName != "") {
-        this.user = {
-          teacher: "",
-          teacher_id: "",
-          group_id : userSchedule.groupId,
-          group: userSchedule.groupName,
-          filial_id: userSchedule.filialId,
-          eng_group: userSchedule.eng_group,
-          subgroup_name: userSchedule.subgroup_name
-        }
-        this.isStudent = true;
-
-      } 
+     
     }
     if(userSchedule != undefined){
       await this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
@@ -238,14 +245,17 @@ export class ApiModel {
     if (isSavedSchedule) {
       let saved_schedule = this.saved_schedule
       let day = this.day
-      if (i == 0) {
-        saved_schedule.current_week = scheduleData.schedule
-        day.current_week = scheduleData.day
+      if(scheduleData.schedule && scheduleData.day){
+        if (i == 0) {
+          saved_schedule.current_week = scheduleData.schedule
+          day.current_week = scheduleData.day
+        }
+        else {
+          saved_schedule.other_week = scheduleData.schedule
+          day.other_week = scheduleData.day
+        }
       }
-      else {
-        saved_schedule.other_week = scheduleData.schedule
-        day.other_week = scheduleData.day
-      }
+     
       this.saved_schedule=saved_schedule
       
       this.day = day
@@ -253,16 +263,19 @@ export class ApiModel {
     else {
       let other_schedule = this.other_schedule
       let day = this.day
-      if (i == 0) {
-        console.log("Set other shcedule; current week")
-        other_schedule.current_week = scheduleData.schedule
-        day.current_week = scheduleData.day
+      if( scheduleData.schedule && scheduleData.day){
+        if (i == 0 ) {
+          console.log("Set other shcedule; current week")
+          other_schedule.current_week = scheduleData.schedule
+          day.current_week = scheduleData.day
+        }
+        else {
+         
+          day.other_week = scheduleData.day
+          other_schedule.other_week = scheduleData.schedule
+        }
       }
-      else {
-        console.log("Set other shcedule; other week")
-        day.other_week = scheduleData.day
-        other_schedule.other_week = scheduleData.schedule
-      }
+      
         this.other_schedule = other_schedule
         this.day = day
 

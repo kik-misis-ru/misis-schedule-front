@@ -521,7 +521,7 @@ const DashboardPage = ({
              
                     
         }
-        {apiModel.user?.group_id == "" && apiModel.user.teacher_id == "" && !apiModel.isSavedUser ? 
+        {!apiModel.isSavedUser ? 
         (<GetCloser/>) : (<div ></div>)}
         <CatalogueHeaderRow/>
 

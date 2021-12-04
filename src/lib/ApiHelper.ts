@@ -41,8 +41,8 @@ export interface IScheduleLessonInfo {
   other: string
 }
 export interface IScheduleFormatData{
-  schedule: IScheduleDays
-  day: IDayHeader[]
+  schedule: IScheduleDays | undefined
+  day: IDayHeader[] | undefined
 }
 
 interface IScheduleBellHeader {
@@ -90,7 +90,7 @@ export interface ITeacherInfo{
   mid_name: string
 }
 
-export interface IScheduleByUserIdData {
+export interface IScheduleByUserIdData  {
   day: number
   formatScheduleData: IScheduleFormatData,
   groupName: string,
@@ -139,7 +139,7 @@ export async function getScheduleFromDb(groupId: string, english_group_id: strin
   return formatShcdeuleData;
 }
 
-export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleFormatData> {
+export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleFormatData>  {
   const url = `${API_URL}schedule_teacher`;
   const config = {
     params: {
@@ -152,12 +152,18 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
 
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
-  console.log(`ApiHelper: getScheduleTeacherFromDb: parsedSchedule:`, parsedSchedule);
-  let formatSchedule:IScheduleFormatData = FormateSchedule(parsedSchedule, undefined);
-  return formatSchedule;
+  if(parsedSchedule["status"] == 1){
+    console.log(`ApiHelper: getScheduleTeacherFromDb: parsedSchedule:`, parsedSchedule);
+    let formatSchedule:IScheduleFormatData = FormateSchedule(parsedSchedule, undefined);
+    return formatSchedule;
+  }
+  return {schedule: undefined, day: undefined}
 }
 
-export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByUserIdData>{
+
+ 
+
+export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByUserIdData | undefined>{
   const url = `${API_URL}schedule_by_user_id`;
   const config={
     params:{
@@ -169,8 +175,10 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleByUserIdData = JSON.parse(rawSchedule);
   console.log(`ApiHelper: getSchedulebyUserId: parsedSchedule:`, parsedSchedule);
+ if(parsedSchedule.schedule && parsedSchedule.subgroup_name){
   parsedSchedule.formatScheduleData = FormateSchedule(parsedSchedule.schedule, parsedSchedule.subgroup_name )
   return parsedSchedule;
+ }
 }
 
 
