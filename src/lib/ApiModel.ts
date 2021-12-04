@@ -243,40 +243,32 @@ export class ApiModel {
      this.isSchedule = false;
     if (isSavedSchedule) {
       let saved_schedule = this.saved_schedule
-      let day = this.day
       if(scheduleData.schedule && scheduleData.day){
         if (i == 0) {
           saved_schedule.current_week = scheduleData.schedule
-          day.current_week = scheduleData.day
+          this.day.current_week = scheduleData.day
         }
         else {
           saved_schedule.other_week = scheduleData.schedule
-          day.other_week = scheduleData.day
+          this.day.other_week = scheduleData.day
         }
       }
      
       this.saved_schedule=saved_schedule
       
-      this.day = day
     }
     else {
-      let other_schedule = this.other_schedule
-      let day = this.day
       if( scheduleData.schedule && scheduleData.day){
         if (i == 0 ) {
           console.log("Set other shcedule; current week")
-          other_schedule.current_week = scheduleData.schedule
-          day.current_week = scheduleData.day
+          this.other_schedule.current_week = scheduleData.schedule
+          this.day.current_week = scheduleData.day
         }
         else {
-         
-          day.other_week = scheduleData.day
-          other_schedule.other_week = scheduleData.schedule
+          this.day.other_week = scheduleData.day
+          this.other_schedule.other_week = scheduleData.schedule
         }
       }
-      
-        this.other_schedule = other_schedule
-        this.day = day
 
     }
     this.isSchedule = true
@@ -465,7 +457,6 @@ export class ApiModel {
        let group
        let groupId
        if(group_response){
-         console.log("Group response", group_response)
          group = JSON.parse(group_response);
         if (group.status == 1) {
           console.log(group.name, group.id, "GROUP RESPONSE")

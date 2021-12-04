@@ -65,6 +65,7 @@ import {
 
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
+import { lesson } from "./stories/consts";
 
 export const HOME_PAGE_ROUTE = "home";
 
@@ -178,7 +179,8 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       await this.apiModel.getSchedulebyUserId()
       console.log("USER:", this.apiModel)
-
+      let date = new Date()
+      date.setDate(date.getDate() +7)
       history.push("/dashboard")
 
       // Проверяем, сохранен ли пользователь
@@ -207,7 +209,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         getTodayDayOfWeek() + offset === 0 ||
         getTodayDayOfWeek() + offset === 7
       );
-
       if (isSunday) {
         this.assistant.sendTodaySchedule(DAY_SUNDAY);
         return this.ChangePage(true);
@@ -251,7 +252,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         action_id: "say",
         parameters: params,
       })
-
+      let date = new Date().toISOString().slice(0,10)
       if ((params.day === DAY_TODAY) && (getTodayDayOfWeek() !== 0)) {
         this.setState({page: getTodayDayOfWeek()-1})
         return this.ChangePage(true);
@@ -266,7 +267,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  handleAssistantHowMany(date: Date | undefined, dayOfWeek: number | undefined) {
+ async handleAssistantHowMany(date: Date | undefined, dayOfWeek: number | undefined) {
     console.log('handleAssistantHowMany: date', date, 'dayOfWeek:', dayOfWeek)
 
     let day: TodayOrTomorrow | undefined;
@@ -287,9 +288,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       }
 
       let assistantParams: AssistantSendActionSay1['parameters'];
-
+      await this.apiModel.getScheduleFromDb(date, true, false)
       const lessonCount = this.getLessonsCountForDate(date)
-      console.log("Lesson count", lessonCount)
       let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
       if (groupApiModel !== "" && lessonCount > 0) {
         // const [dayOfWeekShort, lessonCount] = amountOfLessonsTuple;
@@ -308,7 +308,7 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
         this.setState({page: dayOfWeekIndex})
         if (dayOfWeekIndex < getTodayDayOfWeek()) {
-          return this.ChangePage(false);
+           this.ChangePage(false);
         } else {
           this.ChangePage(true)
         }
@@ -626,8 +626,14 @@ export class App extends React.Component<IAppProps, IAppState> {
    */
   getLessonsCountForDate(date: Date): number {
     const strDate = formatDateWithDots(date);
+    let current_week = this.apiModel.day.current_week
+    let other_week = this.apiModel.day.other_week
     for (let i = 0; i < 6; i++) {
-      let current_week = this.apiModel.day.current_week
+      console.log("strDate:",strDate,", other week date", other_week[i].date)
+      if(strDate === other_week[i].date){
+        return other_week[i].count
+      }
+      console.log("strDate:",strDate,", current week date", current_week[i].date)
       if (strDate === current_week[i].date) {
         return current_week[i].count;
       }
@@ -921,10 +927,19 @@ export class App extends React.Component<IAppProps, IAppState> {
 
 
   ChangePage(IsCurrentWeek: boolean) {
-    let current_date = new Date().toISOString().slice(0,10)
+    let date
+    if(IsCurrentWeek){
+       date = new Date().toISOString().slice(0,10)
+    }
+    else{
+      let _date = new Date()
+      _date.setDate(_date.getDate()+7)
+      date = _date.toISOString().slice(0,10)
+    }
+
     let IsSave = this.apiModel.isSavedSchedule
-    console.log("current_date+'/'+IsSave+'/'+IsCurrentWeek+page", current_date, IsSave, IsCurrentWeek, this.state.page)
-    history.push('/schedule/'+current_date+'/'+IsSave+'/'+IsCurrentWeek)
+    console.log("current_date+'/'+IsSave+'/'+IsCurrentWeek+page", date, IsSave, IsCurrentWeek, this.state.page)
+    history.push('/schedule/'+date+'/'+IsSave+'/'+IsCurrentWeek)
   }
 
   toggleTheme() {
