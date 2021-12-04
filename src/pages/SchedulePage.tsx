@@ -13,6 +13,7 @@ interface SchedulePageProps_ extends ScheduleViewProps, IThemingProps {
 type SchedulePageProps = Omit<SchedulePageProps_, 'schedule'>
 
 interface ScheduleState {
+  timeParam: number
   schedule: { current_week: IScheduleDays, other_week: IScheduleDays }
 }
 
@@ -22,6 +23,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
     console.log("SchedulePage: constructor")
     super(props);
     this.state = {
+      timeParam: this.props.timeParam,
       schedule: {
         current_week: [],
         other_week: [],
@@ -43,6 +45,15 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
   }
 
+  async refetchDay() {
+    console.log("SchedulePage: refetchDay: apiModel", this.props.apiModel.unsavedUser)
+
+    this.setState({
+      timeParam: this.props.timeParam
+    })
+
+  }
+
   async componentDidMount() {
     console.log("SchedulePage: componentDidMount")
     await this.refetchData();
@@ -51,7 +62,9 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
   async componentDidUpdate(prevProps) {
     console.log("SchedulePage: ComponentDidUpdate")
     // Typical usage (don't forget to compare props):
-    
+    console.log("this.props.timeParam !== prevProps.timeParam", this.props.timeParam, prevProps.timeParam)
+    if (this.props.timeParam !== prevProps.timeParam)
+    await this.refetchDay();
     if (this.props.Date !== prevProps.Date) {
       await this.refetchData();
       // this.setState({})
@@ -60,7 +73,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
   render() {
     console.log("SchedulePage: render")
-    const {character, theme, ...restProps} = this.props;
+    const {character, theme, timeParam, ...restProps} = this.props;
 
     return (
       <DeviceThemeProvider>
@@ -76,6 +89,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
           }}>
 
             <ScheduleView
+              timeParam={this.state.timeParam}
               schedule={this.state.schedule}
               {...restProps}
             />

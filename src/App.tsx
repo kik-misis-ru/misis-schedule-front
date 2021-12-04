@@ -144,7 +144,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   componentDidMount() {
     console.log('componentDidMount');
     this.assistant.init();
-    this.setState({page: getTodayDayOfWeek()-1})
+    this.setState({page: getTodayDayOfWeek()})
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -448,7 +448,7 @@ export class App extends React.Component<IAppProps, IAppState> {
      if (this.apiModel.CheckGroupOrTeacherSetted()) {
       const dayOfWeekZeroIndex = dayOfWeek - 1;
 
-      this.setState({page: dayOfWeek})
+      this.setState({page: dayOfWeek-1})
       if (note1 === null && note2 === null) {
         console.log('dispatchAssistantAction: day_schedule: isCurrentWeek:', );
 
@@ -468,7 +468,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
         }
       }
-      console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex)
+      console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex, this.state.page)
 
       const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekZeroIndex]?.toLowerCase();
 
@@ -1119,10 +1119,13 @@ export class App extends React.Component<IAppProps, IAppState> {
           />
           <Route path="/schedule/:Date/:IsSaved/:IsCurrentWeek"
              render={
+               
              ({match}) => {
+               let timeParam = this.state.page;
+               console.log("timeParam", timeParam)
                 return <SchedulePage
                 assistant={this.assistant}
-                timeParam={this.state.page}
+                timeParam={timeParam}
                 character={this.state.character}
                 theme={this.state.theme}
                 getCurrentLesson={this.getCurrentLesson}
