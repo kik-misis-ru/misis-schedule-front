@@ -92,6 +92,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     }
 
     let apiModel =this.props.apiModel;
+    console.log("this.props.IsSavedSchedule", this.props.IsSavedSchedule);
     let subGroupName = this.props.IsSavedSchedule ? apiModel.user?.subgroup_name : apiModel.unsavedUser?.subgroup_name
     let teacher =this.props.IsSavedSchedule? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
     if(teacher == undefined){
@@ -158,8 +159,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
   render() {
     const {schedule } = this.props;
-
     let isReady = this.props.apiModel.isSchedule
+    let teacherName =this.props.IsSavedSchedule? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
+    let teacher = teacherName == undefined ? "" : teacherName
     return (
  /*     <DeviceThemeProvider>
       <DocStyle/>
@@ -176,7 +178,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           <TopMenu
             subLabel={
               !this.props.apiModel.isStudent
-                ? this.state.teacher
+                ? teacher
                 : 
                 //this.props.groupName
                this.state.groupName
