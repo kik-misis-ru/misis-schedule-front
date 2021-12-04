@@ -23,11 +23,19 @@ import {
   RectSkeleton,
   CellDisclosure,
   Caption,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize,
   Header
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 //import {createGlobalStyle} from "styled-components";
+
 import {
   IconLocation, 
   IconStarFill, 
@@ -78,24 +86,23 @@ moment.locale('ru');
 
 
 const HeaderRow = ({
+                     assistant,
                      onHomeClick
                    }: {
+  assistant: AssistantWrapper
   onHomeClick: () => void
 }) => (
   <Row style={{
     margin: "1em"
   }}>
-                <Header
-                    back={false}
-                    logo={logo}
-                    title="Мир МИСиС"
-                    minimize 
-                    onMinimizeClick={() => alert('Minimize click.')}
-                >
-                    <GoToHomeButton
-        onClick={() => onHomeClick()}
-      />
-                </Header>
+<HeaderRoot>
+      <HeaderMinimize onClick={() => assistant.on('exit', () => {
+  })  } />
+    <HeaderLogo src={logo} alt="Logo" onClick={history.push("/dashboard")}/>
+    <HeaderTitleWrapper>
+      <HeaderTitle>Мир МИСиС</HeaderTitle>
+    </HeaderTitleWrapper>
+    </HeaderRoot>
 
   </Row>
 )
@@ -381,7 +388,8 @@ const DashboardPage = ({
                          nextLesson,
                          nextLessonStartEnd,
                          theme,
-                         apiModel
+                         apiModel,
+                         assistant,
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
@@ -394,6 +402,7 @@ const DashboardPage = ({
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
   apiModel: ApiModel
+  assistant: AssistantWrapper
 }) => {
 
   console.log('DashboardPage:', nextLesson)
@@ -412,7 +421,7 @@ const DashboardPage = ({
         // overflow: 'auto',
       }}>
         <HeaderRow
-          // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
+          assistant={assistant}
           onHomeClick={() => history.push('/settings')}
         />
         {
