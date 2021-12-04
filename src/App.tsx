@@ -107,12 +107,9 @@ interface IAppProps {
 export interface IAppState {
   notes: { id: string, title: string }[];
   page: number
-  isCurrentWeek: boolean
   date: number
   character: CharacterId
   theme: string
-  dayPush: number
-  isActive: boolean
   isUser: boolean
 }
 
@@ -130,19 +127,15 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.state = {
       notes: [],
       page: INITIAL_PAGE,
-      isCurrentWeek: true,
       date: Date.now() ,
       theme: "dark",
-      isActive: false,
       character: CHAR_SBER,
       isUser: false,
-      dayPush: 0,
     }
     this.assistant = new AssistantWrapper(this);
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
     this.assistant.init();
     this.setState({page: getTodayDayOfWeek()})
   }
@@ -156,18 +149,12 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async handleAssistantSub(userId: string) {
-    console.log("handleAssistantSub: userId", userId);
-
     this.apiModel = new ApiModel()
     this.apiModel.fetchUser(userId)
     const user = this.apiModel.user;
-    console.log('handleAssistantSub: user', user)
-
     if (this.apiModel.userId != undefined && this.apiModel.userId != "") {
 
       const userSchedule = await getSchedulebyUserId(userId)
-      // .then((userSchedule) => {
-      console.log("handleAssistantSub: getScheduleByUserId", userSchedule)
 
      if(userSchedule){
       this.apiModel.pushSettings = {
@@ -178,7 +165,6 @@ export class App extends React.Component<IAppProps, IAppState> {
      }
 
       await this.apiModel.getSchedulebyUserId()
-      console.log("USER:", this.apiModel)
       let date = new Date()
       date.setDate(date.getDate() +7)
       history.push("/dashboard")
@@ -292,11 +278,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       const lessonCount = this.getLessonsCountForDate(date)
       let groupApiModel = this.apiModel.user?.group==undefined ? "" : this.apiModel.user.group
       if (groupApiModel !== "" && lessonCount > 0) {
-        // const [dayOfWeekShort, lessonCount] = amountOfLessonsTuple;
         const lessonText = pairNumberToPairText(lessonCount);
-
-        // const [dayOfWeekLongPrepositional, dayOfWeekIndex] = dayNameDict[dayOfWeekShort]
-        // const dayOfWeekIndex = DayOfWeek.short.indexOf(dayOfWeekShort)
         const dayOfWeekIndex = date.getDay();
         const dayOfWeekLongPrepositional = DayOfWeek.long.prepositional[dayOfWeekIndex]?.toLowerCase();
 
@@ -386,12 +368,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         parameters: whatLesson,
       })
       this.ChangePage(true);
-      // if (getTodayDayOfWeek() === 0) {
-      //   this.ChangeDay(7)
-      // } else {
-      //   this.ChangeDay(getTodayDayOfWeek());
-      // }
-
     }
   }
 
@@ -399,7 +375,6 @@ export class App extends React.Component<IAppProps, IAppState> {
      if (this.apiModel.CheckGroupOrTeacherSetted()) {
 
       let firstLessonNumStr: string;
-      // let day: TodayOrTomorrow;
       let day1: undefined | TodayOrTomorrow = DAY_TODAY;
 
       const dayOfWeekZeroIndex = dayOfWeek - 1
@@ -721,15 +696,9 @@ export class App extends React.Component<IAppProps, IAppState> {
       console.log('whatLesson: count:', todayBells.count[THIS_WEEK]);
       const firstLessonTimeHhMm = this.getStartFirstLesson(todayWorkDayZeroIndex + 1)[0];
 
-      // if (formatTimeHhMm(date) < firstLessonTimeHhMm) {
-      //   console.log('formatTimeHhMm(date) < firstLessonTimeHhMm: true')
-      // }
       console.log("whatLesson: что за пара", formatTimeHhMm(date), when, firstLessonTimeHhMm);
-
-      // if (this.state.today !== 0) {
       const currLessonNum = this.getCurrentLesson(date);
       
-      //
       if (
         (when === "now") &&
         (currLessonNum !== undefined)
@@ -806,7 +775,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           }
         }
       }
-      // }
     }
     return result;
   }
@@ -1012,7 +980,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   onDashboardClick={() => history.push("/dashboard")}
                   theme={this.state.theme}
                   toggleTheme={() => this.toggleTheme()}
-                  dayPush={this.state.dayPush}
                   apiModel={this.apiModel}
                   assistant={this.assistant}
                 />
