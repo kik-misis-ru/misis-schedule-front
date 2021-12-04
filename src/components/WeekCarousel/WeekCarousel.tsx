@@ -1,5 +1,5 @@
 import React from "react";
-import {Carousel, CarouselGridWrapper, Row} from "@sberdevices/plasma-ui";
+import {Carousel, CarouselGridWrapper, Row, Col} from "@sberdevices/plasma-ui";
 
 import WeekCarouselDay from "./WeekCarouselDay";
 
@@ -18,10 +18,13 @@ export const WeekCarousel = ({
   return (
     <Row style={{
       marginRight: "0",
+      width: "100%",
       overflow: "hidden"
     }}>
+      <Col >
       <CarouselGridWrapper style={{
       marginRight: "0",
+      width: "100%",
       overflow: "hidden"
     }}>
         <Carousel
@@ -50,6 +53,7 @@ export const WeekCarousel = ({
           }
         </Carousel>
       </CarouselGridWrapper>
+      </Col>
     </Row>
   )
 }
