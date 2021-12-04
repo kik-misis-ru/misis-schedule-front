@@ -118,7 +118,7 @@ const ScheduleSectionTitleRow = () => (
 
     <Col
       style={{
-        marginLeft: "15px",
+        marginLeft: "1em",
         paddingTop: "1.2em"
       }}
     >
@@ -142,7 +142,7 @@ const ScheduleSectionTitleRow = () => (
 const CatalogueHeaderRow = () => {
   return (
     <Row>
-      <Col style={{marginLeft: "15px", paddingTop: "1.6em"}}>
+      <Col style={{marginLeft: "1em", paddingTop: "1.6em"}}>
         <IconApps />
       </Col>
       <Col style={{paddingTop: "1.7em"}}>
@@ -197,14 +197,14 @@ const TodaySummary = ({
         // @ts-ignore
         
       >
-        <CardParagraph2 style={{fontSize: "20px"}}>
+        <CardParagraph2 style={{fontSize: "1.4em"}}>
           {
             isSunday
               ? DAY_OFF_TEXT
               : `${DayOfWeek.long.nominative[dayOfWeek]}, ${dateDay} ${Month.long.genitive[month]}`
           }
         </CardParagraph2>
-        <CardParagraph1 style={{color: "grey"}}>
+        <CardParagraph1 style={{color: "grey", paddingTop: "0.5em",}}>
           {
             !isSunday && typeof lessonCount !== 'undefined' && lessonCount !== 0
               ? formatLessonsCountFromTo(
@@ -281,7 +281,7 @@ const GetCloser = ({
 }: {
 }) => {
 return (
-<Row style={{marginLeft: "10px", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+<Row style={{marginLeft: "0.7em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
 
 <Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.5vh"}}>
 
@@ -329,7 +329,7 @@ IsStudent: boolean
 }) => {
 
   return (
-    <Row style={{marginLeft: "8px", marginRight: "8px"}}>
+    <Row style={{marginLeft: "0.5em", marginRight: "0.5em"}}>
 
      
 
@@ -377,7 +377,7 @@ const ScheduleLessonTitle = ({text}: { text: string }) => (
 
 
 const NoLesson = () => (
-  < CardBody2 style={{fontSize: "18px"}}>
+  < CardBody2 style={{fontSize: "1.1em"}}>
     Пары нет🎊
   </CardBody2>
 )
@@ -444,9 +444,9 @@ const DashboardPage = ({
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
                       <Card style={{
-                        marginLeft: "10px",
+                        marginLeft: "0.7em",
                         marginTop: "0.5em",
-                        marginRight: "10px"
+                        marginRight: "0.7em"
                       }}
                             onClick={ () => {
                               history.push('/schedule/'+current_date+'/'+true+'/'+true)
@@ -524,18 +524,18 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user.teacher_id != "")  ?      (
+               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "")||!apiModel.isSavedUser  ?      (
               <Col >
-                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
-                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
+                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
+                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
                 <ScheduleSectionTitleRow/>
-                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "10px", marginRight: "10px"}} roundness={16}/>
+                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "0.7em", marginRight: "0.7em"}} roundness={16}/>
               </Col>): (<div ></div>)
 
              
                     
         }
-        {!apiModel.isSavedUser ? 
+        {apiModel.isSavedUser&&(apiModel.user?.group_id == "" && apiModel.user?.teacher_id == "") ? 
         (<GetCloser/>) : (<div ></div>)}
         <CatalogueHeaderRow/>
 
