@@ -68,7 +68,7 @@ const Start = ({
     <HeaderRoot>
       <HeaderMinimize onClick={() => assistant.on('exit', () => {
   })  } />
-    <HeaderLogo src={logo} alt="Logo" onClick={history.push("/dashboard")}/>
+    <HeaderLogo src={logo} alt="Logo" onClick={()=>history.push("/dashboard")}/>
     <HeaderTitleWrapper>
       <HeaderTitle>Мир МИСиС</HeaderTitle>
     </HeaderTitleWrapper>

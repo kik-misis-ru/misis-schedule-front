@@ -175,7 +175,7 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         min: pushSettings.Minute == -1 ? 1 : pushSettings.Minute,
         value: new Date(1629996400000-68400000-2760000 + pushSettings.Hour * 3600000 + pushSettings.Minute * 60000)
       },
-      edit: false,
+      edit: !this.props.apiModel.isSavedUser,
       theme: false,
       themeName: this.props.theme,
       studentSettings:{

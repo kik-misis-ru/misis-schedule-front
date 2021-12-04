@@ -98,7 +98,7 @@ const HeaderRow = ({
 <HeaderRoot>
       <HeaderMinimize onClick={() => assistant.on('exit', () => {
   })  } />
-    <HeaderLogo src={logo} alt="Logo" onClick={history.push("/dashboard")}/>
+    <HeaderLogo src={logo} alt="Logo" />
     <HeaderTitleWrapper>
       <HeaderTitle>Мир МИСиС</HeaderTitle>
     </HeaderTitleWrapper>
@@ -519,7 +519,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!apiModel.isSavedUser ?      (
+               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user.teacher_id != "")  ?      (
               <Col >
                 <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
