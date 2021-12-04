@@ -12,7 +12,6 @@ import {
   DeviceThemeProvider,
   Header
 } from "@sberdevices/plasma-ui";
-import {IAppState, SetValueFn, SetValueKeys} from "../App";
 import{
   ApiModel,
 IStudentValidation,

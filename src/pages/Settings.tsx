@@ -28,16 +28,12 @@ import {
   HeaderRoot,
   HeaderMinimize
 } from "@sberdevices/plasma-ui";
-import {IconChevronLeft, IconEdit, IconHouse} from "@sberdevices/plasma-icons";
-import {IAppState, SetValueFn, SetValueKeys} from "../App";
+import {IconEdit} from "@sberdevices/plasma-icons";
 import {
   AssistantSendAction,
 } from '../types/AssistantSendAction.d'
 
 import logo from "../images/App Icon.png";
-import {
-  addUserToPushNotification,
-} from "../lib/ApiHelper";
 import {
   ApiModel,
   IStudentSettings,
@@ -48,17 +44,10 @@ import {
 import {
   getThemeBackgroundByChar,
 } from '../themes/tools';
-import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import {Spacer100} from '../components/Spacers'
 import {DocStyle} from '../themes/tools';
 import {CharacterId} from "../types/base";
 import TabSelectorRow from '../components/Home/TabSelectorRow'
-import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
-} from '../components/TopMenu';
-import internal from "stream";
-import { threadId } from "worker_threads";
-import { connected } from "process";
 const HOME_TITLE = 'Салют!';
 const DESC_JOY = "Заполни данные, чтобы открывать расписание одной фразой";
 const DESC_OTHERS = "Чтобы посмотреть расписание, укажите данные учебной группы";

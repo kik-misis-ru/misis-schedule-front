@@ -30,7 +30,6 @@ const DAY_IN_SECONDS = 86400
 
 export interface ScheduleViewProps {
   apiModel: ApiModel
-  timeParam: number
   getCurrentLesson: (Date) => string
   day: IDayHeader[]
   today: number
@@ -43,6 +42,7 @@ export interface ScheduleViewProps {
   IsSavedSchedule: boolean
   IsCurrentWeek: boolean
   assistant: AssistantWrapper
+  timeParam: number
 }
 
 interface ScheduleViewState {
@@ -74,13 +74,6 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
   constructor(props) {
     super(props);
-    let weekParam: THIS_OR_OTHER_WEEK = THIS_WEEK;
-    let _timeparam = this.props.timeParam
-    if (this.props.timeParam > 7) {
-      _timeparam -= 7;
-      weekParam = OTHER_WEEK
-    }
-
 
     const getIsCorrectTeacher = () => {
       return this.props.getIsCorrectTeacher()
