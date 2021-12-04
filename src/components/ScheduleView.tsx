@@ -159,6 +159,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
   }
 
   render() {
+    console.log("this.props.page", this.props.page)
     const {schedule } = this.props;
     let isReady = this.props.apiModel.isSchedule
     let teacherName =this.props.IsSavedSchedule? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
@@ -239,7 +240,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             currentLessonNumber={this.state.current}
             isTeacherAndValid={!this.props.apiModel.isStudent}
             isToday={this.props.today === this.props.page && this.props.IsCurrentWeek}
-            isDayOff={this.props.page == 7}
+            isDayOff={this.props.page == -1}
             onTeacherClick={async (teacherName) => {
               await this.props.apiModel.doSetTeacher(teacherName)
               let current_date = new Date().toISOString().slice(0,10)
