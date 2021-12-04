@@ -138,7 +138,7 @@ export async function getScheduleFromDb(groupId: string, english_group_id: strin
     const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
   console.log(`ApiHelper: getScheduleFromDb: parsedSchedule:`, parsedSchedule);
-  let formatShcdeuleData : IScheduleFormatData = FormateSchedule(parsedSchedule, undefined)
+  let formatShcdeuleData : IScheduleFormatData = FormateSchedule(parsedSchedule, "")
   return formatShcdeuleData;
   }
  
@@ -162,7 +162,7 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
     const {data: rawSchedule} = response;
     const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
     console.log(`ApiHelper: getScheduleTeacherFromDb: parsedSchedule:`, parsedSchedule);
-    let formatSchedule:IScheduleFormatData = FormateSchedule(parsedSchedule, undefined);
+    let formatSchedule:IScheduleFormatData = FormateSchedule(parsedSchedule, "");
     return formatSchedule;
   }
   return {schedule: undefined, day: undefined}
@@ -469,7 +469,7 @@ export function FormateSchedule(schedule_from_api: IScheduleApiData, subgroup) :
           if (
             (schedule_from_api.schedule[bell_num] !== undefined) &&
             (lesson_info !== undefined) &&
-            (subgroup_name !== undefined) &&
+            (subgroup_name !== "") &&
             (subgroup_name === subgroup) &&
             (subgroup !== "")
           ) {
@@ -486,7 +486,7 @@ export function FormateSchedule(schedule_from_api: IScheduleApiData, subgroup) :
           } else if (
             (schedule_from_api.schedule[bell] !== undefined) &&
             (lesson_info !== undefined) &&
-            (subgroup_name !== undefined) &&
+            (subgroup_name !== "") &&
             (subgroup_name !== subgroup) &&
             (subgroup !== "")
           ) {

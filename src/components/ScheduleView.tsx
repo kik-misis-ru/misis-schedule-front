@@ -199,7 +199,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
                 : schedule.other_week[this.state.Day]
             }
             currentLessonNumber={this.state.current}
-            isTeacherAndValid={this.state.isTeacher}
+            isTeacherAndValid={!this.props.apiModel.isStudent}
             isToday={this.props.today === this.state.Day && this.props.IsCurrentWeek}
             isDayOff={this.state.Day == 7}
             onTeacherClick={async (teacherName) => {
