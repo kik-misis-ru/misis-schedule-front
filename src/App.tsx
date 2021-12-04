@@ -451,10 +451,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       this.setState({page: dayOfWeek-1})
       if (note1 === null && note2 === null) {
         console.log('dispatchAssistantAction: day_schedule: isCurrentWeek:', );
-
           this.ChangePage(true)
-        
-
       } else {
         console.log('dispatchAssistantAction: day_schedule: dayOfWeekZeroIndex:', dayOfWeekZeroIndex);
 
@@ -1117,13 +1114,14 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }
           />
-          <Route path="/schedule/:Date/:IsSaved/:IsCurrentWeek"
+          <Route path="/schedule/:Date/:IsSaved/:IsCurrentWeek/:Day?"
              render={
-               
+            
              ({match}) => {
                let timeParam = this.state.page;
                console.log("timeParam", timeParam)
                 return <SchedulePage
+                page={match.params.Day ?Number(match.params.Day): new Date().getDay()-1}
                 assistant={this.assistant}
                 timeParam={timeParam}
                 character={this.state.character}
