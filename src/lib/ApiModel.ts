@@ -182,15 +182,14 @@ export class ApiModel {
 
     if(this.userId!=undefined){
       // Такой пользователь уже есть в базе
-      this.isSavedUser = true
-
       // Получаем настройки для данного пользователя
       userSchedule = await ApiHelper.getSchedulebyUserId(this.userId)
-      console.log("USER_SCHEDULE", userSchedule)
+      console.log("UserSchedule", userSchedule)
       if(userSchedule == undefined){
         this.isSavedUser = false
       }
       else{
+        this.isSavedUser = true
         if (userSchedule.teacher_id != "" && userSchedule.teacher_id != undefined) {
           const teacher = formatTeacherName(userSchedule.teacher_info);
           this.user = {
@@ -219,8 +218,8 @@ export class ApiModel {
   
         } 
 
+  
       }
-
      
     }
     if(userSchedule != undefined){
@@ -346,10 +345,12 @@ export class ApiModel {
         eng !=undefined ? eng : "",
         firstDayWeek
       ).then((response) => {
-        
-        this.SetWeekSchedule(response, week, isSave);
+        if(response){
+          this.SetWeekSchedule(response, week, isSave);
+        }
+        this.isStudent = true
       })
-      this.isStudent = true
+     
     }
   }
 
@@ -377,20 +378,22 @@ export class ApiModel {
     }
     if(settings.initials!=undefined){
       let teacherData = await  ApiHelper.getIdTeacherFromDb(settings.initials)
-        console.log('handleTeacherChange:', teacherData);
-        console.log('handleTeacherChange: status:', teacherData.status);
-  
-        console.log("Number(teacherData.status)", Number(teacherData.status))
-        result.IsInitialsError = Number(teacherData.status)!=1
-        if (
-          (teacherData.status == "-1") ||
-          (teacherData.status == "-2")
-        ) {
-          console.log("handleTeacherChange: teacherData.status:", teacherData.status);
-          this.validation.teacher.isTeacherError = false
-          return {IsInitialsError : false}
-  
-        } else
+        if(teacherData){
+          console.log('handleTeacherChange:', teacherData);
+          console.log('handleTeacherChange: status:', teacherData.status);
+
+          console.log("Number(teacherData.status)", Number(teacherData.status))
+          result.IsInitialsError = Number(teacherData.status) != 1
+          if (
+            (teacherData.status == "-1") ||
+            (teacherData.status == "-2")
+          ) {
+            console.log("handleTeacherChange: teacherData.status:", teacherData.status);
+            this.validation.teacher.isTeacherError = false
+            return { IsInitialsError: false }
+
+          }
+         else
          {
           // ApiHelper.getScheduleTeacherFromDb(
           //   teacherData.id,
@@ -401,9 +404,8 @@ export class ApiModel {
           // });
          }
   
-        console.log('handleTeacherChange: formatTeacherName(teacherData):', formatTeacherName(teacherData))
-  
         let parsedTeacher2 = await ApiHelper.getInTeacherFromDb(teacherData.id)
+         if(parsedTeacher2){
           let  teacher = formatTeacherName(parsedTeacher2)
           if(isSave && this.user!=undefined){
             this.user.teacher = teacher
@@ -433,7 +435,9 @@ export class ApiModel {
               this.user.teacher_id,
             );
           }
+         }
           return result
+        }
     }
     return result
   }
@@ -519,8 +523,10 @@ export class ApiModel {
         getFirstDayWeek(new Date())
       )
         .then((response) => {
-          this.isStudent = true
+        if(response){
           this.SetWeekSchedule(response, 0, isSave);
+          this.isStudent = true
+        }
         })
     }
 

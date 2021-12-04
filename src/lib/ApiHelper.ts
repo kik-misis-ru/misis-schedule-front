@@ -119,7 +119,7 @@ export interface IPushData{
 //const API_URL = "http://127.0.0.1:8000/";
 const API_URL = "https://misis-hub.herokuapp.com/";
 
-export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleFormatData> {
+export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleFormatData|undefined> {
   const url = `${API_URL}schedule`;
   const config = {
     params: {
@@ -130,13 +130,18 @@ export async function getScheduleFromDb(groupId: string, english_group_id: strin
   };
   console.log(`ApiHelper: getScheduleFromDb: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
 
-  const {data: rawSchedule} = response;
+  if(response && response["status"] == 200 ){
+    const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
   console.log(`ApiHelper: getScheduleFromDb: parsedSchedule:`, parsedSchedule);
   let formatShcdeuleData : IScheduleFormatData = FormateSchedule(parsedSchedule, undefined)
   return formatShcdeuleData;
+  }
+ 
 }
 
 export async function getScheduleTeacherFromDb(teacherId: string, date: string): Promise<IScheduleFormatData>  {
@@ -148,11 +153,14 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
     },
   };
   console.log(`ApiHelper: getScheduleTeacherFromDb: url: "${url}", config:`, config);
-  const response = await axios.get(url, config);
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
 
-  const {data: rawSchedule} = response;
-  const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
-  if(parsedSchedule["status"] == 1){
+ 
+  if(response && response["status"] == 200 ){
+    const {data: rawSchedule} = response;
+    const parsedSchedule: IScheduleApiData = JSON.parse(rawSchedule);
     console.log(`ApiHelper: getScheduleTeacherFromDb: parsedSchedule:`, parsedSchedule);
     let formatSchedule:IScheduleFormatData = FormateSchedule(parsedSchedule, undefined);
     return formatSchedule;
@@ -170,19 +178,22 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
       user_id: user_id
     }
   }
-  const response = await axios.get(url, config);
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
 
+
+ if(response && response["status"] == 200 ){
   const {data: rawSchedule} = response;
   const parsedSchedule: IScheduleByUserIdData = JSON.parse(rawSchedule);
   console.log(`ApiHelper: getSchedulebyUserId: parsedSchedule:`, parsedSchedule);
- if(parsedSchedule.schedule && parsedSchedule.subgroup_name){
   parsedSchedule.formatScheduleData = FormateSchedule(parsedSchedule.schedule, parsedSchedule.subgroup_name )
   return parsedSchedule;
  }
 }
 
 
-export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData> {
+export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData | undefined> {
   console.log(`ApiHelper: teacher_in`, teacher_in);
 
   const url = `${API_URL}teacher`;
@@ -193,15 +204,18 @@ export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherAp
   };
   console.log(`ApiHelper: getIdTeacherFromDb: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
-
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });
+  if(response && response["status"] == 200 ){
   const {data: answer} = response;
   const parsedTeacherData = JSON.parse(answer) as ITeacherApiData;
   console.log(`ApiHelper: getIdTeacherFromDb: parsedTeacherData:`, parsedTeacherData);
   return parsedTeacherData;
+  }
 }
 
-export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherApiData> {
+export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherApiData | undefined> {
   const url = `${API_URL}teacher_initials`;
   const config = {
     params: {
@@ -210,12 +224,15 @@ export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherAp
   };
   console.log(`ApiHelper: getInTeacherFromDb: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
-
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });
+  if(response && response["status"] == 200 ){
   const {data: rawTeacherData} = response;
   const parsedTeacherData = JSON.parse(rawTeacherData) as ITeacherApiData;
   console.log(`ApiHelper: getInTeacherFromDb: parsedTeacherData:`, parsedTeacherData);
   return parsedTeacherData;
+  }
 }
 
 export async function addUserToPushNotification( sub: string, pushSettings: IPushSettings){
@@ -330,7 +347,7 @@ export interface IUserData {
 
 export type GetUserResult = IUserData | "0"
 
-export async function getUser(userId: string): Promise<GetUserResult> {
+export async function getUser(userId: string): Promise<GetUserResult | undefined> {
   const url = `${API_URL}users`;
   const config = {
     params: {
@@ -339,11 +356,14 @@ export async function getUser(userId: string): Promise<GetUserResult> {
   };
   console.log(`ApiHelper: getUser: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
-
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
+  if(response && response["status"] == 200 ){
   const {data: answer} = response;
   console.log(`ApiHelper: getUser: answer:`, answer);
   return answer;
+  }
 }
 
 export async function getGroupById(groupId: number) {
@@ -355,11 +375,14 @@ export async function getGroupById(groupId: number) {
   };
   console.log(`ApiHelper: getGroupById: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
-
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
+  if(response && response["status"] == 200 ){
   const {data: groupInfo} = response;
   console.log(`ApiHelper: getGroupById: groupInfo:`, groupInfo);
   return groupInfo;
+  }
 }
 
 export async function getGroupByName(groupName: string) {
@@ -371,12 +394,16 @@ export async function getGroupByName(groupName: string) {
   };
   console.log(`ApiHelper: getGroupByName: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
-
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
+  if(response && response["status"] == 200 ){
   const {data: groupInfo} = response;
   console.log(`ApiHelper: getGroupByName: groupInfo:`, groupInfo);
   return groupInfo;
+  }
 }
+
 
 export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>{
   const url = `${API_URL}is_english_group_exist`;
@@ -387,12 +414,16 @@ export async function  IsEnglishGroupExist(group_num: number) : Promise<boolean>
   };
   console.log(`ApiHelper: isEnglishGroupExist: url: "${url}", config:`, config);
 
-  const response = await axios.get(url, config);
-
+  const response = await axios.get(url, config).catch((error) => {
+    console.log(error);
+  });;
+  if(response && response["status"] == 200 ){
   const {data} = response;
   console.log(`ApiHelper: isEnglishGroupExist: response:`, data);
   let jsonData= JSON.parse(data)
   return jsonData.status === '1' ;
+  }
+  return false
 }
 
 export function FormateSchedule(schedule_from_api: IScheduleApiData, subgroup) : IScheduleFormatData{

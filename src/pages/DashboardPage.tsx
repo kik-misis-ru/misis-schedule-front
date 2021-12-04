@@ -519,7 +519,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!apiModel.isSchedule &&(apiModel.user?.group_id != "" ||  apiModel.user.teacher_id != "") ||!apiModel.isSavedUser ?      (
+               {!apiModel.isSavedUser ?      (
               <Col >
                 <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "10px", marginRight: "10px", width:"95%"}}/>
