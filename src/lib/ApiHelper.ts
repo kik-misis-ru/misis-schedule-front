@@ -398,10 +398,12 @@ export async function getGroupByName(groupName: string) {
     console.log(error);
   });;
   if(response && response["status"] == 200 ){
-  const {data: groupInfo} = response;
-  console.log(`ApiHelper: getGroupByName: groupInfo:`, groupInfo);
-  return groupInfo;
+    const { data: groupInfo } = response;
+    console.log(`ApiHelper: getGroupByName: groupInfo:`, groupInfo);
+    return groupInfo;
   }
+
+
 }
 
 
