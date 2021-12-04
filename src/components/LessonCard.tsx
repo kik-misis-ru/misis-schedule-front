@@ -55,13 +55,10 @@ const MainContent = (
     teacher,
     time,
     url,
-    isAccented,
     lessonType,
     room,
     isTeacherAndValid,
     onTeacherClick,
-    onGoToPage,
-    
   }: {
     lessonName: string
     lessonNumber: string
@@ -74,7 +71,6 @@ const MainContent = (
     isAccented: boolean
     isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
-    onGoToPage: (pageNo: number) => void
   }
 ) => {
 
@@ -189,7 +185,6 @@ const LessonCard = (
     startEndTime,
     isAccented,
     isTeacherAndValid,
-    onGoToPage,
     onTeacherClick,
 
   }: {
@@ -197,7 +192,6 @@ const LessonCard = (
     startEndTime: StartEnd
     isAccented: boolean
     isTeacherAndValid: boolean
-    onGoToPage: (pageNo: number) => void
     onTeacherClick: (teacherName: string) => void
 
   }
@@ -227,7 +221,6 @@ const LessonCard = (
         isAccented={isAccented}
         isTeacherAndValid={isTeacherAndValid}
         onTeacherClick={onTeacherClick}
-        onGoToPage={onGoToPage}
       />
     }
 

@@ -184,6 +184,7 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
       case 'for_this_week':
         this.emit('for_this_week')
         break
+      
 
       case 'when_lesson':
         const [type, day, lessonNum] = action.note || [];

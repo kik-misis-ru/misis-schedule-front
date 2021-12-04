@@ -266,9 +266,7 @@ const DashboardCard = ({
 }
 
 const GetCloser = ({
-  onGoToPage,
 }: {
-onGoToPage: (pageNo) => void
 }) => {
 return (
 <Row style={{marginLeft: "10px", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
@@ -318,9 +316,6 @@ const CatalogueItems = ({IsStudent}: {
 IsStudent: boolean
 }) => {
 
-  // let history = useHistory();
-  // use history.push('/some/path') here
-
   return (
     <Row style={{marginLeft: "8px", marginRight: "8px"}}>
 
@@ -329,7 +324,6 @@ IsStudent: boolean
       <DashboardCard
         text="Карта"
         sub="Как добраться"
-        // onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
         onClick={() => history.push('/navigation')}
       />
       
@@ -344,14 +338,12 @@ IsStudent: boolean
       <DashboardCard
         text="FAQ"
         sub="Часто задаваемые вопросы"
-        // onClick={() => onGoToPage(FAQ_PAGE_NO)}
         onClick={() => history.push('/faq')}
       />
 
       <DashboardCard
         text="Контакты"
         sub="Как связаться"
-        // onClick={() => onGoToPage(CONTACTS_PAGE_NO)}
         onClick={() => history.push('/contacts')}
       />
 
@@ -384,12 +376,10 @@ const DashboardPage = ({
                          start,
                          end,
                          count,
-                         userId,
                          currentLesson,
                          currentLessonStartEnd,
                          nextLesson,
                          nextLessonStartEnd,
-                         onGoToPage,
                          theme,
                          apiModel
                        }: {
@@ -401,10 +391,8 @@ const DashboardPage = ({
   theme: string
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
-  userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
-  onGoToPage: (pageNo: number) => void
   apiModel: ApiModel
 }) => {
 
@@ -533,9 +521,8 @@ const DashboardPage = ({
              
                     
         }
-        {apiModel.user?.group_id == "" && apiModel.user.teacher_id == "" && !apiModel.isSavedUser ? (<GetCloser
-                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
-                    />) : (<div ></div>)}
+        {apiModel.user?.group_id == "" && apiModel.user.teacher_id == "" && !apiModel.isSavedUser ? 
+        (<GetCloser/>) : (<div ></div>)}
         <CatalogueHeaderRow/>
 
         <CatalogueItems

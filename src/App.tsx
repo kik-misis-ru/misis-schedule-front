@@ -984,14 +984,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     else this.setState({theme: "dark"})
   }
 
- 
-  
-  gotoPage(pageNo: number): void {
-    console.log('App: gotoPage:', pageNo);
-    // temporary workaround
-    history.push('/');
-    this.setState({page: pageNo});
-  }
 
   render() {
     let {page} = this.state;
@@ -1049,7 +1041,6 @@ export class App extends React.Component<IAppProps, IAppState> {
             render={
               ({match}) => {
                 return <Settings
-                  userId={this.apiModel.userId}
                   sendAssistantData={(action: AssistantSendAction) => this.assistant.sendAction(action)}
                   description={
                     this.state.character === 'joy'
@@ -1082,7 +1073,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                     // currentLesson={this.apiModel.saved_schedule[this.state.page - 1]?.[match.params.lessonIndex - 1]?.[THIS_WEEK]}
                     currentLesson={this.apiModel.saved_schedule.current_week[this.state.page]?.[match.params.lessonIndex - 1]}
                     currentLessonStartEnd={LessonStartEnd[match.params.lessonIndex]}
-                    onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
                     onDashboardClick={() => history.push("/dashboard")}
                     handleTeacherChange={this.apiModel.CheckIsCorrectTeacher}
@@ -1107,11 +1097,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let nextLesson = this.apiModel.saved_schedule.current_week[todayZeroIndex]?.[nextLessonIdx - 1];
                 console.log(this.whatLesson(now, "will").num, "next")
                 console.log('/dashboard: getTodayDayOfWeek():', nextLesson);
-
                 let count = this.apiModel.day.current_week[todayZeroIndex]?.count;
-                //console.log("COUNT", this.state.today)
-                // console.log('/dashboard: count:', count)
-
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
                 let end = this.getEndLastLesson(todayZeroIndex);
@@ -1122,12 +1108,10 @@ export class App extends React.Component<IAppProps, IAppState> {
                   start={start}
                   end={end}
                   count={count}
-                  userId={this.apiModel.userId}
                   currentLesson={currentLesson}
                   currentLessonStartEnd={currentLessonStartEnd}
                   nextLesson={nextLesson}
                   nextLessonStartEnd={nextLessonStartEnd}
-                  onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                   apiModel={this.apiModel}
 
                 />
@@ -1149,9 +1133,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   theme={this.state.theme}
                   onShowScheduleClick={(IsSave: boolean, IsCurrentWeek: boolean) => {
                     let current_date = new Date().toISOString().slice(0,10)
-                    // let IsSave = this.apiModel.isSavedSchedule
-                    // console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule)
-                    // let IsCurrentWeek = true
                     history.push('/schedule/'+current_date+'/'+IsSave+'/'+IsCurrentWeek)
                   }}
                   apiModel={this.apiModel}
@@ -1174,7 +1155,6 @@ export class App extends React.Component<IAppProps, IAppState> {
           <Route path="/schedule/:Date/:IsSaved/:IsCurrentWeek"
              render={
              ({match}) => {
-               console.log("this.apiModel.isSavedSchedule", this.apiModel.isSavedSchedule, this.state.page)
                 return <SchedulePage
                 assistant={this.assistant}
                 timeParam={this.state.page}
@@ -1185,7 +1165,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 Date={new Date(match.params.Date)}
                 IsSavedSchedule ={match.params.IsSaved == "true"}
                 IsCurrentWeek={match.params.IsCurrentWeek == "true"}
-                weekParam={page > 7 ? 1 : 0}
                 day={page > 7 ? this.apiModel.day.other_week : this.apiModel.day.current_week}
                 today={getTodayDayOfWeek()}
                 // schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}

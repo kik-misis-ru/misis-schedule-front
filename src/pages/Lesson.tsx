@@ -41,7 +41,6 @@ const Lesson = (props: {
   pageNo: number
   onDashboardClick: () => void
   handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
-  onGoToPage: (page: number) => void
 }) => {
   const {
     character,
@@ -52,7 +51,6 @@ const Lesson = (props: {
     pageNo,
     onDashboardClick,
     handleTeacherChange,
-    onGoToPage
   } = props;
 
   console.log('Lesson:props:', props)
@@ -92,7 +90,6 @@ const Lesson = (props: {
             startEndTime={currentLessonStartEnd}
             isTeacherAndValid={isTeacherAndValid}
             isAccented={true}
-            onGoToPage={(page)=> onGoToPage(page)}
             // todo: задавать имя преподавателя
             onTeacherClick={() => handleTeacherChange({initials: currentLesson.teacher},false)}
           />

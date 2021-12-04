@@ -133,7 +133,6 @@ const TextFieldForUserInfo = ({
 
 
 interface SettingsProps {
-  userId: string
   character: CharacterId
   description: string
   sendAssistantData: (action: AssistantSendAction) => void

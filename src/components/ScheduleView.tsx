@@ -32,7 +32,6 @@ export interface ScheduleViewProps {
   apiModel: ApiModel
   timeParam: number
   getCurrentLesson: (Date) => string
-  weekParam: number
   day: IDayHeader[]
   today: number
   schedule: {
@@ -42,17 +41,15 @@ export interface ScheduleViewProps {
   getIsCorrectTeacher: () => boolean
   Date: Date
   IsSavedSchedule: boolean
-  IsCurrentWeek: Boolean
+  IsCurrentWeek: boolean
   assistant: AssistantWrapper
 }
 
 interface ScheduleViewState {
   current: string
-  page: number
   formatDate: (weekDayShort: string, dateDdDotMm: string) => string
   isTeacher: boolean
   groupName: string
-  weekParam: number
   teacher: string
   schedule: {
     current_week: IScheduleDays
@@ -100,11 +97,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
     this.state = {
       current: this.props.getCurrentLesson(new Date()),
-      page: this.props.weekParam === OTHER_WEEK ? FIRST_DAY_OTHER_WEEK : 0,
       formatDate: (weekDayShort, dateDdDotMm) => `${weekDayShort} ${dateDdDotMm}`,
       isTeacher: getIsCorrectTeacher(),
       groupName: formatFullGroupName(groupName ? groupName : "", subGroupName ? subGroupName : ""),
-      weekParam: weekParam,
       teacher : teacher,
       schedule: schedule,
       Day: this.props.timeParam
@@ -186,7 +181,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
           <WeekCarousel
             selectedIndex={this.state.Day}
-            markedIndex={this.props.IsCurrentWeek !=false  ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
+            markedIndex={this.props.IsCurrentWeek  ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
             cols={
               this.props.day.map(d => {
                 const {title, date} = d;
@@ -199,7 +194,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               })
             }
             onSelect={(weekDayIndex) => {
-              this.setState({Day:  weekDayIndex-1 + (this.state.weekParam === OTHER_WEEK ? 0 : 1)});
+              this.setState({Day:  weekDayIndex});
             }}
           />
 
@@ -212,7 +207,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             }
             currentLessonNumber={this.state.current}
             isTeacherAndValid={this.state.isTeacher}
-            isToday={this.props.today === this.state.Day && this.props.weekParam === THIS_WEEK}
+            isToday={this.props.today === this.state.Day && this.props.IsCurrentWeek}
             isDayOff={this.state.Day == 7}
             onTeacherClick={async (teacherName) => {
               await this.props.apiModel.doSetTeacher(teacherName)
