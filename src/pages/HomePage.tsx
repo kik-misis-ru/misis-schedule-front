@@ -200,10 +200,20 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       console.log('action-group', group)
     })
     this.props.assistant.on('action-subGroup', (subGroup) => {
-      console.log('action-subGroup', subGroup)
+      let settings = this.state.studentSettings
+      this.setState({studentSettings: 
+        {groupName: settings.groupName,
+        engGroupName: settings.engGroupName,
+        subGroupName: subGroup
+        }})
     })
     this.props.assistant.on('action-engGroup', (engGroup) => {
-      console.log('action-engGroup', engGroup)
+      let settings = this.state.studentSettings
+      this.setState({studentSettings: 
+        {groupName: settings.groupName,
+        engGroupName: engGroup,
+        subGroupName: settings.subGroupName
+        }})
     })
     this.props.assistant.on('show_schedule', async () => {
       this.props.IsStudent ? await this.save_student() : await this.save_teacher()

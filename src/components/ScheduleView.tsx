@@ -71,6 +71,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       this.NextWeek()
     })
 
+    
     this.props.assistant.on('day_schedule', (action) => {
       console.log("ACTION",action)
       const {dayOfWeek: strDayOfWeekNum_} = action.note[0];
