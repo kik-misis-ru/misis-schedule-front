@@ -104,6 +104,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
       schedule: schedule,
       Day: this.props.timeParam
     }
+    console.log("this.state.teacher", this.state.teacher, this.props.apiModel.isStudent)
    
   }
   PreviousWeek(){
@@ -127,10 +128,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
 
   render() {
     const {schedule } = this.props;
-
+    let teacherName =this.props.IsSavedSchedule? this.props.apiModel.user?.teacher : this.props.apiModel.unsavedUser?.teacher
     console.log("ScheduleView: render: schedule", schedule)
-  
-
+    let teacher = teacherName == undefined ?  "" :  teacherName
     let isReady = this.props.apiModel.isSchedule
   
     console.log("isReady", isReady);
@@ -151,7 +151,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           <TopMenu
             subLabel={
               !this.props.apiModel.isStudent
-                ? this.state.teacher
+                ? teacher
                 : 
                 //this.props.groupName
                this.state.groupName
@@ -210,6 +210,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             isToday={this.props.today === this.state.Day && this.props.IsCurrentWeek}
             isDayOff={this.state.Day == 7}
             onTeacherClick={async (teacherName) => {
+              
               await this.props.apiModel.doSetTeacher(teacherName)
               let current_date = new Date().toISOString().slice(0,10)
               history.push('/schedule/'+current_date+'/'+false+'/'+true)
