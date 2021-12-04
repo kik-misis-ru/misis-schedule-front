@@ -125,9 +125,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
     console.log("ScheduleView: render: schedule", schedule)
     let teacher = teacherName == undefined ?  "" :  teacherName
     let isReady = this.props.apiModel.isSchedule
-  
+    let Day = this.props.timeParam - 1;
     console.log("isReady", isReady);
-    console.log('Day', this.state.Day)
+    console.log('Day', this.props.timeParam)
     return (
  /*     <DeviceThemeProvider>
       <DocStyle/>
@@ -173,7 +173,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <WeekCarousel
-            selectedIndex={this.state.Day}
+            selectedIndex={Day}
             markedIndex={this.props.IsCurrentWeek  ? this.props.today - 1 : -1 /* current weekday can't be on 'other' week*/}
             cols={
               this.props.day.map(d => {
@@ -187,7 +187,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
               })
             }
             onSelect={(weekDayIndex) => {
-              this.setState({Day:  weekDayIndex});
+              Day=  weekDayIndex;
             }}
           />
 
@@ -195,13 +195,13 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             isReady={isReady}
             dayLessons={
               String(this.props.IsCurrentWeek)=="true"
-                ? schedule.current_week[this.state.Day]
-                : schedule.other_week[this.state.Day]
+                ? schedule.current_week[Day]
+                : schedule.other_week[Day]
             }
             currentLessonNumber={this.state.current}
             isTeacherAndValid={!this.props.apiModel.isStudent}
-            isToday={this.props.today === this.state.Day && this.props.IsCurrentWeek}
-            isDayOff={this.state.Day == 7}
+            isToday={this.props.today === Day && this.props.IsCurrentWeek}
+            isDayOff={Day == 7}
             onTeacherClick={async (teacherName) => {
               
               await this.props.apiModel.doSetTeacher(teacherName)
