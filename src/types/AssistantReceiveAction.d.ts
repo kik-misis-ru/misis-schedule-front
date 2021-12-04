@@ -131,6 +131,10 @@ interface AssistantActionShowNavigation {
   type: 'navigation'
 }
 
+interface AssistantActionExit {
+  type: 'exit'
+}
+
 interface AssistantActionSettings {
   type: 'settings'
 }
@@ -193,6 +197,7 @@ export type AssistantAction = AssistantActionProfile
   |AssistantActionShowDashBoard
   |IShowHomePage
   |AssistantActionForSetEngGroup
+  |AssistantActionExit
   |AssistantActionShowSettings;
 
 //

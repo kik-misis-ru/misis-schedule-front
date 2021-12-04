@@ -1054,6 +1054,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
                 let end = this.getEndLastLesson(todayZeroIndex);
                 return <DashboardPage
+                  assistant={this.assistant}
                   character={this.state.character}
                   theme={this.state.theme}
                   isTeacherAndValid={this.getIsCorrectTeacher()}
@@ -1097,6 +1098,7 @@ export class App extends React.Component<IAppProps, IAppState> {
             render={
               ({match}) => {
                 return <Start
+                  assistant={this.assistant}
                   character={this.state.character}
                   theme={this.state.theme}
                   isMobileDevice={detectDevice() === "mobile"}
