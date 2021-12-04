@@ -143,7 +143,6 @@ interface SettingsProps {
   onDashboardClick: () => void
   theme: string
   toggleTheme: () => void
-  dayPush: number
   apiModel: ApiModel
   assistant: AssistantWrapper
 }
@@ -158,7 +157,6 @@ interface SettingsState {
   }
   theme: boolean
   themeName: string
-  dayPush: number
   studentSettings: IStudentSettings
   teacherSettings: ITeacherSettings
   studentValidation: IStudentValidation
@@ -201,7 +199,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     let pushSettings = this.props.apiModel.pushSettings
     let user = this.props.apiModel.user;
     this.state = {disabled: pushSettings.IsActive,
-      dayPush: this.props.dayPush,
       timePush: {
         hour:  pushSettings.Hour == -1 ? 1 : pushSettings.Hour,
         min: pushSettings.Minute == -1 ? 1 : pushSettings.Minute,
