@@ -17,27 +17,18 @@ import {
   StartEnd,
   LessonStartEnd,
 } from '../App';
-import{
-  ITeacherSettings,
-ITeacherValidation
-}from '../lib/ApiModel'
+import {AssistantWrapper} from '../lib/AssistantWrapper'
+
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import logo from "../images/App Icon.png";
 import {IconChevronLeft} from "@sberdevices/plasma-icons";
 import {Bell} from '../types/ScheduleStructure'
-import karta from "../images/Karta.png";
 import LessonCard from "../components/LessonCard";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId} from "../types/base";
-import {COLOR_BLACK} from '../components/consts';
-import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
-  GoToDashboardButton,
-  GoToHomeButton,
-  GoToScheduleButton,
-} from '../components/TopMenu';
+
 import {createBrowserHistory} from 'history';
+import ApiModel from "../lib/ApiModel";
 
 export const history = createBrowserHistory();
 
@@ -49,17 +40,16 @@ const Lesson = (props: {
   theme: string 
   pageNo: number
   onDashboardClick: () => void
-  handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
+  apiModel: ApiModel
 }) => {
   const {
     character,
     theme,
+    apiModel,
     currentLesson,
     isTeacherAndValid,
     currentLessonStartEnd,
-    pageNo,
     onDashboardClick,
-    handleTeacherChange,
   } = props;
 
   console.log('Lesson:props:', props)
@@ -95,7 +85,11 @@ const Lesson = (props: {
             isTeacherAndValid={isTeacherAndValid}
             isAccented={true}
             // todo: задавать имя преподавателя
-            onTeacherClick={() => handleTeacherChange({initials: currentLesson.teacher},false)}
+            onTeacherClick={async () => { 
+              await apiModel.CheckIsCorrectTeacher({initials: currentLesson.teacher},false)
+              let current_date = new Date().toISOString().slice(0,10)
+              history.push('/schedule/'+current_date+'/'+false+'/'+true)
+            }}
           />
      
       </Col>

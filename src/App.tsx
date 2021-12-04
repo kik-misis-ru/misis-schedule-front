@@ -1106,7 +1106,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     currentLessonStartEnd={LessonStartEnd[Number(match.params.lessonIndex)]}
                     pageNo={Number(match.params.Day)}
                     onDashboardClick={() => history.push("/dashboard")}
-                    handleTeacherChange={this.apiModel.CheckIsCorrectTeacher}
+                    apiModel={this.apiModel}
 
                   />
                 )
