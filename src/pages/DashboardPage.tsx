@@ -66,7 +66,7 @@ import {pairNumberToPairNumText} from '../language-ru/utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
 import {history} from "../App";
-
+import {AssistantWrapper} from "../lib/AssistantWrapper";
 
 import {DAY_OFF_TEXT} from '../components/ScheduleDayOff'
 import moment from 'moment';
@@ -338,7 +338,9 @@ const CatalogueItems = ({
       <DashboardCard
               text="Другое расписание"
               sub=""
-              onClick={() => history.push('/home')}
+              onClick={() => 
+                history.push('/home/true')
+              }
             />
 
       <DashboardCard
@@ -408,8 +410,8 @@ const DashboardPage = ({
   onGoToPage: (pageNo: number) => void
   handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   apiModel: ApiModel
-
 }) => {
+
   console.log('DashboardPage:', nextLesson)
   // console.log('DashboardPage:', {count})
   let current_date = new Date().toISOString().slice(0,10)

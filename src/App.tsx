@@ -79,6 +79,7 @@ import {
 
 import Lesson from "./pages/Lesson";
 import {AssistantWrapper} from './lib/AssistantWrapper';
+import { realpathSync } from "fs";
 
 export type SetValueKeys = keyof Pick<IAppState, 'page'|'isCurrentWeek'> /*extends keyof IAppState*/;
 export type SetValueFn = <K extends SetValueKeys>(
@@ -149,7 +150,6 @@ export class App extends React.Component<IAppProps, IAppState> {
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
     this.Load_Schedule = this.Load_Schedule.bind(this);
-    this.doSetTeacher = this.doSetTeacher.bind(this)
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this)
     this.setValue = this.setValue.bind(this);
     console.log('constructor');
@@ -400,11 +400,6 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.ChangePage(true);
       }
 
-      // if (getTodayDayOfWeek() === 0) {
-      //   this.gotoPage(7)
-      // } else {
-      //   this.gotoPage(getTodayDayOfWeek())
-      // }
     }
   }
 
@@ -491,6 +486,8 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
+  
+
   async handleAssistantDaySchedule(dayOfWeek: number, note1, note2) {
     console.log('handleAssistantDaySchedule:', dayOfWeek, note1, note2)
      if (this.apiModel.CheckGroupOrTeacherSetted()) {
@@ -527,29 +524,24 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   async handleAssistantShowSchedule(actionNote: string | undefined) {
+
+    if (history.location == HOME_PAGE_ROUTE) {
+      return
+    }
     console.log('dispatchAssistantAction: show schedule', actionNote);
     if (actionNote) {
 
       const isStudent = !actionNote.includes("препод")
-
+      history.push('/Home')
       this.assistant.sendChangeGroup(isStudent);
 
     } else {
       let success = true;
 
-      if (history.location == HOME_PAGE_ROUTE) {
-        if (this.apiModel.isStudent) {
-          //TODO!!!!!!!!!
-          //success = await this.CheckIsCorrect()
-        } else {
-          //TODO!!!!
-          // success = (await this.apiModel.handleTeacherChange(true)).IsInitialsError;
-        }
-      }
-
       if (success) {
         await this.Load_Schedule(this.apiModel.isSavedSchedule)
-        history.push('/')
+        let current_date = new Date().toISOString().slice(0,10)
+        history.push('/schedule/'+current_date+'/'+true+'/'+true)
       }
 
     }
@@ -1123,14 +1115,6 @@ export class App extends React.Component<IAppProps, IAppState> {
       })
       
     }
- async doSetTeacher(teacherName){
-    let res = await this.apiModel.doSetTeacher(teacherName)
-    if(res && (history.location.pathname == '/home')){
-      history.push('/')
-    }
-    this.gotoPage(this.state.page)
-  }
-
   
   gotoPage(pageNo: number): void {
     console.log('App: gotoPage:', pageNo);
@@ -1283,12 +1267,12 @@ export class App extends React.Component<IAppProps, IAppState> {
               }
             }/>
           <Route
-            path="/home"
+            path="/home/:IsStudent"
             render={
               ({match}) => {
                 return <HomePage
                   assistant={this.assistant}
-                  // state={this.state}
+                  IsStudent={match.params.IsStudent == "true"}
                   CheckIsCorrect={this.CheckIsCorrect}
                   LoadSchedule={this.Load_Schedule}
                   description={
@@ -1332,7 +1316,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 theme={this.state.theme}
                 getCurrentLesson={this.getCurrentLesson}
                 apiModel={ this.apiModel}
-                doSetTeacher = {this.doSetTeacher}
                 Date={new Date(match.params.Date)}
                 IsSavedSchedule ={match.params.IsSaved == "true"}
                 IsCurrentWeek={match.params.IsCurrentWeek == "true"}

@@ -21,6 +21,7 @@ IStudentSettings,
 ITeacherSettings,
 
 } from '../lib/ApiModel'
+import {history} from "../App";
 import {AssistantWrapper} from "../lib/AssistantWrapper";
 import {
   getThemeBackgroundByChar,
@@ -127,6 +128,7 @@ interface HomeViewProps {
   LoadSchedule: (isSave: boolean) => void
   onShowScheduleClick: (IsSave: boolean, IsCurrentWeek: boolean) => void
   apiModel: ApiModel
+  IsStudent: boolean
 }
 
 interface HomeViewState {
@@ -135,7 +137,6 @@ interface HomeViewState {
   teacherSettings: ITeacherSettings
   studentValidation: IStudentValidation
   teacherValidation: ITeacherValidation
-  IsStudent: boolean
   IsSave: boolean
 }
 
@@ -154,7 +155,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         subGroupName: user?.subgroup_name==undefined? "" : user.subgroup_name,
         engGroupName: user?.eng_group==undefined? "" : user.eng_group,
       },
-      IsStudent: this.props.apiModel.isStudent,
       teacherSettings:{
         initials: user == undefined ? "" : user.teacher
       },
@@ -209,7 +209,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       console.log('action-engGroup', engGroup)
     })
     this.props.assistant.on('show_schedule', async () => {
-      this.state.IsStudent ? await this.save_student() : await this.save_teacher()
+      this.props.IsStudent ? await this.save_student() : await this.save_teacher()
     })
     
   }
@@ -241,8 +241,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <TabSelectorRow
           tabs={USER_MODES}
-          selectedIndex={this.state.IsStudent ? 0 : 1}
-          onSelect={(tabIndex) => this.setState({IsStudent: tabIndex === 0})}
+          selectedIndex={this.props.IsStudent ? 0 : 1}
+          onSelect={(tabIndex) => tabIndex === 0 ? history.push('/Home/true') : history.push('/Home/false')}
         />
 
         <HomeDescription
@@ -321,8 +321,8 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
         <TabSelectorRow
           tabs={USER_MODES}
-          selectedIndex={this.state.IsStudent ? 0 : 1}
-          onSelect={(tabIndex) => this.setState({IsStudent: tabIndex === 0})}
+          selectedIndex={this.props.IsStudent ? 0 : 1}
+          onSelect={(tabIndex) => tabIndex === 0 ? history.push('/Home/true') : history.push('/Home/false')}
         />
 
         <HomeDescription
@@ -352,7 +352,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       </Container>
     )
 
-    const mainContent = this.state.IsStudent
+    const mainContent = this.props.IsStudent
       ? studentContent
       : teacherContent;
 

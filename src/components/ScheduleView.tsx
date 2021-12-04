@@ -38,7 +38,6 @@ export interface ScheduleViewProps {
     current_week: IScheduleDays
     other_week: IScheduleDays
   }
-  doSetTeacher: (string) => Promise<void>
   getIsCorrectTeacher: () => boolean
   Date: Date
   IsSavedSchedule: boolean
@@ -206,7 +205,9 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
             isToday={this.props.today === this.state.Day && this.props.weekParam === THIS_WEEK}
             isDayOff={this.state.Day == 7}
             onTeacherClick={async (teacherName) => {
-              await this.props.doSetTeacher(teacherName)
+              await this.props.apiModel.doSetTeacher(teacherName)
+              let current_date = new Date().toISOString().slice(0,10)
+              history.push('/schedule/'+current_date+'/'+false+'/'+true)
             }
           }
           />

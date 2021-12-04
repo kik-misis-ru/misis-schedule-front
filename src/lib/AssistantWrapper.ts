@@ -232,6 +232,7 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
 
       case 'show_schedule':
         this.emit('show_schedule');
+        this._App.handleAssistantShowSchedule(action.note)
         //await this._App.handleAssistantShowSchedule(action.note)
         break
 
