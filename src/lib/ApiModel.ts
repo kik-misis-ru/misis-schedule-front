@@ -347,7 +347,7 @@ export class ApiModel {
       this.unsavedUser.teacher = teacherName
     }
     let teacher: ITeacherSettings = {initials: teacherName}
-    return !(await (await this.handleTeacherChange(teacher, false)).IsInitialsError);
+    return !(await (await this.CheckIsCorrectTeacher(teacher, false)).IsInitialsError);
   }
 
   public async convertGroupNameToGroupId(groupName: string): Promise<Number>{
@@ -358,7 +358,7 @@ export class ApiModel {
   }
      
   // todo исправить асинхронную работу
-  public  async handleTeacherChange(settings: ITeacherSettings, isSave: boolean): Promise<ITeacherValidation> {
+  public  async CheckIsCorrectTeacher(settings: ITeacherSettings, isSave: boolean): Promise<ITeacherValidation> {
     let result: ITeacherValidation ={
       IsInitialsError: true
     }
@@ -424,6 +424,91 @@ export class ApiModel {
     }
     return result
   }
+
+  public  async CheckIsCorrectStudent(settings: IStudentSettings, isSave: boolean): Promise<IStudentValidation> {
+    console.log('App: isCorrect', settings)
+    let IsError: IStudentValidation ={
+      IsGroupNameError: true,
+      IsSubGroupError: true,
+      IsEngGroupError: true
+    }
+    let promiseGroupName = ApiHelper.getGroupByName(settings.groupName);
+    let promiseEnglishGroup = ApiHelper.IsEnglishGroupExist(Number(settings.engGroupName));
+
+    return Promise.all([
+      promiseGroupName,
+      promiseEnglishGroup,
+    ])
+      .then((responses) => {
+        console.log("App: isCorrect: response", responses)
+        const [
+          group_response,
+          english_response,
+        ] = responses;
+        const group = JSON.parse(group_response);
+        console.log("App: isCorrect: response: english", english_response);
+        if (group.status == 1) {
+          console.log(group.name, group.id, "GROUP RESPONSE")
+          IsError.IsGroupNameError = false;
+        }
+        if (english_response || settings.engGroupName == "") {
+          IsError.IsEngGroupError = false;
+          console.log(`App: isCorrect: correct_eng: ${ IsError.IsEngGroupError}`);
+        }
+        if ((settings.subGroupName === "") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "1") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "2")) {
+          IsError.IsSubGroupError = false;
+        }
+        const groupId = String(group.id);
+        let isCorrect = !IsError.IsEngGroupError && !IsError.IsGroupNameError && !IsError.IsSubGroupError
+        if (isCorrect ) {
+          let updateUser ={
+            group_id: groupId,
+            group : group.name,
+            eng_group: settings.engGroupName,
+            subgroup_name: settings.subGroupName,
+            teacher_id: "",
+            teacher: "",
+            filial_id: this.user== undefined ? "" : this.user.filial_id
+          }
+          if(isSave){
+           ApiHelper.createUser(
+            this.userId,
+            this.user== undefined ? "" : this.user.filial_id,
+            group.id,
+            settings.subGroupName,
+            settings.engGroupName,
+            ""
+          )
+            this.user = updateUser
+          }
+          else{
+            this.unsavedUser = updateUser
+          }
+          
+        }
+        return IsError
+      })
+      
+    }
+
+   public  async LoadSchedule(isSave: boolean): Promise<void> {
+      let group_id = isSave ? this.user?.group_id : this.unsavedUser?.group_id
+      let eng_group = isSave ?  this.user?.eng_group : this.unsavedUser?.eng_group
+      if(eng_group == undefined){
+        eng_group = ""
+      }
+      if(group_id == undefined){
+        return
+      }
+      await ApiHelper.getScheduleFromDb(
+        group_id,
+        String(eng_group),
+        getFirstDayWeek(new Date())
+      )
+        .then((response) => {
+          this.SetWeekSchedule(response, 0, isSave);
+        })
+    }
 
 
   protected isTeacher(isSave: boolean) {

@@ -143,13 +143,10 @@ export class App extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.apiModel = new ApiModel()
-    this.Load_Schedule = this.Load_Schedule.bind(this)
-    this.CheckIsCorrect = this.CheckIsCorrect.bind(this)
     this.getCurrentLesson = this.getCurrentLesson.bind(this);
     this.NextWeek = this.NextWeek.bind(this);
     this.CurrentWeek = this.CurrentWeek.bind(this);
     this.PreviousWeek = this.PreviousWeek.bind(this);
-    this.Load_Schedule = this.Load_Schedule.bind(this);
     this.getIsCorrectTeacher = this.getIsCorrectTeacher.bind(this)
     this.setValue = this.setValue.bind(this);
     console.log('constructor');
@@ -539,7 +536,7 @@ export class App extends React.Component<IAppProps, IAppState> {
       let success = true;
 
       if (success) {
-        await this.Load_Schedule(this.apiModel.isSavedSchedule)
+        await this.apiModel.LoadSchedule(this.apiModel.isSavedSchedule)
         let current_date = new Date().toISOString().slice(0,10)
         history.push('/schedule/'+current_date+'/'+true+'/'+true)
       }
@@ -1021,100 +1018,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     else this.setState({theme: "dark"})
   }
 
-
-  async _loadSchedule(isSave: boolean): Promise<void> {
-    let group_id = isSave ? this.apiModel.user?.group_id : this.apiModel.unsavedUser?.group_id
-    let eng_group = isSave ?  this.apiModel.user?.eng_group : this.apiModel.unsavedUser?.eng_group
-    if(eng_group == undefined){
-      eng_group = ""
-    }
-    if(group_id == undefined){
-      return
-    }
-    await getScheduleFromDb(
-      group_id,
-      String(eng_group),
-      getFirstDayWeek(new Date())
-    )
-      .then((response) => {
-        this.apiModel.SetWeekSchedule(response, 0, isSave);
-      })
-  }
-
-  async Load_Schedule( isSave: boolean): Promise<void> {
-    this.setState({page: getTodayDayOfWeek()-1})
-    console.log("Load_Schedule. IsSave:", isSave)
-    return await this._loadSchedule(isSave);
-  }
-
-  //Проверяет правильность ввода данных студента
-  async CheckIsCorrect(settings: IStudentSettings, isSave: boolean): Promise<IStudentValidation> {
-    console.log('App: isCorrect', settings)
-    let IsError: IStudentValidation ={
-      IsGroupNameError: true,
-      IsSubGroupError: true,
-      IsEngGroupError: true
-    }
-    let promiseGroupName = getGroupByName(settings.groupName);
-    let promiseEnglishGroup = IsEnglishGroupExist(Number(settings.engGroupName));
-
-    return Promise.all([
-      promiseGroupName,
-      promiseEnglishGroup,
-    ])
-      .then((responses) => {
-        console.log("App: isCorrect: response", responses)
-        const [
-          group_response,
-          english_response,
-        ] = responses;
-        const group = JSON.parse(group_response);
-        console.log("App: isCorrect: response: english", english_response);
-        if (group.status == 1) {
-          console.log(group.name, group.id, "GROUP RESPONSE")
-          IsError.IsGroupNameError = false;
-        }
-        if (english_response || settings.engGroupName == "") {
-          IsError.IsEngGroupError = false;
-          console.log(`App: isCorrect: correct_eng: ${ IsError.IsEngGroupError}`);
-        }
-        if ((settings.subGroupName === "") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "1") || (settings.subGroupName.replace(/[\s-_.]/g, '') === "2")) {
-          IsError.IsSubGroupError = false;
-        }
-        const groupId = String(group.id);
-        let isCorrect = !IsError.IsEngGroupError && !IsError.IsGroupNameError && !IsError.IsSubGroupError
-        if (isCorrect ) {
-          console.log("create_user", history.location.pathname)
-          let updateUser ={
-            group_id: groupId,
-            group : group.name,
-            eng_group: settings.engGroupName,
-            subgroup_name: settings.subGroupName,
-            teacher_id: "",
-            teacher: "",
-            filial_id: this.apiModel.user== undefined ? "" : this.apiModel.user.filial_id
-          }
-          console.log("UPDATE USER", updateUser)
-          if(isSave){
-            createUser(
-            this.apiModel.userId,
-            filial.id,
-            group.id,
-            settings.subGroupName,
-            settings.engGroupName,
-            ""
-          )
-            this.apiModel.user = updateUser
-          }
-          else{
-            this.apiModel.unsavedUser = updateUser
-          }
-          
-        }
-        return IsError
-      })
-      
-    }
+ 
   
   gotoPage(pageNo: number): void {
     console.log('App: gotoPage:', pageNo);
@@ -1191,8 +1095,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   theme={this.state.theme}
                   toggleTheme={() => this.toggleTheme()}
                   dayPush={this.state.dayPush}
-                  CheckIsCorrect={this.CheckIsCorrect}
-                  LoadSchedule={() => this.Load_Schedule(true)}
                   apiModel={this.apiModel}
                 />
               }
@@ -1217,7 +1119,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                     onGoToPage={(pageNo) => this.gotoPage(pageNo)}
                     pageNo={this.state.page}
                     onDashboardClick={() => history.push("/dashboard")}
-                    handleTeacherChange={this.apiModel.handleTeacherChange}
+                    handleTeacherChange={this.apiModel.CheckIsCorrectTeacher}
 
                   />
                 )
@@ -1260,7 +1162,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                   nextLesson={nextLesson}
                   nextLessonStartEnd={nextLessonStartEnd}
                   onGoToPage={(pageNo) => this.gotoPage(pageNo)}
-                  handleTeacherChange={this.apiModel.handleTeacherChange}
                   apiModel={this.apiModel}
 
                 />
@@ -1273,8 +1174,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                 return <HomePage
                   assistant={this.assistant}
                   IsStudent={match.params.IsStudent == "true"}
-                  CheckIsCorrect={this.CheckIsCorrect}
-                  LoadSchedule={this.Load_Schedule}
                   description={
                     this.state.character === 'joy'
                       ? ENTER_DATA_NO_OFFICIAL_TEXT

@@ -314,10 +314,8 @@ contentRight={
 )
 }
 
-const CatalogueItems = ({
-                          onGoToPage,
-                        }: {
-  onGoToPage: (pageNo) => void
+const CatalogueItems = ({IsStudent}: {
+IsStudent: boolean
 }) => {
 
   // let history = useHistory();
@@ -339,7 +337,7 @@ const CatalogueItems = ({
               text="Другое расписание"
               sub=""
               onClick={() => 
-                history.push('/home/true')
+                IsStudent ? history.push('/home/true') : history.push('/home/false')
               }
             />
 
@@ -393,7 +391,6 @@ const DashboardPage = ({
                          nextLessonStartEnd,
                          onGoToPage,
                          theme,
-                         handleTeacherChange,
                          apiModel
                        }: {
   character: CharacterId
@@ -408,7 +405,6 @@ const DashboardPage = ({
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
   onGoToPage: (pageNo: number) => void
-  handleTeacherChange: (settings: ITeacherSettings, isSave: boolean) => Promise<ITeacherValidation>
   apiModel: ApiModel
 }) => {
 
@@ -474,7 +470,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={true}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange({initials: currentLesson.teacher}, false)}
+                                    onTeacherClick={(teacherName) => apiModel.CheckIsCorrectTeacher({initials: currentLesson.teacher}, false)}
                                   />
                                 )
                                 : <NoLesson/>
@@ -504,7 +500,7 @@ const DashboardPage = ({
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={() => handleTeacherChange({initials: nextLesson.teacher}, false)}
+                                    onTeacherClick={() => apiModel.CheckIsCorrectTeacher({initials: nextLesson.teacher}, false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>
@@ -543,7 +539,7 @@ const DashboardPage = ({
         <CatalogueHeaderRow/>
 
         <CatalogueItems
-          onGoToPage={(pageNo) => onGoToPage(pageNo)}
+         IsStudent={apiModel.isStudent}
         />
 
         <Spacer300/>

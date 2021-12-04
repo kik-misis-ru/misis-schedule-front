@@ -124,8 +124,6 @@ interface HomeViewProps {
   character: CharacterId
   description: string
   theme: string
-  CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
-  LoadSchedule: (isSave: boolean) => void
   onShowScheduleClick: (IsSave: boolean, IsCurrentWeek: boolean) => void
   apiModel: ApiModel
   IsStudent: boolean
@@ -144,7 +142,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   constructor(props: HomeViewProps) {
     super(props);
-    this.Load_Schedule = this.Load_Schedule.bind(this)
     let disabled = true;
     if (props.apiModel.user!=undefined && props.apiModel.user?.group_id !== "") disabled = false;
     let user = this.props.apiModel.user;
@@ -172,7 +169,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   }
 
  async save_teacher(){
-    let teacherValidation = await this.props.apiModel.handleTeacherChange(this.state.teacherSettings, this.state.IsSave)
+    let teacherValidation = await this.props.apiModel.CheckIsCorrectTeacher(this.state.teacherSettings, this.state.IsSave)
     if(!teacherValidation.IsInitialsError){
       console.log("Show Schedule")
       console.log(this.props.apiModel)
@@ -183,11 +180,11 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     }
   }
   async save_student(){
-    let isCorrect = await this.CheckIsCorrect(this.state.studentSettings, this.state.IsSave)
+    let isCorrect = await this.props.apiModel.CheckIsCorrectStudent(this.state.studentSettings, this.state.IsSave)
             if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
               console.log(this.state.IsSave)
               this.props.apiModel.isSavedSchedule = this.state.IsSave
-              await this.Load_Schedule(this.state.IsSave)
+              await this.props.apiModel.LoadSchedule(this.state.IsSave)
               this.props.onShowScheduleClick(this.state.IsSave, true)
             }
             else{
@@ -216,15 +213,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
 
   componentWillUnmount() {
     this.props.assistant.removeAllListeners();
-  }
-
-  async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation> {
-    console.log(student, "Student Settings")
-    return await this.props.CheckIsCorrect(student, isSave);
-  }
-
-  Load_Schedule(isSave: boolean) {
-    this.props.LoadSchedule(isSave)
   }
   render() {
 

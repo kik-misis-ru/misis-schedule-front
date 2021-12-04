@@ -140,8 +140,6 @@ interface SettingsProps {
   onDashboardClick: () => void
   theme: string
   toggleTheme: () => void
-  CheckIsCorrect: (student: IStudentSettings, isSave: boolean) => Promise<IStudentValidation>
-  LoadSchedule: () => void
   dayPush: number
   apiModel: ApiModel
 }
@@ -169,7 +167,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
   constructor(props: SettingsProps) {
     super(props);
     this.Save = this.Save.bind(this);
-    this.Load_Schedule = this.props.LoadSchedule.bind(this)
     let pushSettings = this.props.apiModel.pushSettings
     let user = this.props.apiModel.user;
     this.state = {disabled: pushSettings.IsActive,
@@ -198,12 +195,6 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       teacherValidation : {IsInitialsError: false}
     };
   }
-  async CheckIsCorrect(student: IStudentSettings, isSave: boolean) : Promise<IStudentValidation>{
-    return await this.props.CheckIsCorrect(student, isSave);
-  }
-  Load_Schedule(){
-    this.props.LoadSchedule()
-  }
 
   async Save() {
       console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
@@ -211,16 +202,16 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       this.state.timePush.min=Number(this.state.timePush.value.getMinutes());
       console.log(this.state.timePush.value, Number(this.state.timePush.value.getHours()), Number(this.state.timePush.value.getMinutes()), "TIMEPUSH");
       if(this.state.IsStudent){
-        let studentValidation = await this.CheckIsCorrect(this.state.studentSettings, true)
+        let studentValidation = await this.props.apiModel.CheckIsCorrectStudent(this.state.studentSettings, true)
         await this.setState({studentValidation: studentValidation})
         if(!studentValidation.IsGroupNameError && !studentValidation.IsSubGroupError && !studentValidation.IsEngGroupError){
-          await this.Load_Schedule()
+          await this.props.apiModel.LoadSchedule(true)
           this.setState({edit: false })
          }
       }
 
       else{
-        this.props.apiModel.handleTeacherChange(this.state.teacherSettings, true).then((response)=>{
+        this.props.apiModel.CheckIsCorrectTeacher(this.state.teacherSettings, true).then((response)=>{
           console.log("response.IsInitialsError", response.IsInitialsError)
           if(!response.IsInitialsError){
             this.setState({edit: false })
