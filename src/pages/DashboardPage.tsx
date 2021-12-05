@@ -7,11 +7,8 @@ import {
   DeviceThemeProvider,
   TextBoxBiggerTitle,
   Body1,
-  Caption
-} from '@sberdevices/plasma-ui';
-import 'react-toastify/dist/ReactToastify.css';
-import {
   Card,
+  Image,
   CardBody,
   CardBody2,
   //CardBody1,
@@ -25,7 +22,11 @@ import {
   LineSkeleton,
   RectSkeleton,
   CellDisclosure,
-} from "@sberdevices/plasma-ui";
+  Caption,
+  Header
+} from '@sberdevices/plasma-ui';
+import 'react-toastify/dist/ReactToastify.css';
+import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 //import {createGlobalStyle} from "styled-components";
 import {
   IconLocation, 
@@ -42,20 +43,30 @@ import {
 } from '../themes/tools';
 import {
   capitalize,
+} from '../lib/utils';
+import{
+  ITeacherValidation
+} from '../lib/ApiModel'
+import {
   formatTimeHhMm,
-} from '../utils';
+} from '../lib/datetimeUtils';
 import { StartEnd } from '../App';
 import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
 import DayOfWeek from "../language-ru/DayOfWeek";
 
+import phone from "../images/phone.png";
+import schedule from "../images/schedule.png";
+import faq from "../images/faq.png";
+import location from "../images/location.png";
+import logo from "../images/App Icon.png";
 
 import {Bell} from '../types/ScheduleStructure'
 import {CharacterId} from "../types/base.d";
-import {pairNumberToPairNumText} from '../utils'
+import {pairNumberToPairNumText} from '../language-ru/utils'
 import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
 import {history} from "../App";
-
+import {AssistantWrapper} from "../lib/AssistantWrapper";
 
 import {DAY_OFF_TEXT} from '../components/ScheduleDayOff'
 import moment from 'moment';
@@ -67,25 +78,29 @@ moment.locale('ru');
 
 
 const HeaderRow = ({
-                     onHomeClick
+                     onHomeClick,
+                     assistant
                    }: {
   onHomeClick: () => void
+  assistant: AssistantWrapper
 }) => (
   <Row style={{
-    margin: "1em"
+    margin: "1em",
+    marginLeft: "5%",
+    marginRight: "5%"
   }}>
-
-    <HeaderLogoCol/>
-
-    <HeaderTitleCol
-      title='Мир МИСиС'
-    />
-
-    <Col style={{margin: "0 0 0 auto"}}>
-      <GoToHomeButton
+                <Header
+                    back={false}
+                    logo={logo}
+                    title="Мир МИСиС"
+                    minimize 
+                    onMinimizeClick={() => assistant.on('exit', () => {
+                    })  }
+                >
+                    <GoToHomeButton
         onClick={() => onHomeClick()}
       />
-    </Col>
+                </Header>
 
   </Row>
 )
@@ -96,15 +111,15 @@ const ScheduleSectionTitleRow = () => (
 
     <Col
       style={{
-        marginLeft: "2em",
-        paddingTop: "0.5em"
+        marginLeft: "5%",
+        paddingTop: "1.2em"
       }}
     >
-      <IconStarFill color="grey"/>
+      <IconEvent/>
     </Col>
 
     <Col style={{
-      paddingTop: "0.6em"
+      paddingTop: "1.3em"
     }}>
       <TextBox>
         <CardHeadline3>
@@ -120,10 +135,10 @@ const ScheduleSectionTitleRow = () => (
 const CatalogueHeaderRow = () => {
   return (
     <Row>
-      <Col style={{marginLeft: "2em", paddingTop: "1em"}}>
-        <IconApps color="grey"/>
+      <Col style={{marginLeft: "5%", paddingTop: "1.6em"}}>
+        <IconApps />
       </Col>
-      <Col style={{paddingTop: "1.1em"}}>
+      <Col style={{paddingTop: "1.7em"}}>
         <TextBox>
           <CardHeadline3>
             Каталог
@@ -167,22 +182,22 @@ const TodaySummary = ({
   )
 
   return (
-    <Row>
+    <Row style={{
+          marginLeft: "6%",
+          paddingTop: "0.5em",
+        }}>
       <TextBox
         // @ts-ignore
-        style={{
-          marginLeft: "2.5em",
-          paddingTop: "0.5em",
-        }}
+        
       >
-        <CardParagraph2 style={{fontSize: "20px"}}>
+        <CardParagraph2 style={{fontSize: "1.4em"}}>
           {
             isSunday
               ? DAY_OFF_TEXT
               : `${DayOfWeek.long.nominative[dayOfWeek]}, ${dateDay} ${Month.long.genitive[month]}`
           }
         </CardParagraph2>
-        <CardParagraph1 style={{color: "grey"}}>
+        <CardParagraph1 style={{color: "grey", paddingTop: "0.5em",}}>
           {
             !isSunday && typeof lessonCount !== 'undefined' && lessonCount !== 0
               ? formatLessonsCountFromTo(
@@ -212,7 +227,7 @@ const DashboardCard = ({
     <Col size={2}>
       <Card
         style={{
-          height: "20vh",
+          height: "95%",
           marginTop: "0.5em",
           cursor: !!onClick ? 'pointer' : 'default',
           display: "flex", flexDirection: "column"
@@ -229,23 +244,23 @@ const DashboardCard = ({
               </CardHeadline3>
             </TextBox>
             {text=="Другое расписание" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconEvent size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={schedule} />
             </Col> : <div></div>
             }
             {text=="Карта" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconLocation size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={location} />
             </Col> : <div></div>
             }
             {text=="FAQ" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconHelp size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={faq} />
             </Col> : <div></div>
             }
             {text=="Контакты" ? 
-            <Col style={{margin: "auto 0 0 0"}}>
-            <IconCallCircle size="s"/>
+            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+            <Image src={phone} />
             </Col> : <div></div>
             }
           </CardContent>
@@ -256,12 +271,10 @@ const DashboardCard = ({
 }
 
 const GetCloser = ({
-  onGoToPage,
 }: {
-onGoToPage: (pageNo) => void
 }) => {
 return (
-<Row style={{marginLeft: "1.3em", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+<Row style={{marginLeft: "4%", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
 
 <Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.5vh"}}>
 
@@ -304,44 +317,38 @@ contentRight={
 )
 }
 
-const CatalogueItems = ({
-                          onGoToPage,
-                        }: {
-  onGoToPage: (pageNo) => void
+const CatalogueItems = ({IsStudent}: {
+IsStudent: boolean
 }) => {
 
-  // let history = useHistory();
-  // use history.push('/some/path') here
-
   return (
-    <Row style={{marginLeft: "1em", marginRight: "1em"}}>
+    <Row style={{marginLeft: "4%", marginRight: "4%"}}>
 
      
 
       <DashboardCard
         text="Карта"
         sub="Как добраться"
-        // onClick={() => onGoToPage(NAVIGATOR_PAGE_NO)}
         onClick={() => history.push('/navigation')}
       />
       
       <DashboardCard
               text="Другое расписание"
               sub=""
-              onClick={() => history.push('/home')}
+              onClick={() => 
+                IsStudent ? history.push('/home/true') : history.push('/home/false')
+              }
             />
 
       <DashboardCard
         text="FAQ"
         sub="Часто задаваемые вопросы"
-        // onClick={() => onGoToPage(FAQ_PAGE_NO)}
         onClick={() => history.push('/faq')}
       />
 
       <DashboardCard
         text="Контакты"
-        sub="Помощь"
-        // onClick={() => onGoToPage(CONTACTS_PAGE_NO)}
+        sub="Как связаться"
         onClick={() => history.push('/contacts')}
       />
 
@@ -363,7 +370,7 @@ const ScheduleLessonTitle = ({text}: { text: string }) => (
 
 
 const NoLesson = () => (
-  < CardBody2 style={{fontSize: "18px"}}>
+  < CardBody2 style={{fontSize: "1.1em"}}>
     Пары нет🎊
   </CardBody2>
 )
@@ -374,41 +381,31 @@ const DashboardPage = ({
                          start,
                          end,
                          count,
-                         userId,
                          currentLesson,
                          currentLessonStartEnd,
-                         groupId,
-                         teacherId,
                          nextLesson,
                          nextLessonStartEnd,
-                         spinner,
-                         onGoToPage,
                          theme,
-                         handleTeacherChange,
-                         isUser
+                         apiModel,
+                         assistant
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
-  groupId: String
-  teacherId: String
-  spinner: Boolean,
-  isUser: Boolean,
   count: number,
   start: string,
   end: string,
   theme: string
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
-  filialId: String,
-  userId: String,
   nextLesson: Bell,
   nextLessonStartEnd: StartEnd,
-  onGoToPage: (pageNo: number) => void
-  handleTeacherChange: (isSave: boolean) => Promise<boolean>
-
+  apiModel: ApiModel
+  assistant: AssistantWrapper
 }) => {
-  // console.log('DashboardPage:', groupId, teacherId, userId)
+
+  console.log('DashboardPage:', nextLesson)
   // console.log('DashboardPage:', {count})
+  let current_date = new Date().toISOString().slice(0,10)
   return (
     <DeviceThemeProvider>
       <DocStyle/>
@@ -417,16 +414,18 @@ const DashboardPage = ({
       }
       <Container style={{
         padding: 0,
-        // overflow: "hidden",
-        height: '100%',
-        overflow: 'auto',
+        overflow: "hidden",
+        // height: '100%',
+        // overflow: 'auto',
       }}>
         <HeaderRow
           // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
+          assistant={assistant}
           onHomeClick={() => history.push('/settings')}
         />
         {
-          spinner === true
+
+          apiModel.isSchedule
             ? (
               <Row>
                 <TodaySummary
@@ -439,13 +438,12 @@ const DashboardPage = ({
                     <Col size={12}>
                       <ScheduleSectionTitleRow/>
                       <Card style={{
-                        width: "88%",
-                        marginLeft: "1.5em",
+                        marginLeft: "4.5%",
                         marginTop: "0.5em",
-                        marginRight: "2.5em"
+                        marginRight: "4.5%"
                       }}
                             onClick={ () => {
-                              history.push('/spinner')
+                              history.push('/schedule/'+current_date+'/'+true+'/'+true)
                             }}
                       >
 
@@ -463,12 +461,15 @@ const DashboardPage = ({
                               !!currentLesson&&count!=0
                                 ? (
                                   <ScheduleLesson
+                                    isCurrentWeek={true}
+                                    isSave={true}
+                                    Day={new Date().getDay()}
                                     lesson={currentLesson}
                                     startEndTime={currentLessonStartEnd}
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={true}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => handleTeacherChange(false)}
+                                    onTeacherClick={(teacherName) => apiModel.CheckIsCorrectTeacher({initials: currentLesson.teacher}, false)}
                                   />
                                 )
                                 : <NoLesson/>
@@ -493,12 +494,15 @@ const DashboardPage = ({
                                   <ScheduleLessonTitle text="Дальше"/>
 
                                   <ScheduleLesson
+                                    isCurrentWeek={true}
+                                    isSave={true}
+                                    Day={new Date().getDay()}
                                     lesson={nextLesson}
                                     startEndTime={nextLessonStartEnd}
                                     isTeacherAndValid={isTeacherAndValid}
                                     isAccented={false}
                                     // todo: задавать имя преподавателя
-                                    onTeacherClick={() => handleTeacherChange(false)}
+                                    onTeacherClick={() => apiModel.CheckIsCorrectTeacher({initials: nextLesson.teacher}, false)}
                                   />
                                   {/*</React.Fragment>*/}
                                 </CardContent>
@@ -520,24 +524,23 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!spinner &&(groupId != "" ||  teacherId != "") ||!isUser ?      (
+               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "")||!apiModel.isSavedUser  ?      (
               <Col >
-                <LineSkeleton size="headline1" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
-                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "1em", width:"90%"}}/>
+                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
+                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
                 <ScheduleSectionTitleRow/>
-                <RectSkeleton width="100%" height="10rem" style={{marginTop: "0.5em", marginLeft: "1em", width:"90%"}} roundness={16}/>
+                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "0.7em", marginRight: "0.7em"}} roundness={16}/>
               </Col>): (<div ></div>)
 
              
                     
         }
-        {groupId == "" && teacherId == "" && isUser ? (<GetCloser
-                      onGoToPage={(pageNo) => onGoToPage(pageNo)}
-                    />) : (<div ></div>)}
+        {apiModel.isSavedUser&&(apiModel.user?.group_id == "" && apiModel.user?.teacher_id == "") ? 
+        (<GetCloser/>) : (<div ></div>)}
         <CatalogueHeaderRow/>
 
         <CatalogueItems
-          onGoToPage={(pageNo) => onGoToPage(pageNo)}
+         IsStudent={apiModel.isStudent}
         />
 
         <Spacer300/>

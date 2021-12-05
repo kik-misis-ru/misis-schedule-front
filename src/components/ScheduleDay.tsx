@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router";
 import {Card, CardBody, CardContent, RectSkeleton} from "@sberdevices/plasma-ui";
 
-import {IScheduleDays, LessonStartEnd} from "../App";
+import {LessonStartEnd} from "../App";
+import {IScheduleDays} from "../lib/ApiModel"
 import {NO_LESSONS_NAME} from '../lib/ApiHelper'
 import {Bell} from "../types/ScheduleStructure";
 import {OTHER_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
@@ -14,33 +15,30 @@ const EMPTY_LESSON_NUM = 7;
 
 
 export const ScheduleDayLessons = ({
-                                     // days,
-                                     // day_num,
+                                     
                                      dayLessons,
                                      currentLessonNumber,
-                                     // today,
-                                     // weekParam,
-                                     // timeParam,
+                                     isCurrentWeek,
+                                     isSave,
+                                     Day,
                                      isTeacherAndValid,
                                      isToday,
                                      onTeacherClick,
                                    }: {
-  // days: IScheduleDays,
-  // day_num: number,
+  
   dayLessons: Bell[]
-  // today: number,
   currentLessonNumber: string | undefined,
-  // weekParam: THIS_OR_OTHER_WEEK,
-  // timeParam: number,
+  isCurrentWeek: boolean
+  isSave: boolean
+  Day: number
   isTeacherAndValid: boolean,
   isToday: boolean,
   onTeacherClick: (teacherName: string) => void
 }) => {
-  console.log("DAY LESSONS",dayLessons)
   return (
     <React.Fragment>
       {
-        dayLessons.map((lesson, lessonIndex) => {
+        dayLessons && dayLessons.map((lesson, lessonIndex) => {
 
           const getIsCurrentLesson = () => (
             lesson.lessonNumber === currentLessonNumber
@@ -54,6 +52,9 @@ export const ScheduleDayLessons = ({
           return lesson.lessonName !== ""
             ? (
               <ScheduleLesson
+                isCurrentWeek={isCurrentWeek}
+                isSave={isSave}
+                Day={Day}
                 key={lessonIndex}
                 lesson={lesson}
                 startEndTime={
@@ -89,25 +90,23 @@ export const ScheduleDay = ({
                               isTeacherAndValid,
                               isToday,
                               isDayOff,
-                              // today,
-                              // validateTeacher,
-                              // onSetValue,
+                              isCurrentWeek,
+                              isSave,
+                              Day,
                               onTeacherClick,
                             }: {
   isReady: boolean
-  // days: IScheduleDays,
-  // day_num: number,
   dayLessons: Bell[];
   currentLessonNumber: string | undefined,
-  // weekParam: THIS_OR_OTHER_WEEK,
-  // timeParam: number,
   isTeacherAndValid: boolean,
   isToday: boolean,
   isDayOff: boolean,
-  // today: number,
+  isCurrentWeek: boolean
+  isSave: boolean
+  Day: number
   onTeacherClick: (teacherName: string) => void
 }) => (
-  isReady
+  isReady==true
     ? (
       <div style={{flexDirection: "column"}}>
         <Card style={isDayOff
@@ -120,12 +119,12 @@ export const ScheduleDay = ({
                 isDayOff
                   ? <ScheduleDayOff/>
                   : <ScheduleDayLessons
-                    // days={days}
-                    // day_num={day_num}
+                    
                     dayLessons={dayLessons}
                     currentLessonNumber={currentLessonNumber}
-                    // weekParam={weekParam}
-                    // timeParam={timeParam}
+                    isCurrentWeek={isCurrentWeek}
+                    isSave={isSave}
+                    Day={Day}
                     isTeacherAndValid={isTeacherAndValid}
                     isToday={isToday}
                     // today={today}

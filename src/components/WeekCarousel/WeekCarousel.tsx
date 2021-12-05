@@ -1,5 +1,5 @@
 import React from "react";
-import {Carousel, CarouselGridWrapper, Row} from "@sberdevices/plasma-ui";
+import {Carousel, CarouselGridWrapper, Row, Col} from "@sberdevices/plasma-ui";
 
 import WeekCarouselDay from "./WeekCarouselDay";
 
@@ -17,13 +17,13 @@ export const WeekCarousel = ({
   const [index, setIndex] = React.useState(selectedIndex);
   return (
     <Row style={{
-      width: "100%",
       marginRight: "0",
+      width: "100%",
       overflow: "hidden"
     }}>
       <CarouselGridWrapper style={{
-      width: "100%",
       marginRight: "0",
+      width: "100%",
       overflow: "hidden"
     }}>
         <Carousel
@@ -35,7 +35,7 @@ export const WeekCarousel = ({
           detectThreshold={0.5}
           onIndexChange={(i) => setIndex(i)}
           paddingStart="5%"
-          paddingEnd="5%"
+          paddingEnd="20%"
         >
           {
             cols.map((text, i) => {

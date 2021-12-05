@@ -32,9 +32,8 @@ export const WeekCarouselDay = ({
             : ""
         }}
         size="s"
-        focused={isSelected}
         pin="circle-circle"
-        text={ text }
+        text={isMarked ? `Сегодня ${text.toLowerCase()}` : text }
         // text={ text + moment(date).format(format)}
         onClick={(event) => onClick(event)}
       />

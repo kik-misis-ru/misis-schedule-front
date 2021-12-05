@@ -4,10 +4,11 @@ import {
 } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  CardHeadline3,
+  Body2,
   TextBox,
   TextBoxSubTitle,
   TextBoxTitle,
+  TextBoxLabel,
   Badge,
   Col,
   CellListItem,
@@ -29,7 +30,7 @@ import {Bell} from "../types/ScheduleStructure";
 
 // import {DEFAULT_TEXT_COLOR} from '../App';
 // import {THIS_WEEK, THIS_OR_OTHER_WEEK} from "../types/base.d";
-import {lessonTypeAdjToNoun} from '../utils';
+import {lessonTypeAdjToNoun} from '../language-ru/utils';
 import LinkToOnline from './LinkToOnline';
 
 
@@ -52,16 +53,22 @@ export const LessonName = (
     isAccented,
     text,
     lessonNumber,
+    isCurrentWeek,
+    isSave,
+    Day
   }: {
     isAccented: boolean
     text: string
     lessonNumber: string
+    isCurrentWeek: boolean
+    isSave: boolean
+    Day: number
   }
 ) => {
-  console.log(text);
+  let lessonNum = `${lessonNumber}. `
   return (
     <Link
-      to={`/lesson/${lessonNumber}`}
+      to={`/lesson/${isSave}/${isCurrentWeek}/${Day}/${lessonNumber}`}
       style={{
         color: isAccented
           ? ACCENT_TEXT_COLOR
@@ -71,11 +78,11 @@ export const LessonName = (
       }}
     >
 
-      <CardHeadline3
-        style={isAccented ? {color: ACCENT_TEXT_COLOR} : {color: COLOR_BUTTON_PRIMARY}}
+      <Body2
+        style={isAccented ? {color: ACCENT_TEXT_COLOR, fontSize: "18px"} : {color: COLOR_BUTTON_PRIMARY, fontSize: "18px"}}
       >
-        {text}
-      </CardHeadline3>
+       {lessonNum} {text}
+      </Body2>
 
     </Link>
   )
@@ -106,7 +113,6 @@ export const TeacherName = (
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
   }
 ) => {
-  console.log(text);
   return (
     text != "" || text != null ? (
       <a
@@ -152,6 +158,9 @@ const MainContent = (
     url,
     isAccented,
     isTeacherAndValid,
+    isCurrentWeek,
+    isSave,
+    Day,
     onTeacherClick,
   }: {
     lessonName: string
@@ -162,16 +171,22 @@ const MainContent = (
     url: string
     isAccented: boolean
     isTeacherAndValid: boolean
+    isCurrentWeek: boolean
+    isSave: boolean
+    Day: number
     onTeacherClick: (teacherName: string) => void
   }
 ) => {
   return (
 
-    <TextBox>
+    <TextBox >
       <LessonStartAndFinishTime
         time={time}
       />
       <LessonName
+        isCurrentWeek={isCurrentWeek}
+        isSave={isSave}
+        Day={Day}
         text={lessonName}
         lessonNumber={lessonNumber}
         isAccented={isAccented}
@@ -209,20 +224,11 @@ export const LessonRightContent = (
   return (
     <TextBox>
       {room ? (
-        <Badge
-          text={room}
-          contentLeft={
-            <IconLocation size="xs"/>
-          }
-          style={{
-            backgroundColor: COLOR_BLACK,
-            color: COLOR_BUTTON_PRIMARY,
-          }}
-        />) : (<div></div>)
+        <TextBoxTitle style={{fontSize: "16px"}}>{room}</TextBoxTitle>) : (<div></div>)
       }
-      <TextBoxTitle style={{paddingRight: "0.3em"}}>
+      <TextBoxLabel >
         {lessonType}
-      </TextBoxTitle>
+      </TextBoxLabel>
     </TextBox>
   )
 }
@@ -235,12 +241,18 @@ const ScheduleLesson = (
     isAccented,
     isTeacherAndValid,
     onTeacherClick,
+    isCurrentWeek,
+    isSave,
+    Day
   }: {
     lesson: Bell
     startEndTime: StartEnd
     isAccented: boolean
     isTeacherAndValid: boolean
     onTeacherClick: (teacherName: string) => void
+    isCurrentWeek: boolean
+    isSave: boolean
+    Day: number
   }
 ) => {
 
@@ -250,10 +262,13 @@ const ScheduleLesson = (
 
   return (
     <CellListItem
-      style={{padding: "0", margin: "0"}}
+      style={{paddingLeft: "1em", paddingRight: "1em", margin: "0"}}
       content={
         lesson.lessonName != "Пар нет 🎉"
           ? <MainContent
+            isCurrentWeek={isCurrentWeek}
+            isSave={isSave}
+            Day={Day}
             lessonName={lesson.lessonName}
             lessonNumber={lesson.lessonNumber}
             groupNumber={lesson.groupNumber}
@@ -266,9 +281,9 @@ const ScheduleLesson = (
             isTeacherAndValid={isTeacherAndValid}
             onTeacherClick={onTeacherClick}
           />
-          : <CardHeadline3 style={{marginLeft: "1em"}}>
+          : <Body2 style={{marginLeft: "1em", fontSize: "18px"}}>
             {lesson.lessonName}
-          </CardHeadline3>
+          </Body2>
       }
       contentRight={
         <LessonRightContent
@@ -277,12 +292,6 @@ const ScheduleLesson = (
             // todo: это преобразование должно быть раньше
             lessonTypeAdjToNoun(lesson.lessonType)
           }
-        />
-      }
-      contentLeft={
-        <LessonLeftContent
-          visible={!(lesson.lessonName == NO_LESSONS_NAME)}
-          text={lesson.lessonNumber}
         />
       }
     />

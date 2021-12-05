@@ -1,25 +1,25 @@
 import React from "react";
-import {Container, Row, Col, DeviceThemeProvider, Caption, Body1} from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Card,
-  CardBody,
-  CardContent,
-  CardMedia,
+  Container,
+  Row, 
+  Col, 
+  DeviceThemeProvider,
   TextBox,
-  TextBoxSubTitle,
-  TextBoxTitle,
-  TextBoxLabel,
-  Badge,
-  CellListItem,
-  TextBoxBigTitle,
+  Header,
   Headline1,
   Button,
   Image,
-  ParagraphText1
+  ParagraphText1,
+  HeaderBack,
+  HeaderLogo,
+  HeaderTitle,
+  HeaderTitleWrapper,
+  HeaderContent,
+  HeaderRoot,
+  HeaderMinimize
 } from "@sberdevices/plasma-ui";
-import {IconLocation} from "@sberdevices/plasma-icons";
-
+import {AssistantWrapper} from "../lib/AssistantWrapper"
 import star from "../images/Star-1.png";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId, IBuilding} from "../types/base";
@@ -27,10 +27,9 @@ import {COLOR_BLACK} from '../components/consts';
 import {
   HeaderLogoCol,
   HeaderTitleCol2,
-  GoToDashboardButton,
-  GoToHomeButton,
-  GoToScheduleButton,
 } from '../components/TopMenu';
+
+import logo from "../images/App Icon.png";
 
 import {
   history
@@ -40,10 +39,12 @@ import {
 
 
 const Start = ({
+                         assistant,
                          character,
                          isMobileDevice,
                          theme,
                        }: {
+  assistant: AssistantWrapper
   theme: string 
   character: CharacterId
   isMobileDevice: boolean
@@ -58,20 +59,22 @@ const Start = ({
         ? (
           <Container style={{
             padding: 0,
-            // overflow: "hidden",
-            height: '100%',
-            overflow: 'auto',
+            // overflow: "hidden"
           }}>
 
 <Row style={{
-    margin: "1em"
+    margin: "1em",
+    marginLeft: "5%",
+    marginRight: "5%"
   }}>
-
-    <HeaderLogoCol/>
-
-    <HeaderTitleCol2
-      title='Мир МИСиС'
-    />
+    <HeaderRoot>
+      <HeaderMinimize onClick={() => assistant.on('exit', () => {
+  })  } />
+    <HeaderLogo src={logo} alt="Logo" onClick={()=>history.push("/dashboard")}/>
+    <HeaderTitleWrapper>
+      <HeaderTitle>Мир МИСиС</HeaderTitle>
+    </HeaderTitleWrapper>
+    </HeaderRoot>
 
 
   </Row>
