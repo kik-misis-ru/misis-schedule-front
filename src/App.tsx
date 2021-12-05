@@ -151,6 +151,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   async handleAssistantSub(userId: string) {
     this.apiModel = new ApiModel()
     this.apiModel.fetchUser(userId)
+    console.log("userId", userId)
     const user = this.apiModel.user;
     if (this.apiModel.userId != undefined && this.apiModel.userId != "") {
 
@@ -172,8 +173,8 @@ export class App extends React.Component<IAppProps, IAppState> {
       // Проверяем, сохранен ли пользователь
       if (!this.apiModel.isSavedUser) {
         console.log("handleAssistantSub: first time")
-
-        this.setState({isUser: true});
+        await this.apiModel.createUser()
+        
 
         history.push('/start')
 
@@ -181,8 +182,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         this.assistant.sendHello()
 
         // Создаем пользователя в базе данных с текущими настройками
-        await this.apiModel.createUser()
+        
       }
+      this.setState({isUser: true});
     }
   }
 
@@ -1006,6 +1008,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let nextLessonStartEnd = LessonStartEnd[nextLessonIdx - 1];
                 let start = this.getStartFirstLesson(todayZeroIndex + 1)[0];
                 let end = this.getEndLastLesson(todayZeroIndex);
+                console.log("this.state.isUser", this.state.isUser)
                 return <DashboardPage
                   assistant={this.assistant}
                   character={this.state.character}
@@ -1019,7 +1022,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                   nextLesson={nextLesson}
                   nextLessonStartEnd={nextLessonStartEnd}
                   apiModel={this.apiModel}
-
+                  isUser={this.state.isUser}
                 />
               }
             }/>

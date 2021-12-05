@@ -287,9 +287,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
         }
         <Container style={{
           padding: 0,
-          // overflow: "hidden",
           height: '100%',
-          overflow: 'auto',
+          overflow: 'hidden',
         }}>
         <Row style={{margin: "1em", marginLeft: "5%", marginRight: "5%"}}>
         <HeaderRoot>

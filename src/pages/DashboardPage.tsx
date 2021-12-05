@@ -227,14 +227,14 @@ const DashboardCard = ({
     <Col size={2}>
       <Card
         style={{
-          height: "95%",
+          height: "96%",
           marginTop: "0.5em",
           cursor: !!onClick ? 'pointer' : 'default',
           display: "flex", flexDirection: "column"
         }}
         onClick={(event) => !!onClick ? onClick(event) : undefined}>
         <CardBody >
-          <CardContent style={{height: "20vh"}}>
+          <CardContent style={{height: "22vh"}}>
             <TextBox>
               <Caption style={{color: "grey"}}>
                 {sub}
@@ -274,9 +274,9 @@ const GetCloser = ({
 }: {
 }) => {
 return (
-<Row style={{marginLeft: "4%", marginRight: "1em", marginTop: "0.5em", paddingTop: "0"}}>
+<Row style={{marginLeft: "4.5%", marginRight: "4.5%", marginTop: "0.5em", paddingTop: "0"}}>
 
-<Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.5vh"}}>
+<Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.7vh"}}>
 
 <CardBody
 style={{padding: "0 0 0 0"}}
@@ -387,7 +387,8 @@ const DashboardPage = ({
                          nextLessonStartEnd,
                          theme,
                          apiModel,
-                         assistant
+                         assistant,
+                         isUser
                        }: {
   character: CharacterId
   isTeacherAndValid: boolean
@@ -401,9 +402,10 @@ const DashboardPage = ({
   nextLessonStartEnd: StartEnd,
   apiModel: ApiModel
   assistant: AssistantWrapper
+  isUser: boolean
 }) => {
 
-  console.log('DashboardPage:', nextLesson)
+  console.log('DashboardPage:', apiModel.user?.group_id, apiModel.user?.teacher_id )
   // console.log('DashboardPage:', {count})
   let current_date = new Date().toISOString().slice(0,10)
   return (
@@ -524,7 +526,7 @@ const DashboardPage = ({
             : (<div ></div>)}
 
              
-               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "")||!apiModel.isSavedUser  ?      (
+               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "")||!isUser  ?      (
               <Col >
                 <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
                 <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
@@ -535,7 +537,7 @@ const DashboardPage = ({
              
                     
         }
-        {apiModel.isSavedUser&&(apiModel.user?.group_id == "" && apiModel.user?.teacher_id == "") ? 
+        {isUser&&(apiModel.user?.group_id == "" || apiModel.user?.group_id == undefined)&&(apiModel.user?.teacher_id == "" || apiModel.user?.teacher_id == undefined) ? 
         (<GetCloser/>) : (<div ></div>)}
         <CatalogueHeaderRow/>
 
