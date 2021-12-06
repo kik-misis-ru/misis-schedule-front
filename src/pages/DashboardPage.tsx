@@ -276,7 +276,7 @@ const GetCloser = ({
 return (
 <Row style={{marginLeft: "4.5%", marginRight: "4.5%", marginTop: "0.5em", paddingTop: "0"}}>
 
-<Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "8.7vh"}}>
+<Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "40%"}}>
 
 <CardBody
 style={{padding: "0 0 0 0"}}
@@ -528,10 +528,10 @@ const DashboardPage = ({
              
                {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "")||!isUser  ?      (
               <Col >
-                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
-                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "0.7em", marginRight: "0.7em", width:"95%"}}/>
+                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "4%", marginRight: "4%", width:"95%"}}/>
+                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "4%", marginRight: "4%", width:"95%"}}/>
                 <ScheduleSectionTitleRow/>
-                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "0.7em", marginRight: "0.7em"}} roundness={16}/>
+                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "4%", marginRight: "4%"}} roundness={16}/>
               </Col>): (<div ></div>)
 
              
