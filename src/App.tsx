@@ -815,7 +815,9 @@ export class App extends React.Component<IAppProps, IAppState> {
         }
       }
       const lessonCount = this.getLessonsCountForDate(date);
-      const todayLessons = Boolean(this.apiModel.isSavedSchedule) ? this.apiModel.saved_schedule?.current_week[todayDayOfWeek - 1] : this.apiModel.other_schedule?.current_week[todayDayOfWeek - 1]
+      const todayLessons = Boolean(this.apiModel.isSavedSchedule)
+        ? this.apiModel.saved_schedule?.current_week[todayDayOfWeek - 1]
+        : this.apiModel.other_schedule?.current_week[todayDayOfWeek - 1]
       if (lessonCount <= 0) {
         return {
           exist: "empty",
