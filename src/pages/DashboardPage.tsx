@@ -29,12 +29,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import {ApiModel, ITeacherSettings} from '../lib/ApiModel'
 //import {createGlobalStyle} from "styled-components";
 import {
-  IconLocation, 
-  IconStarFill, 
+  IconLocation,
+  IconStarFill,
   IconApps,
-  IconEvent, 
-  IconHelp, 
-  IconCallCircle} 
+  IconEvent,
+  IconHelp,
+  IconCallCircle
+}
   from "@sberdevices/plasma-icons";
 import Month from "../language-ru/Month";
 import {
@@ -44,14 +45,14 @@ import {
 import {
   capitalize,
 } from '../lib/utils';
-import{
+import {
   ITeacherValidation
 } from '../lib/ApiModel'
 import {
   formatTimeHhMm,
 } from '../lib/datetimeUtils';
-import { StartEnd } from '../App';
-import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import {StartEnd} from '../App';
+import {Spacer100, Spacer200, Spacer300} from '../components/Spacers'
 import DayOfWeek from "../language-ru/DayOfWeek";
 
 import phone from "../images/phone.png";
@@ -89,18 +90,18 @@ const HeaderRow = ({
     marginLeft: "5%",
     marginRight: "5%"
   }}>
-                <Header
-                    back={false}
-                    logo={logo}
-                    title="Мир МИСиС"
-                    minimize 
-                    onMinimizeClick={() => assistant.on('exit', () => {
-                    })  }
-                >
-                    <GoToHomeButton
+    <Header
+      back={false}
+      logo={logo}
+      title="Мир МИСиС"
+      minimize
+      onMinimizeClick={() => assistant.on('exit', () => {
+      })}
+    >
+      <GoToHomeButton
         onClick={() => onHomeClick()}
       />
-                </Header>
+    </Header>
 
   </Row>
 )
@@ -136,7 +137,7 @@ const CatalogueHeaderRow = () => {
   return (
     <Row>
       <Col style={{marginLeft: "5%", paddingTop: "1.6em"}}>
-        <IconApps />
+        <IconApps/>
       </Col>
       <Col style={{paddingTop: "1.7em"}}>
         <TextBox>
@@ -183,12 +184,12 @@ const TodaySummary = ({
 
   return (
     <Row style={{
-          marginLeft: "6%",
-          paddingTop: "0.5em",
-        }}>
+      marginLeft: "6%",
+      paddingTop: "0.5em",
+    }}>
       <TextBox
         // @ts-ignore
-        
+
       >
         <CardParagraph2 style={{fontSize: "1.4em"}}>
           {
@@ -233,7 +234,7 @@ const DashboardCard = ({
           display: "flex", flexDirection: "column"
         }}
         onClick={(event) => !!onClick ? onClick(event) : undefined}>
-        <CardBody >
+        <CardBody>
           <CardContent style={{height: "22vh"}}>
             <TextBox>
               <Caption style={{color: "grey"}}>
@@ -243,25 +244,25 @@ const DashboardCard = ({
                 {text}
               </CardHeadline3>
             </TextBox>
-            {text=="Другое расписание" ? 
-            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
-            <Image src={schedule} />
-            </Col> : <div></div>
+            {text == "Другое расписание" ?
+              <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+                <Image src={schedule}/>
+              </Col> : <div></div>
             }
-            {text=="Карта" ? 
-            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
-            <Image src={location} />
-            </Col> : <div></div>
+            {text == "Карта" ?
+              <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+                <Image src={location}/>
+              </Col> : <div></div>
             }
-            {text=="FAQ" ? 
-            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
-            <Image src={faq} />
-            </Col> : <div></div>
+            {text == "FAQ" ?
+              <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+                <Image src={faq}/>
+              </Col> : <div></div>
             }
-            {text=="Контакты" ? 
-            <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
-            <Image src={phone} />
-            </Col> : <div></div>
+            {text == "Контакты" ?
+              <Col style={{margin: "auto 0 0 0", maxWidth: '2.3rem', padding: "0 0 0 0"}}>
+                <Image src={phone}/>
+              </Col> : <div></div>
             }
           </CardContent>
         </CardBody>
@@ -270,75 +271,72 @@ const DashboardCard = ({
   )
 }
 
-const GetCloser = ({
-}: {
-}) => {
-return (
-<Row style={{marginLeft: "4.5%", marginRight: "4.5%", marginTop: "0.5em", paddingTop: "0"}}>
+const GetCloser = ({}: {}) => {
+  return (
+    <Row style={{marginLeft: "4.5%", marginRight: "4.5%", marginTop: "0.5em", paddingTop: "0"}}>
 
-<Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "40%"}}>
+      <Card onClick={() => history.push('/settings')} style={{padding: "0 0 0 0", width: "100%", height: "40%"}}>
 
-<CardBody
-style={{padding: "0 0 0 0"}}
->
-<CardContent style={{padding: "0 0 0 0"}}>
-<CellListItem
-style={{padding: "0 0 0 0"}}
-contentLeft={
-<TextBox>
-<TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em", padding: "0 0 0 0"}}>
- 🥺
-</TextBoxBiggerTitle>
-</TextBox>}
-content={
-<TextBox >
-<Body1 style={{padding: "0 0 0 0"}}>
- Станем ближе?
-</Body1>
-<Body1 style={{padding: "0 0 0 0", color: "grey"}}>
- Сохрани свои данные
-</Body1>
-</TextBox>
+        <CardBody
+          style={{padding: "0 0 0 0"}}
+        >
+          <CardContent style={{padding: "0 0 0 0"}}>
+            <CellListItem
+              style={{padding: "0 0 0 0"}}
+              contentLeft={
+                <TextBox>
+                  <TextBoxBiggerTitle style={{marginRight: "0.3em", marginLeft: "0.3em", padding: "0 0 0 0"}}>
+                    🥺
+                  </TextBoxBiggerTitle>
+                </TextBox>}
+              content={
+                <TextBox>
+                  <Body1 style={{padding: "0 0 0 0"}}>
+                    Станем ближе?
+                  </Body1>
+                  <Body1 style={{padding: "0 0 0 0", color: "grey"}}>
+                    Сохрани свои данные
+                  </Body1>
+                </TextBox>
 
-}
-contentRight={
-<CellDisclosure style={{marginRight: "1em", marginLeft: "0.3em", padding: "0 0 0 0"}}/>
-}
->
-</CellListItem>
-</CardContent>
+              }
+              contentRight={
+                <CellDisclosure style={{marginRight: "1em", marginLeft: "0.3em", padding: "0 0 0 0"}}/>
+              }
+            >
+            </CellListItem>
+          </CardContent>
 
-</CardBody>
+        </CardBody>
 
-</Card>
+      </Card>
 
-</Row>
+    </Row>
 
-)
+  )
 }
 
 const CatalogueItems = ({IsStudent}: {
-IsStudent: boolean
+  IsStudent: boolean
 }) => {
 
   return (
     <Row style={{marginLeft: "4%", marginRight: "4%"}}>
 
-     
 
       <DashboardCard
         text="Карта"
         sub="Как добраться"
         onClick={() => history.push('/navigation')}
       />
-      
+
       <DashboardCard
-              text="Другое расписание"
-              sub=""
-              onClick={() => 
-                IsStudent ? history.push('/home/true') : history.push('/home/false')
-              }
-            />
+        text="Другое расписание"
+        sub=""
+        onClick={() =>
+          IsStudent ? history.push('/home/true') : history.push('/home/false')
+        }
+      />
 
       <DashboardCard
         text="FAQ"
@@ -376,7 +374,6 @@ const NoLesson = () => (
 )
 
 const DashboardPage = ({
-                         character,
                          isTeacherAndValid,
                          start,
                          end,
@@ -385,17 +382,14 @@ const DashboardPage = ({
                          currentLessonStartEnd,
                          nextLesson,
                          nextLessonStartEnd,
-                         theme,
                          apiModel,
                          assistant,
                          isUser
                        }: {
-  character: CharacterId
   isTeacherAndValid: boolean
   count: number,
   start: string,
   end: string,
-  theme: string
   currentLesson: Bell,
   currentLessonStartEnd: StartEnd,
   nextLesson: Bell,
@@ -405,150 +399,135 @@ const DashboardPage = ({
   isUser: boolean
 }) => {
 
-  console.log('DashboardPage:', apiModel.user?.group_id, apiModel.user?.teacher_id )
+  console.log('DashboardPage:', apiModel.user?.group_id, apiModel.user?.teacher_id)
   // console.log('DashboardPage:', {count})
-  let current_date = new Date().toISOString().slice(0,10)
+  let current_date = new Date().toISOString().slice(0, 10)
   return (
-    <DeviceThemeProvider>
-      <DocStyle/>
+    <Container style={{
+      padding: 0,
+      overflow: "hidden",
+      // height: '100%',
+      // overflow: 'auto',
+    }}>
+      <HeaderRow
+        // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
+        assistant={assistant}
+        onHomeClick={() => history.push('/settings')}
+      />
       {
-        getThemeBackgroundByChar(character, theme)
-      }
-      <Container style={{
-        padding: 0,
-        overflow: "hidden",
-        // height: '100%',
-        // overflow: 'auto',
-      }}>
-        <HeaderRow
-          // onHomeClick={() => onGoToPage(SETTING_PAGE_NO)}
-          assistant={assistant}
-          onHomeClick={() => history.push('/settings')}
-        />
-        {
+        apiModel.isSchedule
+          ? (
+            <Row>
+              <TodaySummary
+                date={new Date()}
+                lessonCount={count}
+                lessonsStart={start}
+                lessonsEnd={end}
+              />
 
-          apiModel.isSchedule
-            ? (
-              <Row>
-                <TodaySummary
-                  date={new Date()}
-                  lessonCount={count}
-                  lessonsStart={start}
-                  lessonsEnd={end}
-                />
-
-                    <Col size={12}>
-                      <ScheduleSectionTitleRow/>
-                      <Card style={{
-                        marginLeft: "4.5%",
-                        marginTop: "0.5em",
-                        marginRight: "4.5%"
-                      }}
-                            onClick={ () => {
-                              history.push('/schedule/'+current_date+'/'+true+'/'+true)
-                            }}
-                      >
-
-                        <CardBody
-                          // style={{padding: "0 0 0 0"}}
-                        >
-                          <CardContent
-                            // compact
-                            style={{padding: "0 0.2em 0.5em 0.8em"}}
-                          >
-
-                            <ScheduleLessonTitle text="Сейчас"/>
-
-                            {
-                              !!currentLesson&&count!=0
-                                ? (
-                                  <ScheduleLesson
-                                    isCurrentWeek={true}
-                                    isSave={true}
-                                    Day={new Date().getDay()}
-                                    lesson={currentLesson}
-                                    startEndTime={currentLessonStartEnd}
-                                    isTeacherAndValid={isTeacherAndValid}
-                                    isAccented={true}
-                                    // todo: задавать имя преподавателя
-                                    onTeacherClick={(teacherName) => apiModel.CheckIsCorrectTeacher({initials: currentLesson.teacher}, false)}
-                                  />
-                                )
-                                : <NoLesson/>
-                            }
-
-                          </CardContent>
-                          {/*
-          </CardBody>
-*/}
-
-                          {
-                            !!nextLesson&&count!=0 // !!nextLessonIdx
-                              ? (
-                                // <React.Fragment>
-                                /*
-                              <CardBody
-                                // style={{padding: "0 0 0 0"}}
-                              >
-              */
-                                <CardContent style={{padding: "0 0.2em 0.2em 0.8em"}}>
-
-                                  <ScheduleLessonTitle text="Дальше"/>
-
-                                  <ScheduleLesson
-                                    isCurrentWeek={true}
-                                    isSave={true}
-                                    Day={new Date().getDay()}
-                                    lesson={nextLesson}
-                                    startEndTime={nextLessonStartEnd}
-                                    isTeacherAndValid={isTeacherAndValid}
-                                    isAccented={false}
-                                    // todo: задавать имя преподавателя
-                                    onTeacherClick={() => apiModel.CheckIsCorrectTeacher({initials: nextLesson.teacher}, false)}
-                                  />
-                                  {/*</React.Fragment>*/}
-                                </CardContent>
-                              )
-                              : (<div></div>)
-                          }
-                          {/*</CardContent>*/}
-                          <Button size="s"  >Посмотреть всё</Button>
-                        </CardBody>
-
-                      </Card>
-                    </Col>
-                  
-                   
-                  
-                
-              </Row>
-            )
-            : (<div ></div>)}
-
-             
-               {!apiModel.isSchedule &&apiModel.isSavedUser&&(apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "")||!isUser  ?      (
-              <Col >
-                <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "4%", marginRight: "4%", width:"95%"}}/>
-                <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "4%", marginRight: "4%", width:"95%"}}/>
+              <Col size={12}>
                 <ScheduleSectionTitleRow/>
-                <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "4%", marginRight: "4%"}} roundness={16}/>
-              </Col>): (<div ></div>)
+                <Card
+                  style={{
+                    marginLeft: "4.5%",
+                    marginTop: "0.5em",
+                    marginRight: "4.5%"
+                  }}
+                  onClick={() => {
+                    history.push('/schedule/' + current_date + '/' + true + '/' + true)
+                  }}
+                >
 
-             
-                    
-        }
-        {isUser&&(apiModel.user?.group_id == "" || apiModel.user?.group_id == undefined)&&(apiModel.user?.teacher_id == "" || apiModel.user?.teacher_id == undefined) ? 
-        (<GetCloser/>) : (<div ></div>)}
-        <CatalogueHeaderRow/>
+                  <CardBody
+                    // style={{padding: "0 0 0 0"}}
+                  >
+                    <CardContent
+                      // compact
+                      style={{padding: "0 0.2em 0.5em 0.8em"}}
+                    >
+                      <ScheduleLessonTitle text="Сейчас"/>
+                      {
+                        !!currentLesson && count != 0
+                          ? (
+                            <ScheduleLesson
+                              isCurrentWeek={true}
+                              isSave={true}
+                              Day={new Date().getDay()}
+                              lesson={currentLesson}
+                              startEndTime={currentLessonStartEnd}
+                              isTeacherAndValid={isTeacherAndValid}
+                              isAccented={true}
+                              // todo: задавать имя преподавателя
+                              onTeacherClick={(teacherName) => apiModel.CheckIsCorrectTeacher({initials: currentLesson.teacher}, false)}
+                            />
+                          )
+                          : <NoLesson/>
+                      }
+                    </CardContent>
+                    {
+                      !!nextLesson && count != 0 // !!nextLessonIdx
+                        ? (
+                          <CardContent style={{padding: "0 0.2em 0.2em 0.8em"}}>
 
-        <CatalogueItems
-         IsStudent={apiModel.isStudent}
-        />
+                            <ScheduleLessonTitle text="Дальше"/>
 
-        <Spacer300/>
+                            <ScheduleLesson
+                              isCurrentWeek={true}
+                              isSave={true}
+                              Day={new Date().getDay()}
+                              lesson={nextLesson}
+                              startEndTime={nextLessonStartEnd}
+                              isTeacherAndValid={isTeacherAndValid}
+                              isAccented={false}
+                              // todo: задавать имя преподавателя
+                              onTeacherClick={() => apiModel.CheckIsCorrectTeacher({initials: nextLesson.teacher}, false)}
+                            />
+                          </CardContent>
+                        )
+                        : (<div></div>)
+                    }
+                    <Button size="s">Посмотреть всё</Button>
+                  </CardBody>
 
-      </Container>
-    </DeviceThemeProvider>
+                </Card>
+              </Col>
+
+
+            </Row>
+          )
+          : (<div></div>)}
+
+
+      {
+        !apiModel.isSchedule && apiModel.isSavedUser && (apiModel.user?.group_id != "" || apiModel.user?.teacher_id != "") || !isUser
+          ? (
+            <Col>
+              <LineSkeleton size="headline2" roundness={8} style={{marginLeft: "4%", marginRight: "4%", width: "95%"}}/>
+              <LineSkeleton size="headline3" roundness={8} style={{marginLeft: "4%", marginRight: "4%", width: "95%"}}/>
+              <ScheduleSectionTitleRow/>
+              <RectSkeleton width="95%" height="10rem" style={{marginTop: "0.5em", marginLeft: "4%", marginRight: "4%"}}
+                            roundness={16}/>
+            </Col>
+          ) :
+          (
+            <div></div>
+          )
+
+
+      }
+      {
+        isUser && (apiModel.user?.group_id == "" || apiModel.user?.group_id == undefined) && (apiModel.user?.teacher_id == "" || apiModel.user?.teacher_id == undefined)
+          ? (<GetCloser/>)
+          : (<div></div>)}
+      <CatalogueHeaderRow/>
+
+      <CatalogueItems
+        IsStudent={apiModel.isStudent}
+      />
+
+      <Spacer300/>
+
+    </Container>
   )
 }
 

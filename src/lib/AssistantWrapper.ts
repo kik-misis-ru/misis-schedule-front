@@ -22,7 +22,25 @@ export const initializeAssistant = (getState) => {
   return createAssistant({getState});
 };
 
-type AssistantWrapperEvents = 'action-group'|'action-subGroup'|'action-engGroup'|'show_schedule'|'for_this_week'|'for_next_week'|'exit'|'day_schedule';
+type AssistantWrapperEvents = 'event-character'
+  | 'event-sub'
+  | 'action-group'     //
+  | 'action-subGroup'  //
+  | 'action-engGroup'  //
+  | 'for_today'
+  | 'for_tomorrow'
+  | 'show_schedule'    //
+  | 'for_this_week'    //
+  | 'for_next_week'    //
+  | 'when_lesson'
+  | 'how_many'
+  | 'how_many_left'
+  | 'where'
+  | 'what_lesson'
+  | 'first_lesson'
+  | 'exit'             //
+  | 'day_schedule'     //
+  ;
 
 export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
   _assistant
@@ -94,6 +112,7 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
   handleAssistantDataEventCharacter(event: AssistantEventCharacter) {
     console.log('AssistantWrapper.handleAssistantEventCharacter: character.id:', event.character.id);
 
+    this.emit('event-character', event.character);
     this._App.handleAssistantCharacter(event.character)
   }
 
@@ -101,11 +120,12 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
     console.log('AssistantWrapper.handleAssistantEventSmartAppData: event:', event);
 
     if (event.sub !== undefined) {
-      this._App.handleAssistantSub(event.sub);
+      this.emit('event-sub', event.sub);
+      /*await*/ this._App.handleAssistantSub(event.sub);
     }
 
     const {action} = event;
-    this.dispatchAssistantAction(action);
+    /*await*/ this.dispatchAssistantAction(action);
   }
 
   async dispatchAssistantAction(action: AssistantAction) {
@@ -170,10 +190,12 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
         break
 
       case 'for_today':
+        this.emit('for_today', 0)
         await this._App.handleAssistantForDayOffset(0)
         break
 
       case 'for_tomorrow':
+        this.emit('for_tomorrow', 1)
         await this._App.handleAssistantForDayOffset(1)
         break
 
@@ -188,6 +210,7 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
 
       case 'when_lesson':
         const [type, day, lessonNum] = action.note || [];
+        this.emit('when_lesson', type, day, lessonNum)
         await this._App.handleAssistantWhenLesson(type, day, lessonNum)
         break
 
@@ -195,24 +218,29 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
         if (action.note) {
           const {timestamp, dayOfWeek: dayOfWeekStrIndex} = action.note;
           const date = new Date(timestamp);
+          this.emit('how_many', date, parseInt(dayOfWeekStrIndex))
           await this._App.handleAssistantHowMany(date, parseInt(dayOfWeekStrIndex))
         } else {
+          this.emit('how_many', undefined, undefined)
           await this._App.handleAssistantHowMany(undefined, undefined)
         }
         break
 
       // Сколько пар осталось (сегодня)
       case 'how_many_left':
+        this.emit('how_many_left')
         await this._App.handleAssistantHowManyLeft()
         break
 
       case 'where':
         const when = action?.note?.when ?? 'now';
+        this.emit('where', when)
         await this._App.handleAssistantWhere(when)
         break
 
       case 'what_lesson':
         const when_ = action?.note?.when ?? 'now';
+        this.emit('what_lesson', when_)
         await this._App.handleAssistantWhatLesson(when_)
         break
 
@@ -222,6 +250,7 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
           console.warn('dispatchAssistantAction: first_lesson: dayOfWeek is undefined');
           dayOfWeek = 1; // Понедельник
         }
+        this.emit('first_lesson', dayOfWeek)
         await this._App.handleAssistantFirstLesson(dayOfWeek)
         break
 
@@ -237,6 +266,7 @@ export class AssistantWrapper extends EventEmitter<AssistantWrapperEvents> {
         break
 
       case 'exit':
+        this.emit('exit');
         this._assistant.close();
         break
 
