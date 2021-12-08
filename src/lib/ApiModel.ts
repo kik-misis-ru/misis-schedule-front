@@ -372,7 +372,7 @@ export class ApiModel {
   }
 
   public async convertGroupNameToGroupId(groupName: string): Promise<Number> {
-    return (groupName && groupName != "")
+    return (groupName)
       ? await ApiHelper.getGroupByName(groupName)
       : -1;
   }
