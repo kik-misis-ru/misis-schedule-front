@@ -1,26 +1,19 @@
 import React, {DetailedHTMLProps, HTMLAttributes} from "react";
 import {
-  Container, 
-  Row, 
-  Col, 
-  Cell, 
-  Header,
+  Container,
+  Row,
+  Cell,
   HeaderBack,
   HeaderLogo,
   HeaderTitle,
   HeaderTitleWrapper,
-  HeaderContent,
   HeaderRoot,
-  HeaderMinimize
 } from '@sberdevices/plasma-ui';
 import 'react-toastify/dist/ReactToastify.css';
 
 import logo from "../../images/App Icon.png";
-import {
-  history, IAppState,
-} from '../../App';
-import {Spacer100,Spacer200,Spacer300} from '../Spacers'
-
+import {history} from '../../App';
+import {Spacer200} from '../Spacers'
 
 
 interface MainProps {
@@ -32,19 +25,18 @@ const Main = ({
               }: MainProps) => {
 
   const TopMenuRow = () => (
-  <Row style={{margin: "1em", marginLeft: "5%",
-  marginRight: "5%"}}>
-
-    <HeaderRoot>
-      <HeaderBack onClick={() => history.push('/dashboard')} />
-      <HeaderLogo src={logo} alt="Logo" onClick={() => history.push('/dashboard')}/>
+    <Row style={{
+      margin: "1em", marginLeft: "5%",
+      marginRight: "5%"
+    }}>
+      <HeaderRoot>
+        <HeaderBack onClick={() => history.push('/dashboard')}/>
+        <HeaderLogo src={logo} alt="Logo" onClick={() => history.push('/dashboard')}/>
         <HeaderTitleWrapper>
           <HeaderTitle>Другое расписание</HeaderTitle>
         </HeaderTitleWrapper>
-    </HeaderRoot>
-  </Row>
-   
-
+      </HeaderRoot>
+    </Row>
   )
 
   return (
@@ -57,16 +49,13 @@ const Main = ({
           contentRight
         }
         style={{
-           padding: '0',
+          padding: '0',
           margin: '0 auto',
         }}
       >
       </Cell>
-
       <Spacer200/>
-
     </Container>
-    
   )
 }
 
