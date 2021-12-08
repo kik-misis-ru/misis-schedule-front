@@ -226,7 +226,7 @@ export class ApiModel {
 
     }
     if (userSchedule != undefined) {
-      await this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
+      this.SetWeekSchedule(userSchedule.formatScheduleData, 0, true)
     }
 
   }
@@ -351,7 +351,7 @@ export class ApiModel {
         user?.teacher_id || '',
         firstDayWeek
       );
-      await this.SetWeekSchedule(response, week, isSave);
+      this.SetWeekSchedule(response, week, isSave);
 
     } else {
       const response = await ApiHelper.getScheduleFromDb(
@@ -359,7 +359,7 @@ export class ApiModel {
         user?.eng_group || '',
         firstDayWeek
       )
-      await this.SetWeekSchedule(response, week, isSave);
+      this.SetWeekSchedule(response, week, isSave);
 
     }
   }
@@ -534,7 +534,7 @@ export class ApiModel {
       String(eng_group),
       getFirstDayWeek(new Date())
     )
-    await this.SetWeekSchedule(response, 0, isSave);
+    this.SetWeekSchedule(response, 0, isSave);
     this.isStudent = true
   }
 
