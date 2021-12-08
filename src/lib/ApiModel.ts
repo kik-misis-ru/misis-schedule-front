@@ -344,9 +344,9 @@ export class ApiModel {
 
     let week = isCurrentWeek ? 0 : 1
 
-    if (this.isTeacher(isSave)) {
-      this.isStudent = false
+    this.isStudent = ! this.isTeacher(isSave);
 
+    if (this.isTeacher(isSave)) {
       const response = await ApiHelper.getScheduleTeacherFromDb(
         user?.teacher_id || '',
         firstDayWeek
@@ -354,8 +354,6 @@ export class ApiModel {
       await this.SetWeekSchedule(response, week, isSave);
 
     } else {
-      this.isStudent = true
-
       const response = await ApiHelper.getScheduleFromDb(
         user?.group_id || '',
         user?.eng_group || '',
