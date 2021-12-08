@@ -368,14 +368,13 @@ export class ApiModel {
       this.unsavedUser.teacher = teacherName
     }
     let teacher: ITeacherSettings = {initials: teacherName}
-    return !(await (await this.CheckIsCorrectTeacher(teacher, false)).IsInitialsError);
+    return !( (await this.CheckIsCorrectTeacher(teacher, false)).IsInitialsError);
   }
 
   public async convertGroupNameToGroupId(groupName: string): Promise<Number> {
-    if (groupName && groupName != "") {
-      return await ApiHelper.getGroupByName(groupName);
-    }
-    return -1
+    return (groupName && groupName != "")
+      ? await ApiHelper.getGroupByName(groupName)
+      : -1;
   }
 
   // todo исправить асинхронную работу
