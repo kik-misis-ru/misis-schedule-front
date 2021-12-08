@@ -6,18 +6,20 @@ import {ACCENT_TEXT_COLOR} from "../components/consts";
 
 export const SpinnerPage = (
   {
-    theme,
-    character
+    // theme,
+    // character
   }: {
-    theme: string
-    character: CharacterId
+    // theme: string
+    // character: CharacterId
   }) => {
   return (
+/*
     <DeviceThemeProvider>
       <DocStyle/>
       {
         getThemeBackgroundByChar(character, theme)
       }
+*/
       <div>
         <Container style={{
           padding: 0,
@@ -35,7 +37,9 @@ export const SpinnerPage = (
             }}/>
         </Container>
       </div>
+/*
     </DeviceThemeProvider>
+*/
   )
 }
 

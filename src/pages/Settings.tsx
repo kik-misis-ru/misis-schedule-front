@@ -154,39 +154,6 @@ interface SettingsState {
 
 class Settings extends React.Component<SettingsProps, SettingsState> {
 
-  componentDidMount() {
-    this.props.assistant.on('action-group', (group) => {
-      console.log('action-group', group)
-    })
-    this.props.assistant.on('action-subGroup', (subGroup) => {
-      let settings = this.state.studentSettings
-      this.setState({
-        studentSettings:
-          {
-            groupName: settings.groupName,
-            engGroupName: settings.engGroupName,
-            subGroupName: subGroup
-          }
-      })
-    })
-    this.props.assistant.on('action-engGroup', (engGroup) => {
-      let settings = this.state.studentSettings
-      this.setState({
-        studentSettings:
-          {
-            groupName: settings.groupName,
-            engGroupName: engGroup,
-            subGroupName: settings.subGroupName
-          }
-      })
-    })
-    this.props.assistant.on('show_schedule', async () => {
-      await this.Save()
-    })
-
-  }
-
-
   constructor(props: SettingsProps) {
     super(props);
     this.Save = this.Save.bind(this);
@@ -216,8 +183,58 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
       },
       teacherValidation: {IsInitialsError: false}
     };
+    this.handleAssistantActionGroup.bind(this);
+    this.handleAssistantActionSubGroup.bind(this)
+    this.handleAssistantActionEngGroup.bind(this)
+    this.handleAssistantActionShowSchedule.bind(this)
   }
 
+
+  componentDidMount() {
+    this.props.assistant.on('action-group', this.handleAssistantActionGroup);
+    this.props.assistant.on('action-subGroup', this.handleAssistantActionSubGroup)
+    this.props.assistant.on('action-engGroup', this.handleAssistantActionEngGroup)
+    this.props.assistant.on('show_schedule', this.handleAssistantActionShowSchedule)
+  }
+
+
+  componentWillUnmount() {
+    this.props.assistant.removeListener('action-group', this.handleAssistantActionGroup);
+    this.props.assistant.removeListener('action-subGroup', this.handleAssistantActionSubGroup)
+    this.props.assistant.removeListener('action-engGroup', this.handleAssistantActionEngGroup)
+    this.props.assistant.removeListener('show_schedule', this.handleAssistantActionShowSchedule)
+  }
+
+
+  handleAssistantActionGroup(group) {
+    console.log('action-group', group)
+  }
+
+  handleAssistantActionSubGroup(subGroup) {
+    let settings = this.state.studentSettings
+    this.setState({
+      studentSettings: {
+        groupName: settings.groupName,
+        engGroupName: settings.engGroupName,
+        subGroupName: subGroup
+      }
+    })
+  }
+
+  handleAssistantActionEngGroup(engGroup) {
+    let settings = this.state.studentSettings
+    this.setState({
+      studentSettings: {
+        groupName: settings.groupName,
+        engGroupName: engGroup,
+        subGroupName: settings.subGroupName
+      }
+    })
+  }
+
+  async handleAssistantActionShowSchedule() {
+    await this.Save()
+  }
 
   async Save() {
     console.log(this.state.timePush.value.getHours(), this.state.timePush.value.getMinutes(), "SETTINGS")
@@ -244,11 +261,11 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     // if (!this.props.isTeacherError && !this.props.student) this.setState({edit: false })
     //console.log("CHECK",!this.props.isTeacherError && !this.props.student)
     this.props.apiModel.pushSettings = {
-        Hour: this.state.timePush.hour,
-        Minute: this.state.timePush.min,
-        IsActive: this.state.disabled
-      }
-    this.props.apiModel.AddPush()
+      Hour: this.state.timePush.hour,
+      Minute: this.state.timePush.min,
+      IsActive: this.state.disabled
+    }
+    await this.props.apiModel.AddPush()
     if (this.state.disabled) {
       this.props.assistant.sendAction({
         action_id: 'settings',
@@ -267,13 +284,17 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
     const Push = (
       <Row>
         <Switch style={{margin: "0"}} label="Включить пуш-уведомления " description="Напоминания о парах"/>
-        <TimePicker style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center"
-        }} min={new Date(1629996400000 - 68400000 - 2760000)} max={new Date(1630000000000 + 10800000 + 780000)}
-                    value={this.state.timePush.value}
-                    options={{hours: true, minutes: true, seconds: false}}></TimePicker>
+        <TimePicker
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center"
+          }}
+          min={new Date(1629996400000 - 68400000 - 2760000)}
+          max={new Date(1630000000000 + 10800000 + 780000)}
+          value={this.state.timePush.value}
+          options={{hours: true, minutes: true, seconds: false}}
+        ></TimePicker>
       </Row>
     )
 
@@ -297,10 +318,22 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
               <HeaderTitle>Настройки</HeaderTitle>
             </HeaderTitleWrapper>
             <HeaderContent>
-              {!this.state.edit ? (<Button size="s" view="clear" contentLeft={<IconEdit/>} onClick={() => {
-                  this.Edit()
-                }}/>
-              ) : (<div></div>)}
+              {
+                !this.state.edit
+                  ? (
+                    <Button
+                      size="s"
+                      view="clear"
+                      contentLeft={
+                        <IconEdit/>
+                      }
+                      onClick={() => {
+                        this.Edit()
+                      }}
+                    />
+                  )
+                  : (<div></div>)
+              }
             </HeaderContent>
           </HeaderRoot>
         </Row>
@@ -318,60 +351,60 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                 selectedIndex={this.state.IsStudent ? 0 : 1}
                 onSelect={(tabIndex) => this.setState({IsStudent: tabIndex === 0})}
               />
-              {this.state.IsStudent
-                ? <Col size={4} style={{marginTop: "1em"}}>
-                  <TextFieldForUserInfo
-                    label={LABEL_GROUP}
-                    isError={this.state.studentValidation.IsGroupNameError}
-                    value={this.state.studentSettings.groupName}
-                    onChange={(value) => this.setState({
-                      studentSettings:
-                        {
-                          groupName: value,
-                          subGroupName: this.state.studentSettings.subGroupName,
-                          engGroupName: this.state.studentSettings.engGroupName
-                        }
-                    })}
-                  />
-
-                  <TextFieldForUserInfo
-                    label={LABEL_SUB_GROUP}
-                    isError={this.state.studentValidation.IsSubGroupError}
-                    value={this.state.studentSettings.subGroupName}
-                    onChange={(value) => this.setState(
-                      {
+              {
+                this.state.IsStudent
+                  ? <Col size={4} style={{marginTop: "1em"}}>
+                    <TextFieldForUserInfo
+                      label={LABEL_GROUP}
+                      isError={this.state.studentValidation.IsGroupNameError}
+                      value={this.state.studentSettings.groupName}
+                      onChange={(value) => this.setState({
                         studentSettings:
                           {
-                            groupName: this.state.studentSettings.groupName,
-                            subGroupName: value,
+                            groupName: value,
+                            subGroupName: this.state.studentSettings.subGroupName,
                             engGroupName: this.state.studentSettings.engGroupName
                           }
                       })}
-                  />
+                    />
 
-                  <TextFieldForUserInfo
-                    label={LABEL_ENG_GROUP}
-                    isError={this.state.studentValidation.IsEngGroupError}
-                    value={this.state.studentSettings.engGroupName}
-                    onChange={(value) => this.setState({
-                      studentSettings:
+                    <TextFieldForUserInfo
+                      label={LABEL_SUB_GROUP}
+                      isError={this.state.studentValidation.IsSubGroupError}
+                      value={this.state.studentSettings.subGroupName}
+                      onChange={(value) => this.setState(
                         {
-                          groupName: this.state.studentSettings.groupName,
-                          subGroupName: this.state.studentSettings.subGroupName,
-                          engGroupName: value
-                        }
-                    })}
-                  />
-                </Col>
+                          studentSettings:
+                            {
+                              groupName: this.state.studentSettings.groupName,
+                              subGroupName: value,
+                              engGroupName: this.state.studentSettings.engGroupName
+                            }
+                        })}
+                    />
 
-                : <Col size={4}>
-                  <TextFieldForUserInfo
-                    label={LABEL_TEACHER}
-                    value={this.state.teacherSettings.initials}
-                    isError={this.state.teacherValidation.IsInitialsError}
-                    onChange={(value) => this.setState({teacherSettings: {initials: value}})}
-                  />
-                </Col>
+                    <TextFieldForUserInfo
+                      label={LABEL_ENG_GROUP}
+                      isError={this.state.studentValidation.IsEngGroupError}
+                      value={this.state.studentSettings.engGroupName}
+                      onChange={(value) => this.setState({
+                        studentSettings:
+                          {
+                            groupName: this.state.studentSettings.groupName,
+                            subGroupName: this.state.studentSettings.subGroupName,
+                            engGroupName: value
+                          }
+                      })}
+                    />
+                  </Col>
+                  : <Col size={4}>
+                    <TextFieldForUserInfo
+                      label={LABEL_TEACHER}
+                      value={this.state.teacherSettings.initials}
+                      isError={this.state.teacherValidation.IsInitialsError}
+                      onChange={(value) => this.setState({teacherSettings: {initials: value}})}
+                    />
+                  </Col>
               }
               <Switch
                 style={{margin: "1em"}}
@@ -429,7 +462,8 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                   style={{margin: "0.5em"}}
                   onClick={() => {
                     this.setState({edit: false});
-                  }}>Отмена</Button>
+                  }}
+                >Отмена</Button>
               </Col>
             </Row>
           )
@@ -440,45 +474,55 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
               </Col>
               {
                 this.state.IsStudent && this.state.studentSettings.groupName != ""
-
-                  ? (<Col size={10}>
-
-                      {this.state.studentSettings.groupName != "" ?
-                        <TextBox>
-                          <TextBoxLabel>
-                            Номер академической группы
-                          </TextBoxLabel>
-                          <Headline4>{this.state.studentSettings.groupName} </Headline4>
-                        </TextBox> : <div></div>}
-                      {this.state.studentSettings.subGroupName != "" ?
-                        <TextBox>
-                          <TextBoxLabel>
-                            Номер подгруппы
-                          </TextBoxLabel>
-                          <Headline4>{this.state.studentSettings.subGroupName} </Headline4>
-                        </TextBox> : <div></div>}
-                      {this.state.studentSettings.engGroupName != "" ?
-                        <TextBox>
-                          <TextBoxLabel>
-                            Номер группы по английскому
-                          </TextBoxLabel>
-                          <Headline4>{this.state.studentSettings.engGroupName} </Headline4>
-                        </TextBox> : <div></div>}
-
+                  ? (
+                    <Col size={10}>
+                      {
+                        this.state.studentSettings.groupName != ""
+                          ? <TextBox>
+                            <TextBoxLabel>
+                              Номер академической группы
+                            </TextBoxLabel>
+                            <Headline4>{this.state.studentSettings.groupName} </Headline4>
+                          </TextBox>
+                          : <div></div>
+                      }
+                      {
+                        this.state.studentSettings.subGroupName != "" ?
+                          <TextBox>
+                            <TextBoxLabel>
+                              Номер подгруппы
+                            </TextBoxLabel>
+                            <Headline4>{this.state.studentSettings.subGroupName} </Headline4>
+                          </TextBox>
+                          : <div></div>
+                      }
+                      {
+                        this.state.studentSettings.engGroupName != ""
+                          ? <TextBox>
+                            <TextBoxLabel>
+                              Номер группы по английскому
+                            </TextBoxLabel>
+                            <Headline4>
+                              {this.state.studentSettings.engGroupName}
+                            </Headline4>
+                          </TextBox>
+                          : <div></div>
+                      }
                     </Col>
                   )
-                  : (<Col size={10}>
-                      {this.state.teacherSettings.initials != ""
-                        ? <TextBox>
-                          <TextBoxLabel>
-                            ФИО
-                          </TextBoxLabel>
-                          <Headline4>{this.state.teacherSettings.initials}</Headline4>
-                        </TextBox>
-                        : <div></div>}
+                  : (
+                    <Col size={10}>
+                      {
+                        this.state.teacherSettings.initials != ""
+                          ? <TextBox>
+                            <TextBoxLabel>
+                              ФИО
+                            </TextBoxLabel>
+                            <Headline4>{this.state.teacherSettings.initials}</Headline4>
+                          </TextBox>
+                          : <div></div>}
                     </Col>
                   )
-
               }
               <Col size={10}>
                 <TextBox>
@@ -493,13 +537,16 @@ class Settings extends React.Component<SettingsProps, SettingsState> {
                       <TextBoxLabel>
                         Время отправки
                       </TextBoxLabel>
-                      <Headline4>{
-                        this.state.timePush.value.getHours() < 10
-                          ? `0${this.state.timePush.value.getHours()}`
-                          : this.state.timePush.value.getHours()}
+                      <Headline4>
+                        {
+                          this.state.timePush.value.getHours() < 10
+                            ? `0${this.state.timePush.value.getHours()}`
+                            : this.state.timePush.value.getHours()}
                         :{this.state.timePush.value.getMinutes() < 10
-                          ? `0${this.state.timePush.value.getMinutes()}`
-                          : this.state.timePush.value.getMinutes()}</Headline4>
+                        ? `0${this.state.timePush.value.getMinutes()}`
+                        : this.state.timePush.value.getMinutes()
+                      }
+                      </Headline4>
                     </TextBox>
                     : <TextBox>
                       <Headline4>Выкл.</Headline4>

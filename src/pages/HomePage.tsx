@@ -160,15 +160,66 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       teacherValidation: {IsInitialsError: false},
       IsSave: false
     }
-    console.log(this.state.studentSettings, "Student Settings")
-    // this.onHandleChange("description", props.character === "joy"
-    //   ? DESC_JOY
-    //   : DESC_OTHERS)
+    this.handleAssistantActionGroup.bind(this);
+    this.handleAssistantActionSubGroup.bind(this)
+    this.handleAssistantActionEngGroup.bind(this)
+    this.handleAssistantActionShowSchedule.bind(this)
+    console.log('HomePage:', this.state.studentSettings, "Student Settings")
   }
 
+
+  componentDidMount() {
+    this.props.assistant.on('action-group', this.handleAssistantActionGroup);
+    this.props.assistant.on('action-subGroup', this.handleAssistantActionSubGroup)
+    this.props.assistant.on('action-engGroup', this.handleAssistantActionEngGroup)
+    this.props.assistant.on('show_schedule', this.handleAssistantActionShowSchedule)
+  }
+
+
+  componentWillUnmount() {
+    this.props.assistant.removeListener('action-group', this.handleAssistantActionGroup);
+    this.props.assistant.removeListener('action-subGroup', this.handleAssistantActionSubGroup)
+    this.props.assistant.removeListener('action-engGroup', this.handleAssistantActionEngGroup)
+    this.props.assistant.removeListener('show_schedule', this.handleAssistantActionShowSchedule)
+  }
+
+
+  handleAssistantActionGroup(group) {
+    console.log('action-group', group)
+  }
+
+  handleAssistantActionSubGroup(subGroup) {
+    let settings = this.state.studentSettings
+    this.setState({
+      studentSettings: {
+        groupName: settings.groupName,
+        engGroupName: settings.engGroupName,
+        subGroupName: subGroup
+      }
+    })
+  }
+
+  handleAssistantActionEngGroup(engGroup) {
+    let settings = this.state.studentSettings
+    this.setState({
+      studentSettings: {
+        groupName: settings.groupName,
+        engGroupName: engGroup,
+        subGroupName: settings.subGroupName
+      }
+    })
+  }
+
+  async handleAssistantActionShowSchedule() {
+    this.props.IsStudent
+      ? await this.save_student()
+      : await this.save_teacher()
+  }
+
+
   goToSchedule(isSave: boolean, isCurrentWeek: boolean) {
-      let current_date = new Date().toISOString().slice(0, 10)
-      history.push('/schedule/' + current_date + '/' + isSave + '/' + isCurrentWeek)
+    let current_date = new Date().toISOString().slice(0, 10)
+    history.push('/schedule/' + current_date + '/' + isSave + '/' + isCurrentWeek)
   }
 
   async save_teacher() {
@@ -192,53 +243,14 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       this.goToSchedule(this.state.IsSave, true)
     } else {
       this.setState({
-        studentValidation:
-          {
-            IsEngGroupError: isCorrect.IsEngGroupError,
-            IsGroupNameError: isCorrect.IsGroupNameError,
-            IsSubGroupError: isCorrect.IsSubGroupError
-          }
+        studentValidation: {
+          IsEngGroupError: isCorrect.IsEngGroupError,
+          IsGroupNameError: isCorrect.IsGroupNameError,
+          IsSubGroupError: isCorrect.IsSubGroupError
+        }
       })
     }
   }
-
-  componentDidMount() {
-    this.props.assistant.on('action-group', (group) => {
-      console.log('action-group', group)
-    })
-    this.props.assistant.on('action-subGroup', (subGroup) => {
-      let settings = this.state.studentSettings
-      this.setState({
-        studentSettings:
-          {
-            groupName: settings.groupName,
-            engGroupName: settings.engGroupName,
-            subGroupName: subGroup
-          }
-      })
-    })
-    this.props.assistant.on('action-engGroup', (engGroup) => {
-      let settings = this.state.studentSettings
-      this.setState({
-        studentSettings:
-          {
-            groupName: settings.groupName,
-            engGroupName: engGroup,
-            subGroupName: settings.subGroupName
-          }
-      })
-    })
-    this.props.assistant.on('show_schedule', async () => {
-      this.props.IsStudent ? await this.save_student() : await this.save_teacher()
-    })
-
-  }
-
-
-  componentWillUnmount() {
-    this.props.assistant.removeAllListeners();
-  }
-
 
   render() {
 
@@ -264,12 +276,10 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           isError={this.state.studentValidation.IsGroupNameError}
           value={this.state.studentSettings.groupName}
           onChange={(value) => this.setState(prevState => ({
-            studentSettings:
-              {
-                ...prevState.studentSettings,
-                groupName: value,
-
-              }
+            studentSettings: {
+              ...prevState.studentSettings,
+              groupName: value,
+            }
           }))
           }
 
@@ -280,12 +290,10 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           isError={this.state.studentValidation.IsSubGroupError}
           value={this.state.studentSettings.subGroupName}
           onChange={(value) => this.setState(prevState => ({
-            studentSettings:
-              {
-                ...prevState.studentSettings,
-                subGroupName: value,
-
-              }
+            studentSettings: {
+              ...prevState.studentSettings,
+              subGroupName: value,
+            }
           }))
           }
         />
@@ -295,12 +303,10 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           isError={this.state.studentValidation.IsEngGroupError}
           value={this.state.studentSettings.engGroupName}
           onChange={(value) => this.setState(prevState => ({
-            studentSettings:
-              {
-                ...prevState.studentSettings,
-                engGroupName: value,
-
-              }
+            studentSettings: {
+              ...prevState.studentSettings,
+              engGroupName: value,
+            }
           }))
           }
         />
@@ -316,8 +322,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <ShowScheduleButtonRow
           onClick={async () => {
             await this.save_student()
-          }
-          }
+          }}
         />
 
       </Container>
@@ -329,7 +334,9 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <TabSelectorRow
           tabs={USER_MODES}
           selectedIndex={this.props.IsStudent ? 0 : 1}
-          onSelect={(tabIndex) => tabIndex === 0 ? history.push('/Home/true') : history.push('/Home/false')}
+          onSelect={(tabIndex) => tabIndex === 0
+            ? history.push('/Home/true')
+            : history.push('/Home/false')}
         />
 
         <HomeDescription
@@ -364,11 +371,9 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       : teacherContent;
 
     return (
-      <div>
-        <Main
-          contentRight={mainContent}
-        />
-      </div>
+      <Main
+        contentRight={mainContent}
+      />
     )
   }
 }

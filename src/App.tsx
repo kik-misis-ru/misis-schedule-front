@@ -931,7 +931,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     console.log("App: render, this.state:", this.state)
     return (
       <Theme
-        assistant={this.assistant}
+        // assistant={this.assistant}
         character={this.state.character}
         theme={this.state.theme}
       >
@@ -951,18 +951,17 @@ export class App extends React.Component<IAppProps, IAppState> {
             />                            
             <Route
               path="/settings"
-              // component={
               render={
                 ({match}) => {
                   return <Settings
+                    apiModel={this.apiModel}
+                    assistant={this.assistant}
                     description={
                       this.state.character === 'joy'
                         ? ENTER_DATA_NO_OFFICIAL_TEXT
                         : ENTER_DATA_OFFICIAL_TEXT
                     }
                     toggleTheme={() => this.toggleTheme()}
-                    apiModel={this.apiModel}
-                    assistant={this.assistant}
                   />
                 }
               }
@@ -1035,14 +1034,12 @@ export class App extends React.Component<IAppProps, IAppState> {
               path="/schedule/:Date/:IsSaved/:IsCurrentWeek/:Day?"
               render={
                 ({match}) => {
-                  let timeParam = this.state.page;
-                  // console.log("timeParam", timeParam)
                   return <SchedulePage
                     page={match.params.Day
                       ? Number(match.params.Day)
                       : new Date().getDay() - 1}
                     assistant={this.assistant}
-                    timeParam={timeParam}
+                    timeParam={this.state.page}
                     getCurrentLesson={this.getCurrentLesson}
                     apiModel={this.apiModel}
                     Date={new Date(match.params.Date)}
@@ -1053,7 +1050,6 @@ export class App extends React.Component<IAppProps, IAppState> {
                     // schedule={this.apiModel.isSavedSchedule ? this.apiModel.saved_schedule : this.apiModel.other_schedule}
                     getIsCorrectTeacher={this.getIsCorrectTeacher}
                   />
-
                 }
               }
             />

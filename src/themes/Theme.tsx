@@ -8,12 +8,12 @@ import {DocStyle, getThemeBackgroundByChar} from "./tools";
 
 
 export const Theme = ({
-                        assistant,
+                        // assistant,
                         character,
                         theme,
                         children,
                       }: {
-  assistant: AssistantWrapper
+  // assistant: AssistantWrapper
   character: CharacterId,
   theme: ThemeType,
   children: JSX.Element[] | JSX.Element,
