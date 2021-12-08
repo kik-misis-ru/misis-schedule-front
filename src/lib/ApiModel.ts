@@ -302,37 +302,38 @@ export class ApiModel {
 
 
   public async getScheduleFromDb(date: Date, isSave: boolean, isCurrentWeek: Boolean) {
-/*
-    let teacher_id, group_id, eng;
-    console.log("isSave", isSave)
-    if (isSave) {
-      teacher_id = this.user?.teacher_id;
-      group_id = this.user?.group_id;
-      console.log("getScheduleFromDb: groupId", group_id)
-      if(group_id && this.user){
-        console.log("GROUP:",this.user.group)
-        //group_id = this.convertGroupNameToGroupId(this.user?.group)
-      }
-      else{
-        return
-      }
-      eng = this.user?.eng_group
-      if (this.isTeacher(isSave) && this.unsavedUser && this.user?.teacher) {
-        this.isStudent=false;
-        this.unsavedUser.teacher = this.user.teacher
-      }
-      else {
-        this.isStudent = true;
-      }
-    }
-    else {
-      teacher_id = this.unsavedUser.teacher_id;
-      group_id = this.unsavedUser.group_id;
-      eng = this.unsavedUser.eng_group;
-    }
-*/
+    /*
+        let teacher_id, group_id, eng;
+        console.log("isSave", isSave)
+        if (isSave) {
+          teacher_id = this.user?.teacher_id;
+          group_id = this.user?.group_id;
+          console.log("getScheduleFromDb: groupId", group_id)
+          if(group_id && this.user){
+            console.log("GROUP:",this.user.group)
+            //group_id = this.convertGroupNameToGroupId(this.user?.group)
+          }
+          else{
+            return
+          }
+          eng = this.user?.eng_group
+          if (this.isTeacher(isSave) && this.unsavedUser && this.user?.teacher) {
+            this.isStudent=false;
+            this.unsavedUser.teacher = this.user.teacher
+          }
+          else {
+            this.isStudent = true;
+          }
+        }
+        else {
+          teacher_id = this.unsavedUser.teacher_id;
+          group_id = this.unsavedUser.group_id;
+          eng = this.unsavedUser.eng_group;
+        }
+    */
+
     const user = this.getUser(isSave);
-    console.log("apiModel:getScheduleFromDb: user", user)
+    console.log("apiModel.getScheduleFromDb: user", user)
 
     if (!user || !user?.group_id) {
       console.warn('No user or group set')
@@ -344,24 +345,20 @@ export class ApiModel {
 
     let week = isCurrentWeek ? 0 : 1
 
-    this.isStudent = ! this.isTeacher(isSave);
+    this.isStudent = !this.isTeacher(isSave);
 
-    if (this.isTeacher(isSave)) {
-      const response = await ApiHelper.getScheduleTeacherFromDb(
+    const response = this.isTeacher(isSave)
+      ? await ApiHelper.getScheduleTeacherFromDb(
         user?.teacher_id || '',
         firstDayWeek
-      );
-      this.SetWeekSchedule(response, week, isSave);
-
-    } else {
-      const response = await ApiHelper.getScheduleFromDb(
+      )
+      : await ApiHelper.getScheduleFromDb(
         user?.group_id || '',
         user?.eng_group || '',
         firstDayWeek
-      )
-      this.SetWeekSchedule(response, week, isSave);
+      );
 
-    }
+    this.SetWeekSchedule(response, week, isSave);
   }
 
   public async doSetTeacher(teacherName: string): Promise<boolean> {
