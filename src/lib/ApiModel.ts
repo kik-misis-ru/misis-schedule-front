@@ -239,7 +239,7 @@ export class ApiModel {
   /**
    * заполнение данными расписания из бд
    */
-  public async SetWeekSchedule(scheduleData: ApiHelper.IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
+  public SetWeekSchedule(scheduleData: ApiHelper.IScheduleFormatData, i: Number, isSavedSchedule: boolean) {
     this.isSavedSchedule = isSavedSchedule
     console.log("SetWeekSchedule: IsSave:", isSavedSchedule)
     console.log("SetWeekSchedule: i:", i)
