@@ -2,15 +2,9 @@ import React from "react";
 import {
   TextBoxBigTitle,
   TextBox,
-  Caption,
   TextBoxLabel,
   TextField,
   Container,
-  Row,
-  Col,
-  Button,
-  DeviceThemeProvider,
-  Header
 } from "@sberdevices/plasma-ui";
 import {
   ApiModel,
@@ -22,11 +16,6 @@ import {
 } from '../lib/ApiModel'
 import {history} from "../App";
 import {AssistantWrapper} from "../lib/AssistantWrapper";
-import {
-  getThemeBackgroundByChar,
-} from '../themes/tools';
-import {DocStyle} from '../themes/tools';
-import {CharacterId} from "../types/base";
 import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'

@@ -62,9 +62,8 @@ import location from "../images/location.png";
 import logo from "../images/App Icon.png";
 
 import {Bell} from '../types/ScheduleStructure'
-import {CharacterId} from "../types/base.d";
 import {pairNumberToPairNumText} from '../language-ru/utils'
-import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
+import {GoToHomeButton} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
 import {history} from "../App";
 import {AssistantWrapper} from "../lib/AssistantWrapper";
