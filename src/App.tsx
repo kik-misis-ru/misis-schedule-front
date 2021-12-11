@@ -1010,6 +1010,7 @@ export class App extends React.Component<IAppProps, IAppState> {
                 let end = this.getEndLastLesson(todayZeroIndex);
                 console.log("this.state.isUser", this.state.isUser)
                 return <DashboardPage
+                
                   assistant={this.assistant}
                   character={this.state.character}
                   theme={this.state.theme}

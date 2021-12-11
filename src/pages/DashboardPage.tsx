@@ -63,7 +63,7 @@ import logo from "../images/App Icon.png";
 import {Bell} from '../types/ScheduleStructure'
 import {CharacterId} from "../types/base.d";
 import {pairNumberToPairNumText} from '../language-ru/utils'
-import {GoToHomeButton, HeaderLogoCol, HeaderTitleCol} from "../components/TopMenu";
+import {GoToHomeButton} from "../components/TopMenu";
 import ScheduleLesson from "../components/ScheduleLesson";
 import {history} from "../App";
 import {AssistantWrapper} from "../lib/AssistantWrapper";
@@ -224,17 +224,17 @@ const DashboardCard = ({
   onClick?: MouseEventHandler<HTMLElement>
 }) => {
   return (
-    <Col size={2}>
+    <Col size={2} >
       <Card
         style={{
-          height: "96%",
-          marginTop: "0.5em",
+          height: "180px",
+          marginTop: "5%",
           cursor: !!onClick ? 'pointer' : 'default',
           display: "flex", flexDirection: "column"
         }}
         onClick={(event) => !!onClick ? onClick(event) : undefined}>
         <CardBody >
-          <CardContent style={{height: "22vh"}}>
+          <CardContent style={{height: "180px"}}>
             <TextBox>
               <Caption style={{color: "grey"}}>
                 {sub}

@@ -24,10 +24,7 @@ import star from "../images/Star-1.png";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
-import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
-} from '../components/TopMenu';
+
 
 import logo from "../images/App Icon.png";
 
@@ -114,18 +111,20 @@ const Start = ({
         (
           <Container style={{padding: 0}}>
 
-<Row style={{
-    margin: "1em"
-  }}>
 
-    <HeaderLogoCol/>
+    <Row style={{margin: "1em", marginLeft: "5%", marginRight: "5%"}}>
 
-    <HeaderTitleCol2
-      title='Мир МИСиС'
-    />
+<HeaderRoot>
+  <HeaderMinimize onClick={() => history.push("/dashboard")} />
+<HeaderLogo src={logo} alt="Logo" onClick={() => history.push("/dashboard")}/>
+<HeaderTitleWrapper>
+  <HeaderTitle>Мир МИСиС</HeaderTitle>
+</HeaderTitleWrapper>
+</HeaderRoot>
 
+</Row>
 
-  </Row>
+   
   <Row style={{display: "flex", flexDirection: "row"}}>
   <Col>
   <Image src={star} style={{width: "40vw", overflow: "hidden"}}/>

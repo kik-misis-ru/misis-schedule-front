@@ -24,8 +24,6 @@ import {CharacterId, IBuilding} from "../types/base";
 import {Libraries} from '../components/Libraries'
 import {FAQCard} from '../components/FAQCard'
 import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
   GoToDashboardButton,
 } from '../components/TopMenu';
 

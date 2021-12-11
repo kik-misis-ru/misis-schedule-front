@@ -33,8 +33,6 @@ import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
 import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
   GoToDashboardButton,
   GoToHomeButton,
   GoToScheduleButton,
@@ -160,18 +158,13 @@ const NavigatorPage = ({
           <Container style={{padding: 0}}>
 
             <Row style={{margin: "1em"}}>
-
-              <HeaderLogoCol/>
-
-              <HeaderTitleCol2
-                title='Карта университета'
-              />
-
-              <Col style={{margin: "0 0 0 auto"}}>
-                <GoToDashboardButton
-                  onClick={() => onDashboardClick()}
-                />
-              </Col>
+            <HeaderRoot>
+            <HeaderMinimize onClick={() => onDashboardClick()} />
+          <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
+          <HeaderTitleWrapper>
+            <HeaderTitle>Карта университета</HeaderTitle>
+          </HeaderTitleWrapper>
+          </HeaderRoot>
 
             </Row>
 

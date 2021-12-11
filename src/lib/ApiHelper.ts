@@ -172,7 +172,7 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
  
 
 export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByUserIdData | undefined>{
-  const url = `${API_URL}schedule_by_user_id`;
+  const url = `${API_URL}data_by_user_id`;
   const config={
     params:{
       user_id: user_id
@@ -196,7 +196,7 @@ export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByU
 export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherApiData | undefined> {
   console.log(`ApiHelper: teacher_in`, teacher_in);
 
-  const url = `${API_URL}teacher`;
+  const url = `${API_URL}teacher_by_initials`;
   const config = {
     params: {
       teacher_initials: teacher_in,
@@ -216,7 +216,7 @@ export async function getIdTeacherFromDb(teacher_in: string): Promise<ITeacherAp
 }
 
 export async function getInTeacherFromDb(teacher_id: string): Promise<ITeacherApiData | undefined> {
-  const url = `${API_URL}teacher_initials`;
+  const url = `${API_URL}teacher_by_id`;
   const config = {
     params: {
       teacher_id: teacher_id,
@@ -261,7 +261,7 @@ export async function createUser(
   engGroup: string,
   teacher_id: string,
 ): Promise<AxiosResponse<any>> {
-  const url = `${API_URL}users`;
+  const url = `${API_URL}user`;
   const data = {
     "user_id": userId,
     "filial_id": filialId!=undefined ? filialId : "",
@@ -455,7 +455,6 @@ export function FormateSchedule(schedule_from_api: IScheduleApiData, subgroup) :
       let countLessons = 0;
      
       day[day_num - 1].count = 0;
-
       if (schedule_from_api.schedule !== null) {
         day[day_num - 1].date = schedule_from_api.schedule_header[`day_${day_num}`].date;
         for (let bell in schedule_from_api.schedule) { //проверка
