@@ -19,7 +19,6 @@ const Template: ComponentStory<typeof NavigatorPage> = (args, context) => (
 export const Default = Template.bind({});
 
 Default.args = {
-  buildings,
   // character
 };
 

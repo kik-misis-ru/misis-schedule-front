@@ -66,3 +66,5 @@ export function pairNumberToPairText(pairCount: number): string | undefined {
       : "пар"
   return lesson;
 }
+
+

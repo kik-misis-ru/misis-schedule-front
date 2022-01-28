@@ -1,26 +1,20 @@
 import React from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  Container, 
-  Row, 
-  Col, 
-  DeviceThemeProvider, 
-  Header,
+  Container,
+  Row,
   HeaderBack,
   HeaderLogo,
   HeaderTitle,
   HeaderTitleWrapper,
-  HeaderContent,
   HeaderRoot,
-  HeaderMinimize
 } from "@sberdevices/plasma-ui";
-import {Spacer100,Spacer200,Spacer300} from '../components/Spacers'
+import {history} from "../App";
+import {Spacer300} from '../components/Spacers'
 import faq from '../data/faq.json';
 import lib from '../data/libraries.json';
 import logo from "../images/App Icon.png";
 
-import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
-import {CharacterId, IBuilding} from "../types/base";
 import {Libraries} from '../components/Libraries'
 import {FAQCard} from '../components/FAQCard'
 import {
@@ -28,20 +22,8 @@ import {
 } from '../components/TopMenu';
 
 
-const FAQ = ({
-               character,
-               theme,
-               onDashboardClick,
-             }: {
-  theme: string
-  character: CharacterId
-  onDashboardClick: () => void
-}) => {
-  return <DeviceThemeProvider>
-    <DocStyle/>
-    {
-      getThemeBackgroundByChar(character, theme)
-    }
+const FAQ = ({}: {}) => {
+  return (
     <Container style={{
       padding: 0,
       // overflow: "hidden",
@@ -50,19 +32,25 @@ const FAQ = ({
     }}>
 
       <Row style={{margin: "1em", marginLeft: "5%", marginRight: "5%"}}>
-
-      <HeaderRoot>
-              <HeaderBack onClick={() => onDashboardClick()} />
-            <HeaderLogo src={logo} alt="Logo" onClick={() => onDashboardClick()}/>
-            <HeaderTitleWrapper>
-              <HeaderTitle>Часто задаваемые вопросы</HeaderTitle>
-            </HeaderTitleWrapper>
-            </HeaderRoot>
+        <HeaderRoot>
+          <HeaderBack
+            onClick={() => history.push("/dashboard")}
+          />
+          <HeaderLogo
+            src={logo}
+            alt="Logo"
+            onClick={() => history.push("/dashboard")}
+          />
+          <HeaderTitleWrapper>
+            <HeaderTitle>Часто задаваемые вопросы</HeaderTitle>
+          </HeaderTitleWrapper>
+        </HeaderRoot>
       </Row>
+
       {
         faq?.map((faq, index) => (
           <FAQCard
-            
+
             key={index}
             questions={faq.questions}
             text={faq.text}
@@ -70,6 +58,7 @@ const FAQ = ({
           />
         ))
       }
+
       {
         lib?.map((lib, index) => (
           <Libraries
@@ -85,7 +74,7 @@ const FAQ = ({
       <Spacer300/>
 
     </Container>
-  </DeviceThemeProvider>
+  )
 }
 
 export default FAQ

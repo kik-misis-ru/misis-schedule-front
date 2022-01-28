@@ -1,9 +1,9 @@
 import React from "react";
 import {Row} from '@sberdevices/plasma-ui';
-import 'react-toastify/dist/ReactToastify.css';
 import {
   Checkbox
 } from "@sberdevices/plasma-ui";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export const RememberCheckboxRow = ({

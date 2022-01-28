@@ -2,31 +2,20 @@ import React from "react";
 import {
   TextBoxBigTitle,
   TextBox,
-  Caption,
   TextBoxLabel,
   TextField,
-  Container, 
-  Row, 
-  Col, 
-  Button, 
-  DeviceThemeProvider,
-  Header
+  Container,
 } from "@sberdevices/plasma-ui";
-import{
+import {
   ApiModel,
-IStudentValidation,
-ITeacherValidation,
-IStudentSettings,
-ITeacherSettings,
+  IStudentValidation,
+  ITeacherValidation,
+  IStudentSettings,
+  ITeacherSettings,
 
 } from '../lib/ApiModel'
 import {history} from "../App";
 import {AssistantWrapper} from "../lib/AssistantWrapper";
-import {
-  getThemeBackgroundByChar,
-} from '../themes/tools';
-import {DocStyle} from '../themes/tools';
-import {CharacterId} from "../types/base";
 import Main from '../components/Home/Main';
 import TabSelectorRow from '../components/Home/TabSelectorRow'
 import {ShowScheduleButtonRow} from '../components/Home/ShowScheduleButtonRow'
@@ -120,10 +109,8 @@ const TextFieldForUserInfo = ({
 
 interface HomeViewProps {
   assistant: AssistantWrapper
-  character: CharacterId
   description: string
-  theme: string
-  onShowScheduleClick: (IsSave: boolean, IsCurrentWeek: boolean) => void
+  // onShowScheduleClick: (IsSave: boolean, IsCurrentWeek: boolean) => void
   apiModel: ApiModel
   IsStudent: boolean
 }
@@ -142,88 +129,118 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
   constructor(props: HomeViewProps) {
     super(props);
     let disabled = true;
-    if (props.apiModel.user!=undefined && props.apiModel.user?.group_id !== "") disabled = false;
+    if (props.apiModel.user != undefined && props.apiModel.user?.group_id !== "") disabled = false;
     let user = this.props.apiModel.user;
     this.state = {
       disabled: disabled,
-      studentSettings:{
-        groupName: user==undefined? "" : user.group,
-        subGroupName: user?.subgroup_name==undefined? "" : user.subgroup_name,
-        engGroupName: user?.eng_group==undefined? "" : user.eng_group,
+      studentSettings: {
+        groupName: user == undefined ? "" : user.group,
+        subGroupName: user?.subgroup_name == undefined ? "" : user.subgroup_name,
+        engGroupName: user?.eng_group == undefined ? "" : user.eng_group,
       },
-      teacherSettings:{
+      teacherSettings: {
         initials: user == undefined ? "" : user.teacher
       },
       studentValidation: {
-        IsGroupNameError: false, 
+        IsGroupNameError: false,
         IsSubGroupError: false,
-        IsEngGroupError: false},
-      teacherValidation : {IsInitialsError: false},
+        IsEngGroupError: false
+      },
+      teacherValidation: {IsInitialsError: false},
       IsSave: false
     }
-    console.log(this.state.studentSettings, "Student Settings")
-    // this.onHandleChange("description", props.character === "joy"
-    //   ? DESC_JOY
-    //   : DESC_OTHERS)
+    this.handleAssistantActionGroup.bind(this);
+    this.handleAssistantActionSubGroup.bind(this)
+    this.handleAssistantActionEngGroup.bind(this)
+    this.handleAssistantActionShowSchedule.bind(this)
+    console.log('HomePage:', this.state.studentSettings, "Student Settings")
   }
 
- async save_teacher(){
-    let teacherValidation = await this.props.apiModel.CheckIsCorrectTeacher(this.state.teacherSettings, this.state.IsSave)
-    console.log("Teacher validation", teacherValidation)
-    if(!teacherValidation.IsInitialsError){
-      console.log("Show Schedule")
-      console.log(this.props.apiModel)
-      this.props.onShowScheduleClick(this.state.IsSave, true)
-    }
-    else{
-      this.setState({teacherValidation: {IsInitialsError : teacherValidation.IsInitialsError}})
-    }
-  }
-  async save_student(){
-    let isCorrect = await this.props.apiModel.CheckIsCorrectStudent(this.state.studentSettings, this.state.IsSave)
-            if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
-              console.log(this.state.IsSave)
-              this.props.apiModel.isSavedSchedule = this.state.IsSave
-              await this.props.apiModel.LoadSchedule(this.state.IsSave)
-              this.props.onShowScheduleClick(this.state.IsSave, true)
-            }
-            else{
-              this.setState({studentValidation: 
-                {IsEngGroupError: isCorrect.IsEngGroupError, 
-                IsGroupNameError: isCorrect.IsGroupNameError,
-                IsSubGroupError: isCorrect.IsSubGroupError}})
-            }
-  }
 
   componentDidMount() {
-    this.props.assistant.on('action-group', (group) => {
-      console.log('action-group', group)
-    })
-    this.props.assistant.on('action-subGroup', (subGroup) => {
-      let settings = this.state.studentSettings
-      this.setState({studentSettings: 
-        {groupName: settings.groupName,
-        engGroupName: settings.engGroupName,
-        subGroupName: subGroup
-        }})
-    })
-    this.props.assistant.on('action-engGroup', (engGroup) => {
-      let settings = this.state.studentSettings
-      this.setState({studentSettings: 
-        {groupName: settings.groupName,
-        engGroupName: engGroup,
-        subGroupName: settings.subGroupName
-        }})
-    })
-    this.props.assistant.on('show_schedule', async () => {
-      this.props.IsStudent ? await this.save_student() : await this.save_teacher()
-    })
-    
+    this.props.assistant.on('action-group', this.handleAssistantActionGroup);
+    this.props.assistant.on('action-subGroup', this.handleAssistantActionSubGroup)
+    this.props.assistant.on('action-engGroup', this.handleAssistantActionEngGroup)
+    this.props.assistant.on('show_schedule', this.handleAssistantActionShowSchedule)
   }
 
+
   componentWillUnmount() {
-    this.props.assistant.removeAllListeners();
+    this.props.assistant.removeListener('action-group', this.handleAssistantActionGroup);
+    this.props.assistant.removeListener('action-subGroup', this.handleAssistantActionSubGroup)
+    this.props.assistant.removeListener('action-engGroup', this.handleAssistantActionEngGroup)
+    this.props.assistant.removeListener('show_schedule', this.handleAssistantActionShowSchedule)
   }
+
+
+  handleAssistantActionGroup(group) {
+    console.log('action-group', group)
+  }
+
+  handleAssistantActionSubGroup(subGroup) {
+    let settings = this.state.studentSettings
+    this.setState({
+      studentSettings: {
+        groupName: settings.groupName,
+        engGroupName: settings.engGroupName,
+        subGroupName: subGroup
+      }
+    })
+  }
+
+  handleAssistantActionEngGroup(engGroup) {
+    let settings = this.state.studentSettings
+    this.setState({
+      studentSettings: {
+        groupName: settings.groupName,
+        engGroupName: engGroup,
+        subGroupName: settings.subGroupName
+      }
+    })
+  }
+
+  async handleAssistantActionShowSchedule() {
+    this.props.IsStudent
+      ? await this.save_student()
+      : await this.save_teacher()
+  }
+
+
+  goToSchedule(isSave: boolean, isCurrentWeek: boolean) {
+    let current_date = new Date().toISOString().slice(0, 10)
+    history.push('/schedule/' + current_date + '/' + isSave + '/' + isCurrentWeek)
+  }
+
+  async save_teacher() {
+    let teacherValidation = await this.props.apiModel.CheckIsCorrectTeacher(this.state.teacherSettings, this.state.IsSave)
+    // console.log("Teacher validation", teacherValidation)
+    if (!teacherValidation.IsInitialsError) {
+      // console.log("Show Schedule")
+      // console.log(this.props.apiModel)
+      this.goToSchedule(this.state.IsSave, true)
+    } else {
+      this.setState({teacherValidation: {IsInitialsError: teacherValidation.IsInitialsError}})
+    }
+  }
+
+  async save_student() {
+    let isCorrect = await this.props.apiModel.CheckIsCorrectStudent(this.state.studentSettings, this.state.IsSave)
+    if (!isCorrect.IsEngGroupError && !isCorrect.IsGroupNameError && !isCorrect.IsSubGroupError) {
+      // console.log(this.state.IsSave)
+      this.props.apiModel.isSavedSchedule = this.state.IsSave
+      await this.props.apiModel.LoadSchedule(this.state.IsSave)
+      this.goToSchedule(this.state.IsSave, true)
+    } else {
+      this.setState({
+        studentValidation: {
+          IsEngGroupError: isCorrect.IsEngGroupError,
+          IsGroupNameError: isCorrect.IsGroupNameError,
+          IsSubGroupError: isCorrect.IsSubGroupError
+        }
+      })
+    }
+  }
+
   render() {
 
     const studentContent = (
@@ -232,10 +249,6 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         // overflow: "hidden",
         height: '100%',
       }}>
-
-        {/* <HomeTitle
-          text={HOME_TITLE}
-        /> */}
 
         <TabSelectorRow
           tabs={USER_MODES}
@@ -252,14 +265,12 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           isError={this.state.studentValidation.IsGroupNameError}
           value={this.state.studentSettings.groupName}
           onChange={(value) => this.setState(prevState => ({
-            studentSettings:
-            {
+            studentSettings: {
               ...prevState.studentSettings,
               groupName: value,
-              
             }
           }))
-        }
+          }
 
         />
 
@@ -268,14 +279,12 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           isError={this.state.studentValidation.IsSubGroupError}
           value={this.state.studentSettings.subGroupName}
           onChange={(value) => this.setState(prevState => ({
-            studentSettings:
-            {
+            studentSettings: {
               ...prevState.studentSettings,
               subGroupName: value,
-              
             }
           }))
-        }
+          }
         />
 
         <TextFieldForUserInfo
@@ -283,27 +292,26 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
           isError={this.state.studentValidation.IsEngGroupError}
           value={this.state.studentSettings.engGroupName}
           onChange={(value) => this.setState(prevState => ({
-            studentSettings:
-            {
+            studentSettings: {
               ...prevState.studentSettings,
               engGroupName: value,
-              
             }
           }))
-        }
+          }
         />
 
         <RememberCheckboxRow
           label={LABEL_REMEMBER_GROUP}
           checked={this.state.IsSave}
-          onChange={(value) => {this.setState({IsSave:value})}}
+          onChange={(value) => {
+            this.setState({IsSave: value})
+          }}
         />
 
         <ShowScheduleButtonRow
           onClick={async () => {
             await this.save_student()
-          }
-          }
+          }}
         />
 
       </Container>
@@ -312,15 +320,12 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
     const teacherContent = (
       <Container style={{padding: 0}}>
 
-        {/* <HomeTitle
-          text={HOME_TITLE}
-          // todo: margin: '3%'
-        /> */}
-
         <TabSelectorRow
           tabs={USER_MODES}
           selectedIndex={this.props.IsStudent ? 0 : 1}
-          onSelect={(tabIndex) => tabIndex === 0 ? history.push('/Home/true') : history.push('/Home/false')}
+          onSelect={(tabIndex) => tabIndex === 0
+            ? history.push('/Home/true')
+            : history.push('/Home/false')}
         />
 
         <HomeDescription
@@ -337,7 +342,7 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
         <RememberCheckboxRow
           label={LABEL_REMEMBER_FIO}
           checked={this.state.IsSave}
-          onChange={(value) => this.setState({IsSave:value})
+          onChange={(value) => this.setState({IsSave: value})
           }
         />
 
@@ -354,18 +359,11 @@ class HomePage extends React.Component<HomeViewProps, HomeViewState> {
       ? studentContent
       : teacherContent;
 
-    return <DeviceThemeProvider>
-      <DocStyle/>
-      {
-        getThemeBackgroundByChar(this.props.character, this.props.theme)
-      }
-
-      <div>
-        <Main
-          contentRight={mainContent}
-        />
-      </div>
-    </DeviceThemeProvider>
+    return (
+      <Main
+        contentRight={mainContent}
+      />
+    )
   }
 }
 

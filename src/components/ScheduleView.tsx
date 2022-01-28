@@ -177,6 +177,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           //  overflow: "scroll",
           minHeight: '100%',
         }}>
+          
           <TopMenu
             subLabel={
               !this.props.apiModel.isStudent

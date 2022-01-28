@@ -7,7 +7,7 @@ import {ScheduleView, ScheduleViewProps} from '../components/ScheduleView'
 import {IScheduleDays} from '../lib/ApiModel'
 
 
-interface SchedulePageProps_ extends ScheduleViewProps, IThemingProps {
+interface SchedulePageProps_ extends ScheduleViewProps {
 }
 
 type SchedulePageProps = Omit<SchedulePageProps_, 'schedule'>
@@ -64,7 +64,7 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
     // Typical usage (don't forget to compare props):
     console.log("this.props.timeParam !== prevProps.timeParam", this.props.timeParam, prevProps.timeParam)
     if (this.props.timeParam !== prevProps.timeParam)
-    await this.refetchDay();
+      await this.refetchDay();
     if (this.props.Date !== prevProps.Date) {
       await this.refetchData();
       // this.setState({})
@@ -73,30 +73,24 @@ class SchedulePage extends React.Component<SchedulePageProps, ScheduleState> {
 
   render() {
     console.log("SchedulePage: render")
-    const {character, theme, timeParam, ...restProps} = this.props;
+    const {/*character, theme,*/ timeParam, ...restProps} = this.props;
 
     return (
-      <DeviceThemeProvider>
-        <DocStyle/>
-        {
-          getThemeBackgroundByChar(character, theme)
-        }
-        <div>
-          <Container style={{
-            padding: 0,
-            overflow: "hidden",
-            //minHeight: '100%',
-          }}>
+      <div>
+        <Container style={{
+          padding: 0,
+          overflow: "hidden",
+          //minHeight: '100%',
+        }}>
 
-            <ScheduleView
-              timeParam={this.state.timeParam}
-              schedule={this.state.schedule}
-              {...restProps}
-            />
+          <ScheduleView
+            timeParam={this.state.timeParam}
+            schedule={this.state.schedule}
+            {...restProps}
+          />
 
-          </Container>
-        </div>
-      </DeviceThemeProvider>
+        </Container>
+      </div>
     )
   }
 }
