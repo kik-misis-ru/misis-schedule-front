@@ -44,7 +44,7 @@ import {
 } from '../themes/tools';
 import {
   capitalize,
-} from '../lib/utils';
+} from '../language-ru/utils';
 import {
   ITeacherValidation
 } from '../lib/ApiModel'
