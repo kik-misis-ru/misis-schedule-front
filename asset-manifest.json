@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/misis-schedule-front/static/css/main.132db754.chunk.css",
-    "main.js": "/misis-schedule-front/static/js/main.24ddfa09.chunk.js",
-    "main.js.map": "/misis-schedule-front/static/js/main.24ddfa09.chunk.js.map",
+    "main.js": "/misis-schedule-front/static/js/main.8aac7f38.chunk.js",
+    "main.js.map": "/misis-schedule-front/static/js/main.8aac7f38.chunk.js.map",
     "runtime-main.js": "/misis-schedule-front/static/js/runtime-main.e67ea004.js",
     "runtime-main.js.map": "/misis-schedule-front/static/js/runtime-main.e67ea004.js.map",
     "static/css/2.68b64559.chunk.css": "/misis-schedule-front/static/css/2.68b64559.chunk.css",
-    "static/js/2.091cada9.chunk.js": "/misis-schedule-front/static/js/2.091cada9.chunk.js",
-    "static/js/2.091cada9.chunk.js.map": "/misis-schedule-front/static/js/2.091cada9.chunk.js.map",
+    "static/js/2.00b3fd80.chunk.js": "/misis-schedule-front/static/js/2.00b3fd80.chunk.js",
+    "static/js/2.00b3fd80.chunk.js.map": "/misis-schedule-front/static/js/2.00b3fd80.chunk.js.map",
     "static/js/3.717397d7.chunk.js": "/misis-schedule-front/static/js/3.717397d7.chunk.js",
     "static/js/3.717397d7.chunk.js.map": "/misis-schedule-front/static/js/3.717397d7.chunk.js.map",
     "index.html": "/misis-schedule-front/index.html",
     "static/css/2.68b64559.chunk.css.map": "/misis-schedule-front/static/css/2.68b64559.chunk.css.map",
     "static/css/main.132db754.chunk.css.map": "/misis-schedule-front/static/css/main.132db754.chunk.css.map",
-    "static/js/2.091cada9.chunk.js.LICENSE.txt": "/misis-schedule-front/static/js/2.091cada9.chunk.js.LICENSE.txt",
+    "static/js/2.00b3fd80.chunk.js.LICENSE.txt": "/misis-schedule-front/static/js/2.00b3fd80.chunk.js.LICENSE.txt",
     "static/media/Karta.e347edc6.png": "/misis-schedule-front/static/media/Karta.e347edc6.png",
     "static/media/Star-1.29be49e3.png": "/misis-schedule-front/static/media/Star-1.29be49e3.png",
     "static/media/lib.268889e0.jpeg": "/misis-schedule-front/static/media/lib.268889e0.jpeg"
@@ -21,8 +21,8 @@
   "entrypoints": [
     "static/js/runtime-main.e67ea004.js",
     "static/css/2.68b64559.chunk.css",
-    "static/js/2.091cada9.chunk.js",
+    "static/js/2.00b3fd80.chunk.js",
     "static/css/main.132db754.chunk.css",
-    "static/js/main.24ddfa09.chunk.js"
+    "static/js/main.8aac7f38.chunk.js"
   ]
 }
