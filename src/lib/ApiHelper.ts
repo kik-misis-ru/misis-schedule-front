@@ -291,52 +291,6 @@ interface StarUser {
   teacherId: string
 }
 
-export async function setGroupStar(
-  props: StarUser,
-  value: boolean
-): Promise<AxiosResponse<any>> {
-  return value
-    ? createUser(
-      props.userId,
-      filial.id,
-      props.groupId,
-      props.subGroup,
-      props.engGroup,
-      props.teacherId
-    )
-    : createUser(
-      props.userId,
-      "",
-      "",
-      "",
-      "",
-      "",
-    )
-}
-
-export async function setTeacherStar(
-  props: StarUser,
-  value: boolean
-): Promise<AxiosResponse<any>> {
-  return value ?
-    createUser(
-      props.userId,
-      filial.id,
-      props.groupId,
-      props.subGroup,
-      props.engGroup,
-      props.teacherId,
-    )
-    : createUser(
-      props.userId,
-      "",
-      props.groupId,
-      props.subGroup,
-      "",
-      "",
-    );
-
-}
 
 
 export interface IUserData {
