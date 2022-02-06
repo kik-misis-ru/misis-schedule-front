@@ -937,8 +937,17 @@ export class App extends React.Component<IAppProps, IAppState> {
       >
         <Router history={history}>
           <Switch>
-            <Route path="/contacts" element={<Contacts/>}/>
-            <Route path="/faq" element={<FAQ/>}/>
+            <Route path="/contacts" render={
+                ({match}) => {
+                  return <Contacts/>
+                }                           
+              }/>
+            <Route path="/faq" render={
+                ({match}) => {
+                  return <FAQ
+                  />
+                }                           
+              }/>
             <Route
               path="/navigation"
               render={
