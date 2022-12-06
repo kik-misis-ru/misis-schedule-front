@@ -2,8 +2,8 @@ import React from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Container,
-  Row, 
-  Col, 
+  Row,
+  Col,
   DeviceThemeProvider,
   TextBox,
   Header,
@@ -24,10 +24,7 @@ import star from "../images/Star-1.png";
 import {DocStyle, getThemeBackgroundByChar} from '../themes/tools';
 import {CharacterId, IBuilding} from "../types/base";
 import {COLOR_BLACK} from '../components/consts';
-import {
-  HeaderLogoCol,
-  HeaderTitleCol2,
-} from '../components/TopMenu';
+
 
 import logo from "../images/App Icon.png";
 
@@ -39,126 +36,121 @@ import {
 
 
 const Start = ({
-                         assistant,
-                         character,
-                         isMobileDevice,
-                         theme,
-                       }: {
+                 assistant,
+                 isMobileDevice,
+               }: {
   assistant: AssistantWrapper
-  theme: string 
-  character: CharacterId
   isMobileDevice: boolean
 }) => {
-  return <DeviceThemeProvider>
-    <DocStyle/>
-    {
-      getThemeBackgroundByChar(character, theme)
-    }
-    {
-      isMobileDevice
-        ? (
-          <Container style={{
-            padding: 0,
-            // overflow: "hidden"
+  return (
+    isMobileDevice
+      ? (
+        <Container style={{
+          padding: 0,
+          // overflow: "hidden"
+        }}>
+
+          <Row style={{
+            margin: "1em",
+            marginLeft: "5%",
+            marginRight: "5%"
           }}>
-
-<Row style={{
-    margin: "1em"
-  }}>
-    <HeaderRoot>
-      <HeaderMinimize onClick={() => assistant.on('exit', () => {
-  })  } />
-    <HeaderLogo src={logo} alt="Logo" onClick={()=>history.push("/dashboard")}/>
-    <HeaderTitleWrapper>
-      <HeaderTitle>Мир МИСиС</HeaderTitle>
-    </HeaderTitleWrapper>
-    </HeaderRoot>
+            <HeaderRoot>
+              <HeaderMinimize onClick={() => assistant.on('exit', () => {
+              })}/>
+              <HeaderLogo src={logo} alt="Logo" onClick={() => history.push("/dashboard")}/>
+              <HeaderTitleWrapper>
+                <HeaderTitle>Мир МИСиС</HeaderTitle>
+              </HeaderTitleWrapper>
+            </HeaderRoot>
 
 
-  </Row>
-  <Row style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-  <TextBox> 
-    <Headline1
-      style={{
-        margin: '15% 1.5% 1.5% 0',
-        //textAlign: "center",
-      }}
-    >
-      Салют!
-    </Headline1>
-    <ParagraphText1 >
-    Мы создали Мир МИСиС,
-    </ParagraphText1>
-    <ParagraphText1>
-    чтобы помочь студентам и преподавателям 
-    </ParagraphText1>
-    <ParagraphText1>
-    каждый день эффективно перформить,
-    </ParagraphText1>
-    <ParagraphText1>
-    не отвлекаясь на рутину
-    </ParagraphText1>
-  </TextBox>
-  <Button onClick={()=>{ history.push("/dashboard")}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
-  
-  </Row>
-  <Image src={star} style={{margin:"0 0 auto 0", overflow: "hidden"}}/>
+          </Row>
+          <Row style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+            <TextBox>
+              <Headline1
+                style={{
+                  margin: '15% 1.5% 1.5% 0',
+                  //textAlign: "center",
+                }}
+              >
+                Салют!
+              </Headline1>
+              <ParagraphText1>
+                Мы создали Мир МИСиС,
+              </ParagraphText1>
+              <ParagraphText1>
+                чтобы помочь студентам и преподавателям
+              </ParagraphText1>
+              <ParagraphText1>
+                каждый день эффективно перформить,
+              </ParagraphText1>
+              <ParagraphText1>
+                не отвлекаясь на рутину
+              </ParagraphText1>
+            </TextBox>
+            <Button onClick={() => {
+              history.push("/dashboard")
+            }} size="m" style={{marginTop: "2em"}}> Дальше</Button>
 
-            {/*<Spacer300/>*/}
+          </Row>
+          <Image src={star} style={{margin: "0 0 auto 0", overflow: "hidden"}}/>
 
-          </Container>
-        )
-        :
-        (
-          <Container style={{padding: 0}}>
+          {/*<Spacer300/>*/}
 
-<Row style={{
-    margin: "1em"
-  }}>
+        </Container>
+      )
+      : (
+        <Container style={{padding: 0}}>
 
-    <HeaderLogoCol/>
+          <Row style={{
+            margin: "1em"
+          }}>
+            <HeaderRoot>
+              <HeaderMinimize onClick={() => assistant.on('exit', () => {
+              })}/>
+              <HeaderLogo src={logo} alt="Logo" onClick={() => history.push("/dashboard")}/>
+              <HeaderTitleWrapper>
+                <HeaderTitle>Мир МИСиС</HeaderTitle>
+              </HeaderTitleWrapper>
+            </HeaderRoot>
+          </Row>
 
-    <HeaderTitleCol2
-      title='Мир МИСиС'
-    />
-
-
-  </Row>
-  <Row style={{display: "flex", flexDirection: "row"}}>
-  <Col>
-  <Image src={star} style={{width: "40vw", overflow: "hidden"}}/>
-  </Col>
-  <Col>
-  <TextBox> 
-    <Headline1
-      style={{
-        margin: '15% 1.5% 1.5% 0',
-        //textAlign: "center",
-      }}
-    >
-      Салют!
-    </Headline1>
-    <ParagraphText1 >
-    Мы создали Мир МИСиС,
-    </ParagraphText1>
-    <ParagraphText1>
-    чтобы помочь студентам и преподавателям 
-    </ParagraphText1>
-    <ParagraphText1>
-    каждый день эффективно перформить,
-    </ParagraphText1>
-    <ParagraphText1>
-    не отвлекаясь на рутину
-    </ParagraphText1>
-  </TextBox>
-  <Button onClick={()=>{ history.push("/dashboard")}} size="m" style={{marginTop: "2em"}}> Дальше</Button>
-  </Col>
-  </Row>
-
-          </Container>
-        )
-    }
-  </DeviceThemeProvider>
+          <Row style={{display: "flex", flexDirection: "row"}}>
+            <Col>
+              <Image src={star} style={{width: "40vw", overflow: "hidden"}}/>
+            </Col>
+            <Col>
+              <TextBox>
+                <Headline1
+                  style={{
+                    margin: '15% 1.5% 1.5% 0',
+                    //textAlign: "center",
+                  }}
+                >
+                  Салют!
+                </Headline1>
+                <ParagraphText1>
+                  Мы создали Мир МИСиС,
+                </ParagraphText1>
+                <ParagraphText1>
+                  чтобы помочь студентам и преподавателям
+                </ParagraphText1>
+                <ParagraphText1>
+                  каждый день эффективно перформить,
+                </ParagraphText1>
+                <ParagraphText1>
+                  не отвлекаясь на рутину
+                </ParagraphText1>
+              </TextBox>
+              <Button onClick={() => {
+                history.push("/dashboard")
+              }} size="m" style={{marginTop: "2em"}}> Дальше</Button>
+            </Col>
+          </Row>
+        </Container>
+      )
+  )
 }
 
 export default Start

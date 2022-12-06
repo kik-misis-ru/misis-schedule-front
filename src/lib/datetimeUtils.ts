@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import DayOfWeek from "../language-ru/DayOfWeek";
 
-import { padZeros } from './utils';
+import { padZeros } from '../language-ru/utils';
 import number from "../language-ru/Number";
 
 // Init `momentjs` module
@@ -124,58 +124,58 @@ export function getFirstDayWeek(date: Date): string {
 }
 
 
-/**
- *
- * @param {string} adj
- * @returns {string}
- */
-export function lessonTypeAdjToNoun(adj: string): string {
-  let result;
-  switch (adj) {
-    case "Лекционные":
-      result = "Лекция";
-      break;
-    case "Практические":
-      result = "Практика";
-      break;
-    case "Лабораторные":
-      result = "Лаба";
-      break;
-    default:
-      break;
-  }
-  return result
-}
+// /**
+//  *
+//  * @param {string} adj
+//  * @returns {string}
+//  */
+// export function lessonTypeAdjToNoun(adj: string): string {
+//   let result;
+//   switch (adj) {
+//     case "Лекционные":
+//       result = "Лекция";
+//       break;
+//     case "Практические":
+//       result = "Практика";
+//       break;
+//     case "Лабораторные":
+//       result = "Лаба";
+//       break;
+//     default:
+//       break;
+//   }
+//   return result
+// }
 
-/**
- *
- * @param {number} pairCount
- * @return {string}
- */
-export function pairNumberToPairNumText(pairCount: number): string {
-  switch (pairCount) {
-    case 1:
-      return "одна пара";
-    case 2:
-      return "две пары";
-    case 3:
-      return "три пары";
-    case 4:
-      return "четыре пары";
-    default:
-      return `${pairCount} пар`;
-  }
-}
+// /**
+//  *
+//  * @param {number} pairCount
+//  * @return {string}
+//  */
+// export function pairNumberToPairNumText(pairCount: number): string {
+//   switch (pairCount) {
+//     case 1:
+//       return "одна пара";
+//     case 2:
+//       return "две пары";
+//     case 3:
+//       return "три пары";
+//     case 4:
+//       return "четыре пары";
+//     default:
+//       return `${pairCount} пар`;
+//   }
+// }
 
 
-export function pairNumberToPairText(pairCount: number): string | undefined {
-  const lesson = (pairCount === 1)
-    ? "пара"
-    : (pairCount === 2 || pairCount === 3 || pairCount === 4)
-      ? "пары"
-      : "пар"
-  return lesson;
-}
+// export function pairNumberToPairText(pairCount: number): string | undefined {
+//   const lesson = (pairCount === 1)
+//     ? "пара"
+//     : (pairCount === 2 || pairCount === 3 || pairCount === 4)
+//       ? "пары"
+//       : "пар"
+//   return lesson;
+// }
 
 /**
  * возвращает короткое название дня недели (Пн,Вт,...)

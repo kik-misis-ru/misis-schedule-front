@@ -177,6 +177,7 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           //  overflow: "scroll",
           minHeight: '100%',
         }}>
+          
           <TopMenu
             subLabel={
               !this.props.apiModel.isStudent
@@ -228,18 +229,18 @@ export class ScheduleView extends React.Component<ScheduleViewProps, ScheduleVie
           />
 
           <ScheduleDay
-            isCurrentWeek={String(this.props.IsCurrentWeek)=="true"}
-            isSave={String(this.props.IsSavedSchedule)=="true"}
+            isCurrentWeek={Boolean(this.props.IsCurrentWeek)}
+            isSave={Boolean(this.props.IsSavedSchedule)}
             Day={this.props.page}
             isReady={isReady}
             dayLessons={
-              String(this.props.IsCurrentWeek)=="true"
+              Boolean(this.props.IsCurrentWeek)
                 ? schedule.current_week[this.props.page]
                 : schedule.other_week[this.props.page]
             }
             currentLessonNumber={this.state.current}
             isTeacherAndValid={!this.props.apiModel.isStudent}
-            isToday={this.props.today === this.props.page && this.props.IsCurrentWeek}
+            isToday={this.props.today-1 === this.props.page && Boolean(this.props.IsCurrentWeek)}
             isDayOff={this.props.page == -1}
             onTeacherClick={async (teacherName) => {
               await this.props.apiModel.doSetTeacher(teacherName)

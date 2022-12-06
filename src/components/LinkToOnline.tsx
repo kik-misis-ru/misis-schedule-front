@@ -13,7 +13,7 @@ export const LinkToOnline = ({
   url
     ? (
     <a href={url}  target="_blank"
-       style={{ color: DEFAULT_TEXT_COLOR, fontSize:"16px" }}
+       style={{ color: DEFAULT_TEXT_COLOR, fontSize:"1em" }}
     >{ text || LINK_TEXT }</a>
     )
     : (

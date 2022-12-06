@@ -13,18 +13,6 @@ import {
 import logo from "../images/logo.png";
 
 
-export const HeaderLogoCol = () => {
-  return (
-    <Col
-      style={{maxWidth: '2.3rem', padding: "0 0 0 0"}}
-    >
-      <Image
-        src={logo}
-        
-      />
-    </Col>
-  )
-}
 
 export const HeaderTitleCol = ({
                        title
@@ -38,18 +26,6 @@ export const HeaderTitleCol = ({
   </Col>
 )
 
-
-export const HeaderTitleCol2 = ({
-                       title
-                     }: {
-  title: string
-}) => (
-  <Col style={{marginLeft: "0.5em", paddingTop: "0.7em"}}>
-    <TextBox>
-      <Body2>{title}</Body2>
-    </TextBox>
-  </Col>
-)
 
 
 const DEFAULT_SCHEDULE_TEXT = 'Расписание занятий';
@@ -119,21 +95,6 @@ export const GoToHomeButton = ({
   />
 )
 
-// export const GoToScheduleButton = ({
-//                           onClick,
-//                         }: {
-//   onClick: React.MouseEventHandler<HTMLElement>
-// }) => (
-//   <Button
-//     size="s"
-//     view="clear"
-//     pin="circle-circle"
-//     onClick={(event) => onClick(event)}
-//     contentRight={
-//       <IconMoreVertical size="s" color="inherit"/>
-//     }
-//   />
-// )
 
 export const GoToScheduleButton = ({
                                      disabled=false,

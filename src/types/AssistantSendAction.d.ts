@@ -97,6 +97,10 @@ export interface AssistantSendSettings{
   action_id: 'settings'
 }
 
+export interface AssistantSendExit{
+  action_id: 'exit'
+}
+
 export interface AssistantSendChangeGroup{
   action_id: 'change_group'
   parameters: {
@@ -115,6 +119,7 @@ export type AssistantSendAction = AssistantSendActionTodaySchedule
   | AssistantSendActionTomorrowSchedule
   | AssistantSendActionSay
   | AssistantSendSettings
+  | AssistantSendExit
   | AssistantSendActionSay1
   | AssistantSendActionSay2
   | AssistantSendActionSay3
