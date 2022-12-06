@@ -23,6 +23,7 @@ import {
 
 
 const FAQ = ({}: {}) => {
+  
   return (
     <Container style={{
       padding: 0,

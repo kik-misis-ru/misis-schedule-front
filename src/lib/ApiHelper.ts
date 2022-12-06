@@ -118,7 +118,7 @@ export interface IPushData {
 //
 
 //const API_URL = "http://127.0.0.1:8000/";
-const API_URL = "https://mir-misis.ru/";
+const API_URL = "http://213.178.155.140/";
 
 export async function getScheduleFromDb(groupId: string, english_group_id: string, date: string): Promise<IScheduleFormatData> {
   const url = `${API_URL}schedule`;
