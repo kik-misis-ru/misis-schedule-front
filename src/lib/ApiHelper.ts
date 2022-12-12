@@ -174,7 +174,7 @@ export async function getScheduleTeacherFromDb(teacherId: string, date: string):
  
 
 export async function getSchedulebyUserId(user_id: string): Promise<IScheduleByUserIdData | undefined>{
-  const url = `${API_URL}data_by_user_id`;
+  const url = `${API_URL}schedule_by_user_id`;
   const config={
     params:{
       user_id: user_id
@@ -264,11 +264,11 @@ export async function createUser(
   engGroup: string,
   teacher_id: string,
 ): Promise<AxiosResponse<any>> {
-  const url = `${API_URL}user`;
+  const url = `${API_URL}users`;
   const data = {
     "user_id": userId,
     "filial_id": filialId != undefined ? filialId : "",
-    "group_id": groupId != undefined ? groupId : "",
+    "group_id": groupId != undefined ? `${groupId}` : "",
     "subgroup_name": subGroup != undefined ? subGroup : "",
     "eng_group": engGroup != undefined ? engGroup : "",
     "teacher_id": teacher_id != undefined ? teacher_id : ""
